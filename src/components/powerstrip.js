@@ -90,13 +90,13 @@ class MiniHumidifierPowerstrip extends LitElement {
           max-width: unset;
         }
         mh-controls {
-          max-width: calc(var(--mmp-unit) * 5);
+          max-width: calc(var(--mh-unit) * 5);
           line-height: initial;
           justify-content: flex-end;
         }
         .mh-controls__target_humidifier {
           flex: 100;
-          max-height: var(--mmp-unit);
+          max-height: var(--mh-unit);
         }
       `,
     ];

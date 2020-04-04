@@ -14,7 +14,6 @@ const style = css`
     --mh-overlay-base-color: var(--mini-humidifier-overlay-base-color, #fff);
     --mh-overlay-accent-color: var(--mini-humidifier-overlay-accent-color, --mh-accent-color);
     --mh-text-color: var(--mini-humidifier-base-color, var(--primary-text-color, #000));
-    --mh-media-cover-info-color: var(--mini-humidifier-media-cover-info-color, --mh-text-color);
     --mh-text-color-inverted: var(--disabled-text-color);
     --mh-active-color: var(--mh-accent-color);
     --mh-button-color: var(--mini-humidifier-button-color, rgba(255,255,255,0.25));
@@ -193,10 +192,6 @@ const style = css`
     margin-left: auto;
     margin-right: calc(var(--mh-unit) / 5);
   }
-  ha-card[content='movie'] .attr__media_season,
-  ha-card[content='movie'] .attr__media_episode {
-    display: none;
-  }
   .entity__icon {
     color: var(--mh-icon-color);
   }
@@ -232,8 +227,7 @@ const style = css`
   .entity__artwork[border][state='playing'] {
     border-color: var(--mh-accent-color);
   }
-  .entity__info__name,
-  .entity__info__media[short] {
+  .entity__info__name {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -243,17 +237,7 @@ const style = css`
     color: var(--mh-text-color);
     font-weight: var(--mh-name-font-weight);
   }
-  .entity__info__media {
-    color: var(--secondary-text-color);
-    max-height: 6em;
-    word-break: break-word;
-    opacity: var(--mh-info-opacity);
-    transition: color .5s;
-  }
-  .entity__info__media[short] {
-    max-height: calc(var(--mh-unit) / 2);
-    overflow: hidden;
-  }
+
   .attr__app_name {
     display: none;
   }
@@ -261,52 +245,13 @@ const style = css`
   .attr__app_name:first-of-type {
     display: inline;
   }
-  .mh-humidifier__core[inactive] .entity__info__media {
-    color: var(--mh-text-color);
-    max-width: 200px;
-    opacity: .5;
-  }
-  .entity__info__media[short-scroll] {
-    max-height: calc(var(--mh-unit) / 2);
-    white-space: nowrap;
-  }
-  .entity__info__media[scroll] > span {
-    visibility: hidden;
-  }
-  .entity__info__media[scroll] > div {
-    animation: move linear infinite;
-  }
-  .entity__info__media[scroll] .marquee {
-    animation: slide linear infinite;
-  }
-  .entity__info__media[scroll] .marquee,
-  .entity__info__media[scroll] > div {
-    animation-duration: inherit;
-    visibility: visible;
-  }
-  .entity__info__media[scroll] {
-    animation-duration: 10s;
-    mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
-  }
+
   .marquee {
     visibility: hidden;
     position: absolute;
     white-space: nowrap;
   }
-  ha-card[artwork*='cover'].--has-artwork .entity__info__media,
-  ha-card.--bg .entity__info__media {
-    color: var(--mh-media-cover-info-color);
-  }
-  .entity__info__media span:before {
-    content: ' - ';
-  }
-  .entity__info__media span:first-of-type:before {
-    content: '';
-  }
-  .entity__info__media span:empty {
-    display: none;
-  }
+
   .mh-humidifier__adds {
     margin-left: calc(var(--mh-unit) * 1.2);
     position: relative;
@@ -326,7 +271,7 @@ const style = css`
     width: auto;
     max-width: 100%;
   }
-  mh-media-controls {
+  mh-controls {
     flex-wrap: wrap;
   }
   ha-card.--flow mh-powerstrip {
@@ -345,7 +290,7 @@ const style = css`
   ha-card.--responsive.--rtl .mh-humidifier__adds {
     margin-right: 0;
   }
-  ha-card.--responsive .mh-humidifier__adds > mh-media-controls {
+  ha-card.--responsive .mh-humidifier__adds > mh-controls {
     padding: 0;
   }
   ha-card.--progress .mh-humidifier {
