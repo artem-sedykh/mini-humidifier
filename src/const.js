@@ -1,8 +1,9 @@
 
 const ICON = {
   DEFAULT: 'mdi:air-filter',
-  DROPDOWN: 'mdi:chevron-down',
+  DROPDOWN: 'mdi:fan',
   POWER: 'mdi:power',
+  HUMIDITY: 'mdi:water-outline',
 };
 
 export {

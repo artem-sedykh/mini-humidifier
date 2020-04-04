@@ -12,6 +12,10 @@ export default class HumidifierObject {
     return this.entity.entity_id;
   }
 
+  get depth() {
+    return this.attr.depth || 0;
+  }
+
   get targetHumidity() {
     return this.attr.target_humidity;
   }
@@ -29,7 +33,7 @@ export default class HumidifierObject {
   }
 
   get fanSpeed() {
-    return this.attr.speed || '';
+    return this.attr.speed || this.attr.mode;
   }
 
   get fanSpeedSource() {

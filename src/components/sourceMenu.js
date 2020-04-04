@@ -22,6 +22,7 @@ class MiniHumidifierSourceMenu extends LitElement {
     return html`
       <mh-dropdown
         @change=${this.handleSource}
+        .humidifier=${this.humidifier}
         .items=${this.sources}
         .label=${this.source}
         .selected=${this.source}>

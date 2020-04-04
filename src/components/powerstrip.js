@@ -16,17 +16,14 @@ class MiniHumidifierPowerstrip extends LitElement {
     };
   }
 
-  get powerColor() {
-    return this.humidifier.isActive;
-  }
-
   handleTargetHumidityChange(ev) {
     const vol = parseFloat(ev.target.value);
+    this.sliderValue = vol;
     this.humidifier.setTargetHumidity(ev, vol);
   }
 
   renderTargetHumiditySlider() {
-
+    const sliderValue = this.sliderValue || this.humidifier.targetHumidity;
     return html`
       <div class='mh-controls__target_humidifier --slider flex'>
         <ha-slider
@@ -39,6 +36,8 @@ class MiniHumidifierPowerstrip extends LitElement {
           dir=${'ltr'}
           ignore-bar-touch pin>
         </ha-slider>
+        <span class='info__item__value'>${sliderValue}%</span>
+        <iron-icon class='info__item__icon' .icon=${ICON.HUMIDITY}></iron-icon>
       </div>`;
   }
 
@@ -57,12 +56,10 @@ class MiniHumidifierPowerstrip extends LitElement {
           .humidifier=${this.humidifier}
           ?full=${true}>
         </mh-source-menu>
-     
-        <paper-icon-button class='power-button'
-          .icon=${ICON.POWER}
-          @click=${e => this.humidifier.togglePower(e)}
-          ?color=${this.powerColor}>
-        </paper-icon-button>
+        <ha-entity-toggle
+          .stateObj=${this.humidifier.entity}
+          .hass=${this.hass}>
+        </ha-entity-toggle>
     `;
   }
 
@@ -89,14 +86,27 @@ class MiniHumidifierPowerstrip extends LitElement {
         :host([flow]) mh-controls {
           max-width: unset;
         }
-        mh-controls {
-          max-width: calc(var(--mh-unit) * 5);
-          line-height: initial;
-          justify-content: flex-end;
-        }
         .mh-controls__target_humidifier {
           flex: 100;
           max-height: var(--mh-unit);
+          display: flex
+        }
+        .mh-controls__target_humidifier ha-slider {
+          height: var(--mh-unit);
+          max-width: 130px;
+        }
+        .mh-controls__target_humidifier .info__item__value {
+          text-align: left;
+          text-transform: none;
+          font-size: 10.5px;
+          line-height: var(--mh-unit);
+          font-weight: var(--mh-name-font-weight);
+        }
+        .mh-controls__target_humidifier .info__item__icon {
+          height: var(--mh-unit);
+          width: calc(var(--mh-unit) * 0.5);
+          min-width: calc(var(--mh-unit) * 0.5);
+          color: rgba(33, 33, 33, 0.6);
         }
       `,
     ];

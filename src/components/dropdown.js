@@ -8,6 +8,7 @@ import './button';
 class MiniHumidifierDropdown extends LitElement {
   static get properties() {
     return {
+      humidifier: {},
       items: [],
       label: String,
       selected: String,
@@ -43,6 +44,7 @@ class MiniHumidifierDropdown extends LitElement {
         .verticalAlign=${'top'}
         .verticalOffset=${44}
         .dynamicAlign=${true}
+        disabled="${this.humidifier.depth === 0}"
         @click=${e => e.stopPropagation()}>
         <mh-button class='mh-dropdown__button' slot='dropdown-trigger'>
           <div>
@@ -87,6 +89,7 @@ class MiniHumidifierDropdown extends LitElement {
         .mh-dropdown {
           padding: 0;
           display: block;
+          margin-right: 5px;
         }
         .mh-dropdown__button {
           display: flex;
@@ -94,7 +97,7 @@ class MiniHumidifierDropdown extends LitElement {
           justify-content: space-between;
           align-items: center;
           height: calc(var(--mh-unit) - 4px);
-          margin: 2px 0;
+          margin: 2px 2px 0 0;
         }
         .mh-dropdown__button.icon {
           height: var(--mh-unit);
@@ -111,11 +114,14 @@ class MiniHumidifierDropdown extends LitElement {
         .mh-dropdown__label {
           text-align: left;
           text-transform: none;
+          font-size: 13px;
+          margin-right: 4px;
         }
         .mh-dropdown__icon {
-          height: calc(var(--mh-unit) * .6);
-          width: calc(var(--mh-unit) * .6);
-          min-width: calc(var(--mh-unit) * .6);
+          height: calc(var(--mh-unit) * .5);
+          width: calc(var(--mh-unit) * .5);
+          min-width: calc(var(--mh-unit) * .5);
+          color: rgba( 33, 33, 33 , 0.6);
         }
         paper-item > *:nth-child(2) {
           margin-left: 4px;
