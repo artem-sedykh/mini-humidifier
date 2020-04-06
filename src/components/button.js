@@ -33,7 +33,7 @@ class MiniHumidifierButton extends LitElement {
           0px 1px 5px 0px rgba(0,0,0,.12);
       }
       :host([color]) {
-        background: var(--mh-active-color);
+        background: var(--mh-icon-active-color);
         transition: background .25s;
         opacity: 1;
       }

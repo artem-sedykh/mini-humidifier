@@ -1,7 +1,5 @@
 import { LitElement, html, css } from 'lit-element';
 
-import { ICON } from '../const';
-
 import sharedStyle from '../sharedStyle';
 import './button';
 
@@ -12,17 +10,13 @@ class MiniHumidifierDropdown extends LitElement {
       items: [],
       label: String,
       selected: String,
+      icon: String,
+      active: Boolean,
     };
   }
 
   get selectedId() {
     return this.items.map(item => item.id).indexOf(this.selected);
-  }
-
-  get selectedLabel() {
-    const id = this.selected ? this.selected.toUpperCase() : '';
-    const selectedItem = this.items.find(item => item.id.toUpperCase() === id);
-    return selectedItem ? selectedItem.name : '';
   }
 
   onChange(e) {
@@ -44,14 +38,11 @@ class MiniHumidifierDropdown extends LitElement {
         .verticalAlign=${'top'}
         .verticalOffset=${44}
         .dynamicAlign=${true}
-        disabled="${this.humidifier.depth === 0}"
         @click=${e => e.stopPropagation()}>
         <mh-button class='mh-dropdown__button' slot='dropdown-trigger'>
           <div>
-            <span class='mh-dropdown__label ellipsis'>
-              ${this.selectedLabel}
-            </span>
-            <iron-icon class='mh-dropdown__icon' .icon=${ICON.DROPDOWN}></iron-icon>
+            <iron-icon ?color=${this.active} class='mh-dropdown__icon' .icon=${this.icon}></iron-icon>
+            ${this.renderLabel()}
           </div>
         </mh-button>
         <paper-listbox slot="dropdown-content" .selected=${this.selectedId} @iron-select=${this.onChange}>
@@ -65,6 +56,16 @@ class MiniHumidifierDropdown extends LitElement {
     `;
   }
 
+  renderLabel() {
+    if (this.label)
+      return html`
+        <span class='mh-dropdown__label ellipsis'>
+                ${this.label}
+         </span>
+      `;
+    return '';
+  }
+
   static get styles() {
     return [
       sharedStyle,
@@ -75,21 +76,9 @@ class MiniHumidifierDropdown extends LitElement {
         :host([faded]) {
           opacity: .75;
         }
-        :host[small] .mh-dropdown__label {
-          max-width: 60px;
-          min-width: 40px;
-          display: block;
-          position: relative;
-          width: auto;
-          text-transform: initial;
-        }
-        :host[full] .mh-dropdown__label {
-          max-width: none;
-        }
         .mh-dropdown {
           padding: 0;
           display: block;
-          margin-right: 5px;
         }
         .mh-dropdown__button {
           display: flex;
@@ -97,7 +86,7 @@ class MiniHumidifierDropdown extends LitElement {
           justify-content: space-between;
           align-items: center;
           height: calc(var(--mh-unit) - 4px);
-          margin: 2px 2px 0 0;
+          margin: 2px 0;
         }
         .mh-dropdown__button.icon {
           height: var(--mh-unit);
@@ -106,29 +95,33 @@ class MiniHumidifierDropdown extends LitElement {
         .mh-dropdown__button > div {
           display: flex;
           flex: 1;
-          justify-content: space-between;
+          justify-content: left;
           align-items: center;
           height: calc(var(--mh-unit) - 4px);
-          max-width: 100%;
+          white-space: nowrap;
         }
         .mh-dropdown__label {
           text-align: left;
           text-transform: none;
-          font-size: 13px;
-          margin-right: 4px;
+          padding-left: 5px;
+          font-weight: 300;
         }
         .mh-dropdown__icon {
-          height: calc(var(--mh-unit) * .5);
-          width: calc(var(--mh-unit) * .5);
-          min-width: calc(var(--mh-unit) * .5);
-          color: rgba( 33, 33, 33 , 0.6);
+          height: calc(var(--mh-unit) * .6);
+          width: calc(var(--mh-unit) * .6);
+          min-width: calc(var(--mh-unit) * .6);
+          color: var(--mh-icon-color);
+        }
+        iron-icon[color].mh-dropdown__icon {
+          color: var(--mh-icon-active-color) !important;
+          transition: background .25s;
+          opacity: 1;
         }
         paper-item > *:nth-child(2) {
           margin-left: 4px;
         }
         paper-menu-button[focused] mh-button iron-icon {
           color: var(--mh-accent-color);
-          transform: rotate(180deg);
         }
         paper-menu-button[focused] paper-icon-button {
           color: var(--mh-accent-color);

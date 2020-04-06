@@ -14,13 +14,13 @@ const sharedStyle = css`
     height: calc(var(--mh-unit) * .6);
   }
   paper-icon-button {
-    width: var(--mh-unit);
-    height: var(--mh-unit);
+    width: calc(var(--mh-unit));
+    height: calc(var(--mh-unit));
     color: var(--mh-text-color, var(--primary-text-color));
     transition: color .25s;
   }
   paper-icon-button[color] {
-    color: var(--mh-accent-color, var(--accent-color)) !important;
+    color: var(--mh-icon-active-color) !important;
     opacity: 1 !important;
   }
   paper-icon-button[inactive] {

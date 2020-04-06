@@ -32,6 +32,18 @@ export default class HumidifierObject {
     return 10;
   }
 
+  get ledBrightness() {
+    return this.attr.led_brightness;
+  }
+
+  get ledBrightnessSource() {
+    // 0 = Bright, 1 = Dim, 2 = Off
+    return [
+      { id: 0, name: 'Ярко' },
+      { id: 1, name: 'Тускло' },
+      { id: 2, name: 'Выкл' }];
+  }
+
   get fanSpeed() {
     return this.attr.speed || this.attr.mode;
   }
@@ -80,16 +92,27 @@ export default class HumidifierObject {
     return this.attr.child_lock === true;
   }
 
+  get isLedBrightnessOn() {
+    return this.attr.led_brightness !== 2;
+  }
+
   get currentSpeedMode() {
     return this.attr.mode;
   }
 
-  get currentTemperature() {
+  get temperature() {
     return this.attr.temperature;
   }
 
-  get currentHumidity() {
+  get humidity() {
     return this.attr.humidity;
+  }
+
+  toggleLedBrightness(e) {
+    if (this.isLedBrightnessOn)
+      return this.callService(e, 'fan_set_led_brightness', { brightness: 2 }, 'xiaomi_miio');
+
+    return this.callService(e, 'fan_set_led_brightness', { brightness: 1 }, 'xiaomi_miio');
   }
 
   toggleChildLock(e) {
@@ -123,6 +146,10 @@ export default class HumidifierObject {
 
   setFanSpeed(e, value) {
     return this.callService(e, 'set_speed', { speed: value }, 'fan');
+  }
+
+  setLedBrightness(e, value) {
+    return this.callService(e, 'fan_set_led_brightness', { brightness: value }, 'xiaomi_miio');
   }
 
   // Включение выключение устройства

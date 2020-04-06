@@ -7,6 +7,9 @@ import sharedStyle from './sharedStyle';
 
 import './components/dropdown';
 import './components/powerstrip';
+import './components/controls';
+import './components/info';
+import './components/targetHumiditySlider';
 
 import {
   ICON,
@@ -86,7 +89,6 @@ class MiniHumidifier extends LitElement {
         <div class='mh-humidifier'>
           <div class='mh-humidifier__core flex'>
             ${this.renderIcon()}
-
             <div class='entity__info'>
               ${this.renderEntityName()}
             </div>
@@ -96,12 +98,18 @@ class MiniHumidifier extends LitElement {
               .config=${config}>
             </mh-powerstrip>
           </div>
-
-        </div>
-        <div class='mmp__container'>
-          ${this.humidifier.active ? html`
-         
-          ` : ''}
+          <div class='mh-humidifier__bottom flex'>
+            <mp-humidifier-state
+              .hass=${this.hass}
+              .humidifier=${this.humidifier}
+              .config=${config}>
+            </mp-humidifier-state>
+            <mp-target-humidity-slider
+              .hass=${this.hass}
+              .humidifier=${this.humidifier}
+              .config=${config}>
+            </mp-target-humidity-slider>
+          </div>
         </div>
       </ha-card>
     `;
@@ -109,7 +117,6 @@ class MiniHumidifier extends LitElement {
 
   renderIcon() {
     const state = this.humidifier.isActive;
-
     return html`
       <div class='entity__icon' ?color=${state}>
         <ha-icon .icon=${this.computeIcon()} ></ha-icon>

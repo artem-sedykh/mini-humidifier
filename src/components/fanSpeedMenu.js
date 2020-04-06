@@ -1,8 +1,9 @@
 import { LitElement, html, css } from 'lit-element';
 
 import './dropdown';
+import { ICON } from '../const';
 
-class MiniHumidifierSourceMenu extends LitElement {
+class MiniHumidifierFanSpeedMenu extends LitElement {
   static get properties() {
     return {
       humidifier: {},
@@ -11,6 +12,12 @@ class MiniHumidifierSourceMenu extends LitElement {
 
   get source() {
     return this.humidifier.fanSpeed;
+  }
+
+  get label() {
+    const selectedId = this.source ? this.source.toUpperCase() : this.source;
+    const item = this.sources.find(s => s.id.toUpperCase() === selectedId);
+    return item ? item.name : '';
   }
 
   get sources() {
@@ -24,7 +31,9 @@ class MiniHumidifierSourceMenu extends LitElement {
         @change=${this.handleSource}
         .humidifier=${this.humidifier}
         .items=${this.sources}
-        .label=${this.source}
+        .icon=${ICON.FAN}
+        .active=${this.humidifier.isOn} 
+        .label=${this.label}       
         .selected=${this.source}>
       </mh-dropdown>
     `;
@@ -38,14 +47,10 @@ class MiniHumidifierSourceMenu extends LitElement {
   static get styles() {
     return css`
       :host {
-        max-width: 120px;
         min-width: var(--mh-unit);
-      }
-      :host([full]) {
-        max-width: none;
       }
     `;
   }
 }
 
-customElements.define('mh-source-menu', MiniHumidifierSourceMenu);
+customElements.define('mh-fan-speed-menu', MiniHumidifierFanSpeedMenu);
