@@ -4,6 +4,7 @@ import { styleMap } from 'lit-html/directives/style-map';
 import HumidifierObject from './model';
 import style from './style';
 import sharedStyle from './sharedStyle';
+import handleClick from './utils/handleClick';
 
 import './components/dropdown';
 import './components/powerstrip';
@@ -27,7 +28,6 @@ class MiniHumidifier extends LitElement {
   constructor() {
     super();
     this.initial = true;
-    this.edit = false;
   }
 
   static get properties() {
@@ -73,6 +73,9 @@ class MiniHumidifier extends LitElement {
 
     const conf = {
       toggle_power: true,
+      tap_action: {
+        action: 'more-info',
+      },
       ...config,
     };
     this.config = conf;
@@ -83,7 +86,8 @@ class MiniHumidifier extends LitElement {
     return html`
       <ha-card
         class=${this.computeClasses()}
-        style=${this.computeStyles()}>
+        style=${this.computeStyles()}
+        @click=${e => this.handlePopup(e)}>
         <div class='mh__bg'>
         </div>
         <div class='mh-humidifier'>
@@ -114,6 +118,11 @@ class MiniHumidifier extends LitElement {
         </div>
       </ha-card>
     `;
+  }
+
+  handlePopup(e) {
+    e.stopPropagation();
+    handleClick(this, this._hass, this.config, this.config.tap_action, this.humidifier.id);
   }
 
   renderIcon() {
