@@ -33,7 +33,7 @@ class MiniHumidifierFanSpeedMenu extends LitElement {
         .items=${this.sources}
         .icon=${ICON.FAN}
         .active=${this.humidifier.isOn} 
-        .label=${this.label}       
+        .disabled=${this.humidifier.isOff}
         .selected=${this.source}>
       </mh-dropdown>
     `;

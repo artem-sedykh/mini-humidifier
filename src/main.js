@@ -9,7 +9,7 @@ import './components/dropdown';
 import './components/powerstrip';
 import './components/controls';
 import './components/info';
-import './components/targetHumiditySlider';
+import './components/togglePanel';
 
 import {
   ICON,
@@ -104,12 +104,13 @@ class MiniHumidifier extends LitElement {
               .humidifier=${this.humidifier}
               .config=${config}>
             </mp-humidifier-state>
-            <mp-target-humidity-slider
-              .hass=${this.hass}
-              .humidifier=${this.humidifier}
-              .config=${config}>
-            </mp-target-humidity-slider>
+
           </div>
+          <mp-toggle-panel
+            .hass=${this.hass}
+            .humidifier=${this.humidifier}
+            .config=${config}>
+          </mp-toggle-panel>
         </div>
       </ha-card>
     `;
@@ -127,7 +128,26 @@ class MiniHumidifier extends LitElement {
     return html`
       <div class='entity__info__name'>
         ${this.name}
-      </div>`;
+      </div>
+     ${this.renderSecondaryInfo()}
+    `;
+  }
+
+  renderSecondaryInfo() {
+    return html`
+      <div class='entity__secondary_info'>
+         <iron-icon class='entity__secondary_info_icon' .icon=${ICON.FAN}></iron-icon>
+         <span class='entity__secondary_info__name'>${this.secondaryInfoLabel}</span>
+      </div>
+    `;
+  }
+
+  get secondaryInfoLabel() {
+    const selectedId = this.humidifier.fanSpeed.toUpperCase();
+    const item = this.humidifier.fanSpeedSource.find(s => s.id.toUpperCase() === selectedId);
+    let label = item ? item.name : '';
+    label = label ? `${label}, ${this.humidifier.temperature}°C` : `${label} ${this.humidifier.temperature}°C`;
+    return label;
   }
 
   computeIcon() {

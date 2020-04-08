@@ -68,7 +68,7 @@ const style = css`
     align-self: flex-end;
     box-sizing: border-box;
     position: relative;
-    padding: 16px;
+    padding: 16px 16px 0px 16px;
     transition: padding .25s ease-out;
     width: 100%;
     will-change: padding;
@@ -90,7 +90,6 @@ const style = css`
     position: relative;
     overflow: hidden;
     user-select: none;
-    min-width: 90px;
   }
   .entity__icon {
     color: var(--mh-icon-color);
@@ -122,25 +121,41 @@ const style = css`
     color: var(--mh-text-color);
     font-weight: var(--mh-name-font-weight);
   }
+  .entity__secondary_info_icon {
+    color: var(--mh-icon-color);
+    width: 15px;
+    height: 15px;
+    min-width: 15px;
+  }
+  .entity__secondary_info {
+    margin-top: -2px;
+  }
+  .entity__secondary_info__name {
+    font-size: 13px;
+    font-weight: 300;
+  }
   mh-powerstrip {
     flex: 1;
     justify-content: flex-end;
     margin-right: 0;
     margin-left: auto;
     width: auto;
-    
+    min-width: 0;
   }
   ha-card.--inactive .mh-humidifier {
-    padding: 16px;
+    padding: 16px 16px 0px 16px;
   }
   mp-humidifier-state {
     margin: 0;
   }
   .mh-humidifier__bottom {
-    margin: 5px 0px 0px 10px;
+    margin: 10px 0px 0px 10px;
     justify-content: space-between;
   }
   mp-target-humidity-slider {
+    flex: 1;
+  }
+  mp-humidifier-state {
     flex: 1;
   }
 `;

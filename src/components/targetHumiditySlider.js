@@ -49,23 +49,30 @@ class MiniHumidifierTargetHumiditySlider extends LitElement {
       }
       .mh-target_humidifier.flex {
         display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
       }
       .mh-target_humidifier ha-slider {
+        height: calc(var(--mh-unit) - 15);
         flex: 1;
-        height: calc(var(--mh-unit) * .5);
-        margin: 0 -2px 0 -9px;
+        width: 100%;
+        margin-top: -10px;
+        line-height: normal;
       }
       .mh-target_humidifier__state {
         position: relative;
-        line-height: calc(var(--mh-unit) * .5);
         display: flex;
         flex-wrap: nowrap;
         min-width: 0px;
+        height: calc(var(--mh-unit) * .375);
+        line-height: calc(var(--mh-unit) * .375);
      }
      .state__value_icon {
         height: calc(var(--mh-unit) * .5);
-        width: calc(var(--mh-unit) / 2);
+        width: calc(var(--mh-unit) * .5);
         color: var(--mh-icon-color);
+        margin-top: -3px;
+        margin-right: -2px;
      }
      .state__value {
         display: inline-block;
@@ -74,9 +81,8 @@ class MiniHumidifierTargetHumiditySlider extends LitElement {
      .state__uom {
         align-self: flex-end;
         display: inline-block;
-        font-size: 12px;
+        font-size: 10px;
         font-weight: 400;
-        line-height: calc(var(--mh-unit) * .4);
         margin-top: 1px;
         opacity: 0.6;
         vertical-align: bottom;

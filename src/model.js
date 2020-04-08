@@ -51,9 +51,9 @@ export default class HumidifierObject {
   get fanSpeedSource() {
     return [
       { id: 'Auto', name: 'Авто' },
-      { id: 'Silent', name: 'Тихий' },
-      { id: 'Medium', name: 'Средний' },
-      { id: 'High', name: 'Высокий' }];
+      { id: 'Silent', name: 'Тихая' },
+      { id: 'Medium', name: 'Средняя' },
+      { id: 'High', name: 'Высокая' }];
   }
 
   get icon() {

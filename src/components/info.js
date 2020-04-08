@@ -14,18 +14,14 @@ class MiniHumidifierInfo extends LitElement {
   render() {
     return html`
      <div class='mh-humidifier-state__container'>
-       <div class='state first'>
-         <span class='state__value ellipsis'>${this.humidifier.temperature}</span>
-         <span class='state__uom ellipsis'>°C</span>
-       </div>
        <div class='state'>
-         <iron-icon class='state__value_icon' .icon=${ICON.HUMIDITY}></iron-icon>
-         <span class='state__value ellipsis'>${this.humidifier.humidity}</span>
-         <span class='state__uom ellipsis'>%</span>
-       </div>
-       <div class='state last'>
          <iron-icon class='state__value_icon' .icon=${ICON.DEPTH}></iron-icon>
          <span class='state__value ellipsis'>${this.humidifier.depth}</span>
+         <span class='state__uom ellipsis'>%</span>
+       </div>
+       <div class='state humidity'>
+         <iron-icon class='state__value_icon' .icon=${ICON.HUMIDITY}></iron-icon>
+         <span class='state__value ellipsis'>${this.humidifier.humidity}</span>
          <span class='state__uom ellipsis'>%</span>
        </div>
      </div>
@@ -46,7 +42,6 @@ class MiniHumidifierInfo extends LitElement {
       }
      .mh-humidifier-state__container {
        display: flex;
-       font-weight: 300;
      }
      .state {
         position: relative;
@@ -54,17 +49,13 @@ class MiniHumidifierInfo extends LitElement {
         flex-wrap: nowrap;
         max-width: 100%;
         min-width: 0px;
-        width: 52px;
      }
-     .state.first {
-        width: 49px;
-     }
-     .state.last {
-        margin-right: 0;
-        width: 62px;
-     }
-     .last .state__value {
+     .humidity {
         margin-left: 2px;
+     }
+     .humidity iron-icon {
+        margin-right: -3px;
+        margin-bottom: -1px;
      }
      .state__value_icon {
         height: calc(var(--mh-unit) - 10);

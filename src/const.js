@@ -1,7 +1,7 @@
 
 const ICON = {
   DEFAULT: 'mdi:air-filter',
-  FAN: 'mdi:weather-windy',
+  FAN: 'mdi:fan',
   HUMIDITY: 'mdi:water-outline',
   TEMPERATURE: 'mdi:temperature-celsius',
   DEPTH: 'mdi:beaker-outline',
@@ -9,6 +9,7 @@ const ICON = {
   BUZZER: 'mdi:bell-outline',
   LEDBUTTON: 'mdi:lightbulb-on-outline',
   CHILDLOCK: 'mdi:lock',
+  TOGGLE: 'mdi:chevron-down',
 };
 
 export {

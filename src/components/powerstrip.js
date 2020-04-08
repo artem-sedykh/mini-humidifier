@@ -4,7 +4,7 @@ import sharedStyle from '../sharedStyle';
 
 import getLabel from '../utils/getLabel';
 
-import './controls';
+import './targetHumiditySlider';
 
 class MiniHumidifierPowerstrip extends LitElement {
   static get properties() {
@@ -23,11 +23,11 @@ class MiniHumidifierPowerstrip extends LitElement {
         </span>`;
 
     return html`
-        <mp-humidifier-controls
+        <mp-target-humidity-slider
           .hass=${this.hass}
           .humidifier=${this.humidifier}
           .config=${this.config}>
-        </mp-humidifier-controls>
+        </mp-target-humidity-slider>
         <ha-entity-toggle
           .stateObj=${this.humidifier.entity}
           .hass=${this.hass}>
@@ -45,8 +45,8 @@ class MiniHumidifierPowerstrip extends LitElement {
           line-height: var(--mh-unit);
           max-height: var(--mh-unit);
         }
-        ha-entity-toggle {
-          margin-left: 15px;
+        mp-target-humidity-slider {
+          flex: 1;
         }
       `,
     ];

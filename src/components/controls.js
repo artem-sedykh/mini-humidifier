@@ -39,6 +39,14 @@ class MiniHumidifierControls extends LitElement {
           @click=${e => this.toggleDry(e)}
           ?color=${this.humidifier.isDryOn}>
         </paper-icon-button>
+       <mh-fan-speed-menu
+          .humidifier=${this.humidifier}>
+       </mh-fan-speed-menu>
+       <paper-icon-button class='led-button'
+          .icon=${ICON.LEDBUTTON}
+          @click=${e => this.toggleLedBrightness(e)}
+          ?color=${this.humidifier.isLedBrightnessOn}>
+        </paper-icon-button>
        <paper-icon-button class='buzzer-button'
           .icon=${ICON.BUZZER}
           @click=${e => this.toggleBuzzer(e)}
@@ -49,14 +57,6 @@ class MiniHumidifierControls extends LitElement {
           @click=${e => this.toggleChildLock(e)}
           ?color=${this.humidifier.isChildLockOn}>
         </paper-icon-button>
-       <paper-icon-button class='led-button'
-          .icon=${ICON.LEDBUTTON}
-          @click=${e => this.toggleLedBrightness(e)}
-          ?color=${this.humidifier.isLedBrightnessOn}>
-        </paper-icon-button>
-       <mh-fan-speed-menu
-          .humidifier=${this.humidifier}>
-       </mh-fan-speed-menu>
      </div>
     `;
   }
@@ -85,12 +85,10 @@ class MiniHumidifierControls extends LitElement {
       }
       .mh-humidifier-info__controls {
         display: flex;
+        margin-top: 5px;
       }
       .mh-humidifier-info__controls paper-icon-button {
         color: var(--mh-icon-color);
-        padding-right: 0;
-        padding-left: 0;
-        margin-right: -7px;
       }
       .led-button {
         margin-top: -1px;

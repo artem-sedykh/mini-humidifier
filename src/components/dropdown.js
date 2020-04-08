@@ -12,6 +12,7 @@ class MiniHumidifierDropdown extends LitElement {
       selected: String,
       icon: String,
       active: Boolean,
+      disabled: Boolean,
     };
   }
 
@@ -38,6 +39,7 @@ class MiniHumidifierDropdown extends LitElement {
         .verticalAlign=${'top'}
         .verticalOffset=${44}
         .dynamicAlign=${true}
+        ?disabled=${this.disabled}
         @click=${e => e.stopPropagation()}>
         <mh-button class='mh-dropdown__button' slot='dropdown-trigger'>
           <div>
@@ -71,7 +73,13 @@ class MiniHumidifierDropdown extends LitElement {
       sharedStyle,
       css`
         :host {
-          display: block;
+          position: relative;
+          overflow: hidden;
+        }
+        paper-menu-button
+        :host([disabled]) {
+          opacity: .25;
+          pointer-events: none;
         }
         :host([faded]) {
           opacity: .75;
@@ -98,7 +106,7 @@ class MiniHumidifierDropdown extends LitElement {
           justify-content: left;
           align-items: center;
           height: calc(var(--mh-unit) - 4px);
-          white-space: nowrap;
+          max-width: 100%;
         }
         .mh-dropdown__label {
           text-align: left;
@@ -110,7 +118,7 @@ class MiniHumidifierDropdown extends LitElement {
           height: calc(var(--mh-unit) * .6);
           width: calc(var(--mh-unit) * .6);
           min-width: calc(var(--mh-unit) * .6);
-          color: var(--mh-icon-color);
+          
         }
         iron-icon[color].mh-dropdown__icon {
           color: var(--mh-icon-active-color) !important;
