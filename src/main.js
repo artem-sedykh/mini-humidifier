@@ -103,19 +103,7 @@ class MiniHumidifier extends LitElement {
               .config=${config}>
             </mh-powerstrip>
           </div>
-          <div class='mh-humidifier__bottom flex'>
-            <mp-humidifier-state
-              .hass=${this.hass}
-              .humidifier=${this.humidifier}
-              .config=${config}>
-            </mp-humidifier-state>
-
-          </div>
-          <mp-toggle-panel
-            .hass=${this.hass}
-            .humidifier=${this.humidifier}
-            .config=${config}>
-          </mp-toggle-panel>
+          ${this.renderBottomPanel(config)}
         </div>
       </ha-card>
     `;
@@ -134,6 +122,26 @@ class MiniHumidifier extends LitElement {
       </div>`;
   }
 
+  renderBottomPanel(config) {
+    if (this.humidifier.isUnavailable)
+      return '';
+
+    return html`
+        <div class='mh-humidifier__bottom flex'>
+          <mp-humidifier-state
+            .hass=${this.hass}
+            .humidifier=${this.humidifier}
+            .config=${config}>
+          </mp-humidifier-state>
+        </div>
+        <mp-toggle-panel
+          .hass=${this.hass}
+          .humidifier=${this.humidifier}
+          .config=${config}>
+        </mp-toggle-panel>
+    `;
+  }
+
   renderEntityName() {
     return html`
       <div class='entity__info__name'>
@@ -144,6 +152,9 @@ class MiniHumidifier extends LitElement {
   }
 
   renderSecondaryInfo() {
+    if (this.humidifier.isUnavailable)
+      return '';
+
     return html`
       <div class='entity__secondary_info'>
          <iron-icon class='entity__secondary_info_icon' .icon=${ICON.FAN}></iron-icon>
@@ -168,7 +179,10 @@ class MiniHumidifier extends LitElement {
     return classMap({
       '--initial': this.initial,
       '--collapse': config.collapse,
+      '--group': config.group,
+      '--more-info': config.tap_action !== 'none',
       '--inactive': !this.humidifier.isActive,
+      '--unavailable': this.humidifier.isUnavailable,
     });
   }
 

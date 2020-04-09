@@ -32,6 +32,9 @@ const style = css`
     --paper-checkbox-label-color: var(--mh-text-color);
     color: var(--mh-text-color);
   }
+  ha-card.--group {
+    box-shadow: none;
+  }
   ha-card.--bg {
     --mh-info-opacity: .75;
   }
@@ -90,6 +93,7 @@ const style = css`
     position: relative;
     overflow: hidden;
     user-select: none;
+    max-width: 130px;
   }
   .entity__icon {
     color: var(--mh-icon-color);
@@ -145,6 +149,12 @@ const style = css`
   ha-card.--inactive .mh-humidifier {
     padding: 16px 16px 0px 16px;
   }
+  ha-card.--unavailable .mh-humidifier {
+    padding: 16px;
+  }
+  ha-card.--group .mh-humidifier {
+    padding: 2px 0;
+  }  
   mp-humidifier-state {
     margin: 0;
   }
