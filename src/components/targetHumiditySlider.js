@@ -17,16 +17,16 @@ class MiniHumidifierTargetHumiditySlider extends LitElement {
   }
 
   render() {
-    const sliderValue = this.sliderValue || this.humidifier.targetHumidity;
+    const sliderValue = this.sliderValue || this.humidifier.targetHumidity.value;
     return html`
       <div class='mh-target_humidifier --slider flex'>
         <ha-slider
           @change=${this.handleTargetHumidityChange}
           @click=${e => e.stopPropagation()}
-          min=${this.humidifier.minTargetHumidity}
-          max=${this.humidifier.maxTargetHumidity}
-          step=${this.humidifier.targetHumidityStep}
-          value=${this.humidifier.targetHumidity}
+          min=${this.humidifier.targetHumidity.min}
+          max=${this.humidifier.targetHumidity.max}
+          step=${this.humidifier.targetHumidity.step}
+          value=${this.humidifier.targetHumidity.value}
           dir=${'ltr'}
           ignore-bar-touch pin>
         </ha-slider>

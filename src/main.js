@@ -73,6 +73,7 @@ class MiniHumidifier extends LitElement {
 
     const conf = {
       toggle_power: true,
+      fan_modes: [],
       tap_action: {
         action: 'more-info',
       },

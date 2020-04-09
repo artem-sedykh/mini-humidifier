@@ -6,6 +6,7 @@ export default class HumidifierObject {
     this.entity = entity || {};
     this.state = entity.state;
     this.attr = entity.attributes;
+    this.__fanSpeedSource = this.__getFanSpeedSource(config.fan_modes);
   }
 
   get id() {
@@ -17,31 +18,13 @@ export default class HumidifierObject {
   }
 
   get targetHumidity() {
-    return this.attr.target_humidity;
-  }
-
-  get minTargetHumidity() {
-    return 30;
-  }
-
-  get maxTargetHumidity() {
-    return 80;
-  }
-
-  get targetHumidityStep() {
-    return 10;
-  }
-
-  get ledBrightness() {
-    return this.attr.led_brightness;
-  }
-
-  get ledBrightnessSource() {
-    // 0 = Bright, 1 = Dim, 2 = Off
-    return [
-      { id: 0, name: 'Ярко' },
-      { id: 1, name: 'Тускло' },
-      { id: 2, name: 'Выкл' }];
+    const humidity = this.attr.target_humidity || 0;
+    return {
+      min: 30,
+      max: 80,
+      step: 10,
+      value: humidity,
+    };
   }
 
   get fanSpeed() {
@@ -49,11 +32,7 @@ export default class HumidifierObject {
   }
 
   get fanSpeedSource() {
-    return [
-      { id: 'Auto', name: 'Авто' },
-      { id: 'Silent', name: 'Тихая' },
-      { id: 'Medium', name: 'Средняя' },
-      { id: 'High', name: 'Высокая' }];
+    return this.__fanSpeedSource;
   }
 
   get icon() {
@@ -96,16 +75,33 @@ export default class HumidifierObject {
     return this.attr.led_brightness !== 2;
   }
 
-  get currentSpeedMode() {
-    return this.attr.mode;
-  }
-
   get temperature() {
     return this.attr.temperature;
   }
 
   get humidity() {
     return this.attr.humidity;
+  }
+
+  __getFanSpeedSource(fanModes) {
+    const defaultFanSpeedSource = [
+      { id: 'Auto', name: 'Auto' },
+      { id: 'Silent', name: 'Silent' },
+      { id: 'Medium', name: 'Medium' },
+      { id: 'High', name: 'High' }];
+
+    if (!fanModes)
+      return defaultFanSpeedSource;
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [key, value] of Object.entries(this.config.fan_modes)) {
+      const item = defaultFanSpeedSource.find(s => s.id.toUpperCase() === key.toUpperCase());
+
+      if (item)
+        item.name = value;
+    }
+
+    return defaultFanSpeedSource;
   }
 
   toggleLedBrightness(e) {
@@ -147,21 +143,6 @@ export default class HumidifierObject {
   setFanSpeed(e, value) {
     return this.callService(e, 'set_speed', { speed: value }, 'fan');
   }
-
-  setLedBrightness(e, value) {
-    return this.callService(e, 'fan_set_led_brightness', { brightness: value }, 'xiaomi_miio');
-  }
-
-  // Включение выключение устройства
-  togglePower(e) {
-    if (this.config.toggle_power)
-      return this.callService(e, 'toggle', undefined, 'fan');
-    if (this.isOff)
-      return this.callService(e, 'turn_on', undefined, 'fan');
-    else
-      this.callService(e, 'turn_off', undefined, 'fan');
-  }
-
 
   callService(e, service, inOptions, domain) {
     e.stopPropagation();
