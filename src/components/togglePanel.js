@@ -22,7 +22,8 @@ class MiniHumidifierTogglePanel extends LitElement {
     };
   }
 
-  toggle() {
+  toggle(e) {
+    e.stopPropagation();
     this.visible = !this.visible;
   }
 
@@ -37,7 +38,7 @@ class MiniHumidifierTogglePanel extends LitElement {
         <div class='mh-humidifier__toggle'>
             <paper-icon-button class='toggle-button ${this.toggleButtonCls()}'
             .icon=${ICON.TOGGLE}
-            @click=${() => this.toggle()}>
+            @click=${e => this.toggle(e)}>
             </paper-icon-button>
         </div>
      </div>
