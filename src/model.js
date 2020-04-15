@@ -13,6 +13,10 @@ export default class HumidifierObject {
     return this.entity.entity_id;
   }
 
+  round(value, decimals) {
+    return Number(`${Math.round(`${value}e${decimals}`)}e-${decimals}`);
+  }
+
   get depth() {
     const depth = this.attr.depth || 0;
 
@@ -22,7 +26,7 @@ export default class HumidifierObject {
       value = (value * this.config.depth.volume) / 100;
     }
 
-    return value.toFixed(this.config.depth.fixed);
+    return this.round(value, this.config.depth.fixed);
   }
 
   get targetHumidity() {
