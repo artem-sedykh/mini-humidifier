@@ -1,7 +1,5 @@
 import { LitElement, html, css } from 'lit-element';
 
-import { ICON } from '../const';
-
 class MiniHumidifierInfo extends LitElement {
   static get properties() {
     return {
@@ -11,24 +9,58 @@ class MiniHumidifierInfo extends LitElement {
     };
   }
 
+  renderDepth(config, humidifier) {
+    if (config.depth.hide)
+      return '';
+
+    return html`
+       <div class='state depth'>
+         <iron-icon class='state__value_icon' .icon=${config.depth.icon}></iron-icon>
+         <span class='state__value ellipsis'>${humidifier.depth}</span>
+         <span class='state__uom ellipsis'>${config.depth.unit}</span>
+       </div>
+    `;
+  }
+
+  renderTemperature(config, humidifier) {
+    if (config.temperature.hide)
+      return '';
+
+    return html`
+       <div class='state temperature'>
+         <iron-icon class='state__value_icon' .icon=${config.temperature.icon}></iron-icon>
+         <span class='state__value ellipsis'>${humidifier.temperature}</span>
+         <span class='state__uom ellipsis'>${config.temperature.unit}</span>
+       </div>
+    `;
+  }
+
+  renderHumidity(config, humidifier) {
+    if (config.humidity.hide)
+      return '';
+
+    return html`
+       <div class='state humidity'>
+         <iron-icon class='state__value_icon' .icon=${config.humidity.icon}></iron-icon>
+         <span class='state__value ellipsis'>${humidifier.humidity}</span>
+         <span class='state__uom ellipsis'>${config.humidity.unit}</span>
+       </div>
+    `;
+  }
+
   render() {
+    const source = [
+      { order: this.config.humidity.order, render: this.renderHumidity },
+      { order: this.config.depth.order, render: this.renderDepth },
+      { order: this.config.temperature.order, render: this.renderTemperature }]
+      .sort((a, b) => ((a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0)));
+
+    const conf = this.config;
+    const h = this.humidifier;
+
     return html`
      <div class='mh-humidifier-state__container'>
-       <div class='state depth'>
-         <iron-icon class='state__value_icon' .icon=${ICON.DEPTH}></iron-icon>
-         <span class='state__value ellipsis'>${this.humidifier.depth}</span>
-         <span class='state__uom ellipsis'>${this.config.depth.unit}</span>
-       </div>
-       <div class='state temperature'>
-         <iron-icon class='state__value_icon' .icon=${ICON.TEMPERATURE}></iron-icon>
-         <span class='state__value ellipsis'>${this.humidifier.temperature}</span>
-         <span class='state__uom ellipsis'>°C</span>
-       </div>
-       <div class='state humidity'>
-         <iron-icon class='state__value_icon' .icon=${ICON.HUMIDITY}></iron-icon>
-         <span class='state__value ellipsis'>${this.humidifier.humidity}</span>
-         <span class='state__uom ellipsis'>%</span>
-       </div>
+       ${source.map(item => item.render(conf, h))}
      </div>
     `;
   }
@@ -47,6 +79,7 @@ class MiniHumidifierInfo extends LitElement {
       }
      .mh-humidifier-state__container {
        display: flex;
+       min-height: 10px;
      }
      .state {
         position: relative;
@@ -54,10 +87,7 @@ class MiniHumidifierInfo extends LitElement {
         flex-wrap: nowrap;
         max-width: 100%;
         min-width: 0px;
-        margin-left: 4px;
-     }
-     .depth {
-        margin-left: 0;
+        margin-right: 4px;
      }
      .depth .state__value_icon {
         margin-right: 2px;

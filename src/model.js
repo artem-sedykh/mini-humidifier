@@ -16,7 +16,7 @@ export default class HumidifierObject {
       led_brightness: 0,
       ...entity.attributes || {},
     };
-    this.__fanSpeedSource = this.__getFanSpeedSource(config.fan_modes);
+    this.__fanSpeedSource = this.__getFanSpeedSource(config.fan_mode.source);
   }
 
   get id() {
@@ -42,9 +42,9 @@ export default class HumidifierObject {
   get targetHumidity() {
     const humidity = this.attr.target_humidity || 0;
     return {
-      min: 30,
-      max: 80,
-      step: 10,
+      min: this.config.target_humidity.min,
+      max: this.config.target_humidity.max,
+      step: this.config.target_humidity.step,
       value: humidity,
     };
   }
@@ -116,7 +116,7 @@ export default class HumidifierObject {
       return defaultFanSpeedSource;
 
     // eslint-disable-next-line no-restricted-syntax
-    for (const [key, value] of Object.entries(this.config.fan_modes)) {
+    for (const [key, value] of Object.entries(fanModes)) {
       const item = defaultFanSpeedSource.find(s => s.id.toUpperCase() === key.toUpperCase());
 
       if (item)

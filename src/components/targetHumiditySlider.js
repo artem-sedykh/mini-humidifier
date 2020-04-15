@@ -1,12 +1,11 @@
 import { LitElement, html, css } from 'lit-element';
 
-import { ICON } from '../const';
-
 class MiniHumidifierTargetHumiditySlider extends LitElement {
   static get properties() {
     return {
       humidifier: {},
       hass: {},
+      config: {},
     };
   }
 
@@ -14,6 +13,19 @@ class MiniHumidifierTargetHumiditySlider extends LitElement {
     const vol = parseFloat(ev.target.value);
     this.sliderValue = vol;
     this.humidifier.setTargetHumidity(ev, vol);
+  }
+
+  renderTargetHumidifierState(sliderValue) {
+    if (this.config.target_humidity.hide)
+      return html`<div class="mh-target_humidifier__state"></div>`;
+
+    return html`
+        <div class="mh-target_humidifier__state">
+           <iron-icon class='state__value_icon' .icon=${this.config.target_humidity.icon}></iron-icon>
+           <span class='state__value ellipsis'>${sliderValue}</span>
+           <span class='state__uom ellipsis'>${this.config.target_humidity.unit}</span>
+        </div>
+    `;
   }
 
   render() {
@@ -30,11 +42,7 @@ class MiniHumidifierTargetHumiditySlider extends LitElement {
           dir=${'ltr'}
           ignore-bar-touch pin>
         </ha-slider>
-        <div class="mh-target_humidifier__state">
-           <iron-icon class='state__value_icon' .icon=${ICON.HUMIDITY}></iron-icon>
-           <span class='state__value ellipsis'>${sliderValue}</span>
-           <span class='state__uom ellipsis'>%</span>
-        </div>
+        ${this.renderTargetHumidifierState(sliderValue)}
       </div>`;
   }
 

@@ -71,12 +71,29 @@ class MiniHumidifier extends LitElement {
       throw new Error('Specify an entity from within the fan domain.');
 
     const depthDefaultConf = {
+      icon: ICON.DEPTH,
       max_value: 120,
       unit_type: 'percent',
       fixed: 0,
+      order: 0,
       unit: '%',
       volume: 4,
+      hide: false,
       ...config.depth || {},
+    };
+
+    const fanModeConf = {
+      icon: ICON.FAN,
+      hide: false,
+      ...config.fan_mode || {},
+    };
+
+    fanModeConf.source = {
+      auto: 'Auto',
+      silent: 'Silent',
+      medium: 'Medium',
+      high: 'High',
+      ...(config.fan_mode || {}).source,
     };
 
     this.config = {
@@ -88,6 +105,55 @@ class MiniHumidifier extends LitElement {
       ...config,
     };
     this.config.depth = depthDefaultConf;
+    this.config.fan_mode = fanModeConf;
+    this.config.child_lock = {
+      icon: ICON.CHILDLOCK,
+      hide: false,
+      ...config.child_lock || {},
+    };
+    this.config.buzzer = {
+      icon: ICON.BUZZER,
+      hide: false,
+      ...config.buzzer || {},
+    };
+    this.config.led_button = {
+      icon: ICON.LEDBUTTON,
+      hide: false,
+      ...config.led_button || {},
+    };
+    this.config.temperature = {
+      icon: ICON.TEMPERATURE,
+      unit: '°C',
+      order: 1,
+      hide: false,
+      ...config.temperature || {},
+    };
+    this.config.humidity = {
+      icon: ICON.HUMIDITY,
+      unit: '%',
+      order: 2,
+      hide: false,
+      ...config.humidity || {},
+    };
+    this.config.target_humidity = {
+      icon: ICON.HUMIDITY,
+      hide: false,
+      unit: '%',
+      min: 30,
+      max: 80,
+      step: 10,
+      ...config.target_humidity || {},
+    };
+    this.config.dry = {
+      icon: ICON.DRY,
+      hide: false,
+      ...config.dry || {},
+    };
+    this.config.toggle_button = {
+      icon: ICON.TOGGLE,
+      hide: false,
+      ...config.toggle_button || {},
+    };
   }
 
   // eslint-disable-next-line no-unused-vars
@@ -139,6 +205,20 @@ class MiniHumidifier extends LitElement {
       </div>`;
   }
 
+  renderToggle() {
+    if (this.config.toggle_button.hide)
+      return '';
+
+    return html`
+        <div class='mh-humidifier__toggle'>
+          <paper-icon-button class='toggle-button ${this.toggleButtonCls()}'
+          .icon=${this.config.toggle_button.icon}
+          @click=${e => this.handleToggle(e)}>
+          </paper-icon-button>
+        </div>
+    `;
+  }
+
   renderBottomPanel(config) {
     if (this.humidifier.isUnavailable)
       return '';
@@ -148,14 +228,9 @@ class MiniHumidifier extends LitElement {
           <mp-humidifier-state
             .hass=${this.hass}
             .humidifier=${this.humidifier}
-            .config=${config}>
+            .config=${this.config}>
           </mp-humidifier-state>
-          <div class='mh-humidifier__toggle'>
-            <paper-icon-button class='toggle-button ${this.toggleButtonCls()}'
-            .icon=${ICON.TOGGLE}
-            @click=${e => this.handleToggle(e)}>
-            </paper-icon-button>
-          </div>
+          ${this.renderToggle()}
         </div>
         <mp-toggle-panel
           .hass=${this.hass}
@@ -181,7 +256,7 @@ class MiniHumidifier extends LitElement {
 
     return html`
       <div class='entity__secondary_info'>
-         <iron-icon class='entity__secondary_info_icon' .icon=${ICON.FAN}></iron-icon>
+         <iron-icon class='entity__secondary_info_icon' .icon=${this.config.fan_mode.icon}></iron-icon>
          <span class='entity__secondary_info__name'>${this.secondaryInfoLabel}</span>
       </div>
     `;

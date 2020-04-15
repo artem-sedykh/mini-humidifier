@@ -1,12 +1,12 @@
 import { LitElement, html, css } from 'lit-element';
 
 import './dropdown';
-import { ICON } from '../const';
 
 class MiniHumidifierFanSpeedMenu extends LitElement {
   static get properties() {
     return {
       humidifier: {},
+      config: {},
     };
   }
 
@@ -31,7 +31,7 @@ class MiniHumidifierFanSpeedMenu extends LitElement {
         @change=${this.handleSource}
         .humidifier=${this.humidifier}
         .items=${this.sources}
-        .icon=${ICON.FAN}
+        .icon=${this.config.fan_mode.icon}
         .active=${this.humidifier.isOn} 
         .disabled=${this.humidifier.isOff}
         .selected=${this.source}>
