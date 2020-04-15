@@ -54,32 +54,36 @@ class MiniHumidifierInfo extends LitElement {
         flex-wrap: nowrap;
         max-width: 100%;
         min-width: 0px;
-        margin-left: 8px;
+        margin-left: 4px;
      }
      .depth {
         margin-left: 0;
      }
+     .depth .state__value_icon {
+        margin-right: 2px;
+     }
      .humidity iron-icon {
         margin-right: -3px;
-        margin-bottom: -1px;
      }
      .state__value_icon {
-        height: calc(var(--mh-unit) - 10);
-        width: calc(var(--mh-unit) / 2);
+        height: 17px;
+        width: 17px;
         color: var(--mh-icon-color);
      }
      .state__value {
+        font-size: 13px;
         display: inline-block;
         line-height: calc(var(--mh-unit) / 2);
      }
      .state__uom {
+        font-size: 11px;
         align-self: flex-end;
         display: inline-block;
-        font-size: 12px;
+        line-height: 20px;
         font-weight: 400;
-        line-height: calc(var(--mh-unit) * .4);
         margin-top: 1px;
-        opacity: 0.6;
+        margin-left: 1px;
+        opacity: 0.8;
         vertical-align: bottom;
         flex: 1 1 0%;
      }

@@ -68,23 +68,24 @@ class MiniHumidifierTargetHumiditySlider extends LitElement {
         line-height: calc(var(--mh-unit) * .375);
      }
      .state__value_icon {
-        height: calc(var(--mh-unit) * .5);
-        width: calc(var(--mh-unit) * .5);
+        height: 17px;
+        width: 17px;
+        margin-top: -2px;
         color: var(--mh-icon-color);
-        margin-top: -3px;
         margin-right: -2px;
      }
      .state__value {
+        font-size: 13px;
         display: inline-block;
         margin-right: 2px;
      }
      .state__uom {
         align-self: flex-end;
         display: inline-block;
-        font-size: 10px;
+        font-size: 11px;
+        line-height: 13px;
         font-weight: 400;
-        margin-top: 1px;
-        opacity: 0.6;
+        opacity: 0.8;
         vertical-align: bottom;
         flex: 1 1 0%;
      }

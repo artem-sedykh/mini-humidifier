@@ -36,6 +36,7 @@ class MiniHumidifier extends LitElement {
       humidifier: {},
       initial: Boolean,
       edit: Boolean,
+      toggle: Boolean,
     };
   }
 
@@ -121,6 +122,15 @@ class MiniHumidifier extends LitElement {
     handleClick(this, this._hass, this.config, this.config.tap_action, this.humidifier.id);
   }
 
+  handleToggle(e) {
+    e.stopPropagation();
+    this.toggle = !this.toggle;
+  }
+
+  toggleButtonCls() {
+    return this.toggle ? 'open' : '';
+  }
+
   renderIcon() {
     const state = this.humidifier.isActive;
     return html`
@@ -140,10 +150,17 @@ class MiniHumidifier extends LitElement {
             .humidifier=${this.humidifier}
             .config=${config}>
           </mp-humidifier-state>
+          <div class='mh-humidifier__toggle'>
+            <paper-icon-button class='toggle-button ${this.toggleButtonCls()}'
+            .icon=${ICON.TOGGLE}
+            @click=${e => this.handleToggle(e)}>
+            </paper-icon-button>
+          </div>
         </div>
         <mp-toggle-panel
           .hass=${this.hass}
           .humidifier=${this.humidifier}
+          .visible=${this.toggle}
           .config=${config}>
         </mp-toggle-panel>
     `;

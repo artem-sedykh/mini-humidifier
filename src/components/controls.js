@@ -85,7 +85,8 @@ class MiniHumidifierControls extends LitElement {
       }
       .mh-humidifier-info__controls {
         display: flex;
-        margin-top: 5px;
+        width: 100%;
+        justify-content: space-evenly;
       }
       .mh-humidifier-info__controls paper-icon-button {
         color: var(--mh-icon-color);

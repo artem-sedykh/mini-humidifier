@@ -146,21 +146,35 @@ const style = css`
     width: auto;
     min-width: 0;
   }
-  ha-card.--inactive .mh-humidifier {
-    padding: 16px 16px 0px 16px;
+  ha-card.--initial .mh-humidifier {
+    padding: 16px 16px 5px 16px;
   }
   ha-card.--unavailable .mh-humidifier {
     padding: 16px;
   }
   ha-card.--group .mh-humidifier {
-    padding: 2px 0;
+    padding: 2px 0 0 0;
   }  
   mp-humidifier-state {
     margin: 0;
   }
   .mh-humidifier__bottom {
-    margin: 10px 0px 0px 10px;
+    margin: 0 0 0 56px;
     justify-content: space-between;
+  }
+  .mh-humidifier__toggle {
+    margin-top: -7px;
+    margin-right: 6px
+  }
+  .toggle-button {
+    width: 30px;
+    height: 30px;
+    padding: 3px;
+    color: var(--mh-icon-color);
+  }
+  .toggle-button.open {
+     transform: rotate(180deg);
+     color: var(--mh-active-color)
   }
   mp-target-humidity-slider {
     flex: 1;

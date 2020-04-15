@@ -9,7 +9,7 @@ const ICON = {
   BUZZER: 'mdi:bell-outline',
   LEDBUTTON: 'mdi:lightbulb-on-outline',
   CHILDLOCK: 'mdi:lock',
-  TOGGLE: 'mdi:chevron-down',
+  TOGGLE: 'mdi:dots-horizontal',
 };
 
 export {

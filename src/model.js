@@ -5,7 +5,17 @@ export default class HumidifierObject {
     this.config = config || {};
     this.entity = entity || {};
     this.state = entity.state;
-    this.attr = entity.attributes;
+    this.attr = {
+      friendly_name: '',
+      depth: 0,
+      target_humidity: 0,
+      mode: '',
+      dry: false,
+      buzzer: false,
+      child_lock: false,
+      led_brightness: 0,
+      ...entity.attributes || {},
+    };
     this.__fanSpeedSource = this.__getFanSpeedSource(config.fan_modes);
   }
 
@@ -14,7 +24,7 @@ export default class HumidifierObject {
   }
 
   round(value, decimals) {
-    return Number(`${Math.round(`${value}e${decimals}`)}e-${decimals}`);
+    return Number(`${Math.round(Number(`${value}e${decimals}`))}e-${decimals}`);
   }
 
   get depth() {
