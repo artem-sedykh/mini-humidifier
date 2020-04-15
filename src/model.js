@@ -14,7 +14,7 @@ export default class HumidifierObject {
   }
 
   get depth() {
-    const depth = 109; // this.attr.depth || 0;
+    const depth = this.attr.depth || 0;
 
     let value = (100 * depth) / this.config.depth.max_value;
 
@@ -36,7 +36,7 @@ export default class HumidifierObject {
   }
 
   get fanSpeed() {
-    return this.attr.speed || this.attr.mode;
+    return this.attr.mode;
   }
 
   get fanSpeedSource() {

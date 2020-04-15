@@ -14,10 +14,15 @@ class MiniHumidifierInfo extends LitElement {
   render() {
     return html`
      <div class='mh-humidifier-state__container'>
-       <div class='state'>
+       <div class='state depth'>
          <iron-icon class='state__value_icon' .icon=${ICON.DEPTH}></iron-icon>
          <span class='state__value ellipsis'>${this.humidifier.depth}</span>
          <span class='state__uom ellipsis'>${this.config.depth.unit}</span>
+       </div>
+       <div class='state temperature'>
+         <iron-icon class='state__value_icon' .icon=${ICON.TEMPERATURE}></iron-icon>
+         <span class='state__value ellipsis'>${this.humidifier.temperature}</span>
+         <span class='state__uom ellipsis'>°C</span>
        </div>
        <div class='state humidity'>
          <iron-icon class='state__value_icon' .icon=${ICON.HUMIDITY}></iron-icon>
@@ -49,9 +54,10 @@ class MiniHumidifierInfo extends LitElement {
         flex-wrap: nowrap;
         max-width: 100%;
         min-width: 0px;
+        margin-left: 8px;
      }
-     .humidity {
-        margin-left: 2px;
+     .depth {
+        margin-left: 0;
      }
      .humidity iron-icon {
         margin-right: -3px;

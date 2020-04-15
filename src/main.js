@@ -72,7 +72,7 @@ class MiniHumidifier extends LitElement {
     const depthDefaultConf = {
       max_value: 120,
       unit_type: 'percent',
-      fixed: 1,
+      fixed: 0,
       unit: '%',
       volume: 4,
       ...config.depth || {},
@@ -173,9 +173,7 @@ class MiniHumidifier extends LitElement {
   get secondaryInfoLabel() {
     const selectedId = this.humidifier.fanSpeed.toUpperCase();
     const item = this.humidifier.fanSpeedSource.find(s => s.id.toUpperCase() === selectedId);
-    let label = item ? item.name : '';
-    label = label ? `${label}, ${this.humidifier.temperature}°C` : `${label} ${this.humidifier.temperature}°C`;
-    return label;
+    return item ? item.name : '';
   }
 
   computeIcon() {

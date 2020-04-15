@@ -3,7 +3,7 @@ const ICON = {
   DEFAULT: 'mdi:air-filter',
   FAN: 'mdi:fan',
   HUMIDITY: 'mdi:water-outline',
-  TEMPERATURE: 'mdi:temperature-celsius',
+  TEMPERATURE: 'mdi:thermometer-low',
   DEPTH: 'mdi:beaker-outline',
   DRY: 'mdi:weather-sunny',
   BUZZER: 'mdi:bell-outline',

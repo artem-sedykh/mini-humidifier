@@ -74,7 +74,7 @@ class MiniHumidifierTogglePanel extends LitElement {
       }
       .mh-humidifier__toggle {
          text-align: center;
-         margin-top: -10px;
+         margin-top: -5px;
       }
       .toggle-button {
          margin-bottom: -2px;
@@ -89,7 +89,7 @@ class MiniHumidifierTogglePanel extends LitElement {
         display: flex;
         flex: 1;
         justify-content: flex-end;
-        margin-top: -13px;
+        margin-top: -5px;
       }
     `];
   }
