@@ -17,7 +17,7 @@ class MiniHumidifierInfo extends LitElement {
        <div class='state'>
          <iron-icon class='state__value_icon' .icon=${ICON.DEPTH}></iron-icon>
          <span class='state__value ellipsis'>${this.humidifier.depth}</span>
-         <span class='state__uom ellipsis'>%</span>
+         <span class='state__uom ellipsis'>${this.config.depth.unit}</span>
        </div>
        <div class='state humidity'>
          <iron-icon class='state__value_icon' .icon=${ICON.HUMIDITY}></iron-icon>

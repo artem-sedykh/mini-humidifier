@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit-element';
+import { html, LitElement } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
 import { styleMap } from 'lit-html/directives/style-map';
 import HumidifierObject from './model';
@@ -12,9 +12,7 @@ import './components/controls';
 import './components/info';
 import './components/togglePanel';
 
-import {
-  ICON,
-} from './const';
+import { ICON } from './const';
 
 if (!customElements.get('ha-slider')) {
   customElements.define(
@@ -71,7 +69,16 @@ class MiniHumidifier extends LitElement {
     if (!config.entity || config.entity.split('.')[0] !== 'fan')
       throw new Error('Specify an entity from within the fan domain.');
 
-    const conf = {
+    const depthDefaultConf = {
+      max_value: 120,
+      unit_type: 'percent',
+      fixed: 1,
+      unit: '%',
+      volume: 4,
+      ...config.depth || {},
+    };
+
+    this.config = {
       toggle_power: true,
       fan_modes: [],
       tap_action: {
@@ -79,7 +86,7 @@ class MiniHumidifier extends LitElement {
       },
       ...config,
     };
-    this.config = conf;
+    this.config.depth = depthDefaultConf;
   }
 
   // eslint-disable-next-line no-unused-vars

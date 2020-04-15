@@ -14,7 +14,15 @@ export default class HumidifierObject {
   }
 
   get depth() {
-    return this.attr.depth || 0;
+    const depth = 109; // this.attr.depth || 0;
+
+    let value = (100 * depth) / this.config.depth.max_value;
+
+    if (this.config.depth.unit_type === 'liters') {
+      value = (value * this.config.depth.volume) / 100;
+    }
+
+    return value.toFixed(this.config.depth.fixed);
   }
 
   get targetHumidity() {
