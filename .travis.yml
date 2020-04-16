@@ -5,8 +5,6 @@ script:
 - npm run lint
 - npm run rollup
 - npm run babel
-before_deploy:
-  - gem install renogen
 deploy:
   provider: releases
   api_key: $GITHUB_API_KEY
@@ -16,4 +14,4 @@ deploy:
   cleanup: false
   on:
     repo: artem-sedykh/mini-humidifier
-#    tags: true
+    tags: true
