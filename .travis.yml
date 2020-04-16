@@ -10,7 +10,7 @@ deploy:
   api_key: $GITHUB_API_KEY
   file_glob: true
   file: dist/*
-  release_notes_file: changelog.md
+  release_notes_file: changelogs/release_${TRAVIS_TAG}.md
   cleanup: false
   on:
     repo: artem-sedykh/mini-humidifier
