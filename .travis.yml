@@ -10,8 +10,8 @@ deploy:
   provider: releases
   api_key: $GITHUB_TOKEN
   release_notes_file: changelog.md
-  release_number: 25584947
   file: 'dist/mini-humidifier-bundle.js'
   skip_cleanup: true
   draft: true
-  overwrite: true
+  on:
+    tags: true
