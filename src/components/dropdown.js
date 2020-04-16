@@ -95,6 +95,7 @@ class MiniHumidifierDropdown extends LitElement {
           align-items: center;
           height: calc(var(--mh-unit) - 4px);
           margin: 2px 0;
+          color: var(--mh-icon-color);
         }
         .mh-dropdown__button.icon {
           height: var(--mh-unit);

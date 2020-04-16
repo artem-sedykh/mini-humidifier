@@ -97,6 +97,10 @@ export default class HumidifierObject {
     return this.attr.led_brightness !== 2;
   }
 
+  get isFanDisabled() {
+    return this.attr.depth === 0;
+  }
+
   get temperature() {
     return this.attr.temperature;
   }
