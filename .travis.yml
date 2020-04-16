@@ -9,6 +9,7 @@ deploy:
   provider: releases
   api_key: $GITHUB_API_KEY
   file: 'dist/mini-humidifier-bundle.js'
-  skip_cleanup: true
+  release_notes_file: changelog.md
+  cleanup: false
   on:
     repo: artem-sedykh/mini-humidifier
