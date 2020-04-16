@@ -15,4 +15,4 @@ deploy:
   cleanup: false
   on:
     repo: artem-sedykh/mini-humidifier
-    tags: true
+#    tags: true
