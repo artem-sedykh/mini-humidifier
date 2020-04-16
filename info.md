@@ -13,4 +13,4 @@ A minimalistic yet customizable humidifier card for [Home Assistant](https://git
 <img src="https://user-images.githubusercontent.com/861063/79480184-75127080-8016-11ea-8b0b-c102bf26a5d6.png" width="500px" alt="Entities card example" /> 
 
 
-**Check the repository for card options & example configurations**
+**Check the repository for card options & example configurations**  
