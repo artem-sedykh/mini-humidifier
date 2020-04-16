@@ -7,6 +7,7 @@ class MiniHumidifierFanSpeedMenu extends LitElement {
     return {
       humidifier: {},
       config: {},
+      icon: String,
     };
   }
 
@@ -31,7 +32,7 @@ class MiniHumidifierFanSpeedMenu extends LitElement {
         @change=${this.handleSource}
         .humidifier=${this.humidifier}
         .items=${this.sources}
-        .icon=${this.config.fan_mode.icon}
+        .icon=${this.icon}
         .active=${this.humidifier.isOn} 
         .disabled=${this.humidifier.isOff}
         .selected=${this.source}>

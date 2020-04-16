@@ -16,7 +16,7 @@ export default class HumidifierObject {
       led_brightness: 0,
       ...entity.attributes || {},
     };
-    this.__fanSpeedSource = this.__getFanSpeedSource(config.fan_mode.source);
+    this.__fanSpeedSource = this.__getFanSpeedSource(config.fan_mode_button.source);
   }
 
   get id() {

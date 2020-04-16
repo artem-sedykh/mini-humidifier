@@ -30,78 +30,86 @@ class MiniHumidifierControls extends LitElement {
     return this.humidifier.toggleChildLock(e);
   }
 
-  renderDry() {
-    if (this.config.dry.hide)
+  renderDryButton(context) {
+    if (context.config.dry_button.hide)
       return '';
 
     return html`
       <paper-icon-button class='dry-button'
-        .icon=${this.config.dry.icon}
-        @click=${e => this.toggleDry(e)}
-        ?color=${this.humidifier.isDryOn}>
+        .icon=${context.config.dry_button.icon}
+        @click=${e => context.toggleDry(e)}
+        ?color=${context.humidifier.isDryOn}>
       </paper-icon-button>
     `;
   }
 
-  renderSpeedMenu() {
-    if (this.config.fan_mode.hide)
+  renderSpeedMenu(context) {
+    if (context.config.fan_mode_button.hide)
       return '';
 
     return html`
        <mh-fan-speed-menu
-          .config=${this.config}
-          .humidifier=${this.humidifier}>
+          .icon=${context.config.fan_mode_button.icon}
+          .config=${context.config}
+          .humidifier=${context.humidifier}>
        </mh-fan-speed-menu>
     `;
   }
 
-  renderLedButton() {
-    if (this.config.led_button.hide)
+  renderLedButton(context) {
+    if (context.config.led_button.hide)
       return '';
 
     return html`
        <paper-icon-button class='led-button'
-          .icon=${this.config.led_button.icon}
-          @click=${e => this.toggleLedBrightness(e)}
-          ?color=${this.humidifier.isLedBrightnessOn}>
+          .icon=${context.config.led_button.icon}
+          @click=${e => context.toggleLedBrightness(e)}
+          ?color=${context.humidifier.isLedBrightnessOn}>
         </paper-icon-button>
     `;
   }
 
-  renderBuzzer() {
-    if (this.config.buzzer.hide)
+  renderBuzzerButton(context) {
+    if (context.config.buzzer_button.hide)
       return '';
 
     return html`
        <paper-icon-button class='buzzer-button'
-          .icon=${this.config.buzzer.icon}
-          @click=${e => this.toggleBuzzer(e)}
-          ?color=${this.humidifier.isBuzzerOn}>
+          .icon=${context.config.buzzer_button.icon}
+          @click=${e => context.toggleBuzzer(e)}
+          ?color=${context.humidifier.isBuzzerOn}>
         </paper-icon-button>
     `;
   }
 
-  renderChildLock() {
-    if (this.config.child_lock.hide)
+  renderChildLockButton(context) {
+    if (context.config.child_lock_button.hide)
       return '';
 
     return html`
        <paper-icon-button class='child-lock-button'
-          .icon=${this.config.child_lock.icon}
-          @click=${e => this.toggleChildLock(e)}
-          ?color=${this.humidifier.isChildLockOn}>
+          .icon=${context.config.child_lock_button.icon}
+          @click=${e => context.toggleChildLock(e)}
+          ?color=${context.humidifier.isChildLockOn}>
         </paper-icon-button>
     `;
   }
 
   render() {
+    const conf = this.config;
+    const context = this;
+
+    const source = [
+      { order: conf.dry_button.order, render: this.renderDryButton },
+      { order: conf.fan_mode_button.order, render: this.renderSpeedMenu },
+      { order: conf.led_button.order, render: this.renderLedButton },
+      { order: conf.buzzer_button.order, render: this.renderBuzzerButton },
+      { order: conf.child_lock_button.order, render: this.renderChildLockButton }]
+      .sort((a, b) => ((a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0)));
+
     return html`
      <div class='mh-humidifier-info__controls'>
-       ${this.renderDry()}
-       ${this.renderSpeedMenu()}
-       ${this.renderLedButton()}
-       ${this.renderBuzzer()}
-       ${this.renderChildLock()}
+       ${source.map(item => item.render(context))}
      </div>
     `;
   }

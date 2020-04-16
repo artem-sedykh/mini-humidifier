@@ -9,58 +9,58 @@ class MiniHumidifierInfo extends LitElement {
     };
   }
 
-  renderDepth(config, humidifier) {
-    if (config.depth.hide)
+  renderDepth(context) {
+    if (context.config.depth.hide)
       return '';
 
     return html`
        <div class='state depth'>
-         <iron-icon class='state__value_icon' .icon=${config.depth.icon}></iron-icon>
-         <span class='state__value ellipsis'>${humidifier.depth}</span>
-         <span class='state__uom ellipsis'>${config.depth.unit}</span>
+         <iron-icon class='state__value_icon' .icon=${context.config.depth.icon}></iron-icon>
+         <span class='state__value ellipsis'>${context.humidifier.depth}</span>
+         <span class='state__uom ellipsis'>${context.config.depth.unit}</span>
        </div>
     `;
   }
 
-  renderTemperature(config, humidifier) {
-    if (config.temperature.hide)
+  renderTemperature(context) {
+    if (context.config.temperature.hide)
       return '';
 
     return html`
        <div class='state temperature'>
-         <iron-icon class='state__value_icon' .icon=${config.temperature.icon}></iron-icon>
-         <span class='state__value ellipsis'>${humidifier.temperature}</span>
-         <span class='state__uom ellipsis'>${config.temperature.unit}</span>
+         <iron-icon class='state__value_icon' .icon=${context.config.temperature.icon}></iron-icon>
+         <span class='state__value ellipsis'>${context.humidifier.temperature}</span>
+         <span class='state__uom ellipsis'>${context.config.temperature.unit}</span>
        </div>
     `;
   }
 
-  renderHumidity(config, humidifier) {
-    if (config.humidity.hide)
+  renderHumidity(context) {
+    if (context.config.humidity.hide)
       return '';
 
     return html`
        <div class='state humidity'>
-         <iron-icon class='state__value_icon' .icon=${config.humidity.icon}></iron-icon>
-         <span class='state__value ellipsis'>${humidifier.humidity}</span>
-         <span class='state__uom ellipsis'>${config.humidity.unit}</span>
+         <iron-icon class='state__value_icon' .icon=${context.config.humidity.icon}></iron-icon>
+         <span class='state__value ellipsis'>${context.humidifier.humidity}</span>
+         <span class='state__uom ellipsis'>${context.config.humidity.unit}</span>
        </div>
     `;
   }
 
   render() {
-    const source = [
-      { order: this.config.humidity.order, render: this.renderHumidity },
-      { order: this.config.depth.order, render: this.renderDepth },
-      { order: this.config.temperature.order, render: this.renderTemperature }]
-      .sort((a, b) => ((a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0)));
-
     const conf = this.config;
-    const h = this.humidifier;
+    const context = this;
+
+    const source = [
+      { order: conf.humidity.order, render: this.renderHumidity },
+      { order: conf.depth.order, render: this.renderDepth },
+      { order: conf.temperature.order, render: this.renderTemperature }]
+      .sort((a, b) => ((a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0)));
 
     return html`
      <div class='mh-humidifier-state__container'>
-       ${source.map(item => item.render(conf, h))}
+       ${source.map(item => item.render(context))}
      </div>
     `;
   }
@@ -91,9 +91,6 @@ class MiniHumidifierInfo extends LitElement {
      }
      .depth .state__value_icon {
         margin-right: 2px;
-     }
-     .humidity iron-icon {
-        margin-right: -3px;
      }
      .state__value_icon {
         height: 17px;

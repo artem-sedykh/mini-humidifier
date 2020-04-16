@@ -85,7 +85,8 @@ class MiniHumidifier extends LitElement {
     const fanModeConf = {
       icon: ICON.FAN,
       hide: false,
-      ...config.fan_mode || {},
+      order: 1,
+      ...config.fan_mode_button || {},
     };
 
     fanModeConf.source = {
@@ -93,7 +94,7 @@ class MiniHumidifier extends LitElement {
       silent: 'Silent',
       medium: 'Medium',
       high: 'High',
-      ...(config.fan_mode || {}).source,
+      ...(config.fan_mode_button || {}).source,
     };
 
     this.config = {
@@ -105,20 +106,23 @@ class MiniHumidifier extends LitElement {
       ...config,
     };
     this.config.depth = depthDefaultConf;
-    this.config.fan_mode = fanModeConf;
-    this.config.child_lock = {
+    this.config.fan_mode_button = fanModeConf;
+    this.config.child_lock_button = {
       icon: ICON.CHILDLOCK,
       hide: false,
-      ...config.child_lock || {},
+      order: 4,
+      ...config.child_lock_button || {},
     };
-    this.config.buzzer = {
+    this.config.buzzer_button = {
       icon: ICON.BUZZER,
       hide: false,
-      ...config.buzzer || {},
+      order: 3,
+      ...config.buzzer_button || {},
     };
     this.config.led_button = {
       icon: ICON.LEDBUTTON,
       hide: false,
+      order: 2,
       ...config.led_button || {},
     };
     this.config.temperature = {
@@ -144,10 +148,11 @@ class MiniHumidifier extends LitElement {
       step: 10,
       ...config.target_humidity || {},
     };
-    this.config.dry = {
+    this.config.dry_button = {
       icon: ICON.DRY,
       hide: false,
-      ...config.dry || {},
+      order: 0,
+      ...config.dry_button || {},
     };
     this.config.toggle_button = {
       icon: ICON.TOGGLE,
@@ -256,7 +261,7 @@ class MiniHumidifier extends LitElement {
 
     return html`
       <div class='entity__secondary_info'>
-         <iron-icon class='entity__secondary_info_icon' .icon=${this.config.fan_mode.icon}></iron-icon>
+         <iron-icon class='entity__secondary_info_icon' .icon=${this.config.fan_mode_button.icon}></iron-icon>
          <span class='entity__secondary_info__name'>${this.secondaryInfoLabel}</span>
       </div>
     `;
