@@ -71,59 +71,59 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | icon | string | optional | v1.0.1 | Specify a custom icon from any of the available mdi icons.
 | group | boolean | optional | v1.0.1 | Removes paddings, background color and box-shadow.
 | dry_button | object | optional | v1.0.1 | Dry mode on/off button
-| dry_button: icon | string | optional | v1.0.1 | Custom icon, default value `mdi:weather-sunny`
-| dry_button: hide | boolean | optional | v1.0.1 | Hide button, default value `False`
-| dry_button: order | number | optional | v1.0.1 | Sort order, default value `0`
+| dry_button: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:weather-sunny`
+| dry_button: `hide` | boolean | optional | v1.0.1 | Hide button, default value `False`
+| dry_button: `order` | number | optional | v1.0.1 | Sort order, default value `0`
 | fan_mode_button | object | optional | v1.0.1 | Dry mode on/off button
-| fan_mode_button: icon | string | optional | v1.0.1 | Custom icon, default value `mdi:fan`
-| fan_mode_button: hide | boolean | optional | v1.0.1 | Hide button, default value `False`
-| fan_mode_button: order | number | optional | v1.0.1 | Sort order, default value `1`
-| fan_mode_button: source | object | optional | v1.0.1 | Source for fan mode drop down list.
-| fan_mode_button: source: auto | string | optional | v1.0.1 | Title for auto mode, default: `Auto`
-| fan_mode_button: source: silent | string | optional | v1.0.1 | Title for silent mode, default: `Silent`
-| fan_mode_button: source: medium | string | optional | v1.0.1 | Title for medium mode, default: `Medium`
-| fan_mode_button: source: high | string | optional | v1.0.1 | Title for high mode, default: `High`
+| fan_mode_button: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:fan`
+| fan_mode_button: `hide` | boolean | optional | v1.0.1 | Hide button, default value `False`
+| fan_mode_button: `order` | number | optional | v1.0.1 | Sort order, default value `1`
+| fan_mode_button: `source` | object | optional | v1.0.1 | Source for fan mode drop down list.
+| fan_mode_button: `source: auto` | string | optional | v1.0.1 | Title for auto mode, default: `Auto`
+| fan_mode_button: `source: silent` | string | optional | v1.0.1 | Title for silent mode, default: `Silent`
+| fan_mode_button: `source: medium` | string | optional | v1.0.1 | Title for medium mode, default: `Medium`
+| fan_mode_button: `source: high` | string | optional | v1.0.1 | Title for high mode, default: `High`
 | led_button | object | optional | v1.0.1 | Button Illumination on/off
-| led_button: icon | string | optional | v1.0.1 | Custom icon, default value `mdi:lightbulb-on-outline`
-| led_button: hide | boolean | optional | v1.0.1 | Hide button, default value `False`
-| led_button: order | number | optional | v1.0.1 | Sort order, default value `2`
+| led_button: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:lightbulb-on-outline`
+| led_button: `hide` | boolean | optional | v1.0.1 | Hide button, default value `False`
+| led_button: `order` | number | optional | v1.0.1 | Sort order, default value `2`
 | buzzer_button | object | optional | v1.0.1 | Buzzer on/off
-| buzzer_button: icon | string | optional | v1.0.1 | Custom icon, default value `mdi:bell-outline`
-| buzzer_button: hide | boolean | optional | v1.0.1 | Hide button, default value `False`
-| buzzer_button: order | number | optional | v1.0.1 | Sort order, default value `3`
+| buzzer_button: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:bell-outline`
+| buzzer_button: `hide` | boolean | optional | v1.0.1 | Hide button, default value `False`
+| buzzer_button: `order` | number | optional | v1.0.1 | Sort order, default value `3`
 | child_lock_button | object | optional | v1.0.1 | Child lock on/off
-| child_lock_button: icon | string | optional | v1.0.1 | Custom icon, default value `mdi:lock`
-| child_lock_button: hide | boolean | optional | v1.0.1 | Hide button, default value `False`
-| child_lock_button: order | number | optional | v1.0.1 | Sort order, default value `4`
+| child_lock_button: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:lock`
+| child_lock_button: `hide` | boolean | optional | v1.0.1 | Hide button, default value `False`
+| child_lock_button: `order` | number | optional | v1.0.1 | Sort order, default value `4`
 | toggle_button | object | optional | v1.0.1 | Toggle button.
-| toggle_button: icon | string | optional | v1.0.1 | Custom icon, default value `mdi:dots-horizontal`
-| toggle_button: hide | boolean | optional | v1.0.1 | Hide button, default value `False`
+| toggle_button: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:dots-horizontal`
+| toggle_button: `hide` | boolean | optional | v1.0.1 | Hide button, default value `False`
 | depth | object | optional | v1.0.1 | Information indicator, showing how much water is left in the humidifier
-| depth: icon | string | optional | v1.0.1 | Custom icon, default value `mdi:beaker-outline`
-| depth: hide | boolean | optional | v1.0.1 | Hide indicator, default value `False`
-| depth: order | number | optional | v1.0.1 | Indicator sort order, default value `0`
-| depth: unit_type | string | optional | v1.0.1 | Indicator type available Values: `liters` or `percent`, default `percent`
-| depth: unit | string | optional | v1.0.1 | display unit, default `%`
-| depth: max_value | number | optional | v1.0.1 | Depth attribute value with a full tank of humidifier, default `120`
-| depth: volume | number | optional | v1.0.1 | Humidifier tank volume, needed to calculate values in liters, default `4` liters
-| depth: fixed | number | optional | v1.0.1 | Rounding the calculated values, default value `0`
+| depth: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:beaker-outline`
+| depth: `hide` | boolean | optional | v1.0.1 | Hide indicator, default value `False`
+| depth: `order` | number | optional | v1.0.1 | Indicator sort order, default value `0`
+| depth: `unit_type` | string | optional | v1.0.1 | Indicator type available Values: `liters` or `percent`, default `percent`
+| depth: `unit` | string | optional | v1.0.1 | display unit, default `%`
+| depth: `max_value` | number | optional | v1.0.1 | Depth attribute value with a full tank of humidifier, default `120`
+| depth: `volume` | number | optional | v1.0.1 | Humidifier tank volume, needed to calculate values in liters, default `4` liters
+| depth: `fixed` | number | optional | v1.0.1 | Rounding the calculated values, default value `0`
 | temperature | object | optional | v1.0.1 | Information indicator, showing temperature
-| temperature: icon | string | optional | v1.0.1 | Custom icon, default value `mdi:thermometer-low`
-| temperature: hide | boolean | optional | v1.0.1 | Hide indicator, default value `False`
-| temperature: order | number | optional | v1.0.1 | Indicator sort order, default value `1`
-| temperature: unit | string | optional | v1.0.1 | display unit, default `°C`
+| temperature: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:thermometer-low`
+| temperature: `hide` | boolean | optional | v1.0.1 | Hide indicator, default value `False`
+| temperature: `order` | number | optional | v1.0.1 | Indicator sort order, default value `1`
+| temperature: `unit` | string | optional | v1.0.1 | display unit, default `°C`
 | humidity | object | optional | v1.0.1 | Information indicator, showing humidity
-| humidity: icon | string | optional | v1.0.1 | Custom icon, default value `mdi:water-outline`
-| humidity: hide | boolean | optional | v1.0.1 | Hide indicator, default value `False`
-| humidity: order | number | optional | v1.0.1 | Indicator sort order, default value `2`
-| humidity: unit | string | optional | v1.0.1 | display unit, default `%`
+| humidity: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:water-outline`
+| humidity: `hide` | boolean | optional | v1.0.1 | Hide indicator, default value `False`
+| humidity: `order` | number | optional | v1.0.1 | Indicator sort order, default value `2`
+| humidity: `unit` | string | optional | v1.0.1 | display unit, default `%`
 | target_humidity | object | optional | v1.0.1 | Target humidity
-| target_humidity: icon | string | optional | v1.0.1 | Custom icon, default value `mdi:water-outline`
-| target_humidity: hide | boolean | optional | v1.0.1 | Hide indicator, default value `False`
-| target_humidity: unit | string | optional | v1.0.1 | display unit, default `%`
-| target_humidity: min | number | optional | v1.0.1 | minimum target humidity, default value `30` [see](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
-| target_humidity: max | number | optional | v1.0.1 | maximum target humidity, default value `80` [see](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
-| target_humidity: step | number | optional | v1.0.1 | slider step, default value `10`
+| target_humidity: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:water-outline`
+| target_humidity: `hide` | boolean | optional | v1.0.1 | Hide indicator, default value `False`
+| target_humidity: `unit` | string | optional | v1.0.1 | display unit, default `%`
+| target_humidity: `min` | number | optional | v1.0.1 | minimum target humidity, default value `30` [see](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
+| target_humidity: `max` | number | optional | v1.0.1 | maximum target humidity, default value `80` [see](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
+| target_humidity: `step` | number | optional | v1.0.1 | slider step, default value `10`
 
 
 ### Example usage
