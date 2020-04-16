@@ -8,6 +8,6 @@ script:
 deploy:
   provider: releases
   api_key: $GITHUB_API_KEY
-  file: dist/mini-humidifier-bundle.js
+  file: 'dist/mini-humidifier-bundle.js'
   on:
     repo: artem-sedykh/mini-humidifier
