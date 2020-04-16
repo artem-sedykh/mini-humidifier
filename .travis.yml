@@ -12,6 +12,5 @@ deploy:
   release_notes_file: changelog.md
   file: 'dist/mini-humidifier-bundle.js'
   skip_cleanup: true
-  draft: true
   on:
     tags: true
