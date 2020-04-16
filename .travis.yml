@@ -1,7 +1,6 @@
 language: node_js
 node_js:
 - 10.15.0
-install: gem install renogen
 script:
 - npm run lint
 - npm run rollup
