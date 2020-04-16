@@ -35,7 +35,6 @@ class MiniHumidifier extends LitElement {
       entity: {},
       humidifier: {},
       initial: Boolean,
-      edit: Boolean,
       toggle: Boolean,
     };
   }
