@@ -10,7 +10,8 @@ before_deploy:
 deploy:
   provider: releases
   api_key: $GITHUB_API_KEY
-  file: 'dist/mini-humidifier-bundle.js'
+  file_glob: true
+  file: dist/*
   release_notes_file: changelog.md
   cleanup: false
   on:
