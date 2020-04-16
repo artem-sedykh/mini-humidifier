@@ -13,5 +13,6 @@ deploy:
   file:
     - 'dist/mini-humidifier-bundle.js'
   skip_cleanup: true
+  overwrite: true
   on:
     tags: true
