@@ -87,6 +87,20 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | led_button: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:lightbulb-on-outline`
 | led_button: `hide` | boolean | optional | v1.0.1 | Hide button, default value `False`
 | led_button: `order` | number | optional | v1.0.1 | Sort order, default value `2`
+| led_button: `type` | string | optional | v1.0.2 | Render type, available values `button or dropdown` default value `button`
+| led_button: `source` | object | optional | v1.0.2 | Source for dropdown button type, supported values are 0 (Bright), 1 (Dim), 2 (Off).
+| led_button: `source:bright` | object | optional | v1.0.2 | 0 (Bright)
+| led_button: `source:bright:value` | number | optional | v1.0.2 | Bright value, default `0`
+| led_button: `source:bright:name` | number | optional | v1.0.2 | name, default `Bright`
+| led_button: `source:bright:order` | number | optional | v1.0.2 | Sort order, default `0`
+| led_button: `source:dim` | object | optional | v1.0.2 | 0 (Dim)
+| led_button: `source:dim:value` | number | optional | v1.0.2 | Dim value, default `1`
+| led_button: `source:dim:name` | number | optional | v1.0.2 | name, default `Dim`
+| led_button: `source:dim:order` | number | optional | v1.0.2 | Sort order, default `1`
+| led_button: `source:'off'` | object | optional | v1.0.2 | 0 (Off), the key must be written in quotation marks, without them the parameter will be false
+| led_button: `source:'off':value` | number | optional | v1.0.2 | Off value, default `2`
+| led_button: `source:'off':name` | number | optional | v1.0.2 | name, default `Off`
+| led_button: `source:'off':order` | number | optional | v1.0.2 | Sort order, default `2`
 | **buzzer_button** | object | optional | v1.0.1 | Buzzer on/off
 | buzzer_button: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:bell-outline`
 | buzzer_button: `hide` | boolean | optional | v1.0.1 | Hide button, default value `False`
@@ -165,6 +179,26 @@ For use Entities card you need to add `group: on`
       silent: Тихий
       medium: Средний
       high: Высокоий
+```
+
+
+#### led button dropdown list configuration
+
+
+<img src="https://user-images.githubusercontent.com/861063/79615043-7a50e780-810a-11ea-8716-f96f868be879.png" width="500px" alt="Entities card example" />
+
+```yaml
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  led_button:
+    type: dropdown
+    source:
+      bright:
+        name: Bright
+      dim:
+        name: Dim
+      'off':
+        name: 'Off'
 ```
 
 ## Development

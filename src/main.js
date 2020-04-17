@@ -65,22 +65,7 @@ class MiniHumidifier extends LitElement {
     return this.config.name || this.humidifier.name;
   }
 
-  setConfig(config) {
-    if (!config.entity || config.entity.split('.')[0] !== 'fan')
-      throw new Error('Specify an entity from within the fan domain.');
-
-    const depthDefaultConf = {
-      icon: ICON.DEPTH,
-      max_value: 120,
-      unit_type: 'percent',
-      fixed: 0,
-      order: 0,
-      unit: '%',
-      volume: 4,
-      hide: false,
-      ...config.depth || {},
-    };
-
+  getFanModeButtonConfig(config) {
     const fanModeConf = {
       icon: ICON.FAN,
       hide: false,
@@ -96,6 +81,75 @@ class MiniHumidifier extends LitElement {
       ...(config.fan_mode_button || {}).source,
     };
 
+    const source = [
+      { id: 'auto', value: 'Auto', name: 'Auto' },
+      { id: 'silent', value: 'Silent', name: 'Silent' },
+      { id: 'medium', value: 'Medium', name: 'Medium' },
+      { id: 'high', value: 'High', name: 'High' }];
+
+    const data = Object.entries(fanModeConf.source);
+
+    for (let i = 0; i < data.length; i += 1) {
+      const key = data[i][0];
+      const value = data[i][1];
+
+      const item = source.find(s => s.id.toUpperCase() === key.toUpperCase());
+
+      if (item)
+        item.name = value;
+    }
+
+    fanModeConf.source = source;
+
+    return fanModeConf;
+  }
+
+  getLedButtonConfig(config) {
+    const ledButtonSource = (config.led_button || {}).source || {};
+
+    const ledButtonConfig = {
+      icon: ICON.LEDBUTTON,
+      hide: false,
+      type: 'button',
+      order: 2,
+      ...config.led_button || {},
+    };
+
+    const source = {
+      bright: {
+        value: 0,
+        order: 0,
+        name: 'Bright',
+        ...ledButtonSource.bright || {},
+      },
+      dim: {
+        value: 1,
+        order: 1,
+        name: 'Dim',
+        ...ledButtonSource.dim || {},
+      },
+      off: {
+        value: 2,
+        order: 2,
+        name: 'Off',
+        ...ledButtonSource.off || {},
+      },
+    };
+
+    ledButtonConfig.source = Object.keys(source).map(key => ({
+      id: key,
+      name: source[key].name,
+      order: source[key].order,
+      value: source[key].value,
+    })).sort((a, b) => ((a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0)));
+
+    return ledButtonConfig;
+  }
+
+  setConfig(config) {
+    if (!config.entity || config.entity.split('.')[0] !== 'fan')
+      throw new Error('Specify an entity from within the fan domain.');
+
     this.config = {
       toggle_power: true,
       fan_modes: [],
@@ -104,8 +158,19 @@ class MiniHumidifier extends LitElement {
       },
       ...config,
     };
-    this.config.depth = depthDefaultConf;
-    this.config.fan_mode_button = fanModeConf;
+
+    this.config.depth = {
+      icon: ICON.DEPTH,
+      max_value: 120,
+      unit_type: 'percent',
+      fixed: 0,
+      order: 0,
+      unit: '%',
+      volume: 4,
+      hide: false,
+      ...config.depth || {},
+    };
+    this.config.fan_mode_button = this.getFanModeButtonConfig(config);
     this.config.child_lock_button = {
       icon: ICON.CHILDLOCK,
       hide: false,
@@ -118,12 +183,7 @@ class MiniHumidifier extends LitElement {
       order: 3,
       ...config.buzzer_button || {},
     };
-    this.config.led_button = {
-      icon: ICON.LEDBUTTON,
-      hide: false,
-      order: 2,
-      ...config.led_button || {},
-    };
+    this.config.led_button = this.getLedButtonConfig(config);
     this.config.temperature = {
       icon: ICON.TEMPERATURE,
       unit: '°C',
@@ -267,8 +327,7 @@ class MiniHumidifier extends LitElement {
   }
 
   get secondaryInfoLabel() {
-    const selectedId = this.humidifier.fanSpeed.toUpperCase();
-    const item = this.humidifier.fanSpeedSource.find(s => s.id.toUpperCase() === selectedId);
+    const item = this.humidifier.fanSpeed;
     return item ? item.name : '';
   }
 

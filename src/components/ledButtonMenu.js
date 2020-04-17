@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit-element';
 
 import './dropdown';
 
-class MiniHumidifierFanSpeedMenu extends LitElement {
+class MiniHumidifierLedButtonMenu extends LitElement {
   static get properties() {
     return {
       humidifier: {},
@@ -12,7 +12,7 @@ class MiniHumidifierFanSpeedMenu extends LitElement {
   }
 
   get source() {
-    return this.humidifier.fanSpeed || {};
+    return this.humidifier.ledButtonValue || {};
   }
 
   get label() {
@@ -20,7 +20,7 @@ class MiniHumidifierFanSpeedMenu extends LitElement {
   }
 
   get sources() {
-    return this.humidifier.fanSpeedSource
+    return this.humidifier.ledButtonSource
       .map(s => ({ name: s.name, id: s.id, type: 'source' }));
   }
 
@@ -31,8 +31,7 @@ class MiniHumidifierFanSpeedMenu extends LitElement {
         .humidifier=${this.humidifier}
         .items=${this.sources}
         .icon=${this.icon}
-        .active=${this.humidifier.isOn} 
-        .disabled=${this.humidifier.isFanDisabled}
+        .active=${this.humidifier.isLedBrightnessOn} 
         .selected=${this.source.id}>
       </mh-dropdown>
     `;
@@ -40,7 +39,8 @@ class MiniHumidifierFanSpeedMenu extends LitElement {
 
   handleSource(ev) {
     const { id } = ev.detail;
-    this.humidifier.setFanSpeed(ev, id);
+
+    this.humidifier.setLedButtonBrightness(ev, id);
   }
 
   static get styles() {
@@ -52,4 +52,4 @@ class MiniHumidifierFanSpeedMenu extends LitElement {
   }
 }
 
-customElements.define('mh-fan-speed-menu', MiniHumidifierFanSpeedMenu);
+customElements.define('mh-led-button-menu', MiniHumidifierLedButtonMenu);

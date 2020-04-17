@@ -16,7 +16,6 @@ export default class HumidifierObject {
       led_brightness: 0,
       ...entity.attributes || {},
     };
-    this.__fanSpeedSource = this.__getFanSpeedSource(config.fan_mode_button.source);
   }
 
   get id() {
@@ -50,11 +49,22 @@ export default class HumidifierObject {
   }
 
   get fanSpeed() {
-    return this.attr.mode;
+    if (this.attr.mode)
+      return this.fanSpeedSource.find(s => s.value.toUpperCase() === this.attr.mode.toUpperCase());
+
+    return undefined;
   }
 
   get fanSpeedSource() {
-    return this.__fanSpeedSource;
+    return this.config.fan_mode_button.source;
+  }
+
+  get ledButtonValue() {
+    return this.ledButtonSource.find(s => s.value === this.attr.led_brightness);
+  }
+
+  get ledButtonSource() {
+    return this.config.led_button.source;
   }
 
   get icon() {
@@ -109,32 +119,19 @@ export default class HumidifierObject {
     return this.attr.humidity;
   }
 
-  __getFanSpeedSource(fanModes) {
-    const defaultFanSpeedSource = [
-      { id: 'Auto', name: 'Auto' },
-      { id: 'Silent', name: 'Silent' },
-      { id: 'Medium', name: 'Medium' },
-      { id: 'High', name: 'High' }];
-
-    if (!fanModes)
-      return defaultFanSpeedSource;
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const [key, value] of Object.entries(fanModes)) {
-      const item = defaultFanSpeedSource.find(s => s.id.toUpperCase() === key.toUpperCase());
-
-      if (item)
-        item.name = value;
-    }
-
-    return defaultFanSpeedSource;
-  }
-
   toggleLedBrightness(e) {
     if (this.isLedBrightnessOn)
-      return this.callService(e, 'fan_set_led_brightness', { brightness: 2 }, 'xiaomi_miio');
+      return this.setLedButtonBrightness(e, 'off');
 
-    return this.callService(e, 'fan_set_led_brightness', { brightness: 1 }, 'xiaomi_miio');
+    return this.setLedButtonBrightness(e, 'bright');
+  }
+
+  setLedButtonBrightness(e, id) {
+    const item = this.ledButtonSource.find(s => s.id === id);
+    if (item)
+      return this.callService(e, 'fan_set_led_brightness', { brightness: item.value }, 'xiaomi_miio');
+
+    throw new Error(`could not find value for key ${id}`);
   }
 
   toggleChildLock(e) {
@@ -166,8 +163,12 @@ export default class HumidifierObject {
     return this.callService(e, 'fan_set_target_humidity', { humidity: value }, 'xiaomi_miio');
   }
 
-  setFanSpeed(e, value) {
-    return this.callService(e, 'set_speed', { speed: value }, 'fan');
+  setFanSpeed(e, id) {
+    const item = this.fanSpeedSource.find(s => s.id === id);
+    if (item)
+      return this.callService(e, 'set_speed', { speed: item.value }, 'fan');
+
+    throw new Error(`could not find value for key ${id}`);
   }
 
   callService(e, service, inOptions, domain) {

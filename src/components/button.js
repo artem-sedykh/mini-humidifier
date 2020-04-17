@@ -23,6 +23,7 @@ class MiniHumidifierButton extends LitElement {
         transition: background .5s;
         border-radius: 4px;
         font-weight: 500;
+        color: var(--mh-icon-color);
       }
       :host([raised]) {
         background: var(--mh-button-color);

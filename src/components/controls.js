@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit-element';
 
 import './button';
 import './fanSpeedMenu';
+import './ledButtonMenu';
 
 import sharedStyle from '../sharedStyle';
 
@@ -60,8 +61,17 @@ class MiniHumidifierControls extends LitElement {
     if (context.config.led_button.hide)
       return '';
 
+    if (context.config.led_button.type === 'dropdown')
+      return html`
+         <mh-led-button-menu class='led-button'
+            .icon=${context.config.led_button.icon}
+            .config=${context.config}
+            .humidifier=${context.humidifier}>
+         </mh-led-button-menu>
+      `;
+
     return html`
-       <paper-icon-button class='led-button'
+       <paper-icon-button 
           .icon=${context.config.led_button.icon}
           @click=${e => context.toggleLedBrightness(e)}
           ?color=${context.humidifier.isLedBrightnessOn}>
