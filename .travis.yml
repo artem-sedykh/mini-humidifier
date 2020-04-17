@@ -12,6 +12,7 @@ deploy:
   file: dist/*
   release_notes_file: changelogs/release_${TRAVIS_TAG}.md
   cleanup: false
+  skip_cleanup: true
   on:
     repo: artem-sedykh/mini-humidifier
     tags: true
