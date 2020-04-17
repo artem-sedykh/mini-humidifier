@@ -2,6 +2,8 @@
 
 A minimalistic yet customizable humidifier card for [Home Assistant](https://github.com/home-assistant/home-assistant) Lovelace UI.
 
+Tested on [zhimi.humidifier.cb1](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
+
 ![Preview Image](https://user-images.githubusercontent.com/861063/79474272-dc2c2700-800e-11ea-8cf8-3facde2b3442.png)
 
 ## Examples
