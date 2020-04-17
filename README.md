@@ -3,6 +3,8 @@
 [![](https://img.shields.io/github/release/artem-sedykh/mini-humidifier.svg?style=flat-square)](https://github.com/artem-sedykh/mini-humidifier/releases/latest)
 [![Build Status](https://travis-ci.com/artem-sedykh/mini-humidifier.svg?branch=master)](https://travis-ci.com/artem-sedykh/mini-humidifier)
 
+Tested on [zhimi.humidifier.cb1](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
+
 A minimalistic yet customizable humidifier card for [Home Assistant](https://github.com/home-assistant/home-assistant) Lovelace UI.
 
 Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
