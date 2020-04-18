@@ -9,7 +9,7 @@ A minimalistic yet customizable humidifier card for [Home Assistant](https://git
 
 Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
-![Preview Image](https://user-images.githubusercontent.com/861063/79474272-dc2c2700-800e-11ea-8cf8-3facde2b3442.png)
+![Preview Image](https://user-images.githubusercontent.com/861063/79672681-0f241580-81dd-11ea-913c-234c287a6264.png)
 
 ## Install
 
@@ -207,7 +207,7 @@ For use Entities card you need to add `group: on`
 #### led button dropdown list configuration
 
 
-<img src="https://user-images.githubusercontent.com/861063/79615043-7a50e780-810a-11ea-8716-f96f868be879.png" width="500px" alt="Entities card example" />
+<img src="https://user-images.githubusercontent.com/861063/79615043-7a50e780-810a-11ea-8716-f96f868be879.png" width="500px" alt="led button dropdown list" />
 
 ```yaml
 - type: custom:mini-humidifier
@@ -222,6 +222,21 @@ For use Entities card you need to add `group: on`
       'off':
         name: 'Off'
 ```
+
+
+#### power button configuration
+
+
+<img src="https://user-images.githubusercontent.com/861063/79672736-6924db00-81dd-11ea-9920-cdf0661b567c.png" width="500px" alt="power button configuration" />
+
+```yaml
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  power_button:
+    type: button
+    icon: mdi:power
+```
+
 
 ## Development
 *If you plan to contribute back to this repo, please fork & create the PR against the [dev](https://github.com/artem-sedykh/mini-humidifier/tree/dev) branch.*
