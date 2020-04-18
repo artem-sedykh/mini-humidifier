@@ -225,7 +225,6 @@ class MiniHumidifier extends LitElement {
     };
   }
 
-  // eslint-disable-next-line no-unused-vars
   render({ config } = this) {
     return html`
       <ha-card
