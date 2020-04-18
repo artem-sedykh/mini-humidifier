@@ -72,6 +72,10 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | name | string | optional | v1.0.1 | Override the entities friendly name.
 | icon | string | optional | v1.0.1 | Specify a custom icon from any of the available mdi icons.
 | group | boolean | optional | v1.0.1 | Removes paddings, background color and box-shadow.
+| **power_button** | object | optional | v1.0.3 | Power button
+| power_button: `type` | string | optional | v1.0.3 | `toggle` or `button`, default `mdi:power`
+| power_button: `icon` | string | optional | v1.0.3 | Custom icon for type `buttom`, default value `mdi:fan`
+| power_button: `hide` | boolean | optional | v1.0.3 | Hide button, default value `False`
 | **dry_button** | object | optional | v1.0.1 | Dry mode on/off button
 | dry_button: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:weather-sunny`
 | dry_button: `hide` | boolean | optional | v1.0.1 | Hide button, default value `False`
@@ -140,6 +144,22 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | target_humidity: `min` | number | optional | v1.0.1 | minimum target humidity, default value `30` [see](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
 | target_humidity: `max` | number | optional | v1.0.1 | maximum target humidity, default value `80` [see](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
 | target_humidity: `step` | number | optional | v1.0.1 | slider step, default value `10`
+| scale | number | optional | v1.0.3 | UI scale modifier, default is 1.
+
+### Theme variables
+The following variables are available and can be set in your theme to change the appearence of the card.
+Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically anything supported by CSS.
+
+| name | Default | Description |
+|------|---------|-------------|
+| mini-humidifier-name-font-weight | 400 | Font weight of the entity name
+| mini-humidifier-info-font-weight | 300 | Font weight of the states
+| mini-humidifier-icon-color | --mini-humidifier-base-color, var(--paper-item-icon-color, #44739e) | The color for icons
+| mini-humidifier-button-color | #44739e | The color for buttons icons
+| mini-humidifier-accent-color | var(--accent-color) | The accent color of UI elements
+| mini-humidifier-base-color | var(--primary-text-color) & var(--paper-item-icon-color) | The color of base text
+| mini-humidifier-background-opacity | 1 | Opacity of the background
+| mini-humidifier-scale | 1 | Scale of the card
 
 
 ### Example usage

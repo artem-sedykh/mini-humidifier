@@ -7,16 +7,12 @@ const style = css`
     --mh-scale: var(--mini-humidifier-scale, 1);
     --mh-unit: calc(var(--mh-scale) * 40px);
     --mh-name-font-weight: var(--mini-humidifier-name-font-weight, 400);
+    --mh-info-font-weight: var(--mini-humidifier-info-font-weight, 300);
+    --mh-entity-info-left-offset: 8px;
     --mh-accent-color: var(--mini-humidifier-accent-color, var(--accent-color, #f39c12));
-    --mh-base-color: var(--mini-humidifier-base-color, var(--primary-text-color, #000));
-    --mh-overlay-color: var(--mini-humidifier-overlay-color, rgba(0,0,0,0.5));
-    --mh-overlay-color-stop: var(--mini-humidifier-overlay-color-stop, 25%);
-    --mh-overlay-base-color: var(--mini-humidifier-overlay-base-color, #fff);
-    --mh-overlay-accent-color: var(--mini-humidifier-overlay-accent-color, --mh-accent-color);
     --mh-text-color: var(--mini-humidifier-base-color, var(--primary-text-color, #000));
-    --mh-text-color-inverted: var(--disabled-text-color);
     --mh-active-color: var(--mh-accent-color);
-    --mh-button-color: var(--mini-humidifier-button-color, rgba(255,255,255,0.25));
+    --mh-button-color: var(--mini-humidifier-button-color, #44739e);
     --mh-icon-color:
       var(--mini-humidifier-icon-color,
         var(--mini-humidifier-base-color,
@@ -24,12 +20,6 @@ const style = css`
     --mh-icon-active-color: var(--paper-item-icon-active-color, --mh-active-color);
     --mh-info-opacity: 1;
     --mh-bg-opacity: var(--mini-humidifier-background-opacity, 1);
-    --mh-artwork-opacity: var(--mini-humidifier-artwork-opacity, 1);
-    --mh-progress-height: var(--mini-humidifier-progress-height, 6px);
-    --mh-theme-primary: var(--mh-text-color);
-    --mh-theme-on-primary: var(--mh-text-color);
-    --paper-checkbox-unchecked-color: var(--mh-text-color);
-    --paper-checkbox-label-color: var(--mh-text-color);
     color: var(--mh-text-color);
   }
   ha-card.--group {
@@ -89,7 +79,7 @@ const style = css`
     justify-content: center;
     display: flex;
     flex-direction: column;
-    margin-left: 8px;
+    margin-left: var(--mh-entity-info-left-offset);
     position: relative;
     overflow: hidden;
     user-select: none;
@@ -127,16 +117,16 @@ const style = css`
   }
   .entity__secondary_info_icon {
     color: var(--mh-icon-color);
-    width: 15px;
-    height: 15px;
-    min-width: 15px;
+    width: calc(var(--mh-unit) * .375);
+    height: calc(var(--mh-unit) * .375);
+    min-width: calc(var(--mh-unit) * .375);
   }
   .entity__secondary_info {
     margin-top: -2px;
   }
   .entity__secondary_info__name {
-    font-size: 13px;
-    font-weight: 300;
+    font-size: calc(var(--mh-unit) * 0.325);
+    font-weight: var(--mh-info-font-weight);
   }
   mh-powerstrip {
     flex: 1;
@@ -159,16 +149,17 @@ const style = css`
     margin: 0;
   }
   .mh-humidifier__bottom {
-    margin: 0 0 0 56px;
+    margin: 0;
+    margin-left: calc(calc(calc(var(--mh-unit) / 5) + var(--mh-unit)) + var(--mh-entity-info-left-offset));
     justify-content: space-between;
   }
   .mh-humidifier__toggle {
     margin-top: -7px;
-    margin-right: 6px
+    margin-right: 4px
   }
   .toggle-button {
-    width: 30px;
-    height: 30px;
+    width: calc(var(--mh-unit) * .75);
+    height: calc(var(--mh-unit) * .75);
     padding: 3px;
     color: var(--mh-icon-color);
   }

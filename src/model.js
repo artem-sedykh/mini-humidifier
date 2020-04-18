@@ -134,6 +134,13 @@ export default class HumidifierObject {
     throw new Error(`could not find value for key ${id}`);
   }
 
+  togglePower(e) {
+    if (this.isOn)
+      return this.callService(e, 'turn_off', undefined, 'fan');
+
+    return this.callService(e, 'turn_on', undefined, 'fan');
+  }
+
   toggleChildLock(e) {
     if (this.isChildLockOn)
       return this.callService(e, 'fan_set_child_lock_off', undefined, 'xiaomi_miio');

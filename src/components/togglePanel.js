@@ -1,7 +1,5 @@
 import { LitElement, html, css } from 'lit-element';
 
-import './button';
-
 import sharedStyle from '../sharedStyle';
 
 import './controls';
@@ -47,9 +45,7 @@ class MiniHumidifierTogglePanel extends LitElement {
         position: relative;
         box-sizing: border-box;
         margin: 0;
-        min-width: 0;
         overflow: hidden;
-        transition: background .5s;
       }
       mp-humidifier-controls {
         display: flex;

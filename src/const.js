@@ -10,9 +10,7 @@ const ICON = {
   LEDBUTTON: 'mdi:lightbulb-on-outline',
   CHILDLOCK: 'mdi:lock',
   TOGGLE: 'mdi:dots-horizontal',
+  POWER: 'mdi:power',
 };
 
-export {
-  // eslint-disable-next-line import/prefer-default-export
-  ICON,
-};
+export default ICON;

@@ -16,7 +16,7 @@ const sharedStyle = css`
   paper-icon-button {
     width: calc(var(--mh-unit));
     height: calc(var(--mh-unit));
-    color: var(--mh-text-color, var(--primary-text-color));
+    color: var(--mh-button-color);
     transition: color .25s;
   }
   paper-icon-button[color] {

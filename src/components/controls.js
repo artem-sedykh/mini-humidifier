@@ -1,6 +1,5 @@
 import { LitElement, html, css } from 'lit-element';
 
-import './button';
 import './fanSpeedMenu';
 import './ledButtonMenu';
 
@@ -32,9 +31,6 @@ class MiniHumidifierControls extends LitElement {
   }
 
   renderDryButton(context) {
-    if (context.config.dry_button.hide)
-      return '';
-
     return html`
       <paper-icon-button class='dry-button'
         .icon=${context.config.dry_button.icon}
@@ -45,9 +41,6 @@ class MiniHumidifierControls extends LitElement {
   }
 
   renderSpeedMenu(context) {
-    if (context.config.fan_mode_button.hide)
-      return '';
-
     return html`
        <mh-fan-speed-menu
           .icon=${context.config.fan_mode_button.icon}
@@ -58,9 +51,6 @@ class MiniHumidifierControls extends LitElement {
   }
 
   renderLedButton(context) {
-    if (context.config.led_button.hide)
-      return '';
-
     if (context.config.led_button.type === 'dropdown')
       return html`
          <mh-led-button-menu class='led-button'
@@ -80,9 +70,6 @@ class MiniHumidifierControls extends LitElement {
   }
 
   renderBuzzerButton(context) {
-    if (context.config.buzzer_button.hide)
-      return '';
-
     return html`
        <paper-icon-button class='buzzer-button'
           .icon=${context.config.buzzer_button.icon}
@@ -93,9 +80,6 @@ class MiniHumidifierControls extends LitElement {
   }
 
   renderChildLockButton(context) {
-    if (context.config.child_lock_button.hide)
-      return '';
-
     return html`
        <paper-icon-button class='child-lock-button'
           .icon=${context.config.child_lock_button.icon}
@@ -106,15 +90,40 @@ class MiniHumidifierControls extends LitElement {
   }
 
   render() {
-    const conf = this.config;
     const context = this;
+    const dryButtonConf = this.config.dry_button;
+    const fanModeButtonConf = this.config.fan_mode_button;
+    const ledButtonConf = this.config.led_button;
+    const buzzerButtonConf = this.config.buzzer_button;
+    const childlockButtonConf = this.config.child_lock_button;
 
     const source = [
-      { order: conf.dry_button.order, render: this.renderDryButton },
-      { order: conf.fan_mode_button.order, render: this.renderSpeedMenu },
-      { order: conf.led_button.order, render: this.renderLedButton },
-      { order: conf.buzzer_button.order, render: this.renderBuzzerButton },
-      { order: conf.child_lock_button.order, render: this.renderChildLockButton }]
+      {
+        hide: dryButtonConf.hide,
+        order: dryButtonConf.order,
+        render: this.renderDryButton,
+      },
+      {
+        hide: fanModeButtonConf.hide,
+        order: fanModeButtonConf.order,
+        render: this.renderSpeedMenu,
+      },
+      {
+        hide: ledButtonConf.hide,
+        order: ledButtonConf.order,
+        render: this.renderLedButton,
+      },
+      {
+        hide: buzzerButtonConf.hide,
+        order: buzzerButtonConf.order,
+        render: this.renderBuzzerButton,
+      },
+      {
+        hide: childlockButtonConf.hide,
+        order: childlockButtonConf.order,
+        render: this.renderChildLockButton,
+      }]
+      .filter(b => !b.hide)
       .sort((a, b) => ((a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0)));
 
     return html`
@@ -132,10 +141,8 @@ class MiniHumidifierControls extends LitElement {
         position: relative;
         box-sizing: border-box;
         margin: 0;
-        min-width: 0;
         overflow: hidden;
         transition: background .5s;
-        border-radius: 4px;
       }
       :host([color]) {
         background: var(--mh-active-color);
@@ -150,12 +157,6 @@ class MiniHumidifierControls extends LitElement {
         display: flex;
         width: 100%;
         justify-content: space-evenly;
-      }
-      .mh-humidifier-info__controls paper-icon-button {
-        color: var(--mh-icon-color);
-      }
-      .led-button {
-        margin-top: -1px;
       }
     `];
   }

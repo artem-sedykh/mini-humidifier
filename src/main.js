@@ -12,7 +12,7 @@ import './components/controls';
 import './components/info';
 import './components/togglePanel';
 
-import { ICON } from './const';
+import ICON from './const';
 
 if (!customElements.get('ha-slider')) {
   customElements.define(
@@ -21,7 +21,6 @@ if (!customElements.get('ha-slider')) {
   );
 }
 
-// eslint-disable-next-line no-unused-vars
 class MiniHumidifier extends LitElement {
   constructor() {
     super();
@@ -217,6 +216,12 @@ class MiniHumidifier extends LitElement {
       icon: ICON.TOGGLE,
       hide: false,
       ...config.toggle_button || {},
+    };
+    this.config.power_button = {
+      icon: ICON.POWER,
+      type: 'toggle',
+      hide: false,
+      ...config.power_button || {},
     };
   }
 
