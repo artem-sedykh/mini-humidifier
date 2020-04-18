@@ -15,10 +15,6 @@ class MiniHumidifierFanSpeedMenu extends LitElement {
     return this.humidifier.fanSpeed || {};
   }
 
-  get label() {
-    return this.source ? this.source.name : '';
-  }
-
   get sources() {
     return this.humidifier.fanSpeedSource
       .map(s => ({ name: s.name, id: s.id, type: 'source' }));

@@ -15,6 +15,28 @@ class MiniHumidifierPowerstrip extends LitElement {
     };
   }
 
+  renderPowerButton() {
+    if (this.config.power_button.hide)
+      return '';
+
+    if (this.config.power_button.type === 'toggle') {
+      return html`
+          <ha-entity-toggle
+            .stateObj=${this.humidifier.entity}
+            .hass=${this.hass}>
+          </ha-entity-toggle>
+      `;
+    }
+
+    return html`
+        <paper-icon-button class='power-button'
+          .icon=${this.config.power_button.icon}
+          @click=${e => this.humidifier.togglePower(e)}
+          ?color=${this.humidifier.isOn}>
+        </paper-icon-button>
+    `;
+  }
+
   render() {
     if (this.humidifier.isUnavailable)
       return html`
@@ -28,10 +50,7 @@ class MiniHumidifierPowerstrip extends LitElement {
           .humidifier=${this.humidifier}
           .config=${this.config}>
         </mp-target-humidity-slider>
-        <ha-entity-toggle
-          .stateObj=${this.humidifier.entity}
-          .hass=${this.hass}>
-        </ha-entity-toggle>
+        ${this.renderPowerButton()}
     `;
   }
 
@@ -42,7 +61,6 @@ class MiniHumidifierPowerstrip extends LitElement {
         :host {
           display: flex;
           margin: 0;
-          line-height: var(--mh-unit);
           max-height: var(--mh-unit);
         }
         mp-target-humidity-slider {

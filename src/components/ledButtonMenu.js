@@ -15,10 +15,6 @@ class MiniHumidifierLedButtonMenu extends LitElement {
     return this.humidifier.ledButtonValue || {};
   }
 
-  get label() {
-    return this.source ? this.source.name : '';
-  }
-
   get sources() {
     return this.humidifier.ledButtonSource
       .map(s => ({ name: s.name, id: s.id, type: 'source' }));

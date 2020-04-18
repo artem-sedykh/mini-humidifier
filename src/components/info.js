@@ -10,52 +10,46 @@ class MiniHumidifierInfo extends LitElement {
   }
 
   renderDepth(context) {
-    if (context.config.depth.hide)
-      return '';
-
     return html`
        <div class='state depth'>
          <iron-icon class='state__value_icon' .icon=${context.config.depth.icon}></iron-icon>
-         <span class='state__value ellipsis'>${context.humidifier.depth}</span>
-         <span class='state__uom ellipsis'>${context.config.depth.unit}</span>
+         <span class='state__value'>${context.humidifier.depth}</span>
+         <span class='state__uom'>${context.config.depth.unit}</span>
        </div>
     `;
   }
 
   renderTemperature(context) {
-    if (context.config.temperature.hide)
-      return '';
-
     return html`
        <div class='state temperature'>
          <iron-icon class='state__value_icon' .icon=${context.config.temperature.icon}></iron-icon>
-         <span class='state__value ellipsis'>${context.humidifier.temperature}</span>
-         <span class='state__uom ellipsis'>${context.config.temperature.unit}</span>
+         <span class='state__value'>${context.humidifier.temperature}</span>
+         <span class='state__uom'>${context.config.temperature.unit}</span>
        </div>
     `;
   }
 
   renderHumidity(context) {
-    if (context.config.humidity.hide)
-      return '';
-
     return html`
        <div class='state humidity'>
          <iron-icon class='state__value_icon' .icon=${context.config.humidity.icon}></iron-icon>
-         <span class='state__value ellipsis'>${context.humidifier.humidity}</span>
-         <span class='state__uom ellipsis'>${context.config.humidity.unit}</span>
+         <span class='state__value'>${context.humidifier.humidity}</span>
+         <span class='state__uom'>${context.config.humidity.unit}</span>
        </div>
     `;
   }
 
   render() {
-    const conf = this.config;
     const context = this;
+    const temperatureConf = this.config.temperature;
+    const humidityConf = this.config.humidity;
+    const depthConf = this.config.depth;
 
     const source = [
-      { order: conf.humidity.order, render: this.renderHumidity },
-      { order: conf.depth.order, render: this.renderDepth },
-      { order: conf.temperature.order, render: this.renderTemperature }]
+      { hide: humidityConf.hide, order: humidityConf.order, render: this.renderHumidity },
+      { hide: depthConf.hide, order: depthConf.order, render: this.renderDepth },
+      { hide: temperatureConf.hide, order: temperatureConf.order, render: this.renderTemperature }]
+      .filter(i => !i.hide)
       .sort((a, b) => ((a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0)));
 
     return html`
@@ -70,49 +64,37 @@ class MiniHumidifierInfo extends LitElement {
      :host {
         position: relative;
         box-sizing: border-box;
-        margin: 4px;
         min-width: 0;
         overflow: hidden;
-        transition: background .5s;
-        font-size: 17px;
-        font-weight: 300;
+        font-size: calc(var(--mh-unit) * .325);
+        line-height: calc(var(--mh-unit) / 2);
       }
      .mh-humidifier-state__container {
        display: flex;
-       min-height: 10px;
      }
      .state {
         position: relative;
         display: flex;
         flex-wrap: nowrap;
-        max-width: 100%;
-        min-width: 0px;
-        margin-right: 4px;
-     }
-     .depth .state__value_icon {
-        margin-right: 2px;
+        margin-right: calc(var(--mh-unit) * .1);
      }
      .state__value_icon {
-        height: 17px;
-        width: 17px;
+        height: calc(var(--mh-unit) * .475);
+        width: calc(var(--mh-unit) * .425);
         color: var(--mh-icon-color);
      }
      .state__value {
-        font-size: 13px;
-        display: inline-block;
-        line-height: calc(var(--mh-unit) / 2);
+        margin: 0 1px;
+        font-weight: var(--mh-info-font-weight);
      }
      .state__uom {
-        font-size: 11px;
-        align-self: flex-end;
-        display: inline-block;
-        line-height: 20px;
-        font-weight: 400;
-        margin-top: 1px;
-        margin-left: 1px;
+        font-size: calc(var(--mh-unit) * .275);
+        line-height: calc(var(--mh-unit) * .55);
+        height: calc(var(--mh-unit) * .475);
         opacity: 0.8;
-        vertical-align: bottom;
-        flex: 1 1 0%;
+     }
+     .humidity .state__value {
+        margin: 0;
      }
     `;
   }
