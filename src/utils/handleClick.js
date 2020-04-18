@@ -1,7 +1,13 @@
 export default (node, hass, config, actionConfig, entityId) => {
   let e;
+
   // eslint-disable-next-line default-case
   switch (actionConfig.action) {
+    case 'toggle': {
+      // eslint-disable-next-line no-param-reassign
+      node.toggle = !node.toggle;
+      break;
+    }
     case 'more-info': {
       e = new Event('hass-more-info', { composed: true });
       e.detail = {

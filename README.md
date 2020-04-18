@@ -23,7 +23,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.3
+    - url: /local/mini-humidifier-bundle.js?v=1.0.4
       type: module
   ```
 
@@ -41,7 +41,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.3
+    - url: /local/mini-humidifier-bundle.js?v=1.0.4
       type: module
   ```
 
@@ -54,7 +54,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.3
+    - url: /local/mini-humidifier-bundle.js?v=1.0.4
       type: module
   ```
 
@@ -145,6 +145,18 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | target_humidity: `max` | number | optional | v1.0.1 | maximum target humidity, default value `80` [see](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
 | target_humidity: `step` | number | optional | v1.0.1 | slider step, default value `10`
 | scale | number | optional | v1.0.3 | UI scale modifier, default is 1.
+| tap_action | [action object](#action-object-options) | true | v1.0.4 | Action on click/tap.
+
+#### Action object options
+| Name | Type | Default | Options | Description |
+|------|:----:|:-------:|:-----------:|-------------|
+| action | string | `more-info` | `more-info` / `navigate` / `call-service`  / `url` / `none` / `toggle` | Action to perform.
+| entity | string |  | Any entity id | Override default entity of `more-info`, when  `action` is defined as `more-info`.
+| service | string |  | Any service | Service to call (e.g. `fan.turn_on`) when `action` is defined as `call-service`.
+| service_data | object |  | Any service data | Service data to include with the service call (e.g. `entity_id: fan.xiaomi_miio_device`).
+| navigation_path | string |  | Any path | Path to navigate to (e.g. `/lovelace/0/`) when `action` is defined as `navigate`.
+| url | string |  | Any URL | URL to open when `action` is defined as `url`.
+
 
 ### Theme variables
 The following variables are available and can be set in your theme to change the appearence of the card.

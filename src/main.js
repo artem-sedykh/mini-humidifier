@@ -154,6 +154,11 @@ class MiniHumidifier extends LitElement {
       fan_modes: [],
       tap_action: {
         action: 'more-info',
+        navigation_path: '',
+        url: '',
+        entity: '',
+        service: '',
+        service_data: {},
       },
       ...config,
     };
