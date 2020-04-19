@@ -157,7 +157,6 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | navigation_path | string |  | Any path | Path to navigate to (e.g. `/lovelace/0/`) when `action` is defined as `navigate`.
 | url | string |  | Any URL | URL to open when `action` is defined as `url`.
 
-
 ### Theme variables
 The following variables are available and can be set in your theme to change the appearence of the card.
 Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically anything supported by CSS.
@@ -236,6 +235,7 @@ For use Entities card you need to add `group: on`
 ```
 
 
+
 #### Power button configuration
 
 
@@ -248,6 +248,7 @@ For use Entities card you need to add `group: on`
     type: button
     icon: mdi:power
 ```
+
 
 
 #### Action object options examples
@@ -294,6 +295,7 @@ For use Entities card you need to add `group: on`
     action: more-info
     entity: sensor.humidity_158d000444c824
 ```
+
 
 
 ## Development
