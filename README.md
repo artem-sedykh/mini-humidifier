@@ -3,6 +3,7 @@
 [![](https://img.shields.io/github/release/artem-sedykh/mini-humidifier.svg?style=flat-square)](https://github.com/artem-sedykh/mini-humidifier/releases/latest)
 [![Build Status](https://travis-ci.com/artem-sedykh/mini-humidifier.svg?branch=master)](https://travis-ci.com/artem-sedykh/mini-humidifier)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/artem-sedykh/mini-humidifier)
+[![buymeacoffee_badge](https://img.shields.io/badge/Donate-buymeacoffe-ff813f?style=flat)](https://www.buymeacoffee.com/anavrin72)
 
 Tested on [zhimi.humidifier.cb1](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
 
@@ -381,3 +382,8 @@ resources:
 
 ## License
 This project is under the MIT license.
+
+
+<a href="https://www.buymeacoffee.com/anavrin72" target="_blank">
+<img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;"/>
+</a>
