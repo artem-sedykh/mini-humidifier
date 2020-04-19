@@ -12,7 +12,7 @@ const style = css`
     --mh-accent-color: var(--mini-humidifier-accent-color, var(--accent-color, #f39c12));
     --mh-text-color: var(--mini-humidifier-base-color, var(--primary-text-color, #000));
     --mh-active-color: var(--mh-accent-color);
-    --mh-button-color: var(--mini-humidifier-button-color, #44739e);
+    --mh-button-color: var(--mini-humidifier-button-color, var(--paper-item-icon-color, #44739e));
     --mh-icon-color:
       var(--mini-humidifier-icon-color,
         var(--mini-humidifier-base-color,
