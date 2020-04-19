@@ -25,6 +25,7 @@ class MiniHumidifier extends LitElement {
   constructor() {
     super();
     this.initial = true;
+    this.toggle = false;
   }
 
   static get properties() {
@@ -220,6 +221,7 @@ class MiniHumidifier extends LitElement {
     this.config.toggle_button = {
       icon: ICON.TOGGLE,
       hide: false,
+      default: false,
       ...config.toggle_button || {},
     };
     this.config.power_button = {
@@ -228,6 +230,8 @@ class MiniHumidifier extends LitElement {
       hide: false,
       ...config.power_button || {},
     };
+
+    this.toggle = this.config.toggle_button.default;
   }
 
   render({ config } = this) {

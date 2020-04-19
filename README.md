@@ -23,7 +23,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.4
+    - url: /local/mini-humidifier-bundle.js?v=1.0.5
       type: module
   ```
 
@@ -41,7 +41,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.4
+    - url: /local/mini-humidifier-bundle.js?v=1.0.5
       type: module
   ```
 
@@ -54,7 +54,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.4
+    - url: /local/mini-humidifier-bundle.js?v=1.0.5
       type: module
   ```
 
@@ -72,7 +72,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | name | string | optional | v1.0.1 | Override the entities friendly name.
 | icon | string | optional | v1.0.1 | Specify a custom icon from any of the available mdi icons.
 | group | boolean | optional | v1.0.1 | Removes paddings, background color and box-shadow.
-| **power_button** | object | optional | v1.0.3 | Power button
+| **power_button** | object | optional | v1.0.3 | Power button, [example](#power-button-configuration).
 | power_button: `type` | string | optional | v1.0.3 | `toggle` or `button`, default `mdi:power`
 | power_button: `icon` | string | optional | v1.0.3 | Custom icon for type `buttom`, default value `mdi:fan`
 | power_button: `hide` | boolean | optional | v1.0.3 | Hide button, default value `False`
@@ -84,7 +84,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | fan_mode_button: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:fan`
 | fan_mode_button: `hide` | boolean | optional | v1.0.1 | Hide button, default value `False`
 | fan_mode_button: `order` | number | optional | v1.0.1 | Sort order, default value `1`
-| fan_mode_button: `source` | object | optional | v1.0.1 | Source for fan mode drop down list.
+| fan_mode_button: `source` | object | optional | v1.0.1 | Source for fan mode drop down list, [example](#fan-mode-source).
 | fan_mode_button: `source: auto` | string | optional | v1.0.1 | Title for auto mode, default: `Auto`
 | fan_mode_button: `source: silent` | string | optional | v1.0.1 | Title for silent mode, default: `Silent`
 | fan_mode_button: `source: medium` | string | optional | v1.0.1 | Title for medium mode, default: `Medium`
@@ -94,7 +94,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | led_button: `hide` | boolean | optional | v1.0.1 | Hide button, default value `False`
 | led_button: `order` | number | optional | v1.0.1 | Sort order, default value `2`
 | led_button: `type` | string | optional | v1.0.2 | Render type, available values `button or dropdown` default value `button`
-| led_button: `source` | object | optional | v1.0.2 | Source for dropdown button type, supported values are 0 (Bright), 1 (Dim), 2 (Off).
+| led_button: `source` | object | optional | v1.0.2 | Source for dropdown button type, supported values are 0 (Bright), 1 (Dim), 2 (Off), [example](#led-button-dropdown-list-configuration).
 | led_button: `source:bright` | object | optional | v1.0.2 | 0 (Bright)
 | led_button: `source:bright:value` | number | optional | v1.0.2 | Bright value, default `0`
 | led_button: `source:bright:name` | number | optional | v1.0.2 | name, default `Bright`
@@ -118,6 +118,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | **toggle_button** | object | optional | v1.0.1 | Toggle button.
 | toggle_button: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:dots-horizontal`
 | toggle_button: `hide` | boolean | optional | v1.0.1 | Hide button, default value `False`
+| toggle_button: `default` | boolean | optional | v1.0.5 | Default toggle_button state, default value `off`, [example](#always-show-control-buttons).
 | **depth** | object | optional | v1.0.1 | Information indicator, showing how much water is left in the humidifier
 | depth: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:beaker-outline`
 | depth: `hide` | boolean | optional | v1.0.1 | Hide indicator, default value `False`
@@ -145,7 +146,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | target_humidity: `max` | number | optional | v1.0.1 | maximum target humidity, default value `80` [see](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
 | target_humidity: `step` | number | optional | v1.0.1 | slider step, default value `10`
 | scale | number | optional | v1.0.3 | UI scale modifier, default is 1.
-| tap_action | [action object](#action-object-options) | true | v1.0.4 | Action on click/tap.
+| tap_action | [action object](#action-object-options) | true | v1.0.4 | Action on click/tap, [examples](#action-object-options-examples).
 
 #### Action object options
 | Name | Type | Default | Options | Description |
@@ -296,6 +297,22 @@ For use Entities card you need to add `group: on`
     entity: sensor.humidity_158d000444c824
 ```
 
+
+#### Always show control buttons
+
+
+<img src="https://user-images.githubusercontent.com/861063/79689322-af6d4f00-825c-11ea-9e95-9e66fbb1b58f.png" width="500px" alt="Always show control buttons" />
+
+```yaml
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  toggle_button:
+    hide: on
+    default: on
+  power_button:
+    type: button
+    icon: mdi:power
+```
 
 
 ## Development
