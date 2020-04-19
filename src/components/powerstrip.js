@@ -66,6 +66,10 @@ class MiniHumidifierPowerstrip extends LitElement {
         mp-target-humidity-slider {
           flex: 1;
         }
+        .label {
+          display: flex;
+          align-items: center;
+        }
       `,
     ];
   }
