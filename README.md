@@ -23,7 +23,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.3
+    - url: /local/mini-humidifier-bundle.js?v=1.0.4
       type: module
   ```
 
@@ -41,7 +41,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.3
+    - url: /local/mini-humidifier-bundle.js?v=1.0.4
       type: module
   ```
 
@@ -54,7 +54,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.3
+    - url: /local/mini-humidifier-bundle.js?v=1.0.4
       type: module
   ```
 
@@ -99,11 +99,11 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | led_button: `source:bright:value` | number | optional | v1.0.2 | Bright value, default `0`
 | led_button: `source:bright:name` | number | optional | v1.0.2 | name, default `Bright`
 | led_button: `source:bright:order` | number | optional | v1.0.2 | Sort order, default `0`
-| led_button: `source:dim` | object | optional | v1.0.2 | 0 (Dim)
+| led_button: `source:dim` | object | optional | v1.0.2 | 1 (Dim)
 | led_button: `source:dim:value` | number | optional | v1.0.2 | Dim value, default `1`
 | led_button: `source:dim:name` | number | optional | v1.0.2 | name, default `Dim`
 | led_button: `source:dim:order` | number | optional | v1.0.2 | Sort order, default `1`
-| led_button: `source:'off'` | object | optional | v1.0.2 | 0 (Off), the key must be written in quotation marks, without them the parameter will be false
+| led_button: `source:'off'` | object | optional | v1.0.2 | 2 (Off), the key must be written in quotation marks, without them the parameter will be false
 | led_button: `source:'off':value` | number | optional | v1.0.2 | Off value, default `2`
 | led_button: `source:'off':name` | number | optional | v1.0.2 | name, default `Off`
 | led_button: `source:'off':order` | number | optional | v1.0.2 | Sort order, default `2`
@@ -145,6 +145,17 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | target_humidity: `max` | number | optional | v1.0.1 | maximum target humidity, default value `80` [see](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
 | target_humidity: `step` | number | optional | v1.0.1 | slider step, default value `10`
 | scale | number | optional | v1.0.3 | UI scale modifier, default is 1.
+| tap_action | [action object](#action-object-options) | true | v1.0.4 | Action on click/tap.
+
+#### Action object options
+| Name | Type | Default | Options | Description |
+|------|:----:|:-------:|:-----------:|-------------|
+| action | string | `more-info` | `more-info` / `navigate` / `call-service`  / `url` / `none` / `toggle` | Action to perform.
+| entity | string |  | Any entity id | Override default entity of `more-info`, when  `action` is defined as `more-info`.
+| service | string |  | Any service | Service to call (e.g. `fan.turn_on`) when `action` is defined as `call-service`
+| service_data | object |  | Any service data | Service data to include with the service call (e.g. `entity_id: fan.xiaomi_miio_device`)
+| navigation_path | string |  | Any path | Path to navigate to (e.g. `/lovelace/0/`) when `action` is defined as `navigate`.
+| url | string |  | Any URL | URL to open when `action` is defined as `url`.
 
 ### Theme variables
 The following variables are available and can be set in your theme to change the appearence of the card.
@@ -155,7 +166,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 | mini-humidifier-name-font-weight | 400 | Font weight of the entity name
 | mini-humidifier-info-font-weight | 300 | Font weight of the states
 | mini-humidifier-icon-color | --mini-humidifier-base-color, var(--paper-item-icon-color, #44739e) | The color for icons
-| mini-humidifier-button-color | #44739e | The color for buttons icons
+| mini-humidifier-button-color |--mini-humidifier-button-color, var(--paper-item-icon-color, #44739e) | The color for buttons icons
 | mini-humidifier-accent-color | var(--accent-color) | The accent color of UI elements
 | mini-humidifier-base-color | var(--primary-text-color) & var(--paper-item-icon-color) | The color of base text
 | mini-humidifier-background-opacity | 1 | Opacity of the background
@@ -190,7 +201,7 @@ For use Entities card you need to add `group: on`
     - entity: switch.living_room_wall_switch_right
 ```
 
-#### fan mode source 
+#### Fan mode source 
 
 ```yaml
 - type: custom:mini-humidifier
@@ -204,7 +215,7 @@ For use Entities card you need to add `group: on`
 ```
 
 
-#### led button dropdown list configuration
+#### Led button dropdown list configuration
 
 
 <img src="https://user-images.githubusercontent.com/861063/79615043-7a50e780-810a-11ea-8716-f96f868be879.png" width="500px" alt="led button dropdown list" />
@@ -224,7 +235,8 @@ For use Entities card you need to add `group: on`
 ```
 
 
-#### power button configuration
+
+#### Power button configuration
 
 
 <img src="https://user-images.githubusercontent.com/861063/79672736-6924db00-81dd-11ea-9920-cdf0661b567c.png" width="500px" alt="power button configuration" />
@@ -236,6 +248,54 @@ For use Entities card you need to add `group: on`
     type: button
     icon: mdi:power
 ```
+
+
+
+#### Action object options examples
+
+```yaml
+# toggle example
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  tap_action:
+    action: toggle
+
+# call-service example
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  tap_action:
+    action: call-service
+    service: xiaomi_miio.fan_set_led_brightness
+    service_data:
+      brightness: 1
+
+# navigate example
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  tap_action:
+    action: navigate
+    navigation_path: '/lovelace/4'
+
+# navigate example
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  tap_action:
+    action: url
+    url: 'https://www.google.com/'
+
+# none example
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  tap_action: none
+
+# more-info for custom entity example
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  tap_action:
+    action: more-info
+    entity: sensor.humidity_158d000444c824
+```
+
 
 
 ## Development
