@@ -317,6 +317,7 @@ For use Entities card you need to add `group: on`
 ```
 
 
+
 ## Development
 *If you plan to contribute back to this repo, please fork & create the PR against the [dev](https://github.com/artem-sedykh/mini-humidifier/tree/dev) branch.*
 
