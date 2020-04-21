@@ -192,6 +192,7 @@ class MiniHumidifier extends LitElement {
     this.config.temperature = {
       icon: ICON.TEMPERATURE,
       unit: '°C',
+      source: { enitity: undefined, attribute: undefined },
       order: 1,
       hide: false,
       ...config.temperature || {},
@@ -199,6 +200,7 @@ class MiniHumidifier extends LitElement {
     this.config.humidity = {
       icon: ICON.HUMIDITY,
       unit: '%',
+      source: { enitity: undefined, attribute: undefined },
       order: 2,
       hide: false,
       ...config.humidity || {},

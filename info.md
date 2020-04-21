@@ -1,5 +1,4 @@
-![GitHub package.json version (branch)](https://img.shields.io/github/package-json/v/artem-sedykh/mini-humidifier/master?label=release)
-[![Build Status](https://travis-ci.com/artem-sedykh/mini-humidifier.svg?branch=master)](https://travis-ci.com/artem-sedykh/mini-humidifier)
+[![Last Version](https://img.shields.io/github/package-json/v/artem-sedykh/mini-humidifier?label.svg=release)](https://github.com/artem-sedykh/mini-humidifier/releases/latest)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/artem-sedykh/mini-humidifier)
 [![buymeacoffee_badge](https://img.shields.io/badge/Donate-buymeacoffe-ff813f?style=flat)](https://www.buymeacoffee.com/anavrin72)
 

@@ -112,11 +112,31 @@ export default class HumidifierObject {
   }
 
   get temperature() {
-    return this.attr.temperature;
+    return this.getValue(this.config.temperature.source, this.attr.temperature);
   }
 
   get humidity() {
-    return this.attr.humidity;
+    return this.getValue(this.config.humidity.source, this.attr.humidity);
+  }
+
+  getValue(config, defaultValue) {
+    if (!config)
+      return defaultValue;
+
+    if (config.entity && this.hass.states) {
+      const entity = this.hass.states[config.entity];
+
+      if (entity && config.attribute)
+        return entity.attributes[config.attribute];
+
+      if (entity)
+        return entity.state;
+    }
+
+    if (config.attribute)
+      return this.attr[config.attribute];
+
+    return defaultValue;
   }
 
   toggleLedBrightness(e) {
