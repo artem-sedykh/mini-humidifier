@@ -135,11 +135,17 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | temperature: `hide` | boolean | optional | v1.0.1 | Hide indicator, default value `False`
 | temperature: `order` | number | optional | v1.0.1 | Indicator sort order, default value `1`
 | temperature: `unit` | string | optional | v1.0.1 | display unit, default `°C`
+| temperature: `source` | object | optional | v1.0.6 | data source, by default, data taken from the attribute `temperature` [examples](#temperature-source-examples).
+| temperature: `source: entity` | string | optional | v1.0.6 | custom entity, if the attribute is not set, the state value
+| temperature: `source: attribute` | string | optional | v1.0.6 | if the entity parameter is not set, then the data will be obtained from the specified entity attribute, otherwise from the current entity attribute
 | **humidity** | object | optional | v1.0.1 | Information indicator, showing humidity
 | humidity: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:water-outline`
 | humidity: `hide` | boolean | optional | v1.0.1 | Hide indicator, default value `False`
 | humidity: `order` | number | optional | v1.0.1 | Indicator sort order, default value `2`
 | humidity: `unit` | string | optional | v1.0.1 | display unit, default `%`
+| humidity: `source` | object | optional | v1.0.6 | data source, by default, data taken from the attribute `humidity`
+| humidity: `source: entity` | string | optional | v1.0.6 | custom entity, if the attribute is not set, the state value
+| humidity: `source: attribute` | string | optional | v1.0.6 | if the entity parameter is not set, then the data will be obtained from the specified entity attribute, otherwise from the current entity attribute
 | **target_humidity** | object | optional | v1.0.1 | Target humidity
 | target_humidity: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:water-outline`
 | target_humidity: `hide` | boolean | optional | v1.0.1 | Hide indicator, default value `False`
@@ -316,6 +322,35 @@ For use Entities card you need to add `group: on`
     icon: mdi:power
 ```
 
+
+#### Temperature source examples
+
+
+```yaml
+# Display temperature using sensor
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  temperature:
+    source:
+      entity: sensor.temperature
+
+# Display temperature from custom attribute
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  temperature:
+    source:
+      attribute: use_time
+
+# Using entity and attribute, display the sensor battery level for example
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  temperature:
+    unit: '%'
+    icon: 'mdi:battery'
+    source:
+      entity: sensor.temperature
+      attribute: battery_level
+```
 
 
 ## Development
