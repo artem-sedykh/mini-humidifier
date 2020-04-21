@@ -123,7 +123,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | led_button: `source:dim:order` | number | optional | v1.0.2 | Sort order, default `1`
 | led_button: `source:'off'` | object | optional | v1.0.2 | 2 (Off), the key must be written in quotation marks, without them the parameter will be false
 | led_button: `source:'off':value` | string | optional | v1.0.2 | Off value, default `2`
-| led_button: `source:'off':name` | number | optional | v1.0.2 | name, default `Off`
+| led_button: `source:'off':name` | string | optional | v1.0.2 | name, default `Off`
 | led_button: `source:'off':order` | number | optional | v1.0.2 | Sort order, default `2`
 | **buzzer_button** | object | optional | v1.0.1 | Buzzer on/off
 | buzzer_button: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:bell-outline`
