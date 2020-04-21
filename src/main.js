@@ -82,10 +82,34 @@ class MiniHumidifier extends LitElement {
     };
 
     const source = [
-      { id: 'auto', value: 'Auto', name: 'Auto' },
-      { id: 'silent', value: 'Silent', name: 'Silent' },
-      { id: 'medium', value: 'Medium', name: 'Medium' },
-      { id: 'high', value: 'High', name: 'High' }];
+      {
+        id: 'auto',
+        value: 'Auto',
+        name: 'Auto',
+        hide: false,
+        order: 0,
+      },
+      {
+        id: 'silent',
+        value: 'Silent',
+        name: 'Silent',
+        hide: false,
+        order: 1,
+      },
+      {
+        id: 'medium',
+        value: 'Medium',
+        name: 'Medium',
+        hide: false,
+        order: 2,
+      },
+      {
+        id: 'high',
+        value: 'High',
+        name: 'High',
+        hide: false,
+        order: 3,
+      }];
 
     const data = Object.entries(fanModeConf.source);
 
@@ -95,12 +119,23 @@ class MiniHumidifier extends LitElement {
 
       const item = source.find(s => s.id.toUpperCase() === key.toUpperCase());
 
-      if (item)
-        item.name = value;
+      if (item) {
+        if (typeof (value) === 'object') {
+          if ('value' in value)
+            item.value = value.value;
+          if ('name' in value)
+            item.name = value.name;
+          if ('hide' in value)
+            item.hide = value.hide;
+          if ('order' in value)
+            item.order = value.order;
+        } else {
+          item.name = value;
+        }
+      }
     }
 
     fanModeConf.source = source;
-
     return fanModeConf;
   }
 
@@ -120,29 +155,49 @@ class MiniHumidifier extends LitElement {
         value: 0,
         order: 0,
         name: 'Bright',
-        ...ledButtonSource.bright || {},
       },
       dim: {
         value: 1,
         order: 1,
         name: 'Dim',
-        ...ledButtonSource.dim || {},
       },
       off: {
         value: 2,
         order: 2,
         name: 'Off',
-        ...ledButtonSource.off || {},
       },
     };
+
+    if (ledButtonSource.bright) {
+      if (typeof (ledButtonSource.bright) === 'object') {
+        source.bright = { ...source.bright, ...ledButtonSource.bright };
+      } else {
+        source.bright.name = ledButtonSource.bright;
+      }
+    }
+
+    if (ledButtonSource.dim) {
+      if (typeof (ledButtonSource.dim) === 'object') {
+        source.dim = { ...source.dim, ...ledButtonSource.dim };
+      } else {
+        source.dim.name = ledButtonSource.dim;
+      }
+    }
+
+    if (ledButtonSource.off) {
+      if (typeof (ledButtonSource.off) === 'object') {
+        source.off = { ...source.off, ...ledButtonSource.off };
+      } else {
+        source.off.name = ledButtonSource.off;
+      }
+    }
 
     ledButtonConfig.source = Object.keys(source).map(key => ({
       id: key,
       name: source[key].name,
       order: source[key].order,
       value: source[key].value,
-    })).sort((a, b) => ((a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0)));
-
+    }));
     return ledButtonConfig;
   }
 
@@ -192,6 +247,7 @@ class MiniHumidifier extends LitElement {
     this.config.temperature = {
       icon: ICON.TEMPERATURE,
       unit: '°C',
+      source: { enitity: undefined, attribute: undefined },
       order: 1,
       hide: false,
       ...config.temperature || {},
@@ -199,6 +255,7 @@ class MiniHumidifier extends LitElement {
     this.config.humidity = {
       icon: ICON.HUMIDITY,
       unit: '%',
+      source: { enitity: undefined, attribute: undefined },
       order: 2,
       hide: false,
       ...config.humidity || {},

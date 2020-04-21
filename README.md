@@ -1,4 +1,4 @@
-# Mini Humidifier
+# Mini Humidifier Card for Xiaomi Smartmi Zhimi Air Humidifier
 
 [![Last Version](https://img.shields.io/github/package-json/v/artem-sedykh/mini-humidifier?label.svg=release)](https://github.com/artem-sedykh/mini-humidifier/releases/latest)
 [![Build Status](https://travis-ci.com/artem-sedykh/mini-humidifier.svg?branch=master)](https://travis-ci.com/artem-sedykh/mini-humidifier)
@@ -25,7 +25,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.5
+    - url: /local/mini-humidifier-bundle.js?v=1.0.6
       type: module
   ```
 
@@ -43,7 +43,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.5
+    - url: /local/mini-humidifier-bundle.js?v=1.0.6
       type: module
   ```
 
@@ -56,7 +56,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.5
+    - url: /local/mini-humidifier-bundle.js?v=1.0.6
       type: module
   ```
 
@@ -87,10 +87,26 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | fan_mode_button: `hide` | boolean | optional | v1.0.1 | Hide button, default value `False`
 | fan_mode_button: `order` | number | optional | v1.0.1 | Sort order, default value `1`
 | fan_mode_button: `source` | object | optional | v1.0.1 | Source for fan mode drop down list, [example](#fan-mode-source).
-| fan_mode_button: `source: auto` | string | optional | v1.0.1 | Title for auto mode, default: `Auto`
-| fan_mode_button: `source: silent` | string | optional | v1.0.1 | Title for silent mode, default: `Silent`
-| fan_mode_button: `source: medium` | string | optional | v1.0.1 | Title for medium mode, default: `Medium`
-| fan_mode_button: `source: high` | string | optional | v1.0.1 | Title for high mode, default: `High`
+| fan_mode_button: `source: auto` | object | optional | v1.0.6 | auto mode configuration
+| fan_mode_button: `source: auto: value` | string | optional | v1.0.6 | value, default `Auto`
+| fan_mode_button: `source: auto: name` | string | optional | v1.0.6 | Display name, default `Auto`
+| fan_mode_button: `source: auto: order` | number | optional | v1.0.6 | Sort order, default `0`
+| fan_mode_button: `source: auto: hide` | boolean | optional | v1.0.6 | Hide from dropdown list, default `False`
+| fan_mode_button: `source: silent` | object | optional | v1.0.6 | silent mode configuration
+| fan_mode_button: `source: silent: value` | string | optional | v1.0.6 | value, default `Silent`
+| fan_mode_button: `source: silent: name` | string | optional | v1.0.6 | Display name, default `Silent`
+| fan_mode_button: `source: silent: order` | number | optional | v1.0.6 | Sort order, default `1`
+| fan_mode_button: `source: silent: hide` | boolean | optional | v1.0.6 | Hide from dropdown list, default `False`
+| fan_mode_button: `source: medium` | object | optional | v1.0.6 | medium mode configuration
+| fan_mode_button: `source: medium: value` | string | optional | v1.0.6 | value, default `Medium`
+| fan_mode_button: `source: medium: name` | string | optional | v1.0.6 | Display name, default `Medium`
+| fan_mode_button: `source: medium: order` | number | optional | v1.0.6 | Sort order, default `2`
+| fan_mode_button: `source: medium: hide` | boolean | optional | v1.0.6 | Hide from dropdown list, default `False`
+| fan_mode_button: `source: high` | object | optional | v1.0.6 | high mode configuration
+| fan_mode_button: `source: high: value` | string | optional | v1.0.6 | value, default `High`
+| fan_mode_button: `source: high: name` | string | optional | v1.0.6 | Display name, default `High`
+| fan_mode_button: `source: high: order` | number | optional | v1.0.6 | Sort order, default `3`
+| fan_mode_button: `source: high: hide` | boolean | optional | v1.0.6 | Hide from dropdown list, default `False`
 | **led_button** | object | optional | v1.0.1 | Button Illumination on/off
 | led_button: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:lightbulb-on-outline`
 | led_button: `hide` | boolean | optional | v1.0.1 | Hide button, default value `False`
@@ -99,14 +115,14 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | led_button: `source` | object | optional | v1.0.2 | Source for dropdown button type, supported values are 0 (Bright), 1 (Dim), 2 (Off), [example](#led-button-dropdown-list-configuration).
 | led_button: `source:bright` | object | optional | v1.0.2 | 0 (Bright)
 | led_button: `source:bright:value` | number | optional | v1.0.2 | Bright value, default `0`
-| led_button: `source:bright:name` | number | optional | v1.0.2 | name, default `Bright`
+| led_button: `source:bright:name` | string | optional | v1.0.2 | name, default `Bright`
 | led_button: `source:bright:order` | number | optional | v1.0.2 | Sort order, default `0`
 | led_button: `source:dim` | object | optional | v1.0.2 | 1 (Dim)
 | led_button: `source:dim:value` | number | optional | v1.0.2 | Dim value, default `1`
-| led_button: `source:dim:name` | number | optional | v1.0.2 | name, default `Dim`
+| led_button: `source:dim:name` | string | optional | v1.0.2 | name, default `Dim`
 | led_button: `source:dim:order` | number | optional | v1.0.2 | Sort order, default `1`
 | led_button: `source:'off'` | object | optional | v1.0.2 | 2 (Off), the key must be written in quotation marks, without them the parameter will be false
-| led_button: `source:'off':value` | number | optional | v1.0.2 | Off value, default `2`
+| led_button: `source:'off':value` | string | optional | v1.0.2 | Off value, default `2`
 | led_button: `source:'off':name` | number | optional | v1.0.2 | name, default `Off`
 | led_button: `source:'off':order` | number | optional | v1.0.2 | Sort order, default `2`
 | **buzzer_button** | object | optional | v1.0.1 | Buzzer on/off
@@ -135,11 +151,17 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | temperature: `hide` | boolean | optional | v1.0.1 | Hide indicator, default value `False`
 | temperature: `order` | number | optional | v1.0.1 | Indicator sort order, default value `1`
 | temperature: `unit` | string | optional | v1.0.1 | display unit, default `°C`
+| temperature: `source` | object | optional | v1.0.6 | data source, by default, data taken from the attribute `temperature` [examples](#temperature-source-examples).
+| temperature: `source: entity` | string | optional | v1.0.6 | custom entity, if the attribute is not set, the state value
+| temperature: `source: attribute` | string | optional | v1.0.6 | if the entity parameter is not set, then the data will be obtained from the specified entity attribute, otherwise from the current entity attribute
 | **humidity** | object | optional | v1.0.1 | Information indicator, showing humidity
 | humidity: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:water-outline`
 | humidity: `hide` | boolean | optional | v1.0.1 | Hide indicator, default value `False`
 | humidity: `order` | number | optional | v1.0.1 | Indicator sort order, default value `2`
 | humidity: `unit` | string | optional | v1.0.1 | display unit, default `%`
+| humidity: `source` | object | optional | v1.0.6 | data source, by default, data taken from the attribute `humidity`
+| humidity: `source: entity` | string | optional | v1.0.6 | custom entity, if the attribute is not set, the state value
+| humidity: `source: attribute` | string | optional | v1.0.6 | if the entity parameter is not set, then the data will be obtained from the specified entity attribute, otherwise from the current entity attribute
 | **target_humidity** | object | optional | v1.0.1 | Target humidity
 | target_humidity: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:water-outline`
 | target_humidity: `hide` | boolean | optional | v1.0.1 | Hide indicator, default value `False`
@@ -147,7 +169,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | target_humidity: `min` | number | optional | v1.0.1 | minimum target humidity, default value `30` [see](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
 | target_humidity: `max` | number | optional | v1.0.1 | maximum target humidity, default value `80` [see](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
 | target_humidity: `step` | number | optional | v1.0.1 | slider step, default value `10`
-| scale | number | optional | v1.0.3 | UI scale modifier, default is 1.
+| scale | number | optional | v1.0.3 | UI scale modifier, default is `1`.
 | tap_action | [action object](#action-object-options) | true | v1.0.4 | Action on click/tap, [examples](#action-object-options-examples).
 
 #### Action object options
@@ -207,6 +229,7 @@ For use Entities card you need to add `group: on`
 #### Fan mode source 
 
 ```yaml
+# Abbreviated record, override name only
 - type: custom:mini-humidifier
   entity: fan.xiaomi_miio_device
   fan_mode_button:
@@ -215,6 +238,15 @@ For use Entities card you need to add `group: on`
       silent: Тихий
       medium: Средний
       high: Высокоий
+
+# Full record to override other parameters
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  fan_mode_button:
+    source:
+      auto:
+        name: Авто
+        order: 4
 ```
 
 
@@ -224,6 +256,17 @@ For use Entities card you need to add `group: on`
 <img src="https://user-images.githubusercontent.com/861063/79615043-7a50e780-810a-11ea-8716-f96f868be879.png" width="500px" alt="led button dropdown list" />
 
 ```yaml
+# Abbreviated record, override name only
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  led_button:
+    type: dropdown
+    source:
+      bright: 'Bright'
+      dim: 'Dim'
+      'off': 'Off'
+
+# Full record to override other parameters
 - type: custom:mini-humidifier
   entity: fan.xiaomi_miio_device
   led_button:
@@ -231,10 +274,13 @@ For use Entities card you need to add `group: on`
     source:
       bright:
         name: Bright
+        order: 2
       dim:
         name: Dim
+        order: 1
       'off':
         name: 'Off'
+        order: 0
 ```
 
 
@@ -316,6 +362,35 @@ For use Entities card you need to add `group: on`
     icon: mdi:power
 ```
 
+
+#### Temperature source examples
+
+
+```yaml
+# Display temperature using sensor
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  temperature:
+    source:
+      entity: sensor.temperature
+
+# Display temperature from custom attribute
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  temperature:
+    source:
+      attribute: use_time
+
+# Using entity and attribute, display the sensor battery level for example
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  temperature:
+    unit: '%'
+    icon: 'mdi:battery'
+    source:
+      entity: sensor.temperature
+      attribute: battery_level
+```
 
 
 ## Development
