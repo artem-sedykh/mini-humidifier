@@ -109,6 +109,13 @@ class MiniHumidifier extends LitElement {
         name: 'High',
         hide: false,
         order: 3,
+      },
+      {
+        id: 'strong',
+        value: 'Strong',
+        name: 'Strong',
+        hide: true,
+        order: 4,
       }];
 
     const data = Object.entries(fanModeConf.source);
@@ -249,6 +256,7 @@ class MiniHumidifier extends LitElement {
       unit: '°C',
       source: { enitity: undefined, attribute: undefined },
       order: 1,
+      fixed: 1,
       hide: false,
       ...config.temperature || {},
     };
@@ -257,6 +265,7 @@ class MiniHumidifier extends LitElement {
       unit: '%',
       source: { enitity: undefined, attribute: undefined },
       order: 2,
+      fixed: 1,
       hide: false,
       ...config.humidity || {},
     };

@@ -112,11 +112,13 @@ export default class HumidifierObject {
   }
 
   get temperature() {
-    return this.getValue(this.config.temperature.source, this.attr.temperature);
+    const value = this.getValue(this.config.temperature.source, this.attr.temperature);
+    return this.round(value, this.config.temperature.fixed);
   }
 
   get humidity() {
-    return this.getValue(this.config.humidity.source, this.attr.humidity);
+    const value = this.getValue(this.config.humidity.source, this.attr.humidity);
+    return this.round(value, this.config.humidity.fixed);
   }
 
   getValue(config, defaultValue) {

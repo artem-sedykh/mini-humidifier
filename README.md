@@ -25,7 +25,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.6
+    - url: /local/mini-humidifier-bundle.js?v=1.0.7
       type: module
   ```
 
@@ -43,7 +43,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.6
+    - url: /local/mini-humidifier-bundle.js?v=1.0.7
       type: module
   ```
 
@@ -56,7 +56,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.6
+    - url: /local/mini-humidifier-bundle.js?v=1.0.7
       type: module
   ```
 
@@ -107,6 +107,11 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | fan_mode_button: `source: high: name` | string | optional | v1.0.6 | Display name, default `High`
 | fan_mode_button: `source: high: order` | number | optional | v1.0.6 | Sort order, default `3`
 | fan_mode_button: `source: high: hide` | boolean | optional | v1.0.6 | Hide from dropdown list, default `False`
+| fan_mode_button: `source: strong` | object | optional | v1.0.7 | strong mode configuration, for `ZHIMI.HUMIDIFIER.V1`
+| fan_mode_button: `source: strong: value` | string | optional | v1.0.7 | value, default `High`
+| fan_mode_button: `source: strong: name` | string | optional | v1.0.7 | Display name, default `Strong`
+| fan_mode_button: `source: strong: order` | number | optional | v1.0.7 | Sort order, default `4`
+| fan_mode_button: `source: strong: hide` | boolean | optional | v1.0.7 | Hide from dropdown list, default `True`
 | **led_button** | object | optional | v1.0.1 | Button Illumination on/off
 | led_button: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:lightbulb-on-outline`
 | led_button: `hide` | boolean | optional | v1.0.1 | Hide button, default value `False`
@@ -151,6 +156,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | temperature: `hide` | boolean | optional | v1.0.1 | Hide indicator, default value `False`
 | temperature: `order` | number | optional | v1.0.1 | Indicator sort order, default value `1`
 | temperature: `unit` | string | optional | v1.0.1 | display unit, default `°C`
+| temperature: `fixed` | number | optional | v1.0.7 | Rounding the calculated values, default value `1`
 | temperature: `source` | object | optional | v1.0.6 | data source, by default, data taken from the attribute `temperature` [examples](#temperature-source-examples).
 | temperature: `source: entity` | string | optional | v1.0.6 | custom entity, if the attribute is not set, the state value
 | temperature: `source: attribute` | string | optional | v1.0.6 | if the entity parameter is not set, then the data will be obtained from the specified entity attribute, otherwise from the current entity attribute
@@ -159,6 +165,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | humidity: `hide` | boolean | optional | v1.0.1 | Hide indicator, default value `False`
 | humidity: `order` | number | optional | v1.0.1 | Indicator sort order, default value `2`
 | humidity: `unit` | string | optional | v1.0.1 | display unit, default `%`
+| humidity: `fixed` | number | optional | v1.0.7 | Rounding the calculated values, default value `1`
 | humidity: `source` | object | optional | v1.0.6 | data source, by default, data taken from the attribute `humidity`
 | humidity: `source: entity` | string | optional | v1.0.6 | custom entity, if the attribute is not set, the state value
 | humidity: `source: attribute` | string | optional | v1.0.6 | if the entity parameter is not set, then the data will be obtained from the specified entity attribute, otherwise from the current entity attribute
@@ -391,6 +398,30 @@ For use Entities card you need to add `group: on`
       entity: sensor.temperature
       attribute: battery_level
 ```
+
+
+#### ZHIMI.HUMIDIFIER.V1 configuration
+
+
+```yaml
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+# hide the indicator showing the amount of water
+  depth:
+    hide: on
+# hide dry button
+  dry_button:
+    hide: on
+  fan_mode_button:
+    source:
+# hide auto mode option
+      auto:
+        hide: on
+# show strong option
+      strong:
+        hide: off
+```
+
 
 
 ## Development
