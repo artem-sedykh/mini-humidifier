@@ -17,6 +17,8 @@ class MiniHumidifierFanSpeedMenu extends LitElement {
 
   get sources() {
     return this.humidifier.fanSpeedSource
+      .filter(s => !s.hide)
+      .sort((a, b) => ((a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0)))
       .map(s => ({ name: s.name, id: s.id, type: 'source' }));
   }
 
