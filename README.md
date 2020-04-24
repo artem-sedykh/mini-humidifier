@@ -148,7 +148,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | depth: `order` | number | optional | v1.0.1 | Indicator sort order, default value `0`
 | depth: `unit_type` | string | optional | v1.0.1 | Indicator type available Values: `liters` or `percent`, default `percent`
 | depth: `unit` | string | optional | v1.0.1 | display unit, default `%`
-| depth: `max_value` | number | optional | v1.0.1 | Depth attribute value with a full tank of humidifier, default `120`
+| depth: `max_value` | number | optional | v1.0.1 | Depth attribute value with a full tank of humidifier, default `125`
 | depth: `volume` | number | optional | v1.0.1 | Humidifier tank volume, needed to calculate values in liters, default `4` liters
 | depth: `fixed` | number | optional | v1.0.1 | Rounding the calculated values, default value `0`
 | **temperature** | object | optional | v1.0.1 | Information indicator, showing temperature

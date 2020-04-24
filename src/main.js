@@ -228,7 +228,7 @@ class MiniHumidifier extends LitElement {
 
     this.config.depth = {
       icon: ICON.DEPTH,
-      max_value: 120,
+      max_value: 125,
       unit_type: 'percent',
       fixed: 0,
       order: 0,
