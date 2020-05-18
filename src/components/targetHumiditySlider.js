@@ -21,7 +21,7 @@ class MiniHumidifierTargetHumiditySlider extends LitElement {
 
     return html`
         <div class="mh-target_humidifier__state">
-           <iron-icon class='state__value_icon' .icon=${this.config.target_humidity.icon}></iron-icon>
+           <ha-icon class='state__value_icon' .icon=${this.config.target_humidity.icon}></ha-icon>
            <span class='state__value ellipsis'>${sliderValue}</span>
            <span class='state__uom ellipsis'>${this.config.target_humidity.unit}</span>
         </div>
@@ -76,6 +76,7 @@ class MiniHumidifierTargetHumiditySlider extends LitElement {
      .state__value_icon {
         height: calc(var(--mh-unit) * .475);
         width: calc(var(--mh-unit) * .425);
+        --mdc-icon-size: calc(var(--mh-unit) * .425);
         color: var(--mh-icon-color);
      }
      .state__value {

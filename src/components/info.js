@@ -12,7 +12,7 @@ class MiniHumidifierInfo extends LitElement {
   renderDepth(context) {
     return html`
        <div class='state depth'>
-         <iron-icon class='state__value_icon' .icon=${context.config.depth.icon}></iron-icon>
+         <ha-icon class='state__value_icon' .icon=${context.config.depth.icon}></ha-icon>
          <span class='state__value'>${context.humidifier.depth}</span>
          <span class='state__uom'>${context.config.depth.unit}</span>
        </div>
@@ -22,7 +22,7 @@ class MiniHumidifierInfo extends LitElement {
   renderTemperature(context) {
     return html`
        <div class='state temperature'>
-         <iron-icon class='state__value_icon' .icon=${context.config.temperature.icon}></iron-icon>
+         <ha-icon class='state__value_icon' .icon=${context.config.temperature.icon}></ha-icon>
          <span class='state__value'>${context.humidifier.temperature}</span>
          <span class='state__uom'>${context.config.temperature.unit}</span>
        </div>
@@ -32,7 +32,7 @@ class MiniHumidifierInfo extends LitElement {
   renderHumidity(context) {
     return html`
        <div class='state humidity'>
-         <iron-icon class='state__value_icon' .icon=${context.config.humidity.icon}></iron-icon>
+         <ha-icon class='state__value_icon' .icon=${context.config.humidity.icon}></ha-icon>
          <span class='state__value'>${context.humidifier.humidity}</span>
          <span class='state__uom'>${context.config.humidity.unit}</span>
        </div>
@@ -82,6 +82,7 @@ class MiniHumidifierInfo extends LitElement {
         height: calc(var(--mh-unit) * .475);
         width: calc(var(--mh-unit) * .425);
         color: var(--mh-icon-color);
+        --mdc-icon-size: calc(var(--mh-unit) * .425);
      }
      .state__value {
         margin: 0 1px;

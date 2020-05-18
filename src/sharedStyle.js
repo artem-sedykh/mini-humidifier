@@ -13,17 +13,18 @@ const sharedStyle = css`
     width: calc(var(--mh-unit) * .6);
     height: calc(var(--mh-unit) * .6);
   }
-  paper-icon-button {
+  ha-icon-button {
     width: calc(var(--mh-unit));
     height: calc(var(--mh-unit));
+    --mdc-icon-button-size: calc(var(--mh-unit));
     color: var(--mh-button-color);
     transition: color .25s;
   }
-  paper-icon-button[color] {
+  ha-icon-button[color] {
     color: var(--mh-icon-active-color) !important;
     opacity: 1 !important;
   }
-  paper-icon-button[inactive] {
+  ha-icon-button[inactive] {
     opacity: .5;
   }
 `;

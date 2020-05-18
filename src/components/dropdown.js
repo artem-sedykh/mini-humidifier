@@ -40,11 +40,11 @@ class MiniHumidifierDropdown extends LitElement {
         .dynamicAlign=${true}
         ?disabled=${this.disabled}
         @click=${e => e.stopPropagation()}>
-        <paper-icon-button class='mh-dropdown__button icon' slot='dropdown-trigger'
+        <ha-icon-button class='mh-dropdown__button icon' slot='dropdown-trigger'
           .icon=${this.icon}
           ?disabled=${this.disabled}
           ?color=${this.active}>
-        </paper-icon-button>
+        </ha-icon-button>
         <paper-listbox slot="dropdown-content" .selected=${this.selectedId} @iron-select=${this.onChange}>
           ${this.items.map(item => html`
             <paper-item value=${item.id || item.name}>
@@ -75,7 +75,7 @@ class MiniHumidifierDropdown extends LitElement {
           padding: 0;
           display: block;
         }
-        paper-icon-button[disabled] {
+        ha-icon-button[disabled] {
           opacity: .25;
           pointer-events: none;
         }
@@ -86,10 +86,10 @@ class MiniHumidifierDropdown extends LitElement {
         paper-item > *:nth-child(2) {
           margin-left: 4px;
         }
-        paper-menu-button[focused] paper-icon-button {
+        paper-menu-button[focused] ha-icon-button {
           color: var(--mh-accent-color);
         }
-        paper-menu-button[focused] paper-icon-button[focused] {
+        paper-menu-button[focused] ha-icon-button[focused] {
           color: var(--mh-text-color);
           transform: rotate(0deg);
         }
