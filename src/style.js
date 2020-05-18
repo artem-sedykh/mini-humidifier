@@ -120,6 +120,7 @@ const style = css`
     width: calc(var(--mh-unit) * .375);
     height: calc(var(--mh-unit) * .375);
     min-width: calc(var(--mh-unit) * .375);
+    --mdc-icon-size: calc(var(--mh-unit) * .375);
   }
   .entity__secondary_info {
     margin-top: -2px;
@@ -160,6 +161,7 @@ const style = css`
   .toggle-button {
     width: calc(var(--mh-unit) * .75);
     height: calc(var(--mh-unit) * .75);
+    --mdc-icon-button-size: calc(var(--mh-unit) * .75);
     padding: 3px;
     color: var(--mh-icon-color);
   }

@@ -29,11 +29,11 @@ class MiniHumidifierPowerstrip extends LitElement {
     }
 
     return html`
-        <paper-icon-button class='power-button'
+        <ha-icon-button class='power-button'
           .icon=${this.config.power_button.icon}
           @click=${e => this.humidifier.togglePower(e)}
           ?color=${this.humidifier.isOn}>
-        </paper-icon-button>
+        </ha-icon-button>
     `;
   }
 

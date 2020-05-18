@@ -21,6 +21,13 @@ if (!customElements.get('ha-slider')) {
   );
 }
 
+if (!customElements.get('ha-icon-button')) {
+  customElements.define(
+    'ha-icon-button',
+    class extends customElements.get('paper-icon-button') {},
+  );
+}
+
 class MiniHumidifier extends LitElement {
   constructor() {
     super();
@@ -354,10 +361,10 @@ class MiniHumidifier extends LitElement {
 
     return html`
         <div class='mh-humidifier__toggle'>
-          <paper-icon-button class='toggle-button ${this.toggleButtonCls()}'
+          <ha-icon-button class='toggle-button ${this.toggleButtonCls()}'
           .icon=${this.config.toggle_button.icon}
           @click=${e => this.handleToggle(e)}>
-          </paper-icon-button>
+          </ha-icon-button>
         </div>
     `;
   }
@@ -399,7 +406,7 @@ class MiniHumidifier extends LitElement {
 
     return html`
       <div class='entity__secondary_info'>
-         <iron-icon class='entity__secondary_info_icon' .icon=${this.config.fan_mode_button.icon}></iron-icon>
+         <ha-icon class='entity__secondary_info_icon' .icon=${this.config.fan_mode_button.icon}></ha-icon>
          <span class='entity__secondary_info__name'>${this.secondaryInfoLabel}</span>
       </div>
     `;

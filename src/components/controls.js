@@ -32,11 +32,11 @@ class MiniHumidifierControls extends LitElement {
 
   renderDryButton(context) {
     return html`
-      <paper-icon-button class='dry-button'
+      <ha-icon-button class='dry-button'
         .icon=${context.config.dry_button.icon}
         @click=${e => context.toggleDry(e)}
         ?color=${context.humidifier.isDryOn}>
-      </paper-icon-button>
+      </ha-icon-button>
     `;
   }
 
@@ -61,31 +61,31 @@ class MiniHumidifierControls extends LitElement {
       `;
 
     return html`
-       <paper-icon-button 
+       <ha-icon-button 
           .icon=${context.config.led_button.icon}
           @click=${e => context.toggleLedBrightness(e)}
           ?color=${context.humidifier.isLedBrightnessOn}>
-        </paper-icon-button>
+        </ha-icon-button>
     `;
   }
 
   renderBuzzerButton(context) {
     return html`
-       <paper-icon-button class='buzzer-button'
+       <ha-icon-button class='buzzer-button'
           .icon=${context.config.buzzer_button.icon}
           @click=${e => context.toggleBuzzer(e)}
           ?color=${context.humidifier.isBuzzerOn}>
-        </paper-icon-button>
+        </ha-icon-button>
     `;
   }
 
   renderChildLockButton(context) {
     return html`
-       <paper-icon-button class='child-lock-button'
+       <ha-icon-button class='child-lock-button'
           .icon=${context.config.child_lock_button.icon}
           @click=${e => context.toggleChildLock(e)}
           ?color=${context.humidifier.isChildLockOn}>
-        </paper-icon-button>
+        </ha-icon-button>
     `;
   }
 
