@@ -25,7 +25,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.7
+    - url: /local/mini-humidifier-bundle.js?v=1.0.8
       type: module
   ```
 
@@ -43,7 +43,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.7
+    - url: /local/mini-humidifier-bundle.js?v=1.0.8
       type: module
   ```
 
@@ -56,7 +56,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.7
+    - url: /local/mini-humidifier-bundle.js?v=1.0.8
       type: module
   ```
 
@@ -144,6 +144,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | toggle_button: `default` | boolean | optional | v1.0.5 | Default toggle_button state, default value `off`, [example](#always-show-control-buttons).
 | **depth** | object | optional | v1.0.1 | Information indicator, showing how much water is left in the humidifier
 | depth: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:beaker-outline`
+| depth: `icon_template` | string | optional | v1.0.8 | Custom icon template, context values: `depth`(calculated value) and `raw`(raw depth value) [example](#icon-template-example)
 | depth: `hide` | boolean | optional | v1.0.1 | Hide indicator, default value `False`
 | depth: `order` | number | optional | v1.0.1 | Indicator sort order, default value `0`
 | depth: `unit_type` | string | optional | v1.0.1 | Indicator type available Values: `liters` or `percent`, default `percent`
@@ -153,6 +154,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | depth: `fixed` | number | optional | v1.0.1 | Rounding the calculated values, default value `0`
 | **temperature** | object | optional | v1.0.1 | Information indicator, showing temperature
 | temperature: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:thermometer-low`
+| temperature: `icon_template` | string | optional | v1.0.8 | Custom icon template, context value: `temperature`
 | temperature: `hide` | boolean | optional | v1.0.1 | Hide indicator, default value `False`
 | temperature: `order` | number | optional | v1.0.1 | Indicator sort order, default value `1`
 | temperature: `unit` | string | optional | v1.0.1 | display unit, default `°C`
@@ -162,6 +164,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | temperature: `source: attribute` | string | optional | v1.0.6 | if the entity parameter is not set, then the data will be obtained from the specified entity attribute, otherwise from the current entity attribute
 | **humidity** | object | optional | v1.0.1 | Information indicator, showing humidity
 | humidity: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:water-outline`
+| humidity: `icon_template` | string | optional | v1.0.8 | Custom icon template, context value: `humidity`
 | humidity: `hide` | boolean | optional | v1.0.1 | Hide indicator, default value `False`
 | humidity: `order` | number | optional | v1.0.1 | Indicator sort order, default value `2`
 | humidity: `unit` | string | optional | v1.0.1 | display unit, default `%`
@@ -171,6 +174,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | humidity: `source: attribute` | string | optional | v1.0.6 | if the entity parameter is not set, then the data will be obtained from the specified entity attribute, otherwise from the current entity attribute
 | **target_humidity** | object | optional | v1.0.1 | Target humidity
 | target_humidity: `icon` | string | optional | v1.0.1 | Custom icon, default value `mdi:water-outline`
+| target_humidity: `icon_template` | string | optional | v1.0.8 | Custom icon template, context value: `targetHumidity`
 | target_humidity: `hide` | boolean | optional | v1.0.1 | Hide indicator, default value `False`
 | target_humidity: `unit` | string | optional | v1.0.1 | display unit, default `%`
 | target_humidity: `min` | number | optional | v1.0.1 | minimum target humidity, default value `30` [see](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
@@ -422,6 +426,26 @@ For use Entities card you need to add `group: on`
         hide: off
 ```
 
+
+#### icon template example
+
+when changing `depth` value we change the icon
+```yaml
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  depth:
+    icon_template: >
+      {% if depth < 10 %}
+        <ha-icon class='state__value_icon' icon='mdi:tray-alert' style='color: #bd1c1c;'></ha-icon>
+      {% elseif depth < 45 %}
+        <ha-icon class='state__value_icon' icon='mdi:tray-minus'></ha-icon>
+      {% else %}
+        <ha-icon class='state__value_icon' icon='mdi:tray-full'></ha-icon>
+      {% endif %}
+```
+used plugin [jinja-js](https://github.com/sstur/jinja-js)
+
+<img src="https://user-images.githubusercontent.com/861063/82473688-a1685380-9ad2-11ea-9f7f-ba094f1e2d27.png"  alt="expample"/>
 
 
 ## Development

@@ -5,6 +5,7 @@ import HumidifierObject from './model';
 import style from './style';
 import sharedStyle from './sharedStyle';
 import handleClick from './utils/handleClick';
+import trimTo from './utils/trimTo';
 
 import './components/dropdown';
 import './components/powerstrip';
@@ -235,6 +236,7 @@ class MiniHumidifier extends LitElement {
 
     this.config.depth = {
       icon: ICON.DEPTH,
+      icon_template: '',
       max_value: 125,
       unit_type: 'percent',
       fixed: 0,
@@ -414,7 +416,8 @@ class MiniHumidifier extends LitElement {
 
   get secondaryInfoLabel() {
     const item = this.humidifier.fanSpeed;
-    return item ? item.name : '';
+
+    return trimTo(item ? item.name : '', 9);
   }
 
   computeIcon() {

@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit-element';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 
 class MiniHumidifierInfo extends LitElement {
   static get properties() {
@@ -10,9 +11,13 @@ class MiniHumidifierInfo extends LitElement {
   }
 
   renderDepth(context) {
+    const icon = context.config.depth.icon_template
+      ? unsafeHTML(context.humidifier.depthIcon)
+      : html`<ha-icon class='state__value_icon' .icon=${context.config.depth.icon}></ha-icon>`;
+
     return html`
        <div class='state depth'>
-         <ha-icon class='state__value_icon' .icon=${context.config.depth.icon}></ha-icon>
+         ${icon}
          <span class='state__value'>${context.humidifier.depth}</span>
          <span class='state__uom'>${context.config.depth.unit}</span>
        </div>
@@ -20,9 +25,13 @@ class MiniHumidifierInfo extends LitElement {
   }
 
   renderTemperature(context) {
+    const icon = context.config.temperature.icon_template
+      ? unsafeHTML(context.humidifier.temperatureIcon)
+      : html`<ha-icon class='state__value_icon' .icon=${context.config.temperature.icon}></ha-icon>`;
+
     return html`
        <div class='state temperature'>
-         <ha-icon class='state__value_icon' .icon=${context.config.temperature.icon}></ha-icon>
+         ${icon}
          <span class='state__value'>${context.humidifier.temperature}</span>
          <span class='state__uom'>${context.config.temperature.unit}</span>
        </div>
@@ -30,9 +39,12 @@ class MiniHumidifierInfo extends LitElement {
   }
 
   renderHumidity(context) {
+    const icon = context.config.humidity.icon_template
+      ? unsafeHTML(context.humidifier.humidityIcon)
+      : html`<ha-icon class='state__value_icon' .icon=${context.config.humidity.icon}></ha-icon>`;
     return html`
        <div class='state humidity'>
-         <ha-icon class='state__value_icon' .icon=${context.config.humidity.icon}></ha-icon>
+         ${icon}
          <span class='state__value'>${context.humidifier.humidity}</span>
          <span class='state__uom'>${context.config.humidity.unit}</span>
        </div>
@@ -66,8 +78,8 @@ class MiniHumidifierInfo extends LitElement {
         box-sizing: border-box;
         min-width: 0;
         overflow: hidden;
-        font-size: calc(var(--mh-unit) * .325);
-        line-height: calc(var(--mh-unit) / 2);
+        font-size: calc(var(--mh-unit) * .35);
+        line-height: calc(var(--mh-unit) * .35);
       }
      .mh-humidifier-state__container {
        display: flex;
@@ -80,13 +92,14 @@ class MiniHumidifierInfo extends LitElement {
      }
      .state__value_icon {
         height: calc(var(--mh-unit) * .475);
-        width: calc(var(--mh-unit) * .425);
+        width: calc(var(--mh-unit) * .5);
         color: var(--mh-icon-color);
         --mdc-icon-size: calc(var(--mh-unit) * .425);
      }
      .state__value {
         margin: 0 1px;
         font-weight: var(--mh-info-font-weight);
+        line-height: calc(var(--mh-unit) * .475);
      }
      .state__uom {
         font-size: calc(var(--mh-unit) * .275);
