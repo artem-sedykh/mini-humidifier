@@ -157,14 +157,13 @@ const style = css`
     justify-content: space-between;
   }
   .mh-humidifier__toggle {
-    margin-top: -7px;
+    margin-top: -5px;
     margin-right: 4px
   }
   .toggle-button {
     width: calc(var(--mh-unit) * .75);
     height: calc(var(--mh-unit) * .75);
     --mdc-icon-button-size: calc(var(--mh-unit) * .75);
-    padding: 3px;
     color: var(--mh-icon-color);
   }
   .toggle-button.open {
