@@ -429,21 +429,23 @@ For use Entities card you need to add `group: on`
 
 #### icon template example
 
-
+when changing `depth` value we change the icon
 ```yaml
 - type: custom:mini-humidifier
   entity: fan.xiaomi_miio_device
   depth:
     icon_template: >
       {% if depth < 10 %}
-        <ha-icon class='state__value_icon' icon='mdi:tray-alert' style='color: red;'></ha-icon>
+        <ha-icon class='state__value_icon' icon='mdi:tray-alert' style='color: #bd1c1c;'></ha-icon>
       {% elseif depth < 45 %}
         <ha-icon class='state__value_icon' icon='mdi:tray-minus'></ha-icon>
       {% else %}
         <ha-icon class='state__value_icon' icon='mdi:tray-full'></ha-icon>
       {% endif %}
 ```
+used plugin [jinja-js](https://github.com/sstur/jinja-js)
 
+<img src="https://user-images.githubusercontent.com/861063/82473688-a1685380-9ad2-11ea-9f7f-ba094f1e2d27.png"  alt="expample"/>
 
 
 ## Development
