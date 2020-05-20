@@ -1,3 +1,4 @@
+import jinja from 'jinja-js';
 
 export default class HumidifierObject {
   constructor(hass, config, entity) {
@@ -38,6 +39,14 @@ export default class HumidifierObject {
     return this.round(value, this.config.depth.fixed);
   }
 
+  get depthIcon() {
+    if (!this.config.depth.icon_template)
+      return '';
+
+    const context = { depth: this.depth, raw: this.attr.depth || 0 };
+    return jinja.render(this.config.depth.icon_template, context);
+  }
+
   get targetHumidity() {
     const humidity = this.attr.target_humidity || 0;
     return {
@@ -46,6 +55,14 @@ export default class HumidifierObject {
       step: this.config.target_humidity.step,
       value: humidity,
     };
+  }
+
+  get targetHumidityIcon() {
+    if (!this.config.target_humidity.icon_template)
+      return '';
+
+    const context = { targetHumidity: this.targetHumidity.value };
+    return jinja.render(this.config.target_humidity.icon_template, context);
   }
 
   get fanSpeed() {
@@ -116,9 +133,25 @@ export default class HumidifierObject {
     return this.round(value, this.config.temperature.fixed);
   }
 
+  get temperatureIcon() {
+    if (!this.config.temperature.icon_template)
+      return '';
+
+    const context = { temperature: this.temperature };
+    return jinja.render(this.config.temperature.icon_template, context);
+  }
+
   get humidity() {
     const value = this.getValue(this.config.humidity.source, this.attr.humidity);
     return this.round(value, this.config.humidity.fixed);
+  }
+
+  get humidityIcon() {
+    if (!this.config.humidity.icon_template)
+      return '';
+
+    const context = { humidity: this.humidity };
+    return jinja.render(this.config.humidity.icon_template, context);
   }
 
   getValue(config, defaultValue) {

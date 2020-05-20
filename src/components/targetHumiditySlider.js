@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit-element';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 
 class MiniHumidifierTargetHumiditySlider extends LitElement {
   static get properties() {
@@ -19,9 +20,13 @@ class MiniHumidifierTargetHumiditySlider extends LitElement {
     if (this.config.target_humidity.hide)
       return html`<div class="mh-target_humidifier__state"></div>`;
 
+    const icon = this.config.humidity.icon_template
+      ? unsafeHTML(this.humidifier.targetHumidityIcon)
+      : html`<ha-icon class='state__value_icon' .icon=${this.config.target_humidity.icon}></ha-icon>`;
+
     return html`
         <div class="mh-target_humidifier__state">
-           <ha-icon class='state__value_icon' .icon=${this.config.target_humidity.icon}></ha-icon>
+           ${icon}
            <span class='state__value ellipsis'>${sliderValue}</span>
            <span class='state__uom ellipsis'>${this.config.target_humidity.unit}</span>
         </div>
@@ -75,13 +80,14 @@ class MiniHumidifierTargetHumiditySlider extends LitElement {
      }
      .state__value_icon {
         height: calc(var(--mh-unit) * .475);
-        width: calc(var(--mh-unit) * .425);
-        --mdc-icon-size: calc(var(--mh-unit) * .425);
+        width: calc(var(--mh-unit) * .5);
         color: var(--mh-icon-color);
+        --mdc-icon-size: calc(var(--mh-unit) * .425);
      }
      .state__value {
-        font-size: calc(var(--mh-unit) * .325);
-        line-height: calc(var(--mh-unit) / 2);
+        font-size: calc(var(--mh-unit) * .35);
+        line-height: calc(var(--mh-unit) * .475);
+        margin: 0px 1px;
      }
      .state__uom {
         font-size: calc(var(--mh-unit) * .275);

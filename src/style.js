@@ -117,17 +117,18 @@ const style = css`
   }
   .entity__secondary_info_icon {
     color: var(--mh-icon-color);
-    width: calc(var(--mh-unit) * .375);
-    height: calc(var(--mh-unit) * .375);
-    min-width: calc(var(--mh-unit) * .375);
+    height: calc(var(--mh-unit) * .475);
+    width: calc(var(--mh-unit) * .5);
+    min-width: calc(var(--mh-unit) * .5);
     --mdc-icon-size: calc(var(--mh-unit) * .375);
   }
   .entity__secondary_info {
     margin-top: -2px;
   }
   .entity__secondary_info__name {
-    font-size: calc(var(--mh-unit) * 0.325);
+    font-size: calc(var(--mh-unit) * .35);
     font-weight: var(--mh-info-font-weight);
+    line-height: calc(var(--mh-unit) * .525);
   }
   mh-powerstrip {
     flex: 1;
@@ -151,6 +152,7 @@ const style = css`
   }
   .mh-humidifier__bottom {
     margin: 0;
+    margin-top: calc(var(--mh-unit) * .075);
     margin-left: calc(calc(calc(var(--mh-unit) / 5) + var(--mh-unit)) + var(--mh-entity-info-left-offset));
     justify-content: space-between;
   }
