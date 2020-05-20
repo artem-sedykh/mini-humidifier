@@ -2,9 +2,9 @@
 const ICON = {
   DEFAULT: 'mdi:air-filter',
   FAN: 'mdi:fan',
-  HUMIDITY: 'mdi:water-outline',
+  HUMIDITY: 'mdi:water',
   TEMPERATURE: 'mdi:thermometer-low',
-  DEPTH: 'mdi:beaker-outline',
+  DEPTH: 'mdi:tray-full',
   DRY: 'mdi:weather-sunny',
   BUZZER: 'mdi:bell-outline',
   LEDBUTTON: 'mdi:lightbulb-on-outline',
