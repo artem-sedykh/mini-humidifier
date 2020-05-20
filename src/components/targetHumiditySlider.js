@@ -82,7 +82,7 @@ class MiniHumidifierTargetHumiditySlider extends LitElement {
         height: calc(var(--mh-unit) * .475);
         width: calc(var(--mh-unit) * .5);
         color: var(--mh-icon-color);
-        --mdc-icon-size: calc(var(--mh-unit) * .425);
+        --mdc-icon-size: calc(var(--mh-unit) * 0.5);
      }
      .state__value {
         font-size: calc(var(--mh-unit) * .35);

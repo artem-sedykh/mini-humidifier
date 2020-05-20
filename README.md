@@ -25,7 +25,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.8
+    - url: /local/mini-humidifier-bundle.js?v=1.0.9
       type: module
   ```
 
@@ -43,7 +43,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.8
+    - url: /local/mini-humidifier-bundle.js?v=1.0.9
       type: module
   ```
 
@@ -56,7 +56,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=1.0.8
+    - url: /local/mini-humidifier-bundle.js?v=1.0.9
       type: module
   ```
 

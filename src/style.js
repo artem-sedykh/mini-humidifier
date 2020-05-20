@@ -120,7 +120,7 @@ const style = css`
     height: calc(var(--mh-unit) * .475);
     width: calc(var(--mh-unit) * .5);
     min-width: calc(var(--mh-unit) * .5);
-    --mdc-icon-size: calc(var(--mh-unit) * .375);
+    --mdc-icon-size: calc(var(--mh-unit) * 0.5);
   }
   .entity__secondary_info {
     margin-top: -2px;
@@ -128,7 +128,7 @@ const style = css`
   .entity__secondary_info__name {
     font-size: calc(var(--mh-unit) * .35);
     font-weight: var(--mh-info-font-weight);
-    line-height: calc(var(--mh-unit) * .525);
+    line-height: calc(var(--mh-unit) * .5);
   }
   mh-powerstrip {
     flex: 1;
