@@ -2,10 +2,9 @@ import { LitElement, html, css } from 'lit-element';
 
 import sharedStyle from '../sharedStyle';
 
-class MiniHumidifierDropdown extends LitElement {
+class MiniClimateDropdown extends LitElement {
   static get properties() {
     return {
-      humidifier: {},
       items: [],
       label: String,
       selected: String,
@@ -62,6 +61,7 @@ class MiniHumidifierDropdown extends LitElement {
         :host {
           position: relative;
           overflow: hidden;
+          --paper-item-min-height: 40px;
         }
         paper-menu-button
         :host([disabled]) {
@@ -80,8 +80,12 @@ class MiniHumidifierDropdown extends LitElement {
           pointer-events: none;
         }
         .mh-dropdown__button.icon {
-          height: var(--mh-unit);
           margin: 0;
+        }
+        ha-icon-button {
+          width: calc(var(--mh-dropdown-unit));
+          height: calc(var(--mh-dropdown-unit));
+          --mdc-icon-button-size: calc(var(--mh-dropdown-unit));
         }
         paper-item > *:nth-child(2) {
           margin-left: 4px;
@@ -98,4 +102,4 @@ class MiniHumidifierDropdown extends LitElement {
   }
 }
 
-customElements.define('mh-dropdown', MiniHumidifierDropdown);
+customElements.define('mh-dropdown', MiniClimateDropdown);

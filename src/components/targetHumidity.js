@@ -1,53 +1,53 @@
-import { LitElement, html, css } from 'lit-element';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
+import { css, html, LitElement } from 'lit-element';
 
-class MiniHumidifierTargetHumiditySlider extends LitElement {
+class TargetHumidity extends LitElement {
   static get properties() {
     return {
-      humidifier: {},
-      hass: {},
-      config: {},
+      targetHumidity: { type: Object },
+      sliderValue: { type: Number },
     };
   }
 
-  handleTargetHumidityChange(ev) {
-    const val = parseFloat(ev.target.value);
-    this.sliderValue = val;
-    this.humidifier.setTargetHumidity(ev, val);
+  constructor() {
+    super();
+    this.targetHumidity = {};
   }
 
-  renderTargetHumidifierState(sliderValue) {
-    if (this.config.target_humidity.hide)
-      return html`<div class="mh-target_humidifier__state"></div>`;
+  handleChange(e) {
+    e.stopPropagation();
+    this.sliderValue = e.target.value;
+    this.targetHumidity.handleChange(this.sliderValue);
+    return this.requestUpdate('sliderValue');
+  }
 
-    const icon = this.config.humidity.icon_template
-      ? unsafeHTML(this.humidifier.targetHumidityIcon)
-      : html`<ha-icon class='state__value_icon' .icon=${this.config.target_humidity.icon}></ha-icon>`;
+  renderState() {
+    if (this.targetHumidity.hide)
+      return html`<div class="mh-target_humidifier__state"></div>`;
 
     return html`
         <div class="mh-target_humidifier__state">
-           ${icon}
-           <span class='state__value ellipsis'>${sliderValue}</span>
-           <span class='state__uom ellipsis'>${this.config.target_humidity.unit}</span>
+           <ha-icon class='state__value_icon' .icon=${this.targetHumidity.icon}></ha-icon>
+           <span class='state__value ellipsis'>${this.sliderValue}</span>
+           <span class='state__uom ellipsis'>${this.targetHumidity.unit}</span>
         </div>
     `;
   }
 
   render() {
-    const sliderValue = this.sliderValue || this.humidifier.targetHumidity.value;
+    this.sliderValue = this.sliderValue || this.targetHumidity.value;
     return html`
       <div class='mh-target_humidifier --slider flex'>
         <ha-slider
-          @change=${this.handleTargetHumidityChange}
+          @change=${e => this.handleChange(e)}
           @click=${e => e.stopPropagation()}
-          min=${this.humidifier.targetHumidity.min}
-          max=${this.humidifier.targetHumidity.max}
-          step=${this.humidifier.targetHumidity.step}
-          value=${this.humidifier.targetHumidity.value}
+          min=${this.targetHumidity.min}
+          max=${this.targetHumidity.max}
+          step=${this.targetHumidity.step}
+          value=${this.targetHumidity.value}
           dir=${'ltr'}
           ignore-bar-touch pin>
         </ha-slider>
-        ${this.renderTargetHumidifierState(sliderValue)}
+        ${this.renderState(this.sliderValue)}
       </div>`;
   }
 
@@ -99,4 +99,4 @@ class MiniHumidifierTargetHumiditySlider extends LitElement {
   }
 }
 
-customElements.define('mp-target-humidity-slider', MiniHumidifierTargetHumiditySlider);
+customElements.define('mh-target-humidity', TargetHumidity);
