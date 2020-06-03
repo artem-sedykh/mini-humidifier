@@ -396,7 +396,7 @@ class MiniHumidifier extends LitElement {
       ...config.target_humidity || {},
     };
 
-    item.functions = {};
+    item.functions = { icon: {} };
     const context = { ...config.target_humidity || {} };
     context.call_service = (domain, service, options) => this.hass.callService(
       domain, service, options,
@@ -405,8 +405,6 @@ class MiniHumidifier extends LitElement {
     context.toggle_state = toggleState;
 
     if (typeof item.icon === 'object') {
-      item.functions.icon = {};
-
       if (item.icon.template)
         item.functions.icon.template = compileTemplate(item.icon.template, context);
 
@@ -508,7 +506,7 @@ class MiniHumidifier extends LitElement {
   }
 
   renderPower() {
-    if (this.humidifier.isUnavailable)
+    if (this.humidifier.isUnavailable || this.power.hide)
       return '';
 
     return html`

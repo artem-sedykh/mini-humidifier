@@ -1,4 +1,5 @@
 import { css, html, LitElement } from 'lit-element';
+import { styleMap } from 'lit-html/directives/style-map';
 import { ACTION_TIMEOUT } from '../const';
 
 class TargetHumidity extends LitElement {
@@ -40,7 +41,11 @@ class TargetHumidity extends LitElement {
 
     return html`
         <div class="mh-target_humidifier__state">
-           <ha-icon class='state__value_icon' .icon=${this.targetHumidity.icon}></ha-icon>
+           <ha-icon
+             class='state__value_icon'
+             style=${styleMap(this.targetHumidity.iconStyle)}
+             .icon=${this.targetHumidity.icon}>
+           </ha-icon>
            <span class='state__value ellipsis'>${this.sliderValue}</span>
            <span class='state__uom ellipsis'>${this.targetHumidity.unit}</span>
         </div>

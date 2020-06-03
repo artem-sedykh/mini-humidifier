@@ -25,7 +25,26 @@ export default class TargetHumidityObject {
   }
 
   get icon() {
-    return this.config.target_humidity.icon;
+    const config = this.config.target_humidity;
+
+    if (config.functions.icon.template) {
+      return config.functions.icon.template(this.value, this.entity,
+        this.humidifier.entity);
+    } else if (config.icon && typeof config.icon === 'string') {
+      return config.icon;
+    }
+
+    return '';
+  }
+
+  get iconStyle() {
+    const config = this.config.target_humidity;
+
+    if (config.functions.icon && config.functions.icon.style)
+      return config.functions.icon.style(this.value, this.entity,
+        this.humidifier.entity) || {};
+
+    return {};
   }
 
   get hide() {
