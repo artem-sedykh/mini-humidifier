@@ -18,6 +18,8 @@ import IndicatorObject from './models/indicator';
 import ButtonObject from './models/button';
 import TargetHumidityObject from './models/targetHumidity';
 import HumidifierObject from './models/humidifier';
+import getLabel from './utils/getLabel';
+import './initialize';
 
 if (!customElements.get('ha-slider')) {
   customElements.define(
@@ -41,6 +43,7 @@ class MiniHumidifier extends LitElement {
     this.indicators = {};
     this.buttons = {};
     this.targetHumidity = {};
+    this.power = {};
   }
 
   static get properties() {
@@ -74,6 +77,7 @@ class MiniHumidifier extends LitElement {
     this.updateIndicators(hass);
     this.updateButtons(hass);
     this.updateTargetHumidity(hass);
+    this.updatePower(hass);
   }
 
   get hass() {
@@ -128,6 +132,17 @@ class MiniHumidifier extends LitElement {
 
     if (changed)
       this.buttons = buttons;
+  }
+
+  updatePower(hass) {
+    const config = this.config.power;
+
+    const entityId = (config.state && config.state.entity) || this.humidifier.id;
+    const entity = hass.states[entityId];
+    const power = entity ? new ButtonObject(entity, config, this.humidifier) : {};
+
+    if (entity !== (this.power && this.power.entity))
+      this.power = power;
   }
 
   updateTargetHumidity(hass) {
@@ -221,9 +236,8 @@ class MiniHumidifier extends LitElement {
     return Object.entries(defaultIndicators).map(i => this.getIndicatorConfig(i[0], i[1], config));
   }
 
-  getButtonConfig(key, value, config) {
+  getButtonConfig(value, config) {
     const item = {
-      id: key,
       icon: 'mdi:radiobox-marked',
       type: 'button',
       toggle_action: undefined,
@@ -354,7 +368,8 @@ class MiniHumidifier extends LitElement {
     for (let i = 0; i < data.length; i += 1) {
       const key = data[i][0];
       const value = data[i][1];
-      const button = this.getButtonConfig(key, value, config);
+      const button = this.getButtonConfig(value, config);
+      button.id = key;
 
       if (!('order' in button))
         button.order = i + 1;
@@ -365,7 +380,7 @@ class MiniHumidifier extends LitElement {
     return buttons;
   }
 
-  getTargetTemperatureConfig(config) {
+  getTargetHumidityConfig(config) {
     const item = {
       icon: ICON.HUMIDITY,
       unit: '%',
@@ -406,6 +421,21 @@ class MiniHumidifier extends LitElement {
     return item;
   }
 
+  getPowerConfig(config) {
+    const item = {
+      icon: ICON.POWER,
+      type: 'button',
+      hide: false,
+      toggle_action: (state, entity) => {
+        const service = state === 'on' ? 'turn_off' : 'turn_on';
+        return this.call_service('fan', service, { entity_id: entity.entity_id });
+      },
+      ...config.power || {},
+    };
+
+    return this.getButtonConfig(item, config);
+  }
+
   setConfig(config) {
     if (!config.entity || config.entity.split('.')[0] !== 'fan')
       throw new Error('Specify an entity from within the fan domain.');
@@ -421,15 +451,18 @@ class MiniHumidifier extends LitElement {
       },
       ...config,
     };
-    this.config.power = {
-      icon: ICON.POWER,
-      type: 'button',
+    this.config.toggle = {
+      icon: ICON.TOGGLE,
       hide: false,
-      ...config.power || {},
+      default: false,
+      ...config.toggle || {},
     };
-    this.config.target_humidity = this.getTargetTemperatureConfig(config);
+    this.config.power = this.getPowerConfig(config);
+    this.config.target_humidity = this.getTargetHumidityConfig(config);
     this.config.indicators = this.getIndicatorsConfig(config);
     this.config.buttons = this.getButtonsConfig(config);
+
+    this.toggle = this.config.toggle.default;
   }
 
   render() {
@@ -449,12 +482,9 @@ class MiniHumidifier extends LitElement {
                   ${this.renderEntityName()}
                 </div>
                 <div class="ctl-wrap">
+                  ${this.renderUnavailable()}
                   ${this.renderTargetHumidifier()}
-                  <mh-power
-                    .humidifier=${this.humidifier}
-                    .hass=${this.hass}
-                    .config=${this.config}>
-                  </mh-power>
+                  ${this.renderPower()}
                 </div>
               </div>
               ${this.renderBottomPanel()}
@@ -475,6 +505,29 @@ class MiniHumidifier extends LitElement {
         .targetHumidity=${this.targetHumidity}>
       </mh-target-humidity>
     `;
+  }
+
+  renderPower() {
+    if (this.humidifier.isUnavailable)
+      return '';
+
+    return html`
+        <mh-power
+          .power=${this.power}
+          .hass=${this.hass}>
+        </mh-power>
+    `;
+  }
+
+  renderUnavailable() {
+    if (!this.humidifier.isUnavailable)
+      return '';
+
+    return html`
+        <span class="label unavailable ellipsis">        
+          ${getLabel(this.hass, 'state.default.unavailable', 'Unavailable')}
+        </span>
+      `;
   }
 
   handlePopup(e) {
@@ -524,10 +577,13 @@ class MiniHumidifier extends LitElement {
     if (this.config.buttons.filter(b => !b.hide).length === 0)
       return '';
 
+    if (this.config.toggle.hide)
+      return '';
+
     const cls = this.toggle ? 'open' : '';
     return html`
         <ha-icon-button class='toggle-button ${cls}'
-          .icon=${ICON.TOGGLE}
+          .icon=${this.config.toggle.icon}
           @click=${e => this.handleToggle(e)}>
         </ha-icon-button>
     `;

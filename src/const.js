@@ -14,3 +14,7 @@ const ICON = {
 };
 
 export default ICON;
+export const STATES_OFF = ['closed', 'locked', 'off'];
+export const UNAVAILABLE = 'unavailable';
+export const UNKNOWN = 'unknown';
+export const UNAVAILABLE_STATES = [UNAVAILABLE, UNKNOWN];

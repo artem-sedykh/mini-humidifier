@@ -1,3 +1,5 @@
+import { STATES_OFF, UNAVAILABLE_STATES } from '../const';
+
 export default class HumidifierObject {
   constructor(hass, config, entity) {
     this.hass = hass || {};
@@ -30,7 +32,9 @@ export default class HumidifierObject {
   }
 
   get isOff() {
-    return this.state === 'off';
+    return this.entity !== undefined
+      && STATES_OFF.includes(this.state)
+      && !UNAVAILABLE_STATES.includes(this.state);
   }
 
   get isActive() {
@@ -38,25 +42,12 @@ export default class HumidifierObject {
   }
 
   get isUnavailable() {
-    return this.state === 'unavailable';
+    return this.entity === undefined || UNAVAILABLE_STATES.includes(this.state);
   }
 
   get isOn() {
-    return this.state === 'on';
-  }
-
-  togglePower(e) {
-    if (this.isOn)
-      return this.callService(e, 'turn_off', undefined, 'fan');
-
-    return this.callService(e, 'turn_on', undefined, 'fan');
-  }
-
-  callService(e, service, inOptions, domain) {
-    e.stopPropagation();
-    return this.hass.callService(domain, service, {
-      entity_id: this.config.entity,
-      ...inOptions,
-    });
+    return this.entity !== undefined
+      && !STATES_OFF.includes(this.state)
+      && !UNAVAILABLE_STATES.includes(this.state);
   }
 }

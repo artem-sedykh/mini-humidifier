@@ -1,33 +1,37 @@
 import { css, html, LitElement } from 'lit-element';
+import { styleMap } from 'lit-html/directives/style-map';
 import sharedStyle from '../sharedStyle';
 
 class PowerButton extends LitElement {
   static get properties() {
     return {
-      humidifier: { type: Object },
-      config: { type: Object },
+      power: { type: Object },
       hass: { type: Object },
     };
   }
 
   render() {
-    if (this.config.power.hide)
+    if (this.power.hide)
       return '';
 
-    if (this.config.power.type === 'toggle') {
+    if (this.power.type === 'toggle') {
       return html`
           <ha-entity-toggle
-            .stateObj=${this.humidifier.entity}
+            style=${styleMap(this.power.style)}
+            .stateObj=${this.power.entity}
             .hass=${this.hass}>
           </ha-entity-toggle>
       `;
     }
 
     return html`
-        <ha-icon-button class='power-button'
-          .icon=${this.config.power.icon}
-          @click=${e => this.humidifier.togglePower(e)}
-          ?color=${this.humidifier.isOn}>
+       <ha-icon-button
+         style=${styleMap(this.power.style)}
+         class='power-button'
+         .icon=${this.power.icon}
+         @click=${e => this.power.handleToggle(e)}
+         ?disabled="${this.power.disabled}"
+         ?color=${this.power.isOn}>
         </ha-icon-button>
     `;
   }

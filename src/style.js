@@ -164,8 +164,19 @@ const style = css`
     max-width: calc(var(--mh-unit) * 3);
     cursor: pointer;
   }
-  
-  
+  .--unavailable .ctl-wrap {
+    margin-left: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+  .--unavailable .ctl-wrap .unavailable {
+    margin-left: auto;
+    margin-right: 0;
+  }
+  .--unavailable .entity__info {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
   .mh-toggle_content {
     margin-top: calc(var(--mh-unit) * .05);
   }

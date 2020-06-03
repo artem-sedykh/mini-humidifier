@@ -1,4 +1,5 @@
 import { getEntityValue } from '../utils/utils';
+import { STATES_OFF, UNAVAILABLE_STATES } from '../const';
 
 export default class ButtonObject {
   constructor(entity, config, humidifier) {
@@ -52,15 +53,19 @@ export default class ButtonObject {
   }
 
   get isUnavailable() {
-    return !this.state || this.state.toString().trim().toUpperCase() === 'UNAVAILABLE';
+    return this.entity === undefined || UNAVAILABLE_STATES.includes(this.state);
   }
 
   get isOff() {
-    return this.state && this.state.toString().trim().toUpperCase() === 'OFF';
+    return this.entity !== undefined
+      && STATES_OFF.includes(this.state)
+      && !UNAVAILABLE_STATES.includes(this.state);
   }
 
   get isOn() {
-    return (this.isOff === false && this.isUnavailable === false) || false;
+    return this.entity !== undefined
+      && !STATES_OFF.includes(this.state)
+      && !UNAVAILABLE_STATES.includes(this.state);
   }
 
   get disabled() {
