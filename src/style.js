@@ -74,19 +74,18 @@ const style = css`
   }
   .mh-humidifier__core {
     position: relative;
+    padding-right: 5px;
   }
   .entity__info {
-    justify-content: center;
-    display: flex;
-    flex-direction: column;
-    margin-left: var(--mh-entity-info-left-offset);
-    position: relative;
-    overflow: hidden;
     user-select: none;
-    max-width: 130px;
+    margin-left: var(--mh-entity-info-left-offset);
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
   }
   .entity__icon {
     color: var(--mh-icon-color);
+    white-space: nowrap;
   }
   .entity__icon[color] {
     color: var(--mh-icon-active-color);
@@ -117,7 +116,7 @@ const style = css`
   }
   .entity__secondary_info_icon {
     color: var(--mh-icon-color);
-    height: calc(var(--mh-unit) * .475);
+    height: calc(var(--mh-unit) * .5);
     width: calc(var(--mh-unit) * .5);
     min-width: calc(var(--mh-unit) * .5);
     --mdc-icon-size: calc(var(--mh-unit) * 0.5);
@@ -129,14 +128,8 @@ const style = css`
     font-size: calc(var(--mh-unit) * .35);
     font-weight: var(--mh-info-font-weight);
     line-height: calc(var(--mh-unit) * .5);
-  }
-  mh-powerstrip {
-    flex: 1;
-    justify-content: flex-end;
-    margin-right: 0;
-    margin-left: auto;
-    width: auto;
-    min-width: 0;
+    vertical-align: middle;
+    display: inline-block;
   }
   ha-card.--initial .mh-humidifier {
     padding: 16px 16px 5px 16px;
@@ -147,35 +140,62 @@ const style = css`
   ha-card.--group .mh-humidifier {
     padding: 2px 0 0 0;
   }  
-  mp-humidifier-state {
-    margin: 0;
-  }
-  .mh-humidifier__bottom {
-    margin: 0;
-    margin-top: calc(var(--mh-unit) * .075);
-    margin-left: calc(calc(calc(var(--mh-unit) / 5) + var(--mh-unit)) + var(--mh-entity-info-left-offset));
-    justify-content: space-between;
-  }
-  .mh-humidifier__toggle {
-    margin-top: -7px;
-    margin-right: 4px
-  }
   .toggle-button {
     width: calc(var(--mh-unit) * .75);
     height: calc(var(--mh-unit) * .75);
     --mdc-icon-button-size: calc(var(--mh-unit) * .75);
-    padding: 3px;
     color: var(--mh-icon-color);
+    margin-left: auto;
+    margin-top: calc(var(--mh-unit) * -.125);
   }
   .toggle-button.open {
      transform: rotate(180deg);
      color: var(--mh-active-color)
   }
-  mp-target-humidity-slider {
-    flex: 1;
+  .wrap {
+    display: flex;
+    flex-direction: row;
   }
-  mp-humidifier-state {
-    flex: 1;
+  .bottom {
+    margin-top: calc(var(--mh-unit) * .075);
+  }
+  .entity__info__name_wrap {
+    margin-right: 0;
+    max-width: calc(var(--mh-unit) * 2.25);
+    cursor: pointer;
+  }
+  .--unavailable .ctl-wrap {
+    margin-left: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+  .--unavailable .ctl-wrap .unavailable {
+    margin-left: auto;
+    margin-right: 0;
+  }
+  .--unavailable .entity__info {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+  .mh-toggle_content {
+    margin-top: calc(var(--mh-unit) * .05);
+  }
+  mh-buttons {
+    width: 100%;
+    justify-content: space-evenly;
+    display: flex;
+  }
+  .ctl-wrap {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+  }
+  mh-power {
+    margin-left: auto;
+    min-width: calc(var(--mh-unit) * .875);
+  }
+  mh-target-humidity {
+    width: 100%;
   }
 `;
 
