@@ -196,13 +196,13 @@ class MiniHumidifier extends LitElement {
         order: 0,
         max_value: 125,
         volume: 4,
-        unit_type: 'liters',
+        type: 'liters',
         hide: false,
         source: {
           attribute: 'depth',
           mapper: (val) => {
             const value = (100 * (val || 0)) / this.max_value;
-            return this.unit_type === 'liters' ? (value * this.volume) / 100 : value;
+            return this.type === 'liters' ? (value * this.volume) / 100 : value;
           },
         },
       },
@@ -320,7 +320,7 @@ class MiniHumidifier extends LitElement {
         type: 'dropdown',
         hide: false,
         order: 2,
-        active: state => (state !== 2),
+        active: state => (state !== 2 && state !== '2'),
         source: { 0: 'Bright', 1: 'Dim', 2: 'Off' },
         state: { attribute: 'led_brightness' },
         change_action: (selected, entity) => {

@@ -1,105 +1,98 @@
 import { LitElement, html, css } from 'lit-element';
-
+import { styleMap } from 'lit-html/directives/style-map';
 import sharedStyle from '../sharedStyle';
+import './dropdown-base';
+import './button';
+import { ACTION_TIMEOUT } from '../const';
 
-class MiniClimateDropdown extends LitElement {
+class HumidifierDropDown extends LitElement {
+  constructor() {
+    super();
+    this.dropdown = {};
+    this.timer = undefined;
+    this._state = undefined;
+  }
+
   static get properties() {
     return {
-      items: [],
-      label: String,
-      selected: String,
-      icon: String,
-      active: Boolean,
-      disabled: Boolean,
+      dropdown: { type: Object },
     };
   }
 
-  get selectedId() {
-    return this.items.map(item => item.id).indexOf(this.selected);
-  }
+  handleChange(e) {
+    e.stopPropagation();
 
-  onChange(e) {
-    const id = e.target.selected;
-    if (id !== this.selectedId && this.items[id]) {
-      this.dispatchEvent(new CustomEvent('change', {
-        detail: this.items[id],
-      }));
-      e.target.selected = -1;
-    }
+    const selected = e.detail.id;
+    const { entity } = this.dropdown;
+    this._state = selected;
+
+    this.dropdown.handleChange(selected);
+
+    if (this.timer)
+      clearTimeout(this.timer);
+
+    this.timer = setTimeout(async () => {
+      if (this.dropdown.entity === entity) {
+        this._state = (this.dropdown.state !== undefined && this.dropdown.state !== null)
+          ? this.dropdown.state.toString() : '';
+
+        return this.requestUpdate('_state');
+      }
+    }, ACTION_TIMEOUT);
+
+    return this.requestUpdate('_state');
   }
 
   render() {
     return html`
-      <paper-menu-button
-        class='mh-dropdown'
-        noink no-animations
-        .horizontalAlign=${'right'}
-        .verticalAlign=${'top'}
-        .verticalOffset=${44}
-        .dynamicAlign=${true}
-        ?disabled=${this.disabled}
-        @click=${e => e.stopPropagation()}>
-        <ha-icon-button class='mh-dropdown__button icon' slot='dropdown-trigger'
-          .icon=${this.icon}
-          ?disabled=${this.disabled}
-          ?color=${this.active}>
-        </ha-icon-button>
-        <paper-listbox slot="dropdown-content" .selected=${this.selectedId} @iron-select=${this.onChange}>
-          ${this.items.map(item => html`
-            <paper-item value=${item.id || item.name}>
-              <span class='mh-dropdown__item__label'>${item.name}</span>
-            </paper-item>`)}
-        </paper-listbox>
-      </paper-menu-button>
+      <mh-dropdown-base
+        style=${styleMap(this.dropdown.style)}
+        @change=${e => this.handleChange(e)}
+        .items=${this.dropdown.source}
+        .icon=${this.dropdown.icon}
+        .disabled="${this.dropdown.disabled}"
+        .active=${this.dropdown.isActive(this._state)}
+        .selected=${this._state}>
+      </mh-dropdown-base>
     `;
+  }
+
+  updated(changedProps) {
+    if (changedProps.has('dropdown')) {
+      this._state = (this.dropdown.state !== undefined && this.dropdown.state !== null)
+        ? this.dropdown.state.toString() : '';
+
+      if (this.timer)
+        clearTimeout(this.timer);
+
+      return this.requestUpdate('_state');
+    }
   }
 
   static get styles() {
     return [
       sharedStyle,
       css`
-        :host {
-          position: relative;
-          overflow: hidden;
-          --paper-item-min-height: 40px;
-        }
-        paper-menu-button
-        :host([disabled]) {
-          opacity: .25;
-          pointer-events: none;
-        }
-        :host([faded]) {
-          opacity: .75;
-        }
-        .mh-dropdown {
-          padding: 0;
-          display: block;
-        }
-        ha-icon-button[disabled] {
-          opacity: .25;
-          pointer-events: none;
-        }
-        .mh-dropdown__button.icon {
-          margin: 0;
-        }
-        ha-icon-button {
-          width: calc(var(--mh-dropdown-unit));
-          height: calc(var(--mh-dropdown-unit));
-          --mdc-icon-button-size: calc(var(--mh-dropdown-unit));
-        }
-        paper-item > *:nth-child(2) {
-          margin-left: 4px;
-        }
-        paper-menu-button[focused] ha-icon-button {
-          color: var(--mh-accent-color);
-        }
-        paper-menu-button[focused] ha-icon-button[focused] {
-          color: var(--mh-text-color);
-          transform: rotate(0deg);
-        }
-      `,
-    ];
+      :host {
+        position: relative;
+        box-sizing: border-box;
+        margin: 0;
+        overflow: hidden;
+        transition: background .5s;
+        --paper-item-min-height: var(--mh-unit);
+        --mh-dropdown-unit: var(--mh-unit);
+      }
+      :host([color]) {
+        background: var(--mh-active-color);
+        transition: background .25s;
+        opacity: 1;
+      }
+      :host([disabled]) {
+        opacity: .25;
+        pointer-events: none;
+      }
+    `];
   }
 }
 
-customElements.define('mh-dropdown', MiniClimateDropdown);
+customElements.define('mh-dropdown', HumidifierDropDown);

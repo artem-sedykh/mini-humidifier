@@ -43,9 +43,9 @@ export default class ButtonObject {
     return state;
   }
 
-  get isActive() {
+  isActive(state) {
     if (this.config.functions.active) {
-      return this.config.functions.active(this.state, this.entity,
+      return this.config.functions.active(state, this.entity,
         this.humidifier.entity);
     }
 
@@ -113,9 +113,7 @@ export default class ButtonObject {
     return this.source.find(s => s.id === state.toString());
   }
 
-  handleToggle(e) {
-    e.stopPropagation();
-
+  handleToggle() {
     if (this.config.functions.toggle_action) {
       return this.config.functions.toggle_action(this.state, this.entity,
         this.humidifier.entity);
@@ -124,11 +122,7 @@ export default class ButtonObject {
     return this.humidifier.callService('switch', 'toggle', { entity_id: this.entity.entity_id });
   }
 
-  handleChange(e) {
-    e.stopPropagation();
-
-    const selected = e.detail.id;
-
+  handleChange(selected) {
     if (this.config.functions.change_action) {
       return this.config.functions.change_action(selected, this.state, this.entity,
         this.humidifier.entity);

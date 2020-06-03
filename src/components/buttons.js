@@ -1,5 +1,4 @@
 import { LitElement, html, css } from 'lit-element';
-import { styleMap } from 'lit-html/directives/style-map';
 import sharedStyle from '../sharedStyle';
 import './dropdown';
 import './button';
@@ -17,25 +16,16 @@ class HumidifierButtons extends LitElement {
 
     return html`
        <mh-button
+         class="custom-button"
          .button=${button}>
         </mh-button>
     `;
   }
 
   renderDropdown(dropdown) {
-    let selected = '';
-    if (dropdown.state !== null && dropdown.state !== undefined)
-      selected = dropdown.state.toString();
-
     return html`
       <mh-dropdown
-        style=${styleMap(dropdown.style)}
-        @change=${e => dropdown.handleChange(e)}
-        .items=${dropdown.source}
-        .icon=${dropdown.icon}
-        .disabled="${dropdown.disabled}"
-        .active=${dropdown.isActive}
-        .selected=${selected}>
+        .dropdown=${dropdown}>
       </mh-dropdown>
     `;
   }

@@ -50,4 +50,8 @@ export default class HumidifierObject {
       && !STATES_OFF.includes(this.state)
       && !UNAVAILABLE_STATES.includes(this.state);
   }
+
+  callService(domain, service, options) {
+    return this.hass.callService(domain, service, options);
+  }
 }

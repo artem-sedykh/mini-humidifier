@@ -8,7 +8,6 @@ class HumidifierButton extends LitElement {
     super();
     this._isOn = false;
     this.timer = undefined;
-    this.cls = undefined;
   }
 
   static get properties() {
@@ -19,10 +18,11 @@ class HumidifierButton extends LitElement {
   }
 
   handleToggle(e) {
+    e.stopPropagation();
     const { entity } = this.button;
 
     this._isOn = !this._isOn;
-    this.button.handleToggle(e);
+    this.button.handleToggle();
 
     if (this.timer)
       clearTimeout(this.timer);
@@ -41,7 +41,6 @@ class HumidifierButton extends LitElement {
     return html`
        <ha-icon-button
          style=${styleMap(this.button.style)}
-         ?class='${this.cls}'
          .icon=${this.button.icon}
          @click=${e => this.handleToggle(e)}
          ?disabled="${this.button.disabled || this.button.isUnavailable}"

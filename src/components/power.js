@@ -33,6 +33,7 @@ class PowerButton extends LitElement {
 
     return html`
        <mh-button
+         class="power-button"
          .button=${this.power}>
         </mh-button>
     `;

@@ -160,8 +160,8 @@ const style = css`
     margin-top: calc(var(--mh-unit) * .075);
   }
   .entity__info__name_wrap {
-    margin-right: calc(var(--mh-unit) * .5);
-    max-width: calc(var(--mh-unit) * 3);
+    margin-right: 0;
+    max-width: calc(var(--mh-unit) * 2.25);
     cursor: pointer;
   }
   .--unavailable .ctl-wrap {
@@ -192,6 +192,7 @@ const style = css`
   }
   mh-power {
     margin-left: auto;
+    min-width: calc(var(--mh-unit) * .875);
   }
   mh-target-humidity {
     width: 100%;
