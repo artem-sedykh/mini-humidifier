@@ -2,19 +2,14 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/artem-sedykh/mini-humidifier)
 [![buymeacoffee_badge](https://img.shields.io/badge/Donate-buymeacoffe-ff813f?style=flat)](https://www.buymeacoffee.com/anavrin72)
 
-A minimalistic yet customizable humidifier(Xiaomi Smartmi Zhimi Air Humidifier) card for [Home Assistant](https://github.com/home-assistant/home-assistant) Lovelace UI.
+A minimalistic yet customizable humidifier card for [Home Assistant](https://github.com/home-assistant/home-assistant) Lovelace UI.
 
 Tested on [zhimi.humidifier.cb1](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
 
-![Preview Image](https://user-images.githubusercontent.com/861063/79672681-0f241580-81dd-11ea-913c-234c287a6264.png)
+> Attention! The config version *v1.0.8* **very differs** from version >= *v2.0.1*  
+> Read the [README](https://github.com/artem-sedykh/mini-humidifier)  before upgrading
 
-## Examples
-
-#### Basic card
-<img src="https://user-images.githubusercontent.com/861063/79479945-27960380-8016-11ea-8110-5460566feb0b.png" width="500px" alt="Basic card example" />
-
-#### Entity card
-<img src="https://user-images.githubusercontent.com/861063/79480184-75127080-8016-11ea-8b0b-c102bf26a5d6.png" width="500px" alt="Entities card example" /> 
+![Preview Image](https://user-images.githubusercontent.com/861063/83651482-3171c700-a5c2-11ea-8053-f66472a8d539.png)
 
 
-**Check the repository for card options & example configurations**  
+**Check the [repository](https://github.com/artem-sedykh/mini-humidifier) for card options & example configurations**  

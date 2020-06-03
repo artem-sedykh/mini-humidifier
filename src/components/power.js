@@ -6,7 +6,6 @@ class PowerButton extends LitElement {
   constructor() {
     super();
     this._isOn = false;
-    this.timer = undefined;
   }
 
   static get properties() {
