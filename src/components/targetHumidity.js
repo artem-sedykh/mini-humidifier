@@ -1,4 +1,5 @@
 import { css, html, LitElement } from 'lit-element';
+import { ACTION_TIMEOUT } from '../const';
 
 class TargetHumidity extends LitElement {
   static get properties() {
@@ -11,12 +12,25 @@ class TargetHumidity extends LitElement {
   constructor() {
     super();
     this.targetHumidity = {};
+    this.timer = undefined;
   }
 
   handleChange(e) {
     e.stopPropagation();
     this.sliderValue = e.target.value;
+    const { entity } = this.targetHumidity;
     this.targetHumidity.handleChange(this.sliderValue);
+
+    if (this.timer)
+      clearTimeout(this.timer);
+
+    this.timer = setTimeout(async () => {
+      if (this.targetHumidity.entity === entity) {
+        this.sliderValue = this.targetHumidity.value;
+        return this.requestUpdate('sliderValue');
+      }
+    }, ACTION_TIMEOUT);
+
     return this.requestUpdate('sliderValue');
   }
 
@@ -34,7 +48,6 @@ class TargetHumidity extends LitElement {
   }
 
   render() {
-    this.sliderValue = this.sliderValue || this.targetHumidity.value;
     return html`
       <div class='mh-target_humidifier --slider flex'>
         <ha-slider
@@ -43,12 +56,18 @@ class TargetHumidity extends LitElement {
           min=${this.targetHumidity.min}
           max=${this.targetHumidity.max}
           step=${this.targetHumidity.step}
-          value=${this.targetHumidity.value}
+          value=${this.sliderValue}
           dir=${'ltr'}
           ignore-bar-touch pin>
         </ha-slider>
         ${this.renderState(this.sliderValue)}
       </div>`;
+  }
+
+  updated(changedProps) {
+    if (changedProps.has('targetHumidity')) {
+      this.sliderValue = this.targetHumidity.value;
+    }
   }
 
   static get styles() {

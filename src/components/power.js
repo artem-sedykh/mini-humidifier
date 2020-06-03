@@ -1,8 +1,15 @@
 import { css, html, LitElement } from 'lit-element';
 import { styleMap } from 'lit-html/directives/style-map';
 import sharedStyle from '../sharedStyle';
+import './button';
 
 class PowerButton extends LitElement {
+  constructor() {
+    super();
+    this._isOn = false;
+    this.timer = undefined;
+  }
+
   static get properties() {
     return {
       power: { type: Object },
@@ -25,15 +32,16 @@ class PowerButton extends LitElement {
     }
 
     return html`
-       <ha-icon-button
-         style=${styleMap(this.power.style)}
-         class='power-button'
-         .icon=${this.power.icon}
-         @click=${e => this.power.handleToggle(e)}
-         ?disabled="${this.power.disabled}"
-         ?color=${this.power.isOn}>
-        </ha-icon-button>
+       <mh-button
+         .button=${this.power}>
+        </mh-button>
     `;
+  }
+
+  updated(changedProps) {
+    if (changedProps.has('power')) {
+      this._isOn = this.power.isOn;
+    }
   }
 
   static get styles() {

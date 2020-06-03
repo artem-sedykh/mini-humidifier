@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit-element';
 import { styleMap } from 'lit-html/directives/style-map';
 import sharedStyle from '../sharedStyle';
 import './dropdown';
+import './button';
 
 class HumidifierButtons extends LitElement {
   static get properties() {
@@ -15,14 +16,9 @@ class HumidifierButtons extends LitElement {
       return '';
 
     return html`
-       <ha-icon-button
-         style=${styleMap(button.style)}
-         class='custom-button'
-         .icon=${button.icon}
-         @click=${e => button.handleToggle(e)}
-         ?disabled="${button.disabled}"
-         ?color=${button.isOn}>
-        </ha-icon-button>
+       <mh-button
+         .button=${button}>
+        </mh-button>
     `;
   }
 
