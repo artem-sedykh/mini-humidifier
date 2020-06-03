@@ -388,7 +388,7 @@ class MiniHumidifier extends LitElement {
       max: 80,
       step: 10,
       hide: false,
-      source: { entity: undefined, attribute: 'target_humidity' },
+      state: { entity: undefined, attribute: 'target_humidity' },
       change_action: (selected, entity) => {
         const options = { entity_id: entity.entity_id, humidity: selected };
         return this.call_service('xiaomi_miio', 'fan_set_target_humidity', options);
@@ -414,6 +414,10 @@ class MiniHumidifier extends LitElement {
 
     if (item.change_action) {
       item.functions.change_action = compileTemplate(item.change_action, context);
+    }
+
+    if (item.state && item.state.mapper) {
+      item.functions.state = { mapper: compileTemplate(item.state.mapper, context) };
     }
 
     return item;

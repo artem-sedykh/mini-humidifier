@@ -20,8 +20,20 @@ export default class TargetHumidityObject {
     return this.config.target_humidity.step;
   }
 
+  get originalValue() {
+    return getEntityValue(this.entity, this.config.target_humidity.state);
+  }
+
   get value() {
-    return getEntityValue(this.entity, this.config.target_humidity.source);
+    const value = this.originalValue;
+
+    if (this.config.target_humidity.functions.state
+      && this.config.target_humidity.functions.state.mapper) {
+      return this.config.target_humidity.functions.state.mapper(value, this.entity,
+        this.humidifier.entity);
+    }
+
+    return value;
   }
 
   get icon() {
@@ -55,21 +67,9 @@ export default class TargetHumidityObject {
     return this.config.target_humidity.unit;
   }
 
-  get state() {
-    let state = this.value;
-
-    if (this.config.target_humidity.functions.state
-      && this.config.target_humidity.functions.state.mapper) {
-      state = this.config.target_humidity.functions.state.mapper(state, this.entity,
-        this.humidifier.entity);
-    }
-
-    return state;
-  }
-
   handleChange(value) {
     if (this.config.target_humidity.functions.change_action) {
-      return this.config.target_humidity.functions.change_action(value, this.state,
+      return this.config.target_humidity.functions.change_action(value, this.value,
         this.entity, this.humidifier.entity);
     }
 
