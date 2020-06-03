@@ -196,7 +196,7 @@ class MiniHumidifier extends LitElement {
         order: 0,
         max_value: 125,
         volume: 4,
-        type: 'liters',
+        type: 'percent',
         hide: false,
         source: {
           attribute: 'depth',
@@ -220,7 +220,7 @@ class MiniHumidifier extends LitElement {
         round: 1,
         order: 2,
         hide: false,
-        source: { attribute: 'temperature' },
+        source: { attribute: 'humidity' },
       },
     };
 
@@ -389,7 +389,7 @@ class MiniHumidifier extends LitElement {
       step: 10,
       hide: false,
       state: { entity: undefined, attribute: 'target_humidity' },
-      change_action: (selected, entity) => {
+      change_action: (selected, _, entity) => {
         const options = { entity_id: entity.entity_id, humidity: selected };
         return this.call_service('xiaomi_miio', 'fan_set_target_humidity', options);
       },

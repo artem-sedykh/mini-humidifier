@@ -1,5 +1,4 @@
 import { css, html, LitElement } from 'lit-element';
-import { styleMap } from 'lit-html/directives/style-map';
 import sharedStyle from '../sharedStyle';
 import './button';
 
@@ -24,7 +23,6 @@ class PowerButton extends LitElement {
     if (this.power.type === 'toggle') {
       return html`
           <ha-entity-toggle
-            style=${styleMap(this.power.style)}
             .stateObj=${this.power.entity}
             .hass=${this.hass}>
           </ha-entity-toggle>

@@ -33,6 +33,10 @@ export default class IndicatorObject {
     return this.config.unit;
   }
 
+  get hide() {
+    return this.config.hide;
+  }
+
   get icon() {
     if (this.config.functions.icon && this.config.functions.icon.template) {
       return this.config.functions.icon.template(this.value, this.entity,
