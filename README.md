@@ -593,7 +593,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
           }
 ```
 
-> You can override the default indicators or even hide them and add your own
+> You can override the default buttons or even hide them and add your own
 > Let's add translations for the mode and led buttons and hide the child_lock button
 
 ```yaml
