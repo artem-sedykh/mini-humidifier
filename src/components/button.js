@@ -13,7 +13,6 @@ class HumidifierButton extends LitElement {
   static get properties() {
     return {
       button: { type: Object },
-      cls: { type: String },
     };
   }
 

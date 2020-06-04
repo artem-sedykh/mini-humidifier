@@ -233,7 +233,9 @@ class MiniHumidifier extends LitElement {
       defaultIndicators[key] = { ...defaultIndicators[key] || {}, ...value };
     }
 
-    return Object.entries(defaultIndicators).map(i => this.getIndicatorConfig(i[0], i[1], config));
+    return Object.entries(defaultIndicators)
+      .map(i => this.getIndicatorConfig(i[0], i[1], config))
+      .filter(i => !i.hide);
   }
 
   getButtonConfig(value, config) {
