@@ -518,7 +518,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
         # the dry attribute is of type boolean, for the button the state should be on/off/closed/locked/unavailable/unknown 
         mapper: "(state) => (state ? 'on' : 'off')"
         # service is used xiaomi_miio.fan_set_dry_on or xiaomi_miio.fan_set_dry_off
-        toggle_action: >
+      toggle_action: >
           (state, entity) => {
             const service = state === 'on' ? 'fan_set_dry_off' : 'fan_set_dry_on';
             const options = { entity_id: entity.entity_id };
@@ -572,7 +572,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
         attribute: buzzer
         mapper: "(state) => (state ? 'on' : 'off')"
         # using service: xiaomi_miio.fan_set_buzzer_on and xiaomi_miio.fan_set_buzzer_off
-        toggle_action: >
+      toggle_action: >
           (state, entity) => {
             const service = state === 'on' ? 'fan_set_buzzer_off' : 'fan_set_buzzer_on';
             const options = { entity_id: entity.entity_id };
@@ -585,7 +585,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
         attribute: child_lock
         mapper: "(state) => (state ? 'on' : 'off')"
         # using service: xiaomi_miio.fan_set_child_lock_on and xiaomi_miio.fan_set_child_lock_off
-        toggle_action: >
+      toggle_action: >
           (state, entity) => {
             const service = state === 'on' ? 'fan_set_child_lock_off' : 'fan_set_child_lock_on';
             const options = { entity_id: entity.entity_id };
@@ -633,7 +633,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
       state:
         attribute: led_brightness
         mapper: "(value) => (this.on_states.includes(value) ? 'on' : 'off')"
-        toggle_action: >
+      toggle_action: >
           (state, entity) => {
             const value = state === 'on' ? this.off_value : this.on_value;
             const options = { entity_id: entity.entity_id, brightness: value };
