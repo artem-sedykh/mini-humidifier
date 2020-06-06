@@ -11,7 +11,6 @@ class PowerButton extends LitElement {
   static get properties() {
     return {
       power: { type: Object },
-      hass: { type: Object },
     };
   }
 
@@ -23,7 +22,7 @@ class PowerButton extends LitElement {
       return html`
           <ha-entity-toggle
             .stateObj=${this.power.entity}
-            .hass=${this.hass}>
+            .hass=${this.power.hass}>
           </ha-entity-toggle>
       `;
     }

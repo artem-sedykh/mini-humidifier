@@ -1,7 +1,6 @@
 import { LitElement, html, css } from 'lit-element';
 import { styleMap } from 'lit-html/directives/style-map';
 import sharedStyle from '../sharedStyle';
-import { ACTION_TIMEOUT } from '../const';
 
 class HumidifierButton extends LitElement {
   constructor() {
@@ -13,7 +12,6 @@ class HumidifierButton extends LitElement {
   static get properties() {
     return {
       button: { type: Object },
-      cls: { type: String },
     };
   }
 
@@ -32,7 +30,7 @@ class HumidifierButton extends LitElement {
         this._isOn = this.button.isOn;
         return this.requestUpdate('_isOn');
       }
-    }, ACTION_TIMEOUT);
+    }, this.button.actionTimeout);
 
     return this.requestUpdate('_isOn');
   }

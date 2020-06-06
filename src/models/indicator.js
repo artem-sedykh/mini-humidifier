@@ -1,14 +1,19 @@
 import { getEntityValue, round } from '../utils/utils';
 
 export default class IndicatorObject {
-  constructor(entity, config, humidifier) {
+  constructor(entity, config, humidifier, hass) {
     this.config = config || {};
     this.entity = entity || {};
     this.humidifier = humidifier || {};
+    this._hass = hass;
   }
 
   get id() {
     return this.config.id;
+  }
+
+  get hass() {
+    return this._hass;
   }
 
   get originalValue() {

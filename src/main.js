@@ -20,6 +20,7 @@ import TargetHumidityObject from './models/targetHumidity';
 import HumidifierObject from './models/humidifier';
 import getLabel from './utils/getLabel';
 import './initialize';
+import HUMIDIFIERS from './humidifiers';
 
 if (!customElements.get('ha-slider')) {
   customElements.define(
@@ -48,7 +49,6 @@ class MiniHumidifier extends LitElement {
 
   static get properties() {
     return {
-      _hass: {},
       config: {},
       entity: {},
       humidifier: {},
@@ -67,17 +67,19 @@ class MiniHumidifier extends LitElement {
   set hass(hass) {
     if (!hass) return;
     const entity = hass.states[this.config.entity];
+    let force = false;
     this._hass = hass;
 
     if (entity && this.entity !== entity) {
       this.entity = entity;
       this.humidifier = new HumidifierObject(hass, this.config, entity);
+      force = true;
     }
 
-    this.updateIndicators(hass);
-    this.updateButtons(hass);
-    this.updateTargetHumidity(hass);
-    this.updatePower(hass);
+    this.updateIndicators(force);
+    this.updateButtons(force);
+    this.updateTargetHumidity(force);
+    this.updatePower(force);
   }
 
   get hass() {
@@ -88,7 +90,7 @@ class MiniHumidifier extends LitElement {
     return this.config.name || this.humidifier.name;
   }
 
-  updateIndicators(hass) {
+  updateIndicators(force) {
     const indicators = { };
     let changed = false;
 
@@ -97,21 +99,21 @@ class MiniHumidifier extends LitElement {
       const { id } = config;
 
       const entityId = config.source.entity || this.humidifier.id;
-      const entity = hass.states[entityId];
+      const entity = this.hass.states[entityId];
 
       if (entity) {
-        indicators[id] = new IndicatorObject(entity, config, this.humidifier);
+        indicators[id] = new IndicatorObject(entity, config, this.humidifier, this.hass);
       }
 
       if (entity !== (this.indicators[id] && this.indicators[id].entity))
         changed = true;
     }
 
-    if (changed)
+    if (changed || force)
       this.indicators = indicators;
   }
 
-  updateButtons(hass) {
+  updateButtons(force) {
     const buttons = { };
     let changed = false;
 
@@ -120,39 +122,38 @@ class MiniHumidifier extends LitElement {
       const { id } = config;
 
       const entityId = (config.state && config.state.entity) || this.humidifier.id;
-      const entity = hass.states[entityId];
+      const entity = this.hass.states[entityId];
 
       if (entity) {
-        buttons[id] = new ButtonObject(entity, config, this.humidifier);
+        buttons[id] = new ButtonObject(entity, config, this.humidifier, this.hass);
       }
 
       if (entity !== (this.buttons[id] && this.buttons[id].entity))
         changed = true;
     }
 
-    if (changed)
+    if (changed || force)
       this.buttons = buttons;
   }
 
-  updatePower(hass) {
+  updatePower(force) {
     const config = this.config.power;
-
     const entityId = (config.state && config.state.entity) || this.humidifier.id;
-    const entity = hass.states[entityId];
-    const power = entity ? new ButtonObject(entity, config, this.humidifier) : {};
+    const entity = this.hass.states[entityId];
+    const power = entity ? new ButtonObject(entity, config, this.humidifier, this.hass) : {};
 
-    if (entity !== (this.power && this.power.entity))
+    if ((entity !== (this.power && this.power.entity)) || force)
       this.power = power;
   }
 
-  updateTargetHumidity(hass) {
+  updateTargetHumidity(force) {
     const entityId = (this.config.target_humidity.source
       && this.config.target_humidity.source.entity) || this.config.entity;
 
-    const entity = hass.states[entityId];
-    const targetHumidity = new TargetHumidityObject(hass, entity, this.config, this.humidifier);
+    const entity = this.hass.states[entityId];
+    const targetHumidity = new TargetHumidityObject(entity, this.config, this.humidifier);
 
-    if (this.targetHumidity.value !== targetHumidity.value) {
+    if (this.targetHumidity.value !== targetHumidity.value || force) {
       this.targetHumidity = targetHumidity;
     }
   }
@@ -164,6 +165,11 @@ class MiniHumidifier extends LitElement {
       icon: '',
       ...value,
     };
+
+    if (typeof value.tap_action === 'string')
+      item.tap_action = { action: value.tap_action };
+    else
+      item.tap_action = { action: 'none', ...item.tap_action || {} };
 
     item.functions = item.functions || {};
     const context = { ...value };
@@ -187,42 +193,8 @@ class MiniHumidifier extends LitElement {
     return item;
   }
 
-  getIndicatorsConfig(config) {
-    const defaultIndicators = {
-      depth: {
-        icon: ICON.DEPTH,
-        unit: '%',
-        round: 0,
-        order: 0,
-        max_value: 125,
-        volume: 4,
-        type: 'percent',
-        hide: false,
-        source: {
-          attribute: 'depth',
-          mapper: (val) => {
-            const value = (100 * (val || 0)) / this.max_value;
-            return this.type === 'liters' ? (value * this.volume) / 100 : value;
-          },
-        },
-      },
-      temperature: {
-        icon: ICON.TEMPERATURE,
-        unit: '°C',
-        round: 1,
-        order: 1,
-        hide: false,
-        source: { attribute: 'temperature' },
-      },
-      humidity: {
-        icon: ICON.HUMIDITY,
-        unit: '%',
-        round: 1,
-        order: 2,
-        hide: false,
-        source: { attribute: 'humidity' },
-      },
-    };
+  getIndicatorsConfig(config, indicatorsConfig) {
+    const defaultIndicators = indicatorsConfig || {};
 
     const data = Object.entries(config.indicators || {});
 
@@ -233,7 +205,9 @@ class MiniHumidifier extends LitElement {
       defaultIndicators[key] = { ...defaultIndicators[key] || {}, ...value };
     }
 
-    return Object.entries(defaultIndicators).map(i => this.getIndicatorConfig(i[0], i[1], config));
+    return Object.entries(defaultIndicators)
+      .map(i => this.getIndicatorConfig(i[0], i[1], config))
+      .filter(i => !i.hide);
   }
 
   getButtonConfig(value, config) {
@@ -283,74 +257,8 @@ class MiniHumidifier extends LitElement {
     return item;
   }
 
-  getButtonsConfig(config) {
-    const defaultButtonsConfig = {
-      dry: {
-        icon: ICON.DRY,
-        hide: false,
-        order: 0,
-        state: { attribute: 'dry', mapper: state => (state ? 'on' : 'off') },
-        toggle_action: (state, entity) => {
-          const service = state === 'on' ? 'fan_set_dry_off' : 'fan_set_dry_on';
-          const options = { entity_id: entity.entity_id };
-          return this.call_service('xiaomi_miio', service, options);
-        },
-      },
-      mode: {
-        icon: ICON.FAN,
-        type: 'dropdown',
-        hide: false,
-        order: 1,
-        source: {
-          auto: 'auto',
-          silent: 'silent',
-          medium: 'medium',
-          high: 'high',
-        },
-        active: (state, entity) => (entity.state !== 'off'),
-        disabled: (state, entity) => (entity.attributes.depth === 0),
-        state: { attribute: 'mode' },
-        change_action: (selected, entity) => {
-          const options = { entity_id: entity.entity_id, speed: selected };
-          return this.call_service('fan', 'set_speed', options);
-        },
-      },
-      led: {
-        icon: ICON.LEDBUTTON,
-        type: 'dropdown',
-        hide: false,
-        order: 2,
-        active: state => (state !== 2 && state !== '2'),
-        source: { 0: 'Bright', 1: 'Dim', 2: 'Off' },
-        state: { attribute: 'led_brightness' },
-        change_action: (selected, entity) => {
-          const options = { entity_id: entity.entity_id, brightness: selected };
-          return this.call_service('xiaomi_miio', 'fan_set_led_brightness', options);
-        },
-      },
-      buzzer: {
-        icon: ICON.BUZZER,
-        hide: false,
-        order: 3,
-        state: { attribute: 'buzzer', mapper: state => (state ? 'on' : 'off') },
-        toggle_action: (state, entity) => {
-          const service = state === 'on' ? 'fan_set_buzzer_off' : 'fan_set_buzzer_on';
-          const options = { entity_id: entity.entity_id };
-          return this.call_service('xiaomi_miio', service, options);
-        },
-      },
-      child_lock: {
-        icon: ICON.CHILDLOCK,
-        hide: false,
-        order: 4,
-        state: { attribute: 'child_lock', mapper: state => (state ? 'on' : 'off') },
-        toggle_action: (state, entity) => {
-          const service = state === 'on' ? 'fan_set_child_lock_off' : 'fan_set_child_lock_on';
-          const options = { entity_id: entity.entity_id };
-          return this.call_service('xiaomi_miio', service, options);
-        },
-      },
-    };
+  getButtonsConfig(config, buttonsConfig) {
+    const defaultButtonsConfig = { ...buttonsConfig || {} };
 
     const entries = Object.entries(config.buttons || {});
 
@@ -380,19 +288,9 @@ class MiniHumidifier extends LitElement {
     return buttons;
   }
 
-  getTargetHumidityConfig(config) {
+  getTargetHumidityConfig(config, targetHumidityConfig) {
     const item = {
-      icon: ICON.HUMIDITY,
-      unit: '%',
-      min: 30,
-      max: 80,
-      step: 10,
-      hide: false,
-      state: { entity: undefined, attribute: 'target_humidity' },
-      change_action: (selected, _, entity) => {
-        const options = { entity_id: entity.entity_id, humidity: selected };
-        return this.call_service('xiaomi_miio', 'fan_set_target_humidity', options);
-      },
+      ...targetHumidityConfig || {},
       ...config.target_humidity || {},
     };
 
@@ -423,26 +321,22 @@ class MiniHumidifier extends LitElement {
     return item;
   }
 
-  getPowerConfig(config) {
-    const item = {
-      icon: ICON.POWER,
-      type: 'button',
-      hide: false,
-      toggle_action: (state, entity) => {
-        const service = state === 'on' ? 'turn_off' : 'turn_on';
-        return this.call_service('fan', service, { entity_id: entity.entity_id });
-      },
-      ...config.power || {},
-    };
-
-    return this.getButtonConfig(item, config);
+  getPowerConfig(config, powerConfig) {
+    return this.getButtonConfig({ ...powerConfig || {}, ...config.power || {} }, config);
   }
 
   setConfig(config) {
     if (!config.entity || config.entity.split('.')[0] !== 'fan')
       throw new Error('Specify an entity from within the fan domain.');
 
+    let modelConfiguration = HUMIDIFIERS.default;
+    const { model } = config;
+
+    if (model in HUMIDIFIERS)
+      modelConfiguration = HUMIDIFIERS[model];
+
     this.config = {
+      model: 'zhimi.humidifier.cb1',
       tap_action: {
         action: 'more-info',
         navigation_path: '',
@@ -459,10 +353,21 @@ class MiniHumidifier extends LitElement {
       default: false,
       ...config.toggle || {},
     };
-    this.config.power = this.getPowerConfig(config);
-    this.config.target_humidity = this.getTargetHumidityConfig(config);
-    this.config.indicators = this.getIndicatorsConfig(config);
-    this.config.buttons = this.getButtonsConfig(config);
+
+    this.config.power = this.getPowerConfig(config, modelConfiguration.power);
+    this.config.target_humidity = this.getTargetHumidityConfig(config,
+      modelConfiguration.target_humidity);
+    this.config.indicators = this.getIndicatorsConfig(config, modelConfiguration.indicators);
+    this.config.buttons = this.getButtonsConfig(config, modelConfiguration.buttons);
+
+    if (typeof config.secondary_info === 'string') {
+      this.config.secondary_info = { type: config.secondary_info };
+    } else {
+      this.config.secondary_info = {
+        type: 'mode',
+        ...config.secondary_info || {},
+      };
+    }
 
     this.toggle = this.config.toggle.default;
   }
@@ -515,8 +420,7 @@ class MiniHumidifier extends LitElement {
 
     return html`
         <mh-power
-          .power=${this.power}
-          .hass=${this.hass}>
+          .power=${this.power}>
         </mh-power>
     `;
   }
@@ -534,7 +438,7 @@ class MiniHumidifier extends LitElement {
 
   handlePopup(e) {
     e.stopPropagation();
-    handleClick(this, this._hass, this.config, this.config.tap_action, this.humidifier.id);
+    handleClick(this, this.hass, this.config.tap_action, this.humidifier.id);
   }
 
   handleToggle(e) {
@@ -569,7 +473,9 @@ class MiniHumidifier extends LitElement {
 
     return html`
         <div class='bottom flex'>
-          <mh-indicators .indicators=${this.indicators}></mh-indicators>
+          <mh-indicators
+            .indicators=${this.indicators}>
+          </mh-indicators>
           ${this.renderToggleButton()}
         </div>
     `;
@@ -604,13 +510,25 @@ class MiniHumidifier extends LitElement {
     if (this.humidifier.isUnavailable)
       return '';
 
+    if (this.config.secondary_info.type === 'last-changed') {
+      return html`
+      <div class='entity__secondary_info ellipsis'>
+            <ha-relative-time
+              .hass=${this.hass}
+              .datetime=${this.entity.last_changed}>
+            </ha-relative-time>
+      </div>
+    `;
+    }
+
     const { mode } = this.buttons;
     const { selected } = mode;
     const label = selected ? selected.name : mode.state;
+    const icon = this.config.secondary_info.icon ? this.config.secondary_info.icon : mode.icon;
 
     return html`
       <div class='entity__secondary_info ellipsis'>
-         <ha-icon class='entity__secondary_info_icon' .icon=${mode.icon}></ha-icon>
+         <ha-icon class='entity__secondary_info_icon' .icon=${icon}></ha-icon>
          <span class='entity__secondary_info__name'>${label}</span>
       </div>
     `;

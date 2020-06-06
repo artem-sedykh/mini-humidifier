@@ -27,7 +27,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=2.0.1
+    - url: /local/mini-humidifier-bundle.js?v=2.1.1
       type: module
   ```
 
@@ -38,14 +38,14 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 2. Grab `mini-humidifier-bundle.js`
 
   ```console
-  $ wget https://github.com/artem-sedykh/mini-humidifier/releases/download/v2.0.1/mini-humidifier-bundle.js
+  $ wget https://github.com/artem-sedykh/mini-humidifier/releases/download/v2.1.1/mini-humidifier-bundle.js
   ```
 
 3. Add a reference to `mini-humidifier-bundle.js` inside your `ui-lovelace.yaml`.
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=2.0.1
+    - url: /local/mini-humidifier-bundle.js?v=2.1.1
       type: module
   ```
 
@@ -58,7 +58,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=2.0.1
+    - url: /local/mini-humidifier-bundle.js?v=2.1.1
       type: module
   ```
 
@@ -80,10 +80,14 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | toggle: `icon` | string | optional | v2.0.1 | Custom icon, default value `mdi:dots-horizontal`
 | toggle: `hide` | boolean | optional | v2.0.1 | Hide button, default value `False`
 | toggle: `default` | boolean | optional | v2.0.1 | Default toggle button state, default value `off`, [example](#toggle-button).
+| **secondary_info** | object | optional | v2.1.1 | secondary_info config. [secondary info examples](#secondary-info)
+| secondary_info: `type` | string | optional | v2.1.1 | available types: `last-changed, mode`
+| secondary_info: `icon` | string | optional | v2.1.1 | icon for type: `mode`
 | **power** | object | optional | v2.0.1 | Power button, [example](#power-button).
 | power: `type` | string | optional | v2.0.1 | `toggle` or `button`, default `button`
 | power: `icon` | string | optional | v2.0.1 | Specify a custom icon from any of the available mdi icons, default `mdi:power`
 | power: `hide` | boolean | optional | v2.0.1 | Hide power button, default value `False`
+| power: `action_timeout` | number | optional | v2.1.1 | `ms` default value `3500`
 | power: `disabled` | function | optional | v2.0.1 | button disabled calculation function, default unset
 | power: `style` | function | optional | v2.0.1 | function for getting custom styles, default unset
 | power: `state` | object | optional | v2.0.1 | config to get power button state.
@@ -100,6 +104,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | target_humidity: `unit` | string | optional | v1.0.1 | display unit, default `%`
 | target_humidity: `min` | number | optional | v1.0.1 | minimum target humidity, default value `30`
 | target_humidity: `max` | number | optional | v1.0.1 | maximum target humidity, default value `80`
+| target_humidity: `action_timeout` | number | optional | v2.1.1 | `ms` default value `3500`
 | target_humidity: `step` | number | optional | v1.0.1 | slider step, default value `10`
 | target_humidity: `state` | object | optional | v2.0.1 | configuration to ge target_humidity value
 | target_humidity: `state:entity` | object | optional | v2.0.1 | target_humidity entity_id, default current entity
@@ -114,14 +119,16 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | indicators: `name:unit` | string | optional | v2.0.1 | display unit.
 | indicators: `name:round` | number | optional | v2.0.1 | rounding number value.
 | indicators: `name:hide` | boolean | optional | v2.0.1 | hide indicator, default `false`
-| indicators: `name:source` | number | optional | v2.0.1 | data source.
+| indicators: `name:tap_action` | [action object](#action-object-options) | true | v1.1.0 | Action on click/tap.
+| indicators: `name:source` | object | optional | v2.0.1 | data source.
 | indicators: `name:source:entity` | string | optional | v2.0.1 | indicator entity_id
 | indicators: `name:source:attribute` | string | optional | v2.0.1 | entity attribute
 | indicators: `name:source:mapper` | function | optional | v2.0.1 | value processing function
 | **buttons** | object | optional | v2.0.1 | any buttons, [example](#buttons).
 | buttons: `name` | object | optional | v2.0.1 | the name of your button see examples
 | buttons: `name:icon` | string | optional | v2.0.1 | Specify a custom icon from any of the available mdi icons.
-| buttons: `name:type` | string | optional | v2.0.1 | `dropdown` or `button` default `bitton`
+| buttons: `name:type` | string | optional | v2.0.1 | `dropdown` or `button` default `button`
+| buttons: `name:action_timeout` | number | optional | v2.1.1 | `ms` default value `3500`
 | buttons: `name:order` | number | optional | v2.0.1 | sort order
 | buttons: `name:state` | object | optional | v2.0.1 | config to get button state.
 | buttons: `name:hide` | object | optional | v2.0.1 | hide button, default `false`
@@ -137,6 +144,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | buttons: `name:toggle_action` | function | optional | v2.0.1 | for type `button`
 | buttons: `name:style` | function | optional | v2.0.1 | styles
 | scale | number | optional | v1.0.3 | UI scale modifier, default is `1`.
+| model | string | optional | v2.1.1 | default configuration for a specific humidifier model, default value `zhimi.humidifier.cb1`
 | tap_action | [action object](#action-object-options) | true | v1.0.4 | Action on click/tap, [examples](#action-object-options-examples).
 
 #### Action object options
@@ -164,6 +172,24 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 | mini-humidifier-background-opacity | 1 | Opacity of the background
 | mini-humidifier-scale | 1 | Scale of the card
 
+
+### Adding the default configuration for the new model
+
+ 1. Read the documentation
+ 2. See an example for [zhimi.humidifier.cb1](https://github.com/artem-sedykh/mini-humidifier/blob/master/src/configurations/zhimi_humidifier_cb1.js)
+ 3. Create a pull request or issue with the configuration file.
+ 
+ #### Available default configurations
+ `zhimi_humidifier_cb1`
+ 
+> Using the default configuration for a specific model
+
+```yaml
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  # zhimi.humidifier.cb1 default value may be omitted, added for example.
+  model: 'zhimi.humidifier.cb1' 
+```
 
 #### target humidity
 
@@ -227,7 +253,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
     max: 80
     step: 10
     change_action: >
-      (selected, _, entity) => {
+      (selected, state, entity) => {
         const options = { entity_id: entity.entity_id, humidity: selected };
         return this.call_service('xiaomi_miio', 'fan_set_target_humidity', options);
       }
@@ -518,7 +544,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
         # the dry attribute is of type boolean, for the button the state should be on/off/closed/locked/unavailable/unknown 
         mapper: "(state) => (state ? 'on' : 'off')"
         # service is used xiaomi_miio.fan_set_dry_on or xiaomi_miio.fan_set_dry_off
-        toggle_action: >
+      toggle_action: >
           (state, entity) => {
             const service = state === 'on' ? 'fan_set_dry_off' : 'fan_set_dry_on';
             const options = { entity_id: entity.entity_id };
@@ -543,7 +569,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
       disabled: "(state, entity) => (entity.attributes.depth === 0)"
       # using service: fan.set_speed
       change_action: >
-        (selected, entity) => {
+        (selected, state, entity) => {
           const options = { entity_id: entity.entity_id, speed: selected };
           return this.call_service('fan', 'set_speed', options);
         }
@@ -561,7 +587,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
       active: "state => (state !== 2 && state !== '2')"
       # using service: xiaomi_miio.fan_set_led_brightness
       change_action: >
-        (selected, entity) => {
+        (selected, state, entity) => {
           const options = { entity_id: entity.entity_id, brightness: selected };
           return this.call_service('xiaomi_miio', 'fan_set_led_brightness', options);
         }
@@ -572,7 +598,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
         attribute: buzzer
         mapper: "(state) => (state ? 'on' : 'off')"
         # using service: xiaomi_miio.fan_set_buzzer_on and xiaomi_miio.fan_set_buzzer_off
-        toggle_action: >
+      toggle_action: >
           (state, entity) => {
             const service = state === 'on' ? 'fan_set_buzzer_off' : 'fan_set_buzzer_on';
             const options = { entity_id: entity.entity_id };
@@ -585,7 +611,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
         attribute: child_lock
         mapper: "(state) => (state ? 'on' : 'off')"
         # using service: xiaomi_miio.fan_set_child_lock_on and xiaomi_miio.fan_set_child_lock_off
-        toggle_action: >
+      toggle_action: >
           (state, entity) => {
             const service = state === 'on' ? 'fan_set_child_lock_off' : 'fan_set_child_lock_on';
             const options = { entity_id: entity.entity_id };
@@ -633,7 +659,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
       state:
         attribute: led_brightness
         mapper: "(value) => (this.on_states.includes(value) ? 'on' : 'off')"
-        toggle_action: >
+      toggle_action: >
           (state, entity) => {
             const value = state === 'on' ? this.off_value : this.on_value;
             const options = { entity_id: entity.entity_id, brightness: value };
@@ -679,6 +705,19 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
   toggle:
     default: on
     hide: on
+```
+
+#### secondary info
+
+```yaml
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  secondary_info: last-changed
+
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  secondary_info: #default type mode, changing icon
+    icon: 'mdi:fan'
 ```
 
 #### group

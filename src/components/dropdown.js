@@ -2,8 +2,6 @@ import { LitElement, html, css } from 'lit-element';
 import { styleMap } from 'lit-html/directives/style-map';
 import sharedStyle from '../sharedStyle';
 import './dropdown-base';
-import './button';
-import { ACTION_TIMEOUT } from '../const';
 
 class HumidifierDropDown extends LitElement {
   constructor() {
@@ -38,7 +36,7 @@ class HumidifierDropDown extends LitElement {
 
         return this.requestUpdate('_state');
       }
-    }, ACTION_TIMEOUT);
+    }, this.dropdown.actionTimeout);
 
     return this.requestUpdate('_state');
   }

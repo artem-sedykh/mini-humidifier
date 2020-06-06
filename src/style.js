@@ -124,6 +124,9 @@ const style = css`
   .entity__secondary_info {
     margin-top: -2px;
   }
+  .entity__secondary_info ha-relative-time {
+    color: #727272;
+  }
   .entity__secondary_info__name {
     font-size: calc(var(--mh-unit) * .35);
     font-weight: var(--mh-info-font-weight);

@@ -1,15 +1,20 @@
 import { getEntityValue } from '../utils/utils';
-import { STATES_OFF, UNAVAILABLE_STATES } from '../const';
+import { ACTION_TIMEOUT, STATES_OFF, UNAVAILABLE_STATES } from '../const';
 
 export default class ButtonObject {
-  constructor(entity, config, humidifier) {
+  constructor(entity, config, humidifier, hass) {
     this.config = config || {};
     this.entity = entity || {};
     this.humidifier = humidifier || {};
+    this._hass = hass || {};
   }
 
   get id() {
     return this.config.id;
+  }
+
+  get hass() {
+    return this._hass;
   }
 
   get type() {
@@ -111,6 +116,13 @@ export default class ButtonObject {
       return undefined;
 
     return this.source.find(s => s.id === state.toString());
+  }
+
+  get actionTimeout() {
+    if ('action_timeout' in this.config)
+      return this.config.action_timeout;
+
+    return ACTION_TIMEOUT;
   }
 
   handleToggle() {

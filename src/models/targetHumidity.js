@@ -1,10 +1,10 @@
 import { getEntityValue } from '../utils/utils';
+import { ACTION_TIMEOUT } from '../const';
 
 export default class TargetHumidityObject {
-  constructor(hass, entity, config, humidifier) {
+  constructor(entity, config, humidifier) {
     this.entity = entity || {};
     this.config = config;
-    this.hass = hass;
     this.humidifier = humidifier;
   }
 
@@ -65,6 +65,13 @@ export default class TargetHumidityObject {
 
   get unit() {
     return this.config.target_humidity.unit;
+  }
+
+  get actionTimeout() {
+    if ('action_timeout' in this.config.target_humidity)
+      return this.config.target_humidity.action_timeout;
+
+    return ACTION_TIMEOUT;
   }
 
   handleChange(value) {

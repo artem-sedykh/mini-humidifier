@@ -1,6 +1,5 @@
 import { css, html, LitElement } from 'lit-element';
 import { styleMap } from 'lit-html/directives/style-map';
-import { ACTION_TIMEOUT } from '../const';
 
 class TargetHumidity extends LitElement {
   static get properties() {
@@ -30,7 +29,7 @@ class TargetHumidity extends LitElement {
         this.sliderValue = this.targetHumidity.value;
         return this.requestUpdate('sliderValue');
       }
-    }, ACTION_TIMEOUT);
+    }, this.targetHumidity.actionTimeout);
 
     return this.requestUpdate('sliderValue');
   }
