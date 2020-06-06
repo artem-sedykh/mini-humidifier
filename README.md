@@ -144,6 +144,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | buttons: `name:toggle_action` | function | optional | v2.0.1 | for type `button`
 | buttons: `name:style` | function | optional | v2.0.1 | styles
 | scale | number | optional | v1.0.3 | UI scale modifier, default is `1`.
+| model | string | optional | v2.1.1 | default configuration for a specific humidifier model, default value `zhimi.humidifier.cb1`
 | tap_action | [action object](#action-object-options) | true | v1.0.4 | Action on click/tap, [examples](#action-object-options-examples).
 
 #### Action object options
@@ -177,6 +178,18 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
  1. Read the documentation
  2. See an example for [zhimi.humidifier.cb1](https://github.com/artem-sedykh/mini-humidifier/blob/master/src/configurations/zhimi_humidifier_cb1.js)
  3. Create a pull request or issue with the configuration file.
+ 
+ #### Available default configurations
+ `zhimi_humidifier_cb1`
+ 
+> Using the default configuration for a specific model
+
+```yaml
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  # zhimi.humidifier.cb1 default value may be omitted, added for example.
+  model: 'zhimi.humidifier.cb1' 
+```
 
 #### target humidity
 
