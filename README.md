@@ -117,7 +117,8 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | indicators: `name:unit` | string | optional | v2.0.1 | display unit.
 | indicators: `name:round` | number | optional | v2.0.1 | rounding number value.
 | indicators: `name:hide` | boolean | optional | v2.0.1 | hide indicator, default `false`
-| indicators: `name:source` | number | optional | v2.0.1 | data source.
+| indicators: `name:tap_action` | [action object](#action-object-options) | true | v1.1.0 | Action on click/tap.
+| indicators: `name:source` | object | optional | v2.0.1 | data source.
 | indicators: `name:source:entity` | string | optional | v2.0.1 | indicator entity_id
 | indicators: `name:source:attribute` | string | optional | v2.0.1 | entity attribute
 | indicators: `name:source:mapper` | function | optional | v2.0.1 | value processing function

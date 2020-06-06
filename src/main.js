@@ -165,6 +165,11 @@ class MiniHumidifier extends LitElement {
       ...value,
     };
 
+    if (typeof value.tap_action === 'string')
+      item.tap_action = { action: value.tap_action };
+    else
+      item.tap_action = { action: 'none', ...item.tap_action || {} };
+
     item.functions = item.functions || {};
     const context = { ...value };
     context.entity_config = config;
@@ -545,7 +550,7 @@ class MiniHumidifier extends LitElement {
 
   handlePopup(e) {
     e.stopPropagation();
-    handleClick(this, this._hass, this.config, this.config.tap_action, this.humidifier.id);
+    handleClick(this, this._hass, this.config.tap_action, this.humidifier.id);
   }
 
   handleToggle(e) {
@@ -580,7 +585,10 @@ class MiniHumidifier extends LitElement {
 
     return html`
         <div class='bottom flex'>
-          <mh-indicators .indicators=${this.indicators}></mh-indicators>
+          <mh-indicators
+            .indicators=${this.indicators}
+            .hass=${this.hass}>
+          </mh-indicators>
           ${this.renderToggleButton()}
         </div>
     `;
