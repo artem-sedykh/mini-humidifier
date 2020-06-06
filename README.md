@@ -87,6 +87,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | power: `type` | string | optional | v2.0.1 | `toggle` or `button`, default `button`
 | power: `icon` | string | optional | v2.0.1 | Specify a custom icon from any of the available mdi icons, default `mdi:power`
 | power: `hide` | boolean | optional | v2.0.1 | Hide power button, default value `False`
+| power: `action_timeout` | number | optional | v2.1.1 | `ms` default value `3500`
 | power: `disabled` | function | optional | v2.0.1 | button disabled calculation function, default unset
 | power: `style` | function | optional | v2.0.1 | function for getting custom styles, default unset
 | power: `state` | object | optional | v2.0.1 | config to get power button state.
@@ -103,6 +104,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | target_humidity: `unit` | string | optional | v1.0.1 | display unit, default `%`
 | target_humidity: `min` | number | optional | v1.0.1 | minimum target humidity, default value `30`
 | target_humidity: `max` | number | optional | v1.0.1 | maximum target humidity, default value `80`
+| target_humidity: `action_timeout` | number | optional | v2.1.1 | `ms` default value `3500`
 | target_humidity: `step` | number | optional | v1.0.1 | slider step, default value `10`
 | target_humidity: `state` | object | optional | v2.0.1 | configuration to ge target_humidity value
 | target_humidity: `state:entity` | object | optional | v2.0.1 | target_humidity entity_id, default current entity
@@ -125,7 +127,8 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | **buttons** | object | optional | v2.0.1 | any buttons, [example](#buttons).
 | buttons: `name` | object | optional | v2.0.1 | the name of your button see examples
 | buttons: `name:icon` | string | optional | v2.0.1 | Specify a custom icon from any of the available mdi icons.
-| buttons: `name:type` | string | optional | v2.0.1 | `dropdown` or `button` default `bitton`
+| buttons: `name:type` | string | optional | v2.0.1 | `dropdown` or `button` default `button`
+| buttons: `name:action_timeout` | number | optional | v2.1.1 | `ms` default value `3500`
 | buttons: `name:order` | number | optional | v2.0.1 | sort order
 | buttons: `name:state` | object | optional | v2.0.1 | config to get button state.
 | buttons: `name:hide` | object | optional | v2.0.1 | hide button, default `false`
@@ -231,7 +234,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
     max: 80
     step: 10
     change_action: >
-      (selected, _, entity) => {
+      (selected, state, entity) => {
         const options = { entity_id: entity.entity_id, humidity: selected };
         return this.call_service('xiaomi_miio', 'fan_set_target_humidity', options);
       }
@@ -547,7 +550,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
       disabled: "(state, entity) => (entity.attributes.depth === 0)"
       # using service: fan.set_speed
       change_action: >
-        (selected, entity) => {
+        (selected, state, entity) => {
           const options = { entity_id: entity.entity_id, speed: selected };
           return this.call_service('fan', 'set_speed', options);
         }
@@ -565,7 +568,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
       active: "state => (state !== 2 && state !== '2')"
       # using service: xiaomi_miio.fan_set_led_brightness
       change_action: >
-        (selected, entity) => {
+        (selected, state, entity) => {
           const options = { entity_id: entity.entity_id, brightness: selected };
           return this.call_service('xiaomi_miio', 'fan_set_led_brightness', options);
         }

@@ -1,5 +1,5 @@
 import { getEntityValue } from '../utils/utils';
-import { STATES_OFF, UNAVAILABLE_STATES } from '../const';
+import { ACTION_TIMEOUT, STATES_OFF, UNAVAILABLE_STATES } from '../const';
 
 export default class ButtonObject {
   constructor(entity, config, humidifier) {
@@ -111,6 +111,13 @@ export default class ButtonObject {
       return undefined;
 
     return this.source.find(s => s.id === state.toString());
+  }
+
+  get actionTimeout() {
+    if ('action_timeout' in this.config)
+      return this.config.action_timeout;
+
+    return ACTION_TIMEOUT;
   }
 
   handleToggle() {

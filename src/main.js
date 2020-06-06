@@ -68,16 +68,18 @@ class MiniHumidifier extends LitElement {
     if (!hass) return;
     const entity = hass.states[this.config.entity];
     this._hass = hass;
+    let force = false;
 
     if (entity && this.entity !== entity) {
       this.entity = entity;
       this.humidifier = new HumidifierObject(hass, this.config, entity);
+      force = true;
     }
 
-    this.updateIndicators(hass);
-    this.updateButtons(hass);
-    this.updateTargetHumidity(hass);
-    this.updatePower(hass);
+    this.updateIndicators(hass, force);
+    this.updateButtons(hass, force);
+    this.updateTargetHumidity(hass, force);
+    this.updatePower(hass, force);
   }
 
   get hass() {
@@ -88,7 +90,7 @@ class MiniHumidifier extends LitElement {
     return this.config.name || this.humidifier.name;
   }
 
-  updateIndicators(hass) {
+  updateIndicators(hass, force) {
     const indicators = { };
     let changed = false;
 
@@ -107,11 +109,11 @@ class MiniHumidifier extends LitElement {
         changed = true;
     }
 
-    if (changed)
+    if (changed || force)
       this.indicators = indicators;
   }
 
-  updateButtons(hass) {
+  updateButtons(hass, force) {
     const buttons = { };
     let changed = false;
 
@@ -130,29 +132,29 @@ class MiniHumidifier extends LitElement {
         changed = true;
     }
 
-    if (changed)
+    if (changed || force)
       this.buttons = buttons;
   }
 
-  updatePower(hass) {
+  updatePower(hass, force) {
     const config = this.config.power;
 
     const entityId = (config.state && config.state.entity) || this.humidifier.id;
     const entity = hass.states[entityId];
     const power = entity ? new ButtonObject(entity, config, this.humidifier) : {};
 
-    if (entity !== (this.power && this.power.entity))
+    if ((entity !== (this.power && this.power.entity)) || force)
       this.power = power;
   }
 
-  updateTargetHumidity(hass) {
+  updateTargetHumidity(hass, force) {
     const entityId = (this.config.target_humidity.source
       && this.config.target_humidity.source.entity) || this.config.entity;
 
     const entity = hass.states[entityId];
     const targetHumidity = new TargetHumidityObject(hass, entity, this.config, this.humidifier);
 
-    if (this.targetHumidity.value !== targetHumidity.value) {
+    if (this.targetHumidity.value !== targetHumidity.value || force) {
       this.targetHumidity = targetHumidity;
     }
   }
@@ -317,7 +319,7 @@ class MiniHumidifier extends LitElement {
         active: (state, entity) => (entity.state !== 'off'),
         disabled: (state, entity) => (entity.attributes.depth === 0),
         state: { attribute: 'mode' },
-        change_action: (selected, entity) => {
+        change_action: (selected, state, entity) => {
           const options = { entity_id: entity.entity_id, speed: selected };
           return this.call_service('fan', 'set_speed', options);
         },
@@ -330,7 +332,7 @@ class MiniHumidifier extends LitElement {
         active: state => (state !== 2 && state !== '2'),
         source: { 0: 'Bright', 1: 'Dim', 2: 'Off' },
         state: { attribute: 'led_brightness' },
-        change_action: (selected, entity) => {
+        change_action: (selected, state, entity) => {
           const options = { entity_id: entity.entity_id, brightness: selected };
           return this.call_service('xiaomi_miio', 'fan_set_led_brightness', options);
         },
@@ -396,7 +398,7 @@ class MiniHumidifier extends LitElement {
       step: 10,
       hide: false,
       state: { entity: undefined, attribute: 'target_humidity' },
-      change_action: (selected, _, entity) => {
+      change_action: (selected, state, entity) => {
         const options = { entity_id: entity.entity_id, humidity: selected };
         return this.call_service('xiaomi_miio', 'fan_set_target_humidity', options);
       },
