@@ -7,13 +7,12 @@ class HumidifierIndicators extends LitElement {
   static get properties() {
     return {
       indicators: { type: Object },
-      hass: { type: Object },
     };
   }
 
   handlePopup(e, indicator) {
     e.stopPropagation();
-    handleClick(this, this.hass, indicator.config.tap_action, indicator.entity.entity_id);
+    handleClick(this, indicator.hass, indicator.config.tap_action, indicator.entity.entity_id);
   }
 
   renderIcon(indicator) {

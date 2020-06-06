@@ -2,10 +2,9 @@ import { getEntityValue } from '../utils/utils';
 import { ACTION_TIMEOUT } from '../const';
 
 export default class TargetHumidityObject {
-  constructor(hass, entity, config, humidifier) {
+  constructor(entity, config, humidifier) {
     this.entity = entity || {};
     this.config = config;
-    this.hass = hass;
     this.humidifier = humidifier;
   }
 
