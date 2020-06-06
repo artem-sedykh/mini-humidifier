@@ -466,6 +466,15 @@ class MiniHumidifier extends LitElement {
     this.config.indicators = this.getIndicatorsConfig(config);
     this.config.buttons = this.getButtonsConfig(config);
 
+    if (typeof config.secondary_info === 'string') {
+      this.config.secondary_info = { type: config.secondary_info };
+    } else {
+      this.config.secondary_info = {
+        type: 'mode',
+        ...config.secondary_info || {},
+      };
+    }
+
     this.toggle = this.config.toggle.default;
   }
 
@@ -606,13 +615,25 @@ class MiniHumidifier extends LitElement {
     if (this.humidifier.isUnavailable)
       return '';
 
+    if (this.config.secondary_info.type === 'last-changed') {
+      return html`
+      <div class='entity__secondary_info ellipsis'>
+            <ha-relative-time
+              .hass=${this.hass}
+              .datetime=${this.entity.last_changed}>
+            </ha-relative-time>
+      </div>
+    `;
+    }
+
     const { mode } = this.buttons;
     const { selected } = mode;
     const label = selected ? selected.name : mode.state;
+    const icon = this.config.secondary_info.icon ? this.config.secondary_info.icon : mode.icon;
 
     return html`
       <div class='entity__secondary_info ellipsis'>
-         <ha-icon class='entity__secondary_info_icon' .icon=${mode.icon}></ha-icon>
+         <ha-icon class='entity__secondary_info_icon' .icon=${icon}></ha-icon>
          <span class='entity__secondary_info__name'>${label}</span>
       </div>
     `;

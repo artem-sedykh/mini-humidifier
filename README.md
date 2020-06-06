@@ -80,6 +80,9 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | toggle: `icon` | string | optional | v2.0.1 | Custom icon, default value `mdi:dots-horizontal`
 | toggle: `hide` | boolean | optional | v2.0.1 | Hide button, default value `False`
 | toggle: `default` | boolean | optional | v2.0.1 | Default toggle button state, default value `off`, [example](#toggle-button).
+| **secondary_info** | object | optional | v2.1.1 | secondary_info config. [secondary info examples](#secondary-info)
+| secondary_info: `type` | string | optional | v2.1.1 | available types: `last-changed, mode`
+| secondary_info: `icon` | string | optional | v2.1.1 | icon for type: `mode`
 | **power** | object | optional | v2.0.1 | Power button, [example](#power-button).
 | power: `type` | string | optional | v2.0.1 | `toggle` or `button`, default `button`
 | power: `icon` | string | optional | v2.0.1 | Specify a custom icon from any of the available mdi icons, default `mdi:power`
@@ -679,6 +682,19 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
   toggle:
     default: on
     hide: on
+```
+
+#### secondary info
+
+```yaml
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  secondary_info: last-changed
+
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  secondary_info: #default type mode, changing icon
+    icon: 'mdi:fan'
 ```
 
 #### group
