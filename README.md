@@ -172,6 +172,12 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 | mini-humidifier-scale | 1 | Scale of the card
 
 
+### Adding the default configuration for the new model
+
+ 1. Read the documentation
+ 2. See an example for [zhimi.humidifier.cb1](https://github.com/artem-sedykh/mini-humidifier/blob/master/src/configurations/zhimi_humidifier_cb1.js)
+ 3. Create a pull request or issue with the configuration file.
+
 #### target humidity
 
 > Functions available for the target_humidity:  
