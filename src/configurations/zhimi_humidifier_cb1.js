@@ -1,6 +1,6 @@
 import ICON from '../const';
 
-const ZHIMI_HUMIDIFIER_CB1 = {
+const ZHIMI_HUMIDIFIER_CB1 = () => ({
   power: {
     icon: ICON.POWER,
     type: 'button',
@@ -126,6 +126,6 @@ const ZHIMI_HUMIDIFIER_CB1 = {
       },
     },
   },
-};
+});
 
 export default ZHIMI_HUMIDIFIER_CB1;
