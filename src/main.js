@@ -45,6 +45,7 @@ class MiniHumidifier extends LitElement {
     this.buttons = {};
     this.targetHumidity = {};
     this.power = {};
+    this.config = {};
   }
 
   static get properties() {
@@ -329,11 +330,13 @@ class MiniHumidifier extends LitElement {
     if (!config.entity || config.entity.split('.')[0] !== 'fan')
       throw new Error('Specify an entity from within the fan domain.');
 
-    let modelConfiguration = HUMIDIFIERS.default;
+    let modelConfiguration;
     const { model } = config;
 
     if (model in HUMIDIFIERS)
-      modelConfiguration = HUMIDIFIERS[model];
+      modelConfiguration = HUMIDIFIERS[model]();
+    else
+      modelConfiguration = HUMIDIFIERS.default();
 
     this.config = {
       model: 'zhimi.humidifier.cb1',
