@@ -63,6 +63,10 @@ export default class TargetHumidityObject {
     return this.config.target_humidity.hide;
   }
 
+  get hideIndicator() {
+    return this.config.target_humidity.hide_indicator;
+  }
+
   get unit() {
     return this.config.target_humidity.unit;
   }

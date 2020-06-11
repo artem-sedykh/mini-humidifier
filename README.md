@@ -29,7 +29,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=2.1.2
+    - url: /local/mini-humidifier-bundle.js?v=2.2.1
       type: module
   ```
 
@@ -40,14 +40,14 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 2. Grab `mini-humidifier-bundle.js`
 
   ```console
-  $ wget https://github.com/artem-sedykh/mini-humidifier/releases/download/v2.1.2/mini-humidifier-bundle.js
+  $ wget https://github.com/artem-sedykh/mini-humidifier/releases/download/v2.2.1/mini-humidifier-bundle.js
   ```
 
 3. Add a reference to `mini-humidifier-bundle.js` inside your `ui-lovelace.yaml`.
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=2.1.2
+    - url: /local/mini-humidifier-bundle.js?v=2.2.1
       type: module
   ```
 
@@ -60,7 +60,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=2.1.2
+    - url: /local/mini-humidifier-bundle.js?v=2.2.1
       type: module
   ```
 
@@ -102,7 +102,8 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | target_humidity: `icon` | object | optional | v2.0.1 | icon config
 | target_humidity: `icon:template` | function | optional | v2.0.1 | icon retrieval function
 | target_humidity: `icon:style` | function | optional | v2.0.1 | function to get icon styles
-| target_humidity: `hide` | boolean | optional | v1.0.1 | Hide indicator, default value `False`
+| target_humidity: `hide` | boolean | optional | v1.0.1 | Hide target_humidity control, default value `False`
+| target_humidity: `hide_indicator` | boolean | optional | v2.2.1 | Hide indicator, default value `False`
 | target_humidity: `unit` | string | optional | v1.0.1 | display unit, default `%`
 | target_humidity: `min` | number | optional | v1.0.1 | minimum target humidity, default value `30`
 | target_humidity: `max` | number | optional | v1.0.1 | maximum target humidity, default value `80`

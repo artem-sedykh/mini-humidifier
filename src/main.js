@@ -407,7 +407,7 @@ class MiniHumidifier extends LitElement {
   }
 
   renderTargetHumidifier() {
-    if (this.humidifier.isUnavailable)
+    if (this.humidifier.isUnavailable || this.targetHumidity.hide)
       return '';
 
     return html`

@@ -35,7 +35,7 @@ class TargetHumidity extends LitElement {
   }
 
   renderState() {
-    if (this.targetHumidity.hide)
+    if (this.targetHumidity.hideIndicator)
       return html`<div class="mh-target_humidifier__state"></div>`;
 
     return html`
