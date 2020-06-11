@@ -18,6 +18,7 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
     max: 80,
     step: 10,
     hide: false,
+    hide_indicator: false,
     state: { attribute: 'target_humidity' },
     change_action: (selected, state, entity) => {
       const options = { entity_id: entity.entity_id, humidity: selected };
