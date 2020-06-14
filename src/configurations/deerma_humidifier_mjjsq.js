@@ -87,6 +87,7 @@ const DEERMA_HUMIDIFIER_MJJSQ = () => ({
     buzzer: {
       icon: ICON.BUZZER,
       hide: false,
+      type: 'button',
       order: 3,
       state: { attribute: 'buzzer', mapper: state => (state ? 'on' : 'off') },
       toggle_action: (state, entity) => {
