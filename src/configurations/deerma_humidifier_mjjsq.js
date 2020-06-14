@@ -26,9 +26,6 @@ const DEERMA_HUMIDIFIER_MJJSQ = () => ({
     },
   },
   indicators: {
-    depth: {
-      hide: true,
-    },
     temperature: {
       icon: ICON.TEMPERATURE,
       unit: '°C',
@@ -48,14 +45,15 @@ const DEERMA_HUMIDIFIER_MJJSQ = () => ({
     status: {
       icon: ICON.TANK,
       order: 3,
-      source: { attribute: 'no_water', mapper: '(val) => (val ? "Empty" : "Filled")' },
-      unit: '',
+      empty: 'Empty',
+      filled: 'Filled',
+      source: {
+        attribute: 'no_water',
+        mapper: val => (val ? this.empty : this.filled),
+      },
     },
   },
   buttons: {
-    dry: {
-      hide: true,
-    },
     mode: {
       icon: ICON.FAN,
       type: 'dropdown',
@@ -99,10 +97,6 @@ const DEERMA_HUMIDIFIER_MJJSQ = () => ({
         const options = { entity_id: entity.entity_id };
         return this.call_service('fan', service, options);
       },
-    },
-    child_lock: {
-      hide: true,
-      order: 4,
     },
   },
 });

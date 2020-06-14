@@ -29,7 +29,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=2.2.1
+    - url: /local/mini-humidifier-bundle.js?v=2.2.2
       type: module
   ```
 
@@ -40,14 +40,14 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 2. Grab `mini-humidifier-bundle.js`
 
   ```console
-  $ wget https://github.com/artem-sedykh/mini-humidifier/releases/download/v2.2.1/mini-humidifier-bundle.js
+  $ wget https://github.com/artem-sedykh/mini-humidifier/releases/download/v2.2.2/mini-humidifier-bundle.js
   ```
 
 3. Add a reference to `mini-humidifier-bundle.js` inside your `ui-lovelace.yaml`.
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=2.2.1
+    - url: /local/mini-humidifier-bundle.js?v=2.2.2
       type: module
   ```
 
@@ -60,7 +60,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=2.2.1
+    - url: /local/mini-humidifier-bundle.js?v=2.2.2
       type: module
   ```
 
@@ -183,7 +183,8 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
  3. Create a pull request or issue with the configuration file.
  
  #### Available default configurations
- `zhimi_humidifier_cb1`
+ `zhimi.humidifier.cb1`
+ `deerma.humidifier.mjjsq` by @dedors
  
 > Using the default configuration for a specific model
 
@@ -192,6 +193,23 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
   entity: fan.xiaomi_miio_device
   # zhimi.humidifier.cb1 default value may be omitted, added for example.
   model: 'zhimi.humidifier.cb1' 
+```
+
+[deerma.humidifier.mjjsq](https://github.com/artem-sedykh/mini-humidifier/blob/master/src/configurations/deerma_humidifier_mjjsq.js)
+```yaml
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  model: 'deerma.humidifier.mjjsq' 
+```
+> localize status indicator
+```yaml
+- type: custom:mini-humidifier
+  entity: fan.xiaomi_miio_device
+  model: 'deerma.humidifier.mjjsq'
+  indicators:
+    status:
+      empty: пустой
+      filled: полный
 ```
 
 #### target humidity
