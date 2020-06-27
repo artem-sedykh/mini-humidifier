@@ -1,5 +1,5 @@
 import { HomeAssistant } from 'custom-card-helpers/dist';
-import { IndicatorConfig } from '../types';
+import { IndicatorConfig, Primitive } from '../types';
 import { HassEntity } from 'home-assistant-js-websocket';
 import { Indicator } from './indicator';
 import { round } from '../utils/utils';
@@ -9,12 +9,10 @@ export class TargetHumidityIndicator extends Indicator {
     super(hass, config, humidifierEntity);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public getValue(value: number): any {
-    let val = this._config.stateMapper(value, this.entity, this._humidifierEntity);
-
-    if (this._config.round != undefined && !isNaN(val)) val = round(val, this._config.round);
-
+  public getValue(value: number): Primitive {
+    const context = this._getExecutionContext(this.state);
+    const val = this._config.stateMapper(value, context);
+    if (this._config.round != undefined && typeof val === 'number') return round(val, this._config.round);
     return val;
   }
 }

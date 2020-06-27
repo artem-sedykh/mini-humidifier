@@ -1,6 +1,8 @@
 import { LovelaceCardConfig } from 'custom-card-helpers';
 import { HassEntity } from 'home-assistant-js-websocket';
-import { HomeAssistant } from 'custom-card-helpers/dist';
+import { StyleInfo } from 'lit-html/directives/style-map';
+
+export type Primitive = null | undefined | boolean | number | string | symbol | bigint;
 
 export interface HumidifierCardConfig extends LovelaceCardConfig {
   readonly type: string;
@@ -26,7 +28,7 @@ export type ToggleButtonConfig = {
 };
 
 export type SecondaryInfo = {
-  icon: string | undefined;
+  icon?: string;
   type: string;
 };
 
@@ -54,11 +56,9 @@ export type TapActionConfig = {
   url?: string;
 };
 
-export type IndicatorIcon = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  template(value: any, entity: HassEntity, humidifierEntity: HassEntity): string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  style(value: any, entity: HassEntity, humidifierEntity: HassEntity): object;
+export type IconConfig = {
+  template: (state: Primitive, context: ExecutionContext) => string;
+  style: (state: Primitive, context: ExecutionContext) => StyleInfo;
 };
 
 export type StateConfig = {
@@ -68,15 +68,15 @@ export type StateConfig = {
 
 export type IndicatorConfig = {
   id: string;
-  unit?: string;
+  unit: IconConfig;
   round?: number;
   hide: boolean;
   order: number;
   tapAction: TapActionConfig;
   state: StateConfig;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  stateMapper(state: any, entity: HassEntity, humidifierEntity: HassEntity): any;
-  icon: IndicatorIcon;
+  stateMapper: (state: Primitive, context: ExecutionContext) => Primitive;
+  icon: IconConfig;
+  raw: object;
 };
 
 export type DropdownItem = {
@@ -89,46 +89,27 @@ export type DropdownItem = {
 
 export type ElementConfigBase = {
   id: string;
-  icon: string;
+  icon: IconConfig;
   actionTimeout: number;
   order: number;
   hide: boolean;
   elementType: ElementType;
   state: StateConfig;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  stateMapper(state: any, entity: HassEntity, humidifierEntity: HassEntity): any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  disabled(state: any, entity: HassEntity, humidifierEntity: HassEntity): boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  style(state: any, entity: HassEntity, humidifierEntity: HassEntity): any;
+  stateMapper: (state: Primitive, context: ExecutionContext) => Primitive;
+  disabled: (state: Primitive, context: ExecutionContext) => boolean;
+  style: (state: Primitive, context: ExecutionContext) => StyleInfo;
+  raw: object;
 };
 
 export type ButtonConfig = ElementConfigBase & {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  toggleAction(hass: HomeAssistant, state: any, entity: HassEntity, humidifierEntity: HassEntity): Promise<void>;
+  toggleAction: (state: Primitive, context: ExecutionContext) => Promise<void>;
 };
 
 export type DropdownConfig = ElementConfigBase & {
   source: DropdownItem[];
-  change(
-    hass: HomeAssistant,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    selected: any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    state: any,
-    entity: HassEntity,
-    humidifierEntity: HassEntity,
-  ): Promise<void>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  active(state: any, entity: HassEntity, humidifierEntity: HassEntity): any;
-  sourceFilter(
-    hass: HomeAssistant,
-    source: DropdownItem[],
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    state: any,
-    entity: HassEntity,
-    humidifierEntity: HassEntity,
-  ): DropdownItem[];
+  change: (selected: Primitive, context: ExecutionContext) => Promise<void>;
+  active: (state: Primitive, context: ExecutionContext) => boolean;
+  sourceFilter: (source: DropdownItem[], context: ExecutionContext) => DropdownItem[];
 };
 
 export type PowerButtonConfig = ButtonConfig & {
@@ -143,16 +124,106 @@ export type TargetHumidityConfig = {
   state: StateConfig;
   hide: boolean;
   actionTimeout: number;
+  stateMapper: (state: Primitive, context: ExecutionContext) => number;
+  change: (selected: number, context: ExecutionContext) => Promise<void>;
+  disabled: (state: Primitive, context: ExecutionContext) => boolean;
+  raw: object;
+};
+
+export type ExecutionContext = {
+  state: Primitive;
+  entity: HassEntity;
+  humidifierEntity: HassEntity;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  stateMapper(state: any, entity: HassEntity, humidifierEntity: HassEntity): any;
-  change(
-    hass: HomeAssistant,
-    selected: number,
+  config: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  call_service: (domain: string, service: string, serviceData?: { [key: string]: any }) => Promise<void>;
+  localize: (string: string, fallback: string) => string;
+};
+
+export type DefaultModelConfig = {
+  power: DefaultPowerButton;
+  target_humidity: DefaultTargetHumidity;
+  indicators?: { [key: string]: DefaultIndicator };
+  buttons?: { [key: string]: DefaultButton | DefaultDropdown };
+};
+
+export type DefaultState = {
+  entity?: string;
+  attribute?: string;
+  mapper?: (state: Primitive, context: ExecutionContext) => Primitive;
+};
+
+export type DefaultIndicator = {
+  unit?: DefaultUnit | string;
+  round?: number;
+  hide?: boolean;
+  order?: number;
+  tap_action?: TapActionConfig;
+  state?: DefaultState;
+  icon: DefaultIcon | string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [property: string]: any;
+};
+
+export type DefaultIcon = {
+  template?: (state: Primitive, context: ExecutionContext) => string;
+  style?: (state: Primitive, context: ExecutionContext) => StyleInfo;
+};
+
+export type DefaultUnit = {
+  template?: (state: Primitive, context: ExecutionContext) => string;
+  style?: (state: Primitive, context: ExecutionContext) => StyleInfo;
+};
+
+export type DefaultElement = {
+  icon: DefaultIcon | string;
+  type: string;
+  hide?: boolean;
+  order?: number;
+  state?: DefaultState;
+  disabled?: (state: Primitive, context: ExecutionContext) => boolean;
+  style?: (state: Primitive, context: ExecutionContext) => StyleInfo;
+  action_timeout?: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [property: string]: any;
+};
+
+export type DefaultButton = DefaultElement & {
+  toggle_action?: (state: Primitive, context: ExecutionContext) => Promise<void>;
+};
+
+export type DefaultPowerButton = DefaultButton;
+
+export type DefaultDropdown = DefaultElement & {
+  source: DefaultDropdownSource;
+  change_action: (selected: Primitive, context: ExecutionContext) => Promise<void>;
+  active?: (state: Primitive, context: ExecutionContext) => boolean;
+};
+
+export type DefaultTargetHumidity = {
+  indicator: {
+    unit?: DefaultUnit | string;
+    round?: number;
+    hide?: boolean;
+    state?: {
+      mapper?: (state: Primitive, context: ExecutionContext) => Primitive;
+    };
+    icon: DefaultIcon | string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    state: any,
-    entity: HassEntity,
-    humidifierEntity: HassEntity,
-  ): Promise<void>;
+    [property: string]: any;
+  };
+  min: number;
+  max: number;
+  step: number;
+  hide?: boolean;
+  action_timeout?: number;
+  state?: DefaultState;
+  change_action: (selected: Primitive, context: ExecutionContext) => Promise<void>;
+};
+
+export type DefaultDropdownSource = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  disabled(state: any, entity: HassEntity, humidifierEntity: HassEntity): boolean;
+  [property: string]: any;
+  __filter?: (source: DropdownItem[], context: ExecutionContext) => DropdownItem[];
 };

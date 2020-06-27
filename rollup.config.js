@@ -5,9 +5,7 @@ import babel from 'rollup-plugin-babel';
 import { terser } from 'rollup-plugin-terser';
 import serve from 'rollup-plugin-serve';
 import json from '@rollup/plugin-json';
-import path from 'path';
 const dev = process.env.ROLLUP_WATCH;
-const configurationPath = path.resolve('./src/configurations/');
 
 const serveopts = {
   contentBase: ['./dist'],
@@ -34,11 +32,6 @@ const plugins = [
 export default [
   {
     input: 'src/mini-humidifier-card.ts',
-    moduleContext(id) {
-      if (path.parse(id).dir === configurationPath) {
-        return 'this';
-      }
-    },
     output: {
       file: 'dist/mini-humidifier-bundle.js',
       format: 'es',

@@ -1,7 +1,9 @@
-import { IndicatorConfig, TapActionConfig } from '../types';
+import { ExecutionContext, IndicatorConfig, Primitive, TapActionConfig } from '../types';
 import { HomeAssistant } from 'custom-card-helpers/dist';
 import { HassEntity } from 'home-assistant-js-websocket';
 import { round } from '../utils/utils';
+import { localize } from '../localize/localize';
+import { StyleInfo } from 'lit-html/directives/style-map';
 
 export class Indicator {
   protected readonly _config: IndicatorConfig;
@@ -33,7 +35,13 @@ export class Indicator {
   }
 
   get unit(): string | undefined {
-    return this._config.unit;
+    const context = this._getExecutionContext(this.state);
+    return this._config.unit.template(this.state, context);
+  }
+
+  get unitStyle(): StyleInfo {
+    const context = this._getExecutionContext(this.state);
+    return this._config.unit.style(this.state, context);
   }
 
   get hide(): boolean {
@@ -45,26 +53,41 @@ export class Indicator {
   }
 
   get icon(): string {
-    return this._config.icon.template(this.value, this.entity, this._humidifierEntity);
+    const context = this._getExecutionContext(this.state);
+    return this._config.icon.template(this.state, context);
   }
 
-  get iconStyle(): object {
-    return this._config.icon.style(this.value, this.entity, this._humidifierEntity);
+  get iconStyle(): StyleInfo {
+    const context = this._getExecutionContext(this.state);
+    return this._config.icon.style(this.state, context);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  get value(): any {
-    let value = this._value();
-    value = this._config.stateMapper(value, this.entity, this._humidifierEntity);
+  get state(): Primitive {
+    let state = this._state();
+    const context = this._getExecutionContext(state);
+    state = this._config.stateMapper(state, context);
 
-    if (this._config.round != undefined && !isNaN(value)) value = round(value, this._config.round);
+    if (this._config.round != undefined && typeof state === 'number') return round(state, this._config.round);
 
-    return value;
+    return state;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private _value(): any {
+  private _state(): Primitive {
     if (this._config.state.attribute) return this.entity.attributes[this._config.state.attribute];
     return this.entity.state;
+  }
+
+  protected _getExecutionContext(state: Primitive): ExecutionContext {
+    return {
+      call_service: this._hass.callService,
+      entity: this._entity,
+      humidifierEntity: this._humidifierEntity,
+      config: this._config.raw,
+      state: state,
+      localize: (string: string, fallback: string): string => {
+        const lang = this.hass?.selectedLanguage || this.hass?.language || 'en';
+        return localize(string, lang, fallback);
+      },
+    };
   }
 }

@@ -1,24 +1,24 @@
 import {
   ButtonConfig,
+  DefaultModelConfig,
   DropdownConfig,
   DropdownItem,
   ElementType,
   HumidifierCardConfig,
   IndicatorConfig,
-  IndicatorIcon,
   PowerButtonConfig,
+  Primitive,
   SecondaryInfo,
-  StateConfig,
   TapAction,
   TapActionConfig,
   TargetHumidityConfig,
   ToggleButtonConfig,
-} from './types';
-import ICON, { ACTION_TIMEOUT } from './const';
-import HUMIDIFIERS from './humidifiers';
-import { compileTemplate, findTapAction } from './utils/utils';
-import { toggleEntity } from './utils/toggle-entity';
-import { localize } from './localize/localize';
+} from '../types';
+import ICON, { ACTION_TIMEOUT } from '../const';
+import HUMIDIFIERS from '../humidifiers';
+import { compileTemplate, findTapAction } from '../utils/utils';
+import { toggle } from '../utils/toggle-entity';
+import { StyleInfo } from 'lit-html/directives/style-map';
 
 export class Config implements HumidifierCardConfig {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,8 +32,7 @@ export class Config implements HumidifierCardConfig {
   private readonly _model: string;
   private readonly _toggle: ToggleButtonConfig;
   private readonly _tapAction: TapActionConfig;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private readonly _modelConfig: any;
+  private readonly _modelConfig?: DefaultModelConfig;
   private readonly _power: PowerButtonConfig;
   private readonly _targetHumidity: TargetHumidityConfig;
   private readonly _indicators: IndicatorConfig[];
@@ -174,7 +173,7 @@ export class Config implements HumidifierCardConfig {
   }
 
   private _parseIndicators(): IndicatorConfig[] {
-    const indicators = { ...(this._modelConfig.indicators || {}) };
+    const indicators = { ...(this._modelConfig?.indicators || {}) };
     const data = Object.entries(this._config.indicators || {});
 
     for (let i = 0; i < data.length; i += 1) {
@@ -195,34 +194,41 @@ export class Config implements HumidifierCardConfig {
   private _parseIndicator(id: string, indicatorObj: any, order: number): IndicatorConfig {
     const indicator: IndicatorConfig = {
       id: id,
-      unit: indicatorObj.unit?.toString(),
+      raw: indicatorObj,
+      icon: { template: (): string => '', style: (): StyleInfo => ({}) },
+      unit: { template: (): string => '', style: (): StyleInfo => ({}) },
       hide: !!indicatorObj.hide,
       order: order,
-      round: indicatorObj.round,
-      tapAction: {} as TapActionConfig,
-      state: {
-        entity: this.entity,
-      } as StateConfig,
-      icon: {
-        template: () => '',
-        style: () => ({}),
-      } as IndicatorIcon,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      stateMapper: (value): any => value,
+      round: undefined,
+      tapAction: { action: TapAction.None, entity: this.entity },
+      state: { entity: this.entity },
+      stateMapper: (value): Primitive => value,
     };
-
-    const context = { ...indicatorObj };
 
     if ('icon' in indicatorObj && indicatorObj.icon) {
       if (typeof indicatorObj.icon === 'string') {
         indicator.icon.template = (): string => indicatorObj.icon;
       } else {
         if (indicatorObj.icon.template) {
-          indicator.icon.template = compileTemplate(indicatorObj.icon.template, context);
+          indicator.icon.template = compileTemplate(indicatorObj.icon.template);
         }
 
         if (indicatorObj.icon.style) {
-          indicator.icon.style = compileTemplate(indicatorObj.icon.style, context);
+          indicator.icon.style = compileTemplate(indicatorObj.icon.style);
+        }
+      }
+    }
+
+    if ('unit' in indicatorObj && indicatorObj.unit) {
+      if (typeof indicatorObj.unit === 'string') {
+        indicator.unit.template = (): string => indicatorObj.unit;
+      } else {
+        if (indicatorObj.unit.template) {
+          indicator.unit.template = compileTemplate(indicatorObj.unit.template);
+        }
+
+        if (indicatorObj.unit.style) {
+          indicator.unit.style = compileTemplate(indicatorObj.unit.style);
         }
       }
     }
@@ -231,18 +237,20 @@ export class Config implements HumidifierCardConfig {
       indicator.order = order;
     }
 
-    if (indicatorObj.source) {
-      if (typeof indicatorObj.source === 'string') {
-        indicator.state.entity = indicatorObj.source;
+    if (indicatorObj.state) {
+      if (typeof indicatorObj.state === 'string') {
+        indicator.state.entity = indicatorObj.state;
       } else {
-        indicator.state.attribute = indicatorObj.source.attribute?.toString();
-        if (indicatorObj.source.entity) indicator.state.entity = indicatorObj.source.entity?.toString();
+        indicator.state.attribute = indicatorObj.state.attribute?.toString();
+        if (indicatorObj.state.entity) indicator.state.entity = indicatorObj.state.entity?.toString();
 
-        if (indicatorObj.source.mapper) {
-          indicator.stateMapper = compileTemplate(indicatorObj.source.mapper, context);
+        if (indicatorObj.state.mapper) {
+          indicator.stateMapper = compileTemplate(indicatorObj.state.mapper);
         }
       }
     }
+
+    if ('round' in indicatorObj && typeof indicatorObj.round === 'number') indicator.round = indicatorObj.round;
 
     indicator.tapAction = Config._parseTapAction(indicatorObj.tap_action, indicator.state.entity, TapAction.None);
 
@@ -250,7 +258,7 @@ export class Config implements HumidifierCardConfig {
   }
 
   private _parseButtons(): (ButtonConfig | DropdownConfig)[] {
-    const buttons = { ...(this._modelConfig.buttons || {}) };
+    const buttons = { ...(this._modelConfig?.buttons || {}) };
     const data = Object.entries(this._config.buttons || {});
 
     for (let i = 0; i < data.length; i += 1) {
@@ -278,40 +286,32 @@ export class Config implements HumidifierCardConfig {
   private _parseButton(id: string, buttonObj: any, order: number): ButtonConfig {
     const button: ButtonConfig = {
       id: id,
+      raw: buttonObj,
       elementType: ElementType.Button,
-      icon: buttonObj.icon?.toString(),
+      icon: { template: (): string => '', style: (): StyleInfo => ({}) },
       actionTimeout: ACTION_TIMEOUT,
       order: order,
       hide: !!buttonObj.hide,
-      state: {
-        entity: this.entity,
-      } as StateConfig,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      stateMapper: (value): any => value,
+      state: { entity: this.entity },
+      stateMapper: (value): Primitive => value,
       disabled: () => false,
       style: () => ({}),
-      toggleAction: (hass, _state, entity) => toggleEntity(hass, entity.entity_id),
+      toggleAction: (_state, context): Promise<void> => toggle(context),
     };
 
     if (typeof buttonObj.action_timeout === 'number') button.actionTimeout = buttonObj.action_timeout;
     if (typeof buttonObj.order === 'number') button.order = buttonObj.order;
 
     if (buttonObj.disabled) {
-      button.disabled = compileTemplate(buttonObj.disabled, { ...buttonObj });
+      button.disabled = compileTemplate(buttonObj.disabled);
     }
 
     if (buttonObj.toggle_action) {
-      const context = { ...buttonObj };
-      const compiled = compileTemplate(buttonObj.toggle_action, context);
-
-      button.toggleAction = (hass, state, entity, humidifierEntity): Promise<void> => {
-        context.call_service = hass.callService;
-        return compiled(state, entity, humidifierEntity);
-      };
+      button.toggleAction = compileTemplate(buttonObj.toggle_action);
     }
 
     if (buttonObj.style) {
-      button.style = compileTemplate(buttonObj.style, { ...buttonObj });
+      button.style = compileTemplate(buttonObj.style);
     }
 
     if (buttonObj.state) {
@@ -322,7 +322,21 @@ export class Config implements HumidifierCardConfig {
         if (buttonObj.state.entity) button.state.entity = buttonObj.state.entity?.toString();
 
         if (buttonObj.state.mapper) {
-          button.stateMapper = compileTemplate(buttonObj.state.mapper, { ...buttonObj });
+          button.stateMapper = compileTemplate(buttonObj.state.mapper);
+        }
+      }
+    }
+
+    if ('icon' in buttonObj && buttonObj.icon) {
+      if (typeof buttonObj.icon === 'string') {
+        button.icon.template = (): string => buttonObj.icon;
+      } else {
+        if (buttonObj.icon.template) {
+          button.icon.template = compileTemplate(buttonObj.icon.template);
+        }
+
+        if (buttonObj.icon.style) {
+          button.icon.style = compileTemplate(buttonObj.icon.style);
         }
       }
     }
@@ -334,17 +348,17 @@ export class Config implements HumidifierCardConfig {
     const dropdown: DropdownConfig = {
       id: id,
       elementType: ElementType.Dropdown,
-      icon: dropdownObj.icon?.toString(),
+      raw: dropdownObj,
+      icon: { template: (): string => '', style: (): StyleInfo => ({}) },
       actionTimeout: ACTION_TIMEOUT,
       order: order,
       hide: !!dropdownObj.hide,
-      state: { entity: this.entity } as StateConfig,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      stateMapper: (value): any => value,
+      state: { entity: this.entity },
+      stateMapper: (state): Primitive => state,
       active: () => false,
       disabled: () => false,
       style: () => ({}),
-      sourceFilter: (_hass, source) => source,
+      sourceFilter: source => source,
       source: [],
       change: () =>
         new Promise(() => {
@@ -356,11 +370,11 @@ export class Config implements HumidifierCardConfig {
     if (typeof dropdownObj.order === 'number') dropdown.order = dropdownObj.order;
 
     if (dropdownObj.disabled) {
-      dropdown.disabled = compileTemplate(dropdownObj.disabled, { ...dropdownObj });
+      dropdown.disabled = compileTemplate(dropdownObj.disabled);
     }
 
     if (dropdownObj.style) {
-      dropdown.style = compileTemplate(dropdownObj.style, { ...dropdownObj });
+      dropdown.style = compileTemplate(dropdownObj.style);
     }
 
     if (dropdownObj.state) {
@@ -371,36 +385,22 @@ export class Config implements HumidifierCardConfig {
         if (dropdownObj.state.entity) dropdown.state.entity = dropdownObj.state.entity?.toString();
 
         if (dropdownObj.state.mapper) {
-          dropdown.stateMapper = compileTemplate(dropdownObj.state.mapper, { ...dropdownObj });
+          dropdown.stateMapper = compileTemplate(dropdownObj.state.mapper);
         }
       }
     }
 
     if (dropdownObj.change_action) {
-      const context = { ...dropdownObj };
-      const compiled = compileTemplate(dropdownObj.change_action, context);
-      dropdown.change = (hass, selected, state, entity, humidifierEntity): Promise<void> => {
-        context.call_service = hass.callService;
-        return compiled(selected, state, entity, humidifierEntity);
-      };
+      dropdown.change = compileTemplate(dropdownObj.change_action);
     }
 
     if (dropdownObj.active) {
-      dropdown.active = compileTemplate(dropdownObj.active, { ...dropdownObj });
+      dropdown.active = compileTemplate(dropdownObj.active);
     }
 
     if (typeof dropdownObj.source === 'object') {
       if (dropdownObj.source['__filter']) {
-        const context = { ...dropdownObj };
-        const compiled = compileTemplate(dropdownObj.source['__filter'], context);
-        dropdown.sourceFilter = (hass, source, state, entity, humidifierEntity): DropdownItem[] => {
-          context.localize = (string, fallback): string => {
-            const lang = hass.selectedLanguage || hass.language || 'en';
-            return localize(string, lang, fallback);
-          };
-
-          return compiled(source, state, entity, humidifierEntity);
-        };
+        dropdown.sourceFilter = compileTemplate(dropdownObj.source['__filter']);
       }
 
       dropdown.source = Object.entries(dropdownObj.source)
@@ -416,30 +416,47 @@ export class Config implements HumidifierCardConfig {
         .sort((a, b) => (a.order > b.order ? 1 : b.order > a.order ? -1 : 0));
     }
 
+    if ('icon' in dropdownObj && dropdownObj.icon) {
+      if (typeof dropdownObj.icon === 'string') {
+        dropdown.icon.template = (): string => dropdownObj.icon;
+      } else {
+        if (dropdownObj.icon.template) {
+          dropdown.icon.template = compileTemplate(dropdownObj.icon.template);
+        }
+
+        if (dropdownObj.icon.style) {
+          dropdown.icon.style = compileTemplate(dropdownObj.icon.style);
+        }
+      }
+    }
+
     return dropdown;
   }
 
   private _parsePowerButton(): PowerButtonConfig {
-    const powerButtonObj = { ...(this._modelConfig.power || {}), ...(this._config.power || {}) };
+    const powerButtonObj = { ...(this._modelConfig?.power || {}), ...(this._config.power || {}) };
     const button = this._parseButton('power', powerButtonObj, 0);
-    return { type: powerButtonObj.type, ...button } as PowerButtonConfig;
+    return { type: powerButtonObj.type, ...button };
   }
 
   private _parseTargetHumidity(): TargetHumidityConfig {
-    const targetHumidityObj = { ...(this._modelConfig.target_humidity || {}), ...(this._config.target_humidity || {}) };
+    const targetHumidityObj = {
+      ...(this._modelConfig?.target_humidity || {}),
+      ...(this._config.target_humidity || {}),
+    };
     const indicator = this._parseIndicator('target_humidity', targetHumidityObj.indicator || {}, 0);
 
     const targetHumidity: TargetHumidityConfig = {
       indicator: indicator,
+      raw: targetHumidityObj,
       min: 30,
       max: 80,
       step: 10,
       hide: !!targetHumidityObj.hide,
       actionTimeout: ACTION_TIMEOUT,
       disabled: () => false,
-      state: { entity: this.entity } as StateConfig,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      stateMapper: (value): any => value,
+      state: { entity: this.entity },
+      stateMapper: (value): number => Number(value),
       change: () =>
         new Promise(() => {
           return;
@@ -451,7 +468,7 @@ export class Config implements HumidifierCardConfig {
     if (typeof targetHumidityObj.step === 'number') targetHumidity.step = targetHumidityObj.step;
 
     if (targetHumidityObj.disabled) {
-      targetHumidity.disabled = compileTemplate(targetHumidityObj.disabled, { ...targetHumidityObj });
+      targetHumidity.disabled = compileTemplate(targetHumidityObj.disabled);
     }
 
     if (typeof targetHumidityObj.action_timeout === 'number') {
@@ -466,7 +483,7 @@ export class Config implements HumidifierCardConfig {
         if (targetHumidityObj.state.entity) targetHumidity.state.entity = targetHumidityObj.state.entity?.toString();
 
         if (targetHumidityObj.state.mapper) {
-          targetHumidity.stateMapper = compileTemplate(targetHumidityObj.state.mapper, { ...targetHumidityObj });
+          targetHumidity.stateMapper = compileTemplate(targetHumidityObj.state.mapper);
         }
       }
     }
@@ -474,13 +491,7 @@ export class Config implements HumidifierCardConfig {
     indicator.state = targetHumidity.state;
 
     if (targetHumidityObj.change_action) {
-      const context = { ...targetHumidityObj };
-      const compiled = compileTemplate(targetHumidityObj.change_action, context);
-
-      targetHumidity.change = (hass, selected, state, entity, humidifierEntity): Promise<void> => {
-        context.call_service = hass.callService;
-        return compiled(selected, state, entity, humidifierEntity);
-      };
+      targetHumidity.change = compileTemplate(targetHumidityObj.change_action);
     }
 
     return targetHumidity;

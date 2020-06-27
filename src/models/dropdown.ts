@@ -1,7 +1,8 @@
 import { HomeAssistant } from 'custom-card-helpers/dist';
-import { DropdownConfig, DropdownItem, ElementType } from '../types';
+import { DropdownConfig, DropdownItem, ElementType, ExecutionContext, Primitive } from '../types';
 import { StyleInfo } from 'lit-html/directives/style-map';
 import { HassEntity } from 'home-assistant-js-websocket';
+import { localize } from '../localize/localize';
 
 export class Dropdown {
   private readonly _hass: HomeAssistant;
@@ -44,34 +45,37 @@ export class Dropdown {
     return this._config.actionTimeout;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public get state(): any {
-    let value = this._state();
-    value = this._config.stateMapper(value, this.entity, this._humidifierEntity);
-    return value;
+  public get state(): Primitive {
+    let state = this._state();
+    const context = this._getExecutionContext(state);
+    state = this._config.stateMapper(state, context);
+    return state;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private _state(): any {
+  private _state(): Primitive {
     if (this._config.state.attribute) return this.entity.attributes[this._config.state.attribute];
     return this.entity.state;
   }
 
   get icon(): string {
-    return this._config.icon || '';
+    const context = this._getExecutionContext(this.state);
+    return this._config.icon.template(this.state, context);
   }
 
   get disabled(): boolean {
-    return this._config.disabled(this.state, this.entity, this._humidifierEntity);
+    const context = this._getExecutionContext(this.state);
+    return this._config.disabled(this.state, context);
   }
 
   get style(): StyleInfo {
-    return this._config.style(this.state, this.entity, this._humidifierEntity);
+    const context = this._getExecutionContext(this.state);
+    return this._config.style(this.state, context);
   }
 
   get source(): DropdownItem[] {
     const source = this._config.source;
-    return this._config.sourceFilter(this.hass, source, this.state, this.entity, this._humidifierEntity);
+    const context = this._getExecutionContext(this.state);
+    return this._config.sourceFilter(source, context);
   }
 
   get selected(): DropdownItem | undefined {
@@ -79,10 +83,26 @@ export class Dropdown {
   }
 
   public isActive(state: string | undefined): boolean {
-    return this._config.active(state, this.entity, this._humidifierEntity);
+    const context = this._getExecutionContext(state);
+    return this._config.active(state, context);
   }
 
   public change(selected: string): Promise<void> {
-    return this._config.change(this.hass, selected, this.state, this.entity, this._humidifierEntity);
+    const context = this._getExecutionContext(this.state);
+    return this._config.change(selected, context);
+  }
+
+  protected _getExecutionContext(state: Primitive): ExecutionContext {
+    return {
+      call_service: this._hass.callService,
+      entity: this._entity,
+      humidifierEntity: this._humidifierEntity,
+      config: this._config.raw,
+      state: state,
+      localize: (string: string, fallback: string): string => {
+        const lang = this.hass?.selectedLanguage || this.hass?.language || 'en';
+        return localize(string, lang, fallback);
+      },
+    };
   }
 }

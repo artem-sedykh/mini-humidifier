@@ -1,7 +1,7 @@
 import { css, CSSResult, customElement, html, LitElement, property, TemplateResult } from 'lit-element';
 import { Indicator } from '../models/indicator';
 import { TapAction } from '../types';
-import { StyleInfo, styleMap } from 'lit-html/directives/style-map';
+import { styleMap } from 'lit-html/directives/style-map';
 import { ActionHandlerEvent } from 'custom-card-helpers/dist';
 import { handleClick } from '../utils/utils';
 
@@ -16,7 +16,7 @@ export class HumidifierIndicator extends LitElement {
 
   private renderIcon(): TemplateResult | void {
     if (!this.indicator.icon) return;
-    const style = (this.indicator.iconStyle || {}) as StyleInfo;
+    const style = this.indicator.iconStyle || {};
 
     return html`
       <ha-icon style=${styleMap(style)} class="state__value_icon" .icon=${this.indicator.icon}> </ha-icon>
@@ -25,9 +25,10 @@ export class HumidifierIndicator extends LitElement {
 
   private renderUnit(): TemplateResult | void {
     if (!this.indicator.unit) return;
+    const style = this.indicator.unitStyle || {};
 
     return html`
-      <span class="state__uom">${this.indicator.unit}</span>
+      <span style=${styleMap(style)} class="state__uom">${this.indicator.unit}</span>
     `;
   }
 
@@ -38,7 +39,7 @@ export class HumidifierIndicator extends LitElement {
     return html`
       <div class="state ${cls}" @click=${this._onClick}>
         ${this.renderIcon()}
-        <span class="state__value">${this.indicator.value}</span>
+        <span class="state__value">${this.indicator.state}</span>
         ${this.renderUnit()}
       </div>
     `;

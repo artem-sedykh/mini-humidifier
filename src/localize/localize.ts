@@ -15,10 +15,8 @@ export function localize(string: string, lang: string, fallback = 'unknown'): st
   try {
     translated = languages[lang][section][key];
   } catch (e) {
-    translated = languages['en'][section][key];
+    return fallback;
   }
-
-  if (translated === undefined) translated = languages['en'][section][key];
 
   if (translated === undefined) return fallback;
 

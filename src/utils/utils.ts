@@ -6,9 +6,9 @@ import { forwardHaptic } from './haptic';
 import { toggleEntity } from './toggle-entity';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function compileTemplate(template: string | Function, context: any): any {
+export function compileTemplate(template: string | Function): any {
   try {
-    return new Function('', `return ${template}`).call(context || {});
+    return new Function('', `return ${template}`).call({});
   } catch (e) {
     throw new Error(`\n[COMPILE ERROR]: [${e.toString()}]\n[SOURCE]: ${template}\n`);
   }

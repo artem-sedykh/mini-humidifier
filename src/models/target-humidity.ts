@@ -1,7 +1,8 @@
 import { HomeAssistant } from 'custom-card-helpers/dist';
-import { TargetHumidityConfig } from '../types';
+import { ExecutionContext, Primitive, TargetHumidityConfig } from '../types';
 import { HassEntity } from 'home-assistant-js-websocket';
 import { TargetHumidityIndicator } from './target-humidity-indicator';
+import { localize } from '../localize/localize';
 
 export class TargetHumidity {
   private readonly _hass: HomeAssistant;
@@ -46,24 +47,38 @@ export class TargetHumidity {
     return this._config.step;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public get state(): any {
-    let value = this._state();
-    value = this._config.stateMapper(value, this.entity, this._humidifierEntity);
-    return value;
+  public get state(): number {
+    let state = this._state();
+    const context = this._getExecutionContext(state);
+    state = this._config.stateMapper(state, context);
+    return state;
   }
 
   public get indicator(): TargetHumidityIndicator {
     return this._indicator;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private _state(): any {
+  private _state(): Primitive {
     if (this._config.state.attribute) return this.entity.attributes[this._config.state.attribute];
     return this.entity.state;
   }
 
   public change(selected: number): Promise<void> {
-    return this._config.change(this.hass, selected, this.state, this.entity, this._humidifierEntity);
+    const context = this._getExecutionContext(this.state);
+    return this._config.change(selected, context);
+  }
+
+  protected _getExecutionContext(state: Primitive): ExecutionContext {
+    return {
+      call_service: this._hass.callService,
+      entity: this._entity,
+      humidifierEntity: this._humidifierEntity,
+      config: this._config.raw,
+      state: state,
+      localize: (string: string, fallback: string): string => {
+        const lang = this.hass?.selectedLanguage || this.hass?.language || 'en';
+        return localize(string, lang, fallback);
+      },
+    };
   }
 }

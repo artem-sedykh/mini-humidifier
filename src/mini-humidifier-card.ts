@@ -1,7 +1,7 @@
 import { CSSResult, customElement, html, LitElement, property, TemplateResult } from 'lit-element';
 import { HomeAssistant } from 'custom-card-helpers';
 import { ButtonConfig, DropdownConfig, ElementType, HumidifierCardConfig, TapAction } from './types';
-import { Config } from './config';
+import { Config } from './models/config';
 import { StyleInfo, styleMap } from 'lit-html/directives/style-map';
 import { HumidifierObject } from './models/humidifier';
 import { ClassInfo, classMap } from 'lit-html/directives/class-map';

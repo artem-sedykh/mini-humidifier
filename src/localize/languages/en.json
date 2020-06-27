@@ -1,5 +1,5 @@
 {
-  "led": {
+  "led_brightness": {
     "0": "Bright",
     "1": "Dim",
     "2": "Off"
@@ -9,5 +9,9 @@
     "silent": "Silent",
     "medium": "Medium",
     "high": "High"
+  },
+  "depth": {
+    "liters": "L",
+    "percent": "%"
   }
 }

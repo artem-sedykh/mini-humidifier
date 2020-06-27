@@ -12,6 +12,7 @@ const ICON = {
   CHILD_LOCK: 'mdi:lock',
   TOGGLE: 'mdi:dots-horizontal',
   POWER: 'mdi:power',
+  TANK: 'mdi:cup-water',
 };
 
 export default ICON;
