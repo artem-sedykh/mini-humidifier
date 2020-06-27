@@ -1,24 +1,49 @@
-import resolve from 'rollup-plugin-node-resolve';
+import typescript from 'rollup-plugin-typescript2';
+import commonjs from 'rollup-plugin-commonjs';
+import nodeResolve from 'rollup-plugin-node-resolve';
+import babel from 'rollup-plugin-babel';
+import { terser } from 'rollup-plugin-terser';
+import serve from 'rollup-plugin-serve';
 import json from '@rollup/plugin-json';
-
-const path = require('path');
-
+import path from 'path';
+const dev = process.env.ROLLUP_WATCH;
 const configurationPath = path.resolve('./src/configurations/');
 
-export default {
-  input: 'src/main.js',
-  moduleContext(id) {
-    if (path.parse(id).dir === configurationPath) {
-      return 'this';
-    }
+const serveopts = {
+  contentBase: ['./dist'],
+  host: '0.0.0.0',
+  port: 5000,
+  allowCrossOrigin: true,
+  headers: {
+    'Access-Control-Allow-Origin': '*',
   },
-  output: {
-    file: 'dist/mini-humidifier-bundle.js',
-    format: 'umd',
-    name: 'MiniHumidifier',
-  },
-  plugins: [
-    resolve(),
-    json(),
-  ],
 };
+
+const plugins = [
+  nodeResolve({}),
+  commonjs(),
+  typescript(),
+  json(),
+  babel({
+    exclude: 'node_modules/**',
+  }),
+  dev && serve(serveopts),
+  // !dev && terser(),
+];
+
+export default [
+  {
+    input: 'src/mini-humidifier-card.ts',
+    moduleContext(id) {
+      if (path.parse(id).dir === configurationPath) {
+        return 'this';
+      }
+    },
+    output: {
+      file: 'dist/mini-humidifier-bundle.js',
+      format: 'es',
+      name: 'MiniHumidifierCard',
+    },
+    plugins: [...plugins],
+  },
+];

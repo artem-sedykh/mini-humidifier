@@ -1,0 +1,13 @@
+{
+  "led": {
+    "0": "Bright",
+    "1": "Dim",
+    "2": "Off"
+  },
+  "mode": {
+    "auto": "Auto",
+    "silent": "Silent",
+    "medium": "Medium",
+    "high": "High"
+  }
+}

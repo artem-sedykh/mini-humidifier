@@ -36,6 +36,7 @@ bower_components
 
 # Compiled binary addons (https://nodejs.org/api/addons.html)
 build/Release
+dist
 
 # Dependency directories
 node_modules/
@@ -80,7 +81,7 @@ typings/
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+dist/
 
 # Gatsby files
 .cache/
@@ -102,5 +103,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Ide
 .idea/
-dist/
