@@ -4,7 +4,7 @@ import { ExecutionContext, Primitive, TapAction } from '../types';
 import { instance, mock } from 'ts-mockito';
 import { StyleInfo } from 'lit-html/directives/style-map';
 
-describe('indicator config', () => {
+describe('indicator-config', () => {
   it('indicator.id', () => {
     const indicatorId = 'test_indicator';
     const rawConfig = {

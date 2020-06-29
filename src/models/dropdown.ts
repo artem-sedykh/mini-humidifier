@@ -57,7 +57,7 @@ export class Dropdown {
     return this.entity.state;
   }
 
-  get icon(): string {
+  get icon(): string | undefined {
     const context = this._getExecutionContext();
     return this._config.icon.template(this.state, context);
   }

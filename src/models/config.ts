@@ -298,18 +298,20 @@ export class Config implements HumidifierCardConfig {
       id: id,
       raw: buttonObj,
       elementType: ElementType.Button,
-      icon: { template: (): string => '', style: (): StyleInfo => ({}) },
+      icon: { template: (): string | undefined => undefined, style: (): StyleInfo => ({}) },
       actionTimeout: ACTION_TIMEOUT,
       order: order,
       hide: !!buttonObj.hide,
-      state: { entity: this.entity },
+      state: { entity: this.entity, attribute: undefined },
       stateMapper: (value): Primitive => value,
       disabled: () => false,
       style: () => ({}),
       toggleAction: (_state, context): Promise<void> => toggleEntity(context.entity, context.call_service),
     };
 
-    if (typeof buttonObj.action_timeout === 'number') button.actionTimeout = buttonObj.action_timeout;
+    if (typeof buttonObj.action_timeout === 'number' && buttonObj.action_timeout >= 0) {
+      button.actionTimeout = buttonObj.action_timeout;
+    }
     if (typeof buttonObj.order === 'number') button.order = buttonObj.order;
 
     if (buttonObj.disabled) {
