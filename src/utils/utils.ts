@@ -17,7 +17,7 @@ export function compileTemplate(template: string | Function): any {
   }
 }
 
-export function findTapAction(value: string): TapAction | undefined {
+export function parseTapAction(value?: string): TapAction | undefined {
   const item = Object.entries(TapAction).find(s => s[1] === value);
   if (item) return TapAction[item[0]];
 

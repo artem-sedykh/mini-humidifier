@@ -52,7 +52,7 @@ export class Indicator {
     return this._config.order;
   }
 
-  public get icon(): string {
+  public get icon(): string | undefined {
     const context = this._getExecutionContext();
     return this._config.icon.template(this.state, context);
   }

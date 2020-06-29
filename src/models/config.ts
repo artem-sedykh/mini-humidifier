@@ -16,7 +16,7 @@ import {
 } from '../types';
 import ICON, { ACTION_TIMEOUT } from '../const';
 import HUMIDIFIERS from '../humidifiers';
-import { compileTemplate, findTapAction } from '../utils/utils';
+import { compileTemplate, parseTapAction } from '../utils/utils';
 import { toggleEntity } from '../utils/toggle-entity';
 import { StyleInfo } from 'lit-html/directives/style-map';
 
@@ -144,29 +144,34 @@ export class Config implements HumidifierCardConfig {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private static _parseTapAction(tapActionObj: any, entity: string, defaultAction: TapAction): TapActionConfig {
     const tapAction: TapActionConfig = {
-      action: defaultAction,
       entity: entity,
+      action: defaultAction,
     };
 
     if (!tapActionObj) return tapAction;
 
     if (typeof tapActionObj === 'string') {
-      const action = findTapAction(tapActionObj);
+      const action = parseTapAction(tapActionObj);
       if (action) tapAction.action = action;
       return tapAction;
     }
 
     if (typeof tapActionObj === 'object') {
       if ('action' in tapActionObj) {
-        const action = findTapAction(tapActionObj.action);
+        const action = parseTapAction(tapActionObj.action);
         if (action) tapAction.action = action;
       }
 
-      if ('entity' in tapActionObj) tapAction.entity = tapActionObj.entity?.toString();
-      if ('service' in tapActionObj) tapAction.service = tapActionObj.service?.toString();
-      if ('service_data' in tapActionObj) tapAction.serviceData = tapActionObj.service_data;
-      if ('navigation_path' in tapActionObj) tapAction.navigationPath = tapActionObj.navigation_path;
-      if ('url' in tapActionObj) tapAction.url = tapActionObj.url;
+      if (tapAction.action === TapAction.Toggle) {
+        if ('entity' in tapActionObj) tapAction.entity = tapActionObj.entity?.toString();
+      } else if (tapAction.action === TapAction.callService) {
+        if ('service' in tapActionObj) tapAction.service = tapActionObj.service?.toString();
+        if ('service_data' in tapActionObj) tapAction.serviceData = tapActionObj.service_data;
+      } else if (tapAction.action === TapAction.Navigate) {
+        if ('navigation_path' in tapActionObj) tapAction.navigationPath = tapActionObj.navigation_path;
+      } else if (tapAction.action === TapAction.Url) {
+        if ('url' in tapActionObj) tapAction.url = tapActionObj.url?.toString();
+      }
     }
 
     return tapAction;
@@ -195,13 +200,12 @@ export class Config implements HumidifierCardConfig {
     const indicator: IndicatorConfig = {
       id: id,
       raw: indicatorObj,
-      icon: { template: (): string => '', style: (): StyleInfo => ({}) },
-      unit: { template: (): string => '', style: (): StyleInfo => ({}) },
+      icon: { template: (): string | undefined => undefined, style: (): StyleInfo => ({}) },
+      unit: { template: (): string | undefined => undefined, style: (): StyleInfo => ({}) },
       hide: !!indicatorObj.hide,
       order: order,
-      round: undefined,
       tapAction: { action: TapAction.None, entity: this.entity },
-      state: { entity: this.entity },
+      state: { entity: this.entity, attribute: undefined },
       stateMapper: (value): Primitive => value,
     };
 
@@ -234,7 +238,7 @@ export class Config implements HumidifierCardConfig {
     }
 
     if ('order' in indicatorObj && typeof indicatorObj.order === 'number') {
-      indicator.order = order;
+      indicator.order = indicatorObj.order;
     }
 
     if (indicatorObj.state) {
@@ -250,9 +254,13 @@ export class Config implements HumidifierCardConfig {
       }
     }
 
-    if ('round' in indicatorObj && typeof indicatorObj.round === 'number') indicator.round = indicatorObj.round;
+    if ('round' in indicatorObj && typeof indicatorObj.round === 'number') {
+      if (indicatorObj.round >= 0) indicator.round = indicatorObj.round;
+    }
 
-    if ('fixed' in indicatorObj && typeof indicatorObj.fixed === 'number') indicator.fixed = indicatorObj.fixed;
+    if ('fixed' in indicatorObj && typeof indicatorObj.fixed === 'number') {
+      if (indicatorObj.fixed >= 0) indicator.fixed = indicatorObj.fixed;
+    }
 
     indicator.tapAction = Config._parseTapAction(indicatorObj.tap_action, indicator.state.entity, TapAction.None);
 

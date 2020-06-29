@@ -57,7 +57,7 @@ export type TapActionConfig = {
 };
 
 export type IconConfig = {
-  template: (state: Primitive, context: ExecutionContext) => string;
+  template: (state: Primitive, context: ExecutionContext) => string | undefined;
   style: (state: Primitive, context: ExecutionContext) => StyleInfo;
 };
 
@@ -132,7 +132,6 @@ export type TargetHumidityConfig = {
 };
 
 export type ExecutionContext = {
-  //state: Primitive;
   entity: HassEntity;
   humidifierEntity: HassEntity;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
