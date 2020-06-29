@@ -1,16 +1,12 @@
-import { HomeAssistant } from 'custom-card-helpers/dist';
 import { STATES_OFF } from '../const';
-import { turnOnOffEntity } from './turn-on-off-entity';
-import { ExecutionContext } from '../types';
 import { computeDomain } from './compute-domain';
+import { HassEntity } from 'home-assistant-js-websocket';
 
-export const toggleEntity = (hass: HomeAssistant, entityId: string): Promise<void> => {
-  const turnOn = STATES_OFF.includes(hass.states[entityId].state);
-  return turnOnOffEntity(hass, entityId, turnOn);
-};
-
-export const toggle = (context: ExecutionContext): Promise<void> => {
-  const entity = context.entity;
+export const toggleEntity = (
+  entity: HassEntity,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  callService: (domain: string, service: string, serviceData?: { [key: string]: any }) => Promise<void>,
+): Promise<void> => {
   const entityId = entity.entity_id;
   const turnOn = STATES_OFF.includes(entity.state);
   const stateDomain = computeDomain(entityId);
@@ -28,5 +24,5 @@ export const toggle = (context: ExecutionContext): Promise<void> => {
       service = turnOn ? 'turn_on' : 'turn_off';
   }
 
-  return context.call_service(serviceDomain, service, { entity_id: entityId });
+  return callService(serviceDomain, service, { entity_id: entityId });
 };

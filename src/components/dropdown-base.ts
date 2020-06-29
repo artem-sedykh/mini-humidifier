@@ -1,6 +1,7 @@
 import { LitElement, html, css, customElement, property, TemplateResult, CSSResult } from 'lit-element';
 import sharedStyle from '../sharedStyle';
 import { DropdownItem } from '../types';
+import { StyleInfo, styleMap } from 'lit-html/directives/style-map';
 
 @customElement('mh-dropdown-base')
 export class HumidifierDropdownBase extends LitElement {
@@ -9,6 +10,7 @@ export class HumidifierDropdownBase extends LitElement {
   @property() disabled!: boolean;
   @property() selected!: string;
   @property() items!: DropdownItem[];
+  @property() customStyle!: StyleInfo;
 
   get selectedIndex(): number {
     return this.items.map(item => item.id).indexOf(this.selected);
@@ -48,6 +50,7 @@ export class HumidifierDropdownBase extends LitElement {
         @click=${(e: Event): void => e.stopPropagation()}
       >
         <ha-icon-button
+          style=${styleMap(this.customStyle)}
           class="mh-dropdown__button icon"
           slot="dropdown-trigger"
           .icon=${this._calcIcon()}

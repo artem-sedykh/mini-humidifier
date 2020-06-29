@@ -1,5 +1,4 @@
 import { LitElement, html, css, customElement, property, TemplateResult, CSSResult } from 'lit-element';
-import { styleMap } from 'lit-html/directives/style-map';
 import sharedStyle from '../sharedStyle';
 import { PropertyValues } from 'lit-element/src/lib/updating-element';
 import { Dropdown } from '../models/dropdown';
@@ -43,7 +42,7 @@ export class HumidifierDropdown extends LitElement {
   protected render(): TemplateResult | void {
     return html`
       <mh-dropdown-base
-        style=${styleMap(this.dropdown.style)}
+        .customStyle=${this.dropdown.style}
         @change=${this._handleChange}
         .items=${this.dropdown.source}
         .icon=${this.dropdown.icon}

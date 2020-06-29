@@ -10,9 +10,9 @@ export class TargetHumidityIndicator extends Indicator {
   }
 
   public getValue(value: number): Primitive {
-    const context = this._getExecutionContext(this.state);
+    const context = this._getExecutionContext();
     const val = this._config.stateMapper(value, context);
-    if (this._config.round != undefined && typeof val === 'number') return round(val, this._config.round);
+    if (this._config.round !== undefined && typeof val === 'number') return round(val, this._config.round);
     return val;
   }
 }

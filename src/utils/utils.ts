@@ -6,6 +6,9 @@ import { forwardHaptic } from './haptic';
 import { toggleEntity } from './toggle-entity';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const isNumeric = (obj: any): boolean => !isNaN(parseFloat(obj)) && isFinite(obj);
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function compileTemplate(template: string | Function): any {
   try {
     return new Function('', `return ${template}`).call({});
@@ -41,7 +44,8 @@ export const handleClick = (node: HTMLElement, hass: HomeAssistant, config: TapA
       break;
     case TapAction.Toggle:
       if (config.entity) {
-        toggleEntity(hass, config.entity).then();
+        const entity = hass.states[config.entity];
+        toggleEntity(entity, hass.callService).then();
         forwardHaptic('success');
       }
       break;

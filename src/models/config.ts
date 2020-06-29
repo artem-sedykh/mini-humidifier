@@ -17,7 +17,7 @@ import {
 import ICON, { ACTION_TIMEOUT } from '../const';
 import HUMIDIFIERS from '../humidifiers';
 import { compileTemplate, findTapAction } from '../utils/utils';
-import { toggle } from '../utils/toggle-entity';
+import { toggleEntity } from '../utils/toggle-entity';
 import { StyleInfo } from 'lit-html/directives/style-map';
 
 export class Config implements HumidifierCardConfig {
@@ -252,6 +252,8 @@ export class Config implements HumidifierCardConfig {
 
     if ('round' in indicatorObj && typeof indicatorObj.round === 'number') indicator.round = indicatorObj.round;
 
+    if ('fixed' in indicatorObj && typeof indicatorObj.fixed === 'number') indicator.fixed = indicatorObj.fixed;
+
     indicator.tapAction = Config._parseTapAction(indicatorObj.tap_action, indicator.state.entity, TapAction.None);
 
     return indicator;
@@ -296,7 +298,7 @@ export class Config implements HumidifierCardConfig {
       stateMapper: (value): Primitive => value,
       disabled: () => false,
       style: () => ({}),
-      toggleAction: (_state, context): Promise<void> => toggle(context),
+      toggleAction: (_state, context): Promise<void> => toggleEntity(context.entity, context.call_service),
     };
 
     if (typeof buttonObj.action_timeout === 'number') button.actionTimeout = buttonObj.action_timeout;

@@ -157,7 +157,7 @@ export class MiniHumidifierCard extends LitElement {
         <div class="mh-humidifier">
           <div class="mh-humidifier__core flex">
             <div class="entity__icon" ?color=${this.humidifier.isActive}>
-              <ha-icon .icon=${this.humidifier.icon} />
+              <ha-icon .icon=${this.humidifier.icon}> </ha-icon>
             </div>
             <div class="entity__info">
               <div class="wrap">
@@ -224,7 +224,7 @@ export class MiniHumidifierCard extends LitElement {
           ${indicators.map(
             indicator =>
               html`
-                <mh-indicator .indicator="${indicator}" />
+                <mh-indicator .indicator="${indicator}"> </mh-indicator>
               `,
           )}
         </div>
@@ -258,11 +258,11 @@ export class MiniHumidifierCard extends LitElement {
         ${buttons.map(button => {
           if (button.elementType === ElementType.Button)
             return html`
-              <mh-button .button="${button}" />
+              <mh-button .button="${button}"> </mh-button>
             `;
           if (button.elementType == ElementType.Dropdown)
             return html`
-              <mh-dropdown .dropdown="${button}" />
+              <mh-dropdown .dropdown="${button}"> </mh-dropdown>
             `;
           return undefined;
         })}
@@ -292,7 +292,7 @@ export class MiniHumidifierCard extends LitElement {
     if (this.humidifier.isUnavailable) return;
 
     return html`
-      <mh-power .button="${this._powerButton}" />
+      <mh-power .button="${this._powerButton}"> </mh-power>
     `;
   }
 

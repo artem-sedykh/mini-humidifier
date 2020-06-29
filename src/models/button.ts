@@ -53,7 +53,7 @@ export class Button {
 
   public get state(): Primitive {
     let state = this._state();
-    const context = this._getExecutionContext(state);
+    const context = this._getExecutionContext();
     state = this._config.stateMapper(state, context);
     return state;
   }
@@ -64,12 +64,12 @@ export class Button {
   }
 
   get icon(): string {
-    const context = this._getExecutionContext(this.state);
+    const context = this._getExecutionContext();
     return this._config.icon.template(this.state, context);
   }
 
   get disabled(): boolean {
-    const context = this._getExecutionContext(this.state);
+    const context = this._getExecutionContext();
     return this._config.disabled(this.state, context);
   }
 
@@ -79,22 +79,21 @@ export class Button {
   }
 
   get style(): StyleInfo {
-    const context = this._getExecutionContext(this.state);
+    const context = this._getExecutionContext();
     return this._config.style(this.state, context) as StyleInfo;
   }
 
   public toggle(): Promise<void> {
-    const context = this._getExecutionContext(this.state);
+    const context = this._getExecutionContext();
     return this._config.toggleAction(this.state, context);
   }
 
-  protected _getExecutionContext(state: Primitive): ExecutionContext {
+  protected _getExecutionContext(): ExecutionContext {
     return {
       call_service: this._hass.callService,
       entity: this._entity,
       humidifierEntity: this._humidifierEntity,
       config: this._config.raw,
-      state: state,
       localize: (string: string, fallback: string): string => {
         const lang = this.hass?.selectedLanguage || this.hass?.language || 'en';
         return localize(string, lang, fallback);

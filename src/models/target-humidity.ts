@@ -49,7 +49,7 @@ export class TargetHumidity {
 
   public get state(): number {
     let state = this._state();
-    const context = this._getExecutionContext(state);
+    const context = this._getExecutionContext();
     state = this._config.stateMapper(state, context);
     return state;
   }
@@ -64,17 +64,16 @@ export class TargetHumidity {
   }
 
   public change(selected: number): Promise<void> {
-    const context = this._getExecutionContext(this.state);
+    const context = this._getExecutionContext();
     return this._config.change(selected, context);
   }
 
-  protected _getExecutionContext(state: Primitive): ExecutionContext {
+  protected _getExecutionContext(): ExecutionContext {
     return {
       call_service: this._hass.callService,
       entity: this._entity,
       humidifierEntity: this._humidifierEntity,
       config: this._config.raw,
-      state: state,
       localize: (string: string, fallback: string): string => {
         const lang = this.hass?.selectedLanguage || this.hass?.language || 'en';
         return localize(string, lang, fallback);

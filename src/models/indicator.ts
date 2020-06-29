@@ -1,7 +1,7 @@
 import { ExecutionContext, IndicatorConfig, Primitive, TapActionConfig } from '../types';
 import { HomeAssistant } from 'custom-card-helpers/dist';
 import { HassEntity } from 'home-assistant-js-websocket';
-import { round } from '../utils/utils';
+import { isNumeric, round } from '../utils/utils';
 import { localize } from '../localize/localize';
 import { StyleInfo } from 'lit-html/directives/style-map';
 
@@ -18,56 +18,61 @@ export class Indicator {
     this._entity = hass.states[config.state.entity];
   }
 
-  get id(): string {
+  public get id(): string {
     return this._config.id;
   }
 
-  get hass(): HomeAssistant {
+  public get hass(): HomeAssistant {
     return this._hass;
   }
 
-  get entity(): HassEntity {
+  public get entity(): HassEntity {
     return this._entity;
   }
 
-  get tapAction(): TapActionConfig {
+  public get tapAction(): TapActionConfig {
     return this._config.tapAction;
   }
 
-  get unit(): string | undefined {
-    const context = this._getExecutionContext(this.state);
+  public get unit(): string | undefined {
+    const context = this._getExecutionContext();
     return this._config.unit.template(this.state, context);
   }
 
-  get unitStyle(): StyleInfo {
-    const context = this._getExecutionContext(this.state);
+  public get unitStyle(): StyleInfo {
+    const context = this._getExecutionContext();
     return this._config.unit.style(this.state, context);
   }
 
-  get hide(): boolean {
+  public get hide(): boolean {
     return this._config.hide;
   }
 
-  get order(): number {
+  public get order(): number {
     return this._config.order;
   }
 
-  get icon(): string {
-    const context = this._getExecutionContext(this.state);
+  public get icon(): string {
+    const context = this._getExecutionContext();
     return this._config.icon.template(this.state, context);
   }
 
-  get iconStyle(): StyleInfo {
-    const context = this._getExecutionContext(this.state);
+  public get iconStyle(): StyleInfo {
+    const context = this._getExecutionContext();
     return this._config.icon.style(this.state, context);
   }
 
-  get state(): Primitive {
+  public get state(): Primitive {
     let state = this._state();
-    const context = this._getExecutionContext(state);
+    const context = this._getExecutionContext();
     state = this._config.stateMapper(state, context);
 
-    if (this._config.round != undefined && typeof state === 'number') return round(state, this._config.round);
+    if (state !== null && state !== undefined && isNumeric(state)) {
+      if (this._config.fixed !== undefined && this._config.fixed !== null)
+        return parseFloat(state.toString()).toFixed(this._config.fixed);
+
+      if (this._config.round !== undefined && this._config.round !== null) return round(state, this._config.round);
+    }
 
     return state;
   }
@@ -77,13 +82,12 @@ export class Indicator {
     return this.entity.state;
   }
 
-  protected _getExecutionContext(state: Primitive): ExecutionContext {
+  protected _getExecutionContext(): ExecutionContext {
     return {
       call_service: this._hass.callService,
       entity: this._entity,
       humidifierEntity: this._humidifierEntity,
       config: this._config.raw,
-      state: state,
       localize: (string: string, fallback: string): string => {
         const lang = this.hass?.selectedLanguage || this.hass?.language || 'en';
         return localize(string, lang, fallback);

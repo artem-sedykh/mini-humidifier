@@ -1,5 +1,6 @@
 import ICON from '../const';
 import { DefaultModelConfig, DropdownItem, ExecutionContext, Primitive } from '../types';
+import { StyleInfo } from 'lit-html/directives/style-map';
 
 export const ZHIMI_HUMIDIFIER_CB1 = (): DefaultModelConfig => ({
   power: {
@@ -54,12 +55,8 @@ export const ZHIMI_HUMIDIFIER_CB1 = (): DefaultModelConfig => ({
           const config = context.config;
 
           if (depth > 120) {
-            if (depth === 127) {
-              return '';
-            }
+            if (depth === 127) return '';
             depth = 120;
-          } else if (depth === -1) {
-            depth = 0;
           }
 
           if (config.type === 'liters') return (4 * depth) / 120;
@@ -116,7 +113,7 @@ export const ZHIMI_HUMIDIFIER_CB1 = (): DefaultModelConfig => ({
       },
       disabled: (_state, context): boolean => {
         const depth = context.entity.attributes.depth;
-        return depth !== -1 && depth < 12;
+        return depth < 12;
       },
       change_action: (selected, context): Promise<void> => {
         const options = { entity_id: context.entity.entity_id, speed: selected };
@@ -137,6 +134,9 @@ export const ZHIMI_HUMIDIFIER_CB1 = (): DefaultModelConfig => ({
             return item;
           });
         },
+      },
+      style: (state): StyleInfo => {
+        return state === 1 ? { opacity: '0.6' } : {};
       },
       active: (state): boolean => {
         return state !== 2 && state !== '2';

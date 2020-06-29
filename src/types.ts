@@ -70,6 +70,7 @@ export type IndicatorConfig = {
   id: string;
   unit: IconConfig;
   round?: number;
+  fixed?: number;
   hide: boolean;
   order: number;
   tapAction: TapActionConfig;
@@ -131,7 +132,7 @@ export type TargetHumidityConfig = {
 };
 
 export type ExecutionContext = {
-  state: Primitive;
+  //state: Primitive;
   entity: HassEntity;
   humidifierEntity: HassEntity;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -159,6 +160,7 @@ export type DefaultIndicator = {
   round?: number;
   hide?: boolean;
   order?: number;
+  fixed?: number;
   tap_action?: TapActionConfig;
   state?: DefaultState;
   icon: DefaultIcon | string;

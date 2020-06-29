@@ -36,7 +36,6 @@ export const DEERMA_HUMIDIFIER_MJJSQ = (): DefaultModelConfig => ({
     },
     status: {
       icon: ICON.TANK,
-      order: 3,
       empty: 'Empty',
       filled: 'Filled',
       source: {
