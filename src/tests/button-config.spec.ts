@@ -1,7 +1,7 @@
 import { Config } from '../models/config';
 import { assert, expect } from 'chai';
 import { StyleInfo } from 'lit-html/directives/style-map';
-import { ElementType, ExecutionContext } from '../types';
+import { ElementType, ExecutionContext, Primitive } from '../types';
 import { instance, mock } from 'ts-mockito';
 import { ACTION_TIMEOUT } from '../const';
 
@@ -244,6 +244,230 @@ describe('button-config', () => {
       const button = config.buttons.find(i => i.id === test.buttonId);
 
       expect(button?.state).to.deep.equals(test.expected);
+    });
+  });
+
+  const buttonRawTestSource = [
+    { buttonId: 'test', button: {} },
+    { buttonId: 'test', button: { hide: false, order: 10, test_prop: 12 } },
+    { buttonId: 'test', button: { hide: false, icon: 'mdi:test' } },
+  ];
+
+  buttonRawTestSource.forEach(function(test) {
+    it(`button.raw: ${JSON.stringify(test.button)}`, () => {
+      const rawConfig = {
+        entity: 'fan.xiaomi_miio_device',
+        model: 'empty',
+        indicators: {},
+      };
+
+      rawConfig.indicators[test.buttonId] = test.button;
+
+      const config = new Config(rawConfig);
+      const button = config.indicators.find(i => i.id === test.buttonId);
+
+      expect(button?.raw).to.deep.equals(test.button);
+    });
+  });
+
+  const buttonStyleTestSource = [
+    { buttonId: 'test', state: true, button: {}, expected: {} },
+    {
+      buttonId: 'test',
+      state: 10,
+      button: {
+        style: (state): StyleInfo => ({ state: state }),
+      },
+      expected: {
+        state: 10,
+      },
+    },
+    {
+      buttonId: 'test',
+      state: 10,
+      button: {
+        style: (): StyleInfo => ({ color: 'red' }),
+      },
+      expected: {
+        color: 'red',
+      },
+    },
+  ];
+
+  buttonStyleTestSource.forEach(function(test) {
+    it(`button.style:`, () => {
+      const rawConfig = {
+        entity: 'fan.test',
+        model: 'empty',
+        buttons: {},
+      };
+
+      rawConfig.buttons[test.buttonId] = test.button;
+
+      const config = new Config(rawConfig);
+      const button = config.buttons.find(i => i.id === test.buttonId);
+
+      const contextMock: ExecutionContext = mock<ExecutionContext>();
+      const context: ExecutionContext = instance(contextMock);
+
+      assert.isDefined(button?.style);
+      const style = button?.style(test.state, context);
+
+      expect(style).to.deep.equals(test.expected);
+    });
+  });
+
+  const buttonDisabledTestSource = [
+    { buttonId: 'test', state: true, button: {}, expected: false },
+    { buttonId: 'test', state: false, button: {}, expected: false },
+    {
+      buttonId: 'test',
+      state: 10,
+      button: {
+        disabled: (state): boolean => state > 10,
+      },
+      expected: false,
+    },
+    {
+      buttonId: 'test',
+      state: 11,
+      button: {
+        disabled: (state): boolean => state > 10,
+      },
+      expected: true,
+    },
+  ];
+
+  buttonDisabledTestSource.forEach(function(test) {
+    it(`button.disabled: ${test.button.disabled} state:${test.state} expected:${test.expected}`, () => {
+      const rawConfig = {
+        entity: 'fan.test',
+        model: 'empty',
+        buttons: {},
+      };
+
+      rawConfig.buttons[test.buttonId] = test.button;
+
+      const config = new Config(rawConfig);
+      const button = config.buttons.find(i => i.id === test.buttonId);
+
+      const contextMock: ExecutionContext = mock<ExecutionContext>();
+      const context: ExecutionContext = instance(contextMock);
+
+      assert.isDefined(button?.disabled);
+      const disabled = button?.disabled(test.state, context);
+
+      expect(disabled).to.deep.equals(test.expected);
+    });
+  });
+
+  const buttonStateMapperTestSource = [
+    { buttonId: 'test', state: true, button: {}, expected: true },
+    { buttonId: 'test', state: false, button: {}, expected: false },
+    { buttonId: 'test', state: 10, button: {}, expected: 10 },
+    {
+      buttonId: 'test',
+      state: 10,
+      button: {
+        state: {
+          mapper: (state): Primitive => (state > 10 ? 'on' : 'off'),
+        },
+      },
+      expected: 'off',
+    },
+    {
+      buttonId: 'test',
+      state: 11,
+      button: {
+        state: {
+          mapper: (state): Primitive => (state > 10 ? 'on' : 'off'),
+        },
+      },
+      expected: 'on',
+    },
+  ];
+
+  buttonStateMapperTestSource.forEach(function(test) {
+    it(`button.state.mapper: ${test.button?.state?.mapper} state:${test.state} expected:${test.expected}`, () => {
+      const rawConfig = {
+        entity: 'fan.test',
+        model: 'empty',
+        buttons: {},
+      };
+
+      rawConfig.buttons[test.buttonId] = test.button;
+
+      const config = new Config(rawConfig);
+      const button = config.buttons.find(i => i.id === test.buttonId);
+
+      const contextMock: ExecutionContext = mock<ExecutionContext>();
+      const context: ExecutionContext = instance(contextMock);
+
+      assert.isDefined(button?.stateMapper);
+      const state = button?.stateMapper(test.state, context);
+
+      expect(state).to.deep.equals(test.expected);
+    });
+  });
+
+  const dropdownMapperTestSource = [
+    {
+      buttonId: 'test',
+      button: {},
+      expected: undefined,
+    },
+    {
+      buttonId: 'test',
+      button: {
+        source: ['item1', 'item2', 'item3'],
+      },
+      expected: undefined,
+    },
+    {
+      buttonId: 'test',
+      button: {
+        type: 'dropdown',
+        source: {
+          item1: 'name_item1',
+          item2: 'name_item2',
+        },
+      },
+      expected: [
+        { id: 'item1', name: 'name_item1', order: 0 },
+        { id: 'item2', name: 'name_item2', order: 1 },
+      ],
+    },
+    {
+      buttonId: 'test',
+      button: {
+        type: 'dropdown',
+        source: {
+          item1: { name: 'name_item1', order: 2 },
+          item2: { name: 'name_item2', order: 10, test_pro: 'test' },
+        },
+      },
+      expected: [
+        { id: 'item1', name: 'name_item1', order: 2 },
+        { id: 'item2', name: 'name_item2', order: 10, test_pro: 'test' },
+      ],
+    },
+  ];
+
+  dropdownMapperTestSource.forEach(function(test) {
+    it(`button.source:`, () => {
+      const rawConfig = {
+        entity: 'fan.test',
+        model: 'empty',
+        buttons: {},
+      };
+
+      rawConfig.buttons[test.buttonId] = test.button;
+
+      const config = new Config(rawConfig);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const button = config.buttons.find(i => i.id === test.buttonId) as any;
+
+      expect(button.source).to.deep.equals(test.expected);
     });
   });
 });
