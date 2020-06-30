@@ -1,7 +1,7 @@
 import { Config } from '../models/config';
 import { assert, expect } from 'chai';
 import { StyleInfo } from 'lit-html/directives/style-map';
-import { ElementType, ExecutionContext, Primitive } from '../types';
+import { DropdownConfig, DropdownItem, ElementType, ExecutionContext, Primitive } from '../types';
 import { instance, mock } from 'ts-mockito';
 import { ACTION_TIMEOUT } from '../const';
 
@@ -468,6 +468,138 @@ describe('button-config', () => {
       const button = config.buttons.find(i => i.id === test.buttonId) as any;
 
       expect(button.source).to.deep.equals(test.expected);
+    });
+  });
+
+  const dropdownSourceFilterTestSource = [
+    {
+      buttonId: 'test',
+      button: {
+        type: 'dropdown',
+        source: {
+          item1: 'name_item1',
+          item2: 'name_item2',
+        },
+      },
+      expected: [
+        { id: 'item1', name: 'name_item1', order: 0 },
+        { id: 'item2', name: 'name_item2', order: 1 },
+      ],
+    },
+    {
+      buttonId: 'test',
+      button: {
+        type: 'dropdown',
+        source: {
+          item1: { name: 'name_item1', order: 2 },
+          item2: { name: 'name_item2', order: 10, test_pro: 'test' },
+        },
+      },
+      expected: [
+        { id: 'item1', name: 'name_item1', order: 2 },
+        { id: 'item2', name: 'name_item2', order: 10, test_pro: 'test' },
+      ],
+    },
+    {
+      buttonId: 'test',
+      button: {
+        type: 'dropdown',
+        source: {
+          item1: { name: 'name_item1', order: 2 },
+          item2: { name: 'name_item2', order: 10, test_pro: 'test' },
+          __filter: (source: DropdownItem[]): DropdownItem[] => {
+            return source;
+          },
+        },
+      },
+      expected: [
+        { id: 'item1', name: 'name_item1', order: 2 },
+        { id: 'item2', name: 'name_item2', order: 10, test_pro: 'test' },
+      ],
+    },
+    {
+      buttonId: 'test',
+      button: {
+        type: 'dropdown',
+        source: {
+          item1: { name: 'name_item1', order: 2 },
+          item2: { name: 'name_item2', order: 10, test_pro: 'test' },
+          __filter: (source: DropdownItem[]): DropdownItem[] => {
+            return source.filter(i => i.id === 'item1');
+          },
+        },
+      },
+      expected: [{ id: 'item1', name: 'name_item1', order: 2 }],
+    },
+  ];
+
+  dropdownSourceFilterTestSource.forEach(function(test) {
+    it(`button.source.__filter:`, () => {
+      const rawConfig = {
+        entity: 'fan.test',
+        model: 'empty',
+        buttons: {},
+      };
+
+      rawConfig.buttons[test.buttonId] = test.button;
+
+      const config = new Config(rawConfig);
+      const dropdown = config.buttons.find(i => i.id === test.buttonId) as DropdownConfig;
+
+      assert.isDefined(dropdown.sourceFilter);
+
+      const contextMock: ExecutionContext = mock<ExecutionContext>();
+      const context: ExecutionContext = instance(contextMock);
+
+      const result = dropdown.sourceFilter(dropdown.source, context);
+
+      expect(result).to.deep.equals(test.expected);
+    });
+  });
+
+  const buttonActiveTestSource = [
+    { buttonId: 'test', state: true, button: { type: 'dropdown' }, expected: false },
+    { buttonId: 'test', state: false, button: { type: 'dropdown' }, expected: false },
+    {
+      buttonId: 'test',
+      state: 10,
+      button: {
+        type: 'dropdown',
+        active: (state): boolean => state > 10,
+      },
+      expected: false,
+    },
+    {
+      buttonId: 'test',
+      state: 11,
+      button: {
+        type: 'dropdown',
+        active: (state): boolean => state > 10,
+      },
+      expected: true,
+    },
+  ];
+
+  buttonActiveTestSource.forEach(function(test) {
+    it(`button.active: ${test.button.active?.toString()} state:${test.state} expected:${test.expected}`, () => {
+      const rawConfig = {
+        entity: 'fan.test',
+        model: 'empty',
+        buttons: {},
+      };
+
+      rawConfig.buttons[test.buttonId] = test.button;
+
+      const config = new Config(rawConfig);
+      const dropdown = config.buttons.find(i => i.id === test.buttonId) as DropdownConfig;
+
+      const contextMock: ExecutionContext = mock<ExecutionContext>();
+      const context: ExecutionContext = instance(contextMock);
+
+      assert.isDefined(dropdown?.active);
+      const disabled = dropdown?.active(test.state, context);
+
+      expect(disabled).to.deep.equals(test.expected);
     });
   });
 });
