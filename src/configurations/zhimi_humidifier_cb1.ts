@@ -139,7 +139,7 @@ export const ZHIMI_HUMIDIFIER_CB1 = (): DefaultModelConfig => ({
         },
       },
       style: (state): StyleInfo => {
-        return state === 1 ? { opacity: '0.6' } : {};
+        return state === '1' ? { opacity: '0.6' } : {};
       },
       active: (state): boolean => {
         return state !== '2';

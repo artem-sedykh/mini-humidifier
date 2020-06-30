@@ -6,6 +6,7 @@ import { anyString, anything, deepEqual, instance, mock, verify, when } from 'ts
 import { HomeAssistant } from 'custom-card-helpers/dist';
 import { Button } from '../../models/button';
 import { Dropdown } from '../../models/dropdown';
+import { TargetHumidity } from '../../models/target-humidity';
 
 describe('zhimi.humidifier.cb1 buttons', () => {
   const config = new Config({ entity: 'fan.xiaomi_miio_device', model: 'zhimi.humidifier.cb1' });
@@ -140,7 +141,7 @@ describe('zhimi.humidifier.cb1 buttons', () => {
     assert.isFalse(button.isOn);
   });
 
-  it('buzzer.child_lock', () => {
+  it('child_lock.toggle', () => {
     const state = 'off';
     const buttonId = 'child_lock';
     const attributes = Object.assign({}, defaultAttributes, { child_lock: false });
@@ -196,7 +197,7 @@ describe('zhimi.humidifier.cb1 buttons', () => {
     assert.isFalse(button.isOn);
   });
 
-  it('buzzer.mode', () => {
+  it('mode.change', () => {
     const buttonId = 'mode';
     const defaultMode = 'high';
     const attributes = Object.assign({}, defaultAttributes, { mode: defaultMode });
@@ -266,7 +267,7 @@ describe('zhimi.humidifier.cb1 buttons', () => {
     }
   });
 
-  it('buzzer.led', () => {
+  it('led.change', () => {
     const buttonId = 'led';
     const defaultLedValue = 0;
     const attributes = Object.assign({}, defaultAttributes, { led_brightness: defaultLedValue });
@@ -326,6 +327,57 @@ describe('zhimi.humidifier.cb1 buttons', () => {
       else assert.isTrue(button.isActive(button.state?.toString()));
 
       expect(button.state).to.equal(value);
+    }
+  });
+
+  it('target_humidity.change', () => {
+    const defaultTargetHumidity = 30;
+    const attributes = Object.assign({}, defaultAttributes, { target_humidity: defaultTargetHumidity });
+
+    const entityId = config.entity;
+    const targetHumidityConf = config.targetHumidity;
+    assert.exists(targetHumidityConf);
+
+    const entityMock: HassEntity = mock<HassEntity>();
+    when(entityMock.state).thenReturn('off');
+    when(entityMock.entity_id).thenReturn(entityId);
+    when(entityMock.attributes).thenReturn(attributes);
+    const entity: HassEntity = instance(entityMock);
+
+    const states = {};
+    states[entityId] = entity;
+    const hassMock: HomeAssistant = mock<HomeAssistant>();
+    when(hassMock.states).thenReturn(states);
+    when(hassMock.selectedLanguage).thenReturn('en');
+
+    when(hassMock.callService(anyString(), anyString(), anything())).thenCall(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (domain: string, service: string, serviceData?: { [key: string]: any }) => {
+        if (domain === 'xiaomi_miio' && service === 'fan_set_target_humidity') {
+          attributes.target_humidity = serviceData?.humidity;
+        }
+        return new Promise<void>(() => {
+          return;
+        });
+      },
+    );
+
+    const hass: HomeAssistant = instance(hassMock);
+
+    expect(hass.states[entityId]).to.deep.equal(entity);
+
+    const targetHumidity = new TargetHumidity(hass, targetHumidityConf, entity);
+
+    expect(targetHumidity.state).to.equal(defaultTargetHumidity);
+
+    for (let i = targetHumidityConf.min; i <= targetHumidityConf.max; i += targetHumidityConf.step) {
+      Promise.resolve(targetHumidity.change(i));
+
+      verify(
+        hassMock.callService('xiaomi_miio', 'fan_set_target_humidity', deepEqual({ entity_id: entityId, humidity: i })),
+      ).once();
+
+      expect(targetHumidity.state).to.equal(i);
     }
   });
 });
