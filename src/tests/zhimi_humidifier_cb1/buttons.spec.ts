@@ -265,4 +265,67 @@ describe('zhimi.humidifier.cb1 buttons', () => {
       expect(button.state).to.equal(mode);
     }
   });
+
+  it('buzzer.led', () => {
+    const buttonId = 'led';
+    const defaultLedValue = 0;
+    const attributes = Object.assign({}, defaultAttributes, { led_brightness: defaultLedValue });
+
+    const entityId = config.entity;
+    const buttonConf = config.buttons.find(b => b.id === buttonId) as DropdownConfig;
+    assert.exists(buttonConf);
+    assert.isTrue(buttonConf?.elementType === ElementType.Dropdown);
+
+    const entityMock: HassEntity = mock<HassEntity>();
+    when(entityMock.state).thenReturn('off');
+    when(entityMock.entity_id).thenReturn(entityId);
+    when(entityMock.attributes).thenReturn(attributes);
+    const entity: HassEntity = instance(entityMock);
+
+    const states = {};
+    states[entityId] = entity;
+    const hassMock: HomeAssistant = mock<HomeAssistant>();
+    when(hassMock.states).thenReturn(states);
+    when(hassMock.selectedLanguage).thenReturn('en');
+
+    when(hassMock.callService(anyString(), anyString(), anything())).thenCall(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (domain: string, service: string, serviceData?: { [key: string]: any }) => {
+        if (domain === 'xiaomi_miio' && service === 'fan_set_led_brightness') {
+          attributes.led_brightness = serviceData?.brightness;
+        }
+        return new Promise<void>(() => {
+          return;
+        });
+      },
+    );
+
+    const hass: HomeAssistant = instance(hassMock);
+
+    expect(hass.states[entityId]).to.deep.equal(entity);
+
+    const button = new Dropdown(hass, buttonConf, entity);
+
+    expect(button.state).to.equal(defaultLedValue.toString());
+
+    const values = button.source.map(v => v.id);
+
+    for (let i = 0; i < values.length; i += 1) {
+      const value = values[i];
+      Promise.resolve(button.change(value));
+
+      verify(
+        hassMock.callService(
+          'xiaomi_miio',
+          'fan_set_led_brightness',
+          deepEqual({ entity_id: entityId, brightness: value }),
+        ),
+      ).once();
+
+      if (value === '2') assert.isFalse(button.isActive(button.state?.toString()));
+      else assert.isTrue(button.isActive(button.state?.toString()));
+
+      expect(button.state).to.equal(value);
+    }
+  });
 });

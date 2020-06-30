@@ -123,7 +123,10 @@ export const ZHIMI_HUMIDIFIER_CB1 = (): DefaultModelConfig => ({
     led: {
       icon: ICON.LED,
       type: 'dropdown',
-      state: { attribute: 'led_brightness' },
+      state: {
+        attribute: 'led_brightness',
+        mapper: (state): string | undefined => state?.toString(),
+      },
       source: {
         0: 'Bright',
         1: 'Dim',
@@ -139,7 +142,7 @@ export const ZHIMI_HUMIDIFIER_CB1 = (): DefaultModelConfig => ({
         return state === 1 ? { opacity: '0.6' } : {};
       },
       active: (state): boolean => {
-        return state !== 2 && state !== '2';
+        return state !== '2';
       },
       change_action: (selected, context): Promise<void> => {
         const options = { entity_id: context.entity.entity_id, brightness: selected };
