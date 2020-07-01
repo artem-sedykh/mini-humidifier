@@ -378,7 +378,9 @@ export class Config implements HumidifierCardConfig {
         }),
     };
 
-    if (typeof dropdownObj.action_timeout === 'number') dropdown.actionTimeout = dropdownObj.action_timeout;
+    if (typeof dropdownObj.action_timeout === 'number' && dropdownObj.action_timeout >= 0) {
+      dropdown.actionTimeout = dropdownObj.action_timeout;
+    }
     if (typeof dropdownObj.order === 'number') dropdown.order = dropdownObj.order;
 
     if (dropdownObj.disabled) {
@@ -467,7 +469,7 @@ export class Config implements HumidifierCardConfig {
       hide: !!targetHumidityObj.hide,
       actionTimeout: ACTION_TIMEOUT,
       disabled: () => false,
-      state: { entity: this.entity },
+      state: { entity: this.entity, attribute: undefined },
       stateMapper: (value): number => Number(value),
       change: () =>
         new Promise(() => {
@@ -483,7 +485,7 @@ export class Config implements HumidifierCardConfig {
       targetHumidity.disabled = compileTemplate(targetHumidityObj.disabled);
     }
 
-    if (typeof targetHumidityObj.action_timeout === 'number') {
+    if (typeof targetHumidityObj.action_timeout === 'number' && targetHumidityObj.action_timeout >= 0) {
       targetHumidity.actionTimeout = targetHumidityObj.action_timeout;
     }
 

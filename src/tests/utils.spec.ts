@@ -13,7 +13,7 @@ describe('utils', () => {
   ];
 
   isNumericTestSource.forEach(function(test) {
-    it(`isNumeric: ${test.value}`, () => {
+    it(`isNumeric: ${test.value} is numeric: ${test.expected}`, () => {
       expect(isNumeric(test.value)).to.equal(test.expected);
     });
   });

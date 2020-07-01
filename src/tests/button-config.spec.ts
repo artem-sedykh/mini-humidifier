@@ -137,6 +137,12 @@ describe('button-config', () => {
     { buttonId: 'test', button: { hide: 0 }, expected: { exists: true, hide: false } },
     { buttonId: 'test', button: { hide: true }, expected: { exists: false } },
     { buttonId: 'test', button: { hide: false }, expected: { exists: false, hide: false } },
+
+    { buttonId: 'test', button: { type: 'dropdown' }, expected: { exists: true, hide: false } },
+    { buttonId: 'test', button: { type: 'dropdown', hide: 1 }, expected: { exists: false } },
+    { buttonId: 'test', button: { type: 'dropdown', hide: 0 }, expected: { exists: true, hide: false } },
+    { buttonId: 'test', button: { type: 'dropdown', hide: true }, expected: { exists: false } },
+    { buttonId: 'test', button: { type: 'dropdown', hide: false }, expected: { exists: false, hide: false } },
   ];
 
   buttonHideTestSource.forEach(function(test) {
@@ -168,10 +174,17 @@ describe('button-config', () => {
     { buttonId: 'test', button: { action_timeout: true }, expected: ACTION_TIMEOUT },
     { buttonId: 'test', button: { action_timeout: 'string' }, expected: ACTION_TIMEOUT },
     { buttonId: 'test', button: { action_timeout: -1 }, expected: ACTION_TIMEOUT },
+
+    { buttonId: 'test', button: { type: 'dropdown' }, expected: ACTION_TIMEOUT },
+    { buttonId: 'test', button: { type: 'dropdown', action_timeout: 1 }, expected: 1 },
+    { buttonId: 'test', button: { type: 'dropdown', action_timeout: 0 }, expected: 0 },
+    { buttonId: 'test', button: { type: 'dropdown', action_timeout: true }, expected: ACTION_TIMEOUT },
+    { buttonId: 'test', button: { type: 'dropdown', action_timeout: 'string' }, expected: ACTION_TIMEOUT },
+    { buttonId: 'test', button: { type: 'dropdown', action_timeout: -1 }, expected: ACTION_TIMEOUT },
   ];
 
   buttonActionTimeoutTestSource.forEach(function(test) {
-    it(`button.hide: ${JSON.stringify(test.button)}`, () => {
+    it(`button.action_timeout: ${JSON.stringify(test.button)}`, () => {
       const rawConfig = {
         entity: 'fan.xiaomi_miio_device',
         model: 'empty',
