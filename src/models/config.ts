@@ -296,6 +296,7 @@ export class Config implements HumidifierCardConfig {
   private _parseButton(id: string, buttonObj: any, order: number): ButtonConfig {
     const button: ButtonConfig = {
       id: id,
+      label: (): undefined => undefined,
       raw: buttonObj,
       elementType: ElementType.Button,
       icon: { template: (): string | undefined => undefined, style: (): StyleInfo => ({}) },
@@ -316,6 +317,10 @@ export class Config implements HumidifierCardConfig {
 
     if (buttonObj.disabled) {
       button.disabled = compileTemplate(buttonObj.disabled);
+    }
+
+    if (buttonObj.label) {
+      button.label = compileTemplate(buttonObj.label);
     }
 
     if (buttonObj.toggle_action) {
@@ -360,6 +365,7 @@ export class Config implements HumidifierCardConfig {
     const dropdown: DropdownConfig = {
       id: id,
       elementType: ElementType.Dropdown,
+      label: (): undefined => undefined,
       raw: dropdownObj,
       icon: { template: (): string => '', style: (): StyleInfo => ({}) },
       actionTimeout: ACTION_TIMEOUT,
@@ -385,6 +391,10 @@ export class Config implements HumidifierCardConfig {
 
     if (dropdownObj.disabled) {
       dropdown.disabled = compileTemplate(dropdownObj.disabled);
+    }
+
+    if (dropdownObj.label) {
+      dropdown.label = compileTemplate(dropdownObj.label);
     }
 
     if (dropdownObj.style) {

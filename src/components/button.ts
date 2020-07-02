@@ -46,6 +46,16 @@ export class HumidifierButton extends LitElement {
         ?color=${this._isOn}
       >
       </ha-icon-button>
+      ${this.renderLabel()}
+    `;
+  }
+
+  private renderLabel(): TemplateResult | void {
+    const label = this.button.label;
+    if (!label) return;
+
+    return html`
+      <span class="label">${label}</span>
     `;
   }
 
@@ -85,6 +95,16 @@ export class HumidifierButton extends LitElement {
         ha-icon-button[color] {
           color: var(--mh-icon-active-color);
           opacity: 1;
+        }
+        ha-icon-button,
+        .label {
+          display: flex;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        .label {
+          font-size: calc(var(--mh-unit) * 0.325);
+          margin-top: calc(var(--mh-unit) * -0.125);
         }
       `,
     ];

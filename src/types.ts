@@ -100,6 +100,7 @@ export type ElementConfigBase = {
   disabled: (state: Primitive, context: ExecutionContext) => boolean;
   style: (state: Primitive, context: ExecutionContext) => StyleInfo;
   raw: object;
+  label: (state: Primitive, context: ExecutionContext) => string | undefined;
 };
 
 export type ButtonConfig = ElementConfigBase & {
@@ -183,6 +184,7 @@ export type DefaultElement = {
   hide?: boolean;
   order?: number;
   state?: DefaultState;
+  label?: (state: Primitive, context: ExecutionContext) => string | undefined;
   disabled?: (state: Primitive, context: ExecutionContext) => boolean;
   style?: (state: Primitive, context: ExecutionContext) => StyleInfo;
   action_timeout?: number;

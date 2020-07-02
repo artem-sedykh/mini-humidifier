@@ -39,6 +39,11 @@ export class Button {
     return this._config.hide;
   }
 
+  get label(): string | undefined {
+    const context = this._getExecutionContext();
+    return this._config.label(this.state, context);
+  }
+
   get order(): number {
     return this._config.order;
   }

@@ -410,6 +410,65 @@ describe('button-config', () => {
     });
   });
 
+  const buttonLabelTestSource = [
+    { buttonId: 'test', state: true, button: {}, expected: undefined },
+    { buttonId: 'test', state: false, button: {}, expected: undefined },
+    {
+      buttonId: 'test',
+      state: 10,
+      button: {
+        label: (state): string | undefined => state?.toString(),
+      },
+      expected: '10',
+    },
+    {
+      buttonId: 'test',
+      state: 10,
+      button: {
+        label: '(state) => state.toString()',
+      },
+      expected: '10',
+    },
+    {
+      buttonId: 'test',
+      button: {
+        label: (): string => 'test_label',
+      },
+      expected: 'test_label',
+    },
+    {
+      buttonId: 'test',
+      state: 11,
+      button: {
+        label: '() => "test_label"',
+      },
+      expected: 'test_label',
+    },
+  ];
+
+  buttonLabelTestSource.forEach(function(test) {
+    it(`button.label: ${test.button.label} state:${test.state} expected:${test.expected}`, () => {
+      const rawConfig = {
+        entity: 'fan.test',
+        model: 'empty',
+        buttons: {},
+      };
+
+      rawConfig.buttons[test.buttonId] = test.button;
+
+      const config = new Config(rawConfig);
+      const button = config.buttons.find(i => i.id === test.buttonId);
+
+      const contextMock: ExecutionContext = mock<ExecutionContext>();
+      const context: ExecutionContext = instance(contextMock);
+
+      assert.isDefined(button?.label);
+      const label = button?.label(test.state, context);
+
+      expect(label).to.deep.equals(test.expected);
+    });
+  });
+
   const buttonStateMapperTestSource = [
     { buttonId: 'test', state: true, button: {}, expected: true },
     { buttonId: 'test', state: false, button: {}, expected: false },

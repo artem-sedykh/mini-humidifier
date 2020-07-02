@@ -51,6 +51,16 @@ export class HumidifierDropdown extends LitElement {
         .selected=${this._state}
       >
       </mh-dropdown-base>
+      ${this.renderLabel()}
+    `;
+  }
+
+  private renderLabel(): TemplateResult | void {
+    const label = this.dropdown.label;
+    if (!label) return;
+
+    return html`
+      <span class="label">${label}</span>
     `;
   }
 
@@ -86,6 +96,16 @@ export class HumidifierDropdown extends LitElement {
         :host([disabled]) {
           opacity: 0.25;
           pointer-events: none;
+        }
+        mh-dropdown-base,
+        .label {
+          display: flex;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        .label {
+          font-size: calc(var(--mh-unit) * 0.325);
+          margin-top: calc(var(--mh-unit) * -0.125);
         }
       `,
     ];

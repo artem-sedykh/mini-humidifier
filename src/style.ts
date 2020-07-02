@@ -215,6 +215,11 @@ const style = css`
     flex-wrap: wrap;
     margin-right: calc(var(--mh-unit) * 0.075);
   }
+  mh-button,
+  mh-dropdown {
+    display: flex;
+    flex-direction: column;
+  }
 `;
 
 export default style;
