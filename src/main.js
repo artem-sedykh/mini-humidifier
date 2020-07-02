@@ -376,6 +376,7 @@ class MiniHumidifier extends LitElement {
   }
 
   render() {
+    const cls = this.config.target_humidity.hide ? 'full' : '';
     return html`
       <ha-card
         class=${this.computeClasses()}
@@ -387,7 +388,7 @@ class MiniHumidifier extends LitElement {
             ${this.renderIcon()}
             <div class='entity__info'>
               <div class="wrap">
-                <div class="entity__info__name_wrap" 
+                <div class="entity__info__name_wrap ${cls}" 
                   @click=${e => this.handlePopup(e)}>
                   ${this.renderEntityName()}
                 </div>

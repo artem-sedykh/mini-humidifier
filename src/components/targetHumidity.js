@@ -87,6 +87,7 @@ class TargetHumidity extends LitElement {
         flex-direction: column-reverse;
         align-items: center;
         height: var(--mh-unit);
+        width: 100%;
       }
       .mh-target_humidifier ha-slider {
         flex: 1;
