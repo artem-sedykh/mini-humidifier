@@ -58,6 +58,7 @@ const style = css`
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
     opacity: var(--mh-bg-opacity);
+    border-radius: var(--ha-card-border-radius, 0);
   }
 
   .mh-humidifier {
@@ -101,6 +102,7 @@ const style = css`
     border-radius: 100%;
     height: var(--mh-unit);
     width: var(--mh-unit);
+    --mdc-icon-size: calc(var(--mh-unit) * 0.6);
     min-width: var(--mh-unit);
     line-height: var(--mh-unit);
     margin-right: calc(var(--mh-unit) / 5);
@@ -153,6 +155,7 @@ const style = css`
     color: var(--mh-icon-color);
     margin-left: auto;
     margin-top: calc(var(--mh-unit) * -0.125);
+    --mdc-icon-size: calc(var(--mh-unit) * 0.6);
   }
   .toggle-button.open {
     transform: rotate(180deg);
@@ -197,9 +200,11 @@ const style = css`
   mh-power {
     margin-left: auto;
     min-width: calc(var(--mh-unit) * 0.875);
+    margin-right: calc(var(--mh-unit) * -0.125);
   }
   mh-target-humidity {
-    width: 100%;
+    display: flex;
+    flex: 1;
   }
   .mh-indicators__container {
     display: flex;

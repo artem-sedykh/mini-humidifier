@@ -76,6 +76,7 @@ export class HumidifierDropdown extends LitElement {
           transition: background 0.5s;
           --paper-item-min-height: var(--mh-unit);
           --mh-dropdown-unit: var(--mh-unit);
+          --mdc-icon-size: calc(var(--mh-unit) * 0.6);
         }
         :host([color]) {
           background: var(--mh-active-color);
