@@ -151,6 +151,7 @@ export class MiniHumidifierCard extends LitElement {
   }
 
   protected render(): TemplateResult | void {
+    const cls = this.config.targetHumidity.hide ? 'full' : '';
     return html`
       <ha-card class=${this._computeClasses()} style=${this._computeStyles()}>
         <div class="mh__bg"></div>
@@ -161,7 +162,7 @@ export class MiniHumidifierCard extends LitElement {
             </div>
             <div class="entity__info">
               <div class="wrap">
-                <div class="entity__info__name_wrap" @click=${this._onClick}>
+                <div class="entity__info__name_wrap ${cls}" @click=${this._onClick}>
                   <div class="entity__info__name">
                     ${this.humidifier.name}
                   </div>

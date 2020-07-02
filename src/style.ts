@@ -173,6 +173,9 @@ const style = css`
     max-width: calc(var(--mh-unit) * 4.25);
     cursor: pointer;
   }
+  .entity__info__name_wrap.full {
+    max-width: 80%;
+  }
   .--unavailable .ctl-wrap {
     margin-left: auto;
     margin-top: auto;
@@ -193,7 +196,8 @@ const style = css`
     margin-top: calc(var(--mh-unit) * 0.05);
   }
   .ctl-wrap {
-    width: 100%;
+    flex: 1;
+    margin-left: auto;
     display: flex;
     flex-direction: row;
   }
