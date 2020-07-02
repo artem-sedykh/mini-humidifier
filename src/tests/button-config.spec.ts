@@ -35,10 +35,30 @@ describe('button-config', () => {
     },
     {
       buttonId: 'test',
+      state: 'test_state',
+      button: {
+        icon: {
+          template: '(state) => state',
+        },
+      },
+      expected: { icon: 'test_state', style: {} },
+    },
+    {
+      buttonId: 'test',
       state: undefined,
       button: {
         icon: {
           template: (state): string | undefined => state?.toString(),
+        },
+      },
+      expected: { icon: undefined, style: {} },
+    },
+    {
+      buttonId: 'test',
+      state: undefined,
+      button: {
+        icon: {
+          template: '(state) => state',
         },
       },
       expected: { icon: undefined, style: {} },
@@ -343,9 +363,25 @@ describe('button-config', () => {
     },
     {
       buttonId: 'test',
+      state: 10,
+      button: {
+        disabled: '(state) => state > 10',
+      },
+      expected: false,
+    },
+    {
+      buttonId: 'test',
       state: 11,
       button: {
         disabled: (state): boolean => state > 10,
+      },
+      expected: true,
+    },
+    {
+      buttonId: 'test',
+      state: 11,
+      button: {
+        disabled: '(state) => state > 10',
       },
       expected: true,
     },

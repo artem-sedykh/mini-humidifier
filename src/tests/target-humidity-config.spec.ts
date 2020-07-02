@@ -123,6 +123,12 @@ describe('target-humidity-config', () => {
       expected: true,
     },
     {
+      target_humidity: {
+        disabled: '() => true',
+      },
+      expected: true,
+    },
+    {
       state: 10,
       target_humidity: {
         disabled: (state): boolean => state > 10,
@@ -130,9 +136,23 @@ describe('target-humidity-config', () => {
       expected: false,
     },
     {
+      state: 10,
+      target_humidity: {
+        disabled: '(state) => state > 10',
+      },
+      expected: false,
+    },
+    {
       state: 11,
       target_humidity: {
         disabled: (state): boolean => state > 10,
+      },
+      expected: true,
+    },
+    {
+      state: 11,
+      target_humidity: {
+        disabled: '(state) => state > 10',
       },
       expected: true,
     },
@@ -175,6 +195,15 @@ describe('target-humidity-config', () => {
       target_humidity: {
         state: {
           mapper: (state): number => state + 20,
+        },
+      },
+      expected: 50,
+    },
+    {
+      state: 30,
+      target_humidity: {
+        state: {
+          mapper: '(state) => state + 20',
         },
       },
       expected: 50,
