@@ -55,6 +55,7 @@ const style = css`
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
     opacity: var(--mh-bg-opacity);
+    border-radius: var(--ha-card-border-radius, 0);
   }
   
   .mh-humidifier {
@@ -164,8 +165,11 @@ const style = css`
   }
   .entity__info__name_wrap {
     margin-right: 0;
-    max-width: calc(var(--mh-unit) * 2.25);
+    max-width: calc(var(--mh-unit) * 4.25);
     cursor: pointer;
+  }
+  .entity__info__name_wrap.full {
+    max-width: 80%;
   }
   .--unavailable .ctl-wrap {
     margin-left: auto;
@@ -189,16 +193,19 @@ const style = css`
     display: flex;
   }
   .ctl-wrap {
-    width: 100%;
+    flex: 1;
+    margin-left: auto;
     display: flex;
     flex-direction: row;
   }
   mh-power {
     margin-left: auto;
     min-width: calc(var(--mh-unit) * .875);
+    margin-right: calc(var(--mh-unit) * -0.125);
   }
   mh-target-humidity {
-    width: 100%;
+    display: flex;
+    flex: 1;
   }
 `;
 
