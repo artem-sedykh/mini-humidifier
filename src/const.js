@@ -12,6 +12,8 @@ const ICON = {
   TOGGLE: 'mdi:dots-horizontal',
   POWER: 'mdi:power',
   TANK: 'mdi:cup-water',
+  AQI: 'mdi:weather-fog',
+  RPM: 'mdi:speedometer',
 };
 
 export default ICON;
