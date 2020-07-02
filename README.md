@@ -29,7 +29,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=2.2.3
+    - url: /local/mini-humidifier-bundle.js?v=2.2.4
       type: module
   ```
 
@@ -40,14 +40,14 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 2. Grab `mini-humidifier-bundle.js`
 
   ```console
-  $ wget https://github.com/artem-sedykh/mini-humidifier/releases/download/v2.2.3/mini-humidifier-bundle.js
+  $ wget https://github.com/artem-sedykh/mini-humidifier/releases/download/v2.2.4/mini-humidifier-bundle.js
   ```
 
 3. Add a reference to `mini-humidifier-bundle.js` inside your `ui-lovelace.yaml`.
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=2.2.3
+    - url: /local/mini-humidifier-bundle.js?v=2.2.4
       type: module
   ```
 
@@ -60,7 +60,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=2.2.3
+    - url: /local/mini-humidifier-bundle.js?v=2.2.4
       type: module
   ```
 
@@ -185,6 +185,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
  #### Available default configurations
  `zhimi.humidifier.cb1`
  `deerma.humidifier.mjjsq` by @dedors
+ `zhimi.airpurifier.ma2`
  
 > Using the default configuration for a specific model
 
