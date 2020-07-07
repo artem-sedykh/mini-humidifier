@@ -37,13 +37,14 @@ export class HumidifierButton extends LitElement {
   }
 
   protected render(): TemplateResult | void {
+    const disabled = this.button.disabled || this.button.isUnavailable;
     return html`
       <ha-icon-button
         style="${styleMap(this.button.style)}"
         .icon=${this.button.icon}
         @click=${this._onClick}
-        ?disabled="${this.button.disabled || this.button.isUnavailable}"
-        ?color=${this._isOn}
+        ?disabled="${disabled}"
+        ?color=${!disabled && this._isOn}
       >
       </ha-icon-button>
       ${this.renderLabel()}
@@ -89,7 +90,11 @@ export class HumidifierButton extends LitElement {
           opacity: 1;
         }
         :host([disabled]) {
-          opacity: 0.25;
+          opacity: 0.5;
+          pointer-events: none;
+        }
+        ha-icon-button[disabled] {
+          opacity: 0.5;
           pointer-events: none;
         }
         ha-icon-button[color] {

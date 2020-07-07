@@ -92,7 +92,7 @@ export class HumidifierDropdownBase extends LitElement {
           display: block;
         }
         ha-icon-button[disabled] {
-          opacity: 0.25;
+          opacity: 0.5;
           pointer-events: none;
         }
         .mh-dropdown__button.icon {
