@@ -42,6 +42,11 @@ describe('slider-config', () => {
     },
     {
       entity: 'fan.t',
+      slider: { state: 'attribute' },
+      expected: { entity: 'fan.t', attribute: 'attribute' },
+    },
+    {
+      entity: 'fan.t',
       slider: { state: { entity: 'fan.t2' } },
       expected: { entity: 'fan.t2', attribute: undefined },
     },

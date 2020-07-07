@@ -314,6 +314,12 @@ describe('indicator-config', () => {
     {
       entity: 'fan.t',
       indicatorId: 'test',
+      indicator: { state: 'aqi' },
+      expected: { entity: 'fan.t', attribute: 'aqi' },
+    },
+    {
+      entity: 'fan.t',
+      indicatorId: 'test',
       indicator: { state: { entity: 'fan.t2' } },
       expected: { entity: 'fan.t2', attribute: undefined },
     },

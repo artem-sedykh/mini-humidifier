@@ -252,6 +252,18 @@ describe('button-config', () => {
     {
       entity: 'fan.t',
       buttonId: 'test',
+      button: { state: 'test_attr' },
+      expected: { entity: 'fan.t', attribute: 'test_attr' },
+    },
+    {
+      entity: 'fan.t',
+      buttonId: 'test',
+      button: { type: 'dropdown', state: 'test_attr' },
+      expected: { entity: 'fan.t', attribute: 'test_attr' },
+    },
+    {
+      entity: 'fan.t',
+      buttonId: 'test',
       button: { state: { entity: 'fan.t2' } },
       expected: { entity: 'fan.t2', attribute: undefined },
     },
