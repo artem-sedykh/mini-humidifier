@@ -4,7 +4,7 @@ import { DropdownItem } from '../types';
 import { StyleInfo, styleMap } from 'lit-html/directives/style-map';
 
 @customElement('mh-dropdown-base')
-export class HumidifierDropdownBase extends LitElement {
+export class CardDropdownBase extends LitElement {
   @property() icon!: string;
   @property() active!: boolean;
   @property() disabled!: boolean;

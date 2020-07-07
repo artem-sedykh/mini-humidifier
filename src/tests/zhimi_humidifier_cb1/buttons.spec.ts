@@ -6,7 +6,7 @@ import { anyString, anything, deepEqual, instance, mock, verify, when } from 'ts
 import { HomeAssistant } from 'custom-card-helpers/dist';
 import { Button } from '../../models/button';
 import { Dropdown } from '../../models/dropdown';
-import { TargetHumidity } from '../../models/target-humidity';
+import { Slider } from '../../models/slider';
 
 describe('zhimi.humidifier.cb1 buttons', () => {
   const config = new Config({ entity: 'fan.xiaomi_miio_device', model: 'zhimi.humidifier.cb1' });
@@ -330,13 +330,13 @@ describe('zhimi.humidifier.cb1 buttons', () => {
     }
   });
 
-  it('target_humidity.change', () => {
+  it('slider.change', () => {
     const defaultTargetHumidity = 30;
     const attributes = Object.assign({}, defaultAttributes, { target_humidity: defaultTargetHumidity });
 
     const entityId = config.entity;
-    const targetHumidityConf = config.targetHumidity;
-    assert.exists(targetHumidityConf);
+    const sliderConf = config.slider;
+    assert.exists(sliderConf);
 
     const entityMock: HassEntity = mock<HassEntity>();
     when(entityMock.state).thenReturn('off');
@@ -366,18 +366,18 @@ describe('zhimi.humidifier.cb1 buttons', () => {
 
     expect(hass.states[entityId]).to.deep.equal(entity);
 
-    const targetHumidity = new TargetHumidity(hass, targetHumidityConf, entity);
+    const slider = new Slider(hass, sliderConf, entity);
 
-    expect(targetHumidity.state).to.equal(defaultTargetHumidity);
+    expect(slider.state).to.equal(defaultTargetHumidity);
 
-    for (let i = targetHumidityConf.min; i <= targetHumidityConf.max; i += targetHumidityConf.step) {
-      Promise.resolve(targetHumidity.change(i));
+    for (let i = sliderConf.min; i <= sliderConf.max; i += sliderConf.step) {
+      Promise.resolve(slider.change(i));
 
       verify(
         hassMock.callService('xiaomi_miio', 'fan_set_target_humidity', deepEqual({ entity_id: entityId, humidity: i })),
       ).once();
 
-      expect(targetHumidity.state).to.equal(i);
+      expect(slider.state).to.equal(i);
     }
   });
 });

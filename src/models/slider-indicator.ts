@@ -4,9 +4,9 @@ import { HassEntity } from 'home-assistant-js-websocket';
 import { Indicator } from './indicator';
 import { isNumeric, round } from '../utils/utils';
 
-export class TargetHumidityIndicator extends Indicator {
-  constructor(hass: HomeAssistant, config: IndicatorConfig, humidifierEntity: HassEntity) {
-    super(hass, config, humidifierEntity);
+export class SliderIndicator extends Indicator {
+  constructor(hass: HomeAssistant, config: IndicatorConfig, cardEntity: HassEntity) {
+    super(hass, config, cardEntity);
   }
 
   public getValue(value: number): Primitive {

@@ -5,8 +5,8 @@ import { HassEntity } from 'home-assistant-js-websocket';
 
 export class PowerButton extends Button {
   private readonly _powerButtonConfig: PowerButtonConfig;
-  constructor(hass: HomeAssistant, config: PowerButtonConfig, humidifierEntity: HassEntity) {
-    super(hass, config, humidifierEntity);
+  constructor(hass: HomeAssistant, config: PowerButtonConfig, cardEntity: HassEntity) {
+    super(hass, config, cardEntity);
     this._powerButtonConfig = config;
   }
 

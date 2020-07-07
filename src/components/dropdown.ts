@@ -6,7 +6,7 @@ import { HASSDomEvent } from 'custom-card-helpers/src/fire-event';
 import { DropdownItem } from '../types';
 
 @customElement('mh-dropdown')
-export class HumidifierDropdown extends LitElement {
+export class CardDropdown extends LitElement {
   private _timer: NodeJS.Timeout | undefined;
   private _state: string | undefined;
 

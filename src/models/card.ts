@@ -1,14 +1,14 @@
 import { HomeAssistant } from 'custom-card-helpers/dist';
-import { HumidifierCardConfig, TapActionConfig } from '../types';
+import { CardConfig, TapActionConfig } from '../types';
 import { HassEntity } from 'home-assistant-js-websocket';
 import ICON, { STATES_OFF, UNAVAILABLE_STATES } from '../const';
 
-export class HumidifierObject {
+export class CardObject {
   private readonly _hass: HomeAssistant;
-  private readonly _config: HumidifierCardConfig;
+  private readonly _config: CardConfig;
   private readonly _entity: HassEntity;
 
-  constructor(hass: HomeAssistant, config: HumidifierCardConfig) {
+  constructor(hass: HomeAssistant, config: CardConfig) {
     this._hass = hass;
     this._config = config;
     this._entity = hass.states[config.entity];

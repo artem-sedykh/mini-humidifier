@@ -4,23 +4,23 @@ import {
   DropdownConfig,
   DropdownItem,
   ElementType,
-  HumidifierCardConfig,
+  CardConfig,
   IndicatorConfig,
   PowerButtonConfig,
   Primitive,
   SecondaryInfo,
+  SliderConfig,
   TapAction,
   TapActionConfig,
-  TargetHumidityConfig,
   ToggleButtonConfig,
 } from '../types';
 import ICON, { ACTION_TIMEOUT } from '../const';
-import HUMIDIFIERS from '../humidifiers';
+import DefaultModels from '../default-models';
 import { compileTemplate, parseTapAction } from '../utils/utils';
 import { toggleEntity } from '../utils/toggle-entity';
 import { StyleInfo } from 'lit-html/directives/style-map';
 
-export class Config implements HumidifierCardConfig {
+export class Config implements CardConfig {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private readonly _config: any;
   private readonly _entity: string;
@@ -34,7 +34,7 @@ export class Config implements HumidifierCardConfig {
   private readonly _tapAction: TapActionConfig;
   private readonly _modelConfig?: DefaultModelConfig;
   private readonly _power: PowerButtonConfig;
-  private readonly _targetHumidity: TargetHumidityConfig;
+  private readonly _slider: SliderConfig;
   private readonly _indicators: IndicatorConfig[];
   private readonly _buttons: (ButtonConfig | DropdownConfig)[];
   private readonly _secondaryInfo: SecondaryInfo;
@@ -61,18 +61,18 @@ export class Config implements HumidifierCardConfig {
     this._toggle = Config._parseToggle(config.toggle);
     this._tapAction = Config._parseTapAction(config.tap_action, this.entity, TapAction.MoreInfo);
 
-    if (config.model && config.model in HUMIDIFIERS) {
+    if (config.model && config.model in DefaultModels) {
       this._model = config.model;
-      this._modelConfig = HUMIDIFIERS[config.model]();
+      this._modelConfig = DefaultModels[config.model]();
     } else {
       this._model = 'default';
-      this._modelConfig = HUMIDIFIERS.default();
+      this._modelConfig = DefaultModels.default();
     }
 
     this._indicators = this._parseIndicators();
     this._buttons = this._parseButtons();
     this._power = this._parsePowerButton();
-    this._targetHumidity = this._parseTargetHumidity();
+    this._slider = this._parseSlider();
     this._secondaryInfo = Config._parseSecondaryInfo(config.secondary_info);
   }
 
@@ -100,8 +100,8 @@ export class Config implements HumidifierCardConfig {
   public get power(): PowerButtonConfig {
     return this._power;
   }
-  public get targetHumidity(): TargetHumidityConfig {
-    return this._targetHumidity;
+  public get slider(): SliderConfig {
+    return this._slider;
   }
   public get toggle(): ToggleButtonConfig {
     return this._toggle;
@@ -243,7 +243,11 @@ export class Config implements HumidifierCardConfig {
 
     if (indicatorObj.state) {
       if (typeof indicatorObj.state === 'string') {
-        indicator.state.entity = indicatorObj.state;
+        if (indicatorObj.state.includes('.')) {
+          indicator.state.entity = indicatorObj.state;
+        } else {
+          indicator.state.attribute = indicatorObj.state;
+        }
       } else {
         indicator.state.attribute = indicatorObj.state.attribute?.toString();
         if (indicatorObj.state.entity) indicator.state.entity = indicatorObj.state.entity?.toString();
@@ -333,7 +337,11 @@ export class Config implements HumidifierCardConfig {
 
     if (buttonObj.state) {
       if (typeof buttonObj.state === 'string') {
-        button.state.entity = buttonObj.state;
+        if (buttonObj.state.includes('.')) {
+          button.state.entity = buttonObj.state;
+        } else {
+          button.state.attribute = buttonObj.state;
+        }
       } else {
         button.state.attribute = buttonObj.state.attribute?.toString();
         if (buttonObj.state.entity) button.state.entity = buttonObj.state.entity?.toString();
@@ -403,7 +411,11 @@ export class Config implements HumidifierCardConfig {
 
     if (dropdownObj.state) {
       if (typeof dropdownObj.state === 'string') {
-        dropdown.state.entity = dropdownObj.state;
+        if (dropdownObj.state.includes('.')) {
+          dropdown.state.entity = dropdownObj.state;
+        } else {
+          dropdown.state.attribute = dropdownObj.state;
+        }
       } else {
         dropdown.state.attribute = dropdownObj.state.attribute?.toString();
         if (dropdownObj.state.entity) dropdown.state.entity = dropdownObj.state.entity?.toString();
@@ -458,25 +470,29 @@ export class Config implements HumidifierCardConfig {
   }
 
   private _parsePowerButton(): PowerButtonConfig {
+    if (typeof this._config.power === 'string') {
+      const button = this._parseButton('power', { ...(this._modelConfig?.power || {}) }, 0);
+      return { type: this._config.power, ...button };
+    }
     const powerButtonObj = { ...(this._modelConfig?.power || {}), ...(this._config.power || {}) };
     const button = this._parseButton('power', powerButtonObj, 0);
     return { type: powerButtonObj.type, ...button };
   }
 
-  private _parseTargetHumidity(): TargetHumidityConfig {
-    const targetHumidityObj = {
-      ...(this._modelConfig?.target_humidity || {}),
-      ...(this._config.target_humidity || {}),
+  private _parseSlider(): SliderConfig {
+    const sliderObj = {
+      ...(this._modelConfig?.slider || {}),
+      ...(this._config.slider || {}),
     };
-    const indicator = this._parseIndicator('target_humidity', targetHumidityObj.indicator || {}, 0);
+    const indicator = this._parseIndicator('slider', sliderObj.indicator || {}, 0);
 
-    const targetHumidity: TargetHumidityConfig = {
+    const slider: SliderConfig = {
       indicator: indicator,
-      raw: targetHumidityObj,
+      raw: sliderObj,
       min: 30,
       max: 80,
       step: 10,
-      hide: !!targetHumidityObj.hide,
+      hide: !!sliderObj.hide,
       actionTimeout: ACTION_TIMEOUT,
       disabled: () => false,
       state: { entity: this.entity, attribute: undefined },
@@ -487,38 +503,42 @@ export class Config implements HumidifierCardConfig {
         }),
     };
 
-    if (typeof targetHumidityObj.min === 'number') targetHumidity.min = targetHumidityObj.min;
-    if (typeof targetHumidityObj.max === 'number') targetHumidity.max = targetHumidityObj.max;
-    if (typeof targetHumidityObj.step === 'number') targetHumidity.step = targetHumidityObj.step;
+    if (typeof sliderObj.min === 'number') slider.min = sliderObj.min;
+    if (typeof sliderObj.max === 'number') slider.max = sliderObj.max;
+    if (typeof sliderObj.step === 'number') slider.step = sliderObj.step;
 
-    if (targetHumidityObj.disabled) {
-      targetHumidity.disabled = compileTemplate(targetHumidityObj.disabled);
+    if (sliderObj.disabled) {
+      slider.disabled = compileTemplate(sliderObj.disabled);
     }
 
-    if (typeof targetHumidityObj.action_timeout === 'number' && targetHumidityObj.action_timeout >= 0) {
-      targetHumidity.actionTimeout = targetHumidityObj.action_timeout;
+    if (typeof sliderObj.action_timeout === 'number' && sliderObj.action_timeout >= 0) {
+      slider.actionTimeout = sliderObj.action_timeout;
     }
 
-    if (targetHumidityObj.state) {
-      if (typeof targetHumidityObj.state === 'string') {
-        targetHumidity.state.entity = targetHumidityObj.state;
+    if (sliderObj.state) {
+      if (typeof sliderObj.state === 'string') {
+        if (sliderObj.state.includes('.')) {
+          slider.state.entity = sliderObj.state;
+        } else {
+          slider.state.attribute = sliderObj.state;
+        }
       } else {
-        targetHumidity.state.attribute = targetHumidityObj.state.attribute?.toString();
-        if (targetHumidityObj.state.entity) targetHumidity.state.entity = targetHumidityObj.state.entity?.toString();
+        slider.state.attribute = sliderObj.state.attribute?.toString();
+        if (sliderObj.state.entity) slider.state.entity = sliderObj.state.entity?.toString();
 
-        if (targetHumidityObj.state.mapper) {
-          targetHumidity.stateMapper = compileTemplate(targetHumidityObj.state.mapper);
+        if (sliderObj.state.mapper) {
+          slider.stateMapper = compileTemplate(sliderObj.state.mapper);
         }
       }
     }
 
-    indicator.state = targetHumidity.state;
+    indicator.state = slider.state;
 
-    if (targetHumidityObj.change_action) {
-      targetHumidity.change = compileTemplate(targetHumidityObj.change_action);
+    if (sliderObj.change_action) {
+      slider.change = compileTemplate(sliderObj.change_action);
     }
 
-    return targetHumidity;
+    return slider;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -6,7 +6,7 @@ import { ActionHandlerEvent } from 'custom-card-helpers/dist';
 import { PropertyValues } from 'lit-element/src/lib/updating-element';
 
 @customElement('mh-button')
-export class HumidifierButton extends LitElement {
+export class CardButton extends LitElement {
   private _isOn: boolean;
   private _timer: NodeJS.Timeout | undefined;
 

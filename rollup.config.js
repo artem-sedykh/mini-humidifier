@@ -31,11 +31,11 @@ const plugins = [
 
 export default [
   {
-    input: 'src/mini-humidifier-card.ts',
+    input: 'src/mini-card.ts',
     output: {
       file: 'dist/mini-humidifier-bundle.js',
       format: 'es',
-      name: 'MiniHumidifierCard',
+      name: 'MiniCard',
     },
     plugins: [...plugins],
   },

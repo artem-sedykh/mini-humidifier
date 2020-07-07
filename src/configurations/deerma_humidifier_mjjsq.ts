@@ -10,7 +10,7 @@ export const DEERMA_HUMIDIFIER_MJJSQ = (): DefaultModelConfig => ({
       return context.call_service('fan', 'toggle', options);
     },
   },
-  target_humidity: {
+  slider: {
     indicator: { icon: ICON.HUMIDITY, unit: '%' },
     min: 30,
     max: 80,

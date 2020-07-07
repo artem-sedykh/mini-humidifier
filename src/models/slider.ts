@@ -1,22 +1,22 @@
 import { HomeAssistant } from 'custom-card-helpers/dist';
-import { ExecutionContext, Primitive, TargetHumidityConfig } from '../types';
+import { ExecutionContext, Primitive, SliderConfig } from '../types';
 import { HassEntity } from 'home-assistant-js-websocket';
-import { TargetHumidityIndicator } from './target-humidity-indicator';
+import { SliderIndicator } from './slider-indicator';
 import { localize } from '../localize/localize';
 
-export class TargetHumidity {
+export class Slider {
   private readonly _hass: HomeAssistant;
-  private readonly _config: TargetHumidityConfig;
-  private readonly _humidifierEntity: HassEntity;
+  private readonly _config: SliderConfig;
+  private readonly _cardEntity: HassEntity;
   private readonly _entity: HassEntity;
-  private readonly _indicator: TargetHumidityIndicator;
+  private readonly _indicator: SliderIndicator;
 
-  constructor(hass: HomeAssistant, config: TargetHumidityConfig, humidifierEntity: HassEntity) {
+  constructor(hass: HomeAssistant, config: SliderConfig, cardEntity: HassEntity) {
     this._hass = hass;
     this._config = config;
-    this._humidifierEntity = humidifierEntity;
+    this._cardEntity = cardEntity;
     this._entity = hass.states[config.state.entity];
-    this._indicator = new TargetHumidityIndicator(hass, config.indicator, humidifierEntity);
+    this._indicator = new SliderIndicator(hass, config.indicator, cardEntity);
   }
 
   get hass(): HomeAssistant {
@@ -54,7 +54,7 @@ export class TargetHumidity {
     return state;
   }
 
-  public get indicator(): TargetHumidityIndicator {
+  public get indicator(): SliderIndicator {
     return this._indicator;
   }
 
@@ -72,7 +72,7 @@ export class TargetHumidity {
     return {
       call_service: this._hass.callService,
       entity: this._entity,
-      humidifierEntity: this._humidifierEntity,
+      cardEntity: this._cardEntity,
       config: this._config.raw,
       localize: (string: string, fallback: string): string => {
         const lang = this.hass?.selectedLanguage || this.hass?.language || 'en';

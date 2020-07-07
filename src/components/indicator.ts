@@ -6,7 +6,7 @@ import { ActionHandlerEvent } from 'custom-card-helpers/dist';
 import { handleClick } from '../utils/utils';
 
 @customElement('mh-indicator')
-export class HumidifierIndicator extends LitElement {
+export class CardIndicator extends LitElement {
   @property() public indicator!: Indicator;
 
   private _onClick(ev: ActionHandlerEvent): void {

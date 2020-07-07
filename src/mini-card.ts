@@ -1,9 +1,9 @@
 import { CSSResult, customElement, html, LitElement, property, TemplateResult } from 'lit-element';
 import { HomeAssistant } from 'custom-card-helpers';
-import { ButtonConfig, DropdownConfig, ElementType, HumidifierCardConfig, TapAction } from './types';
+import { ButtonConfig, DropdownConfig, ElementType, CardConfig, TapAction } from './types';
 import { Config } from './models/config';
 import { StyleInfo, styleMap } from 'lit-html/directives/style-map';
-import { HumidifierObject } from './models/humidifier';
+import { Slider } from './models/slider';
 import { ClassInfo, classMap } from 'lit-html/directives/class-map';
 import style from './style';
 import sharedStyle from './sharedStyle';
@@ -14,24 +14,24 @@ import { HassEntity } from 'home-assistant-js-websocket';
 import { Button } from './models/button';
 import { Dropdown } from './models/dropdown';
 import { PowerButton } from './models/power-button';
-import { TargetHumidity } from './models/target-humidity';
 
 import './components/dropdown';
 import './components/button';
 import './components/power-button';
 import './components/dropdown-base';
 import './components/indicator';
-import './components/target-humidity';
+import './components/slider';
 
 import './initialize';
 import { getLabel } from './utils/getLabel';
+import { CardObject } from './models/card';
 
 @customElement('mini-humidifier')
-export class MiniHumidifierCard extends LitElement {
+export class MiniCard extends LitElement {
   private _indicators: { [id: string]: Indicator };
   private _buttons: { [id: string]: Button | Dropdown };
   private _powerButton!: PowerButton;
-  private _targetHumidity!: TargetHumidity;
+  private _slider!: Slider;
 
   constructor() {
     super();
@@ -41,10 +41,10 @@ export class MiniHumidifierCard extends LitElement {
   }
 
   @property()
-  public config!: HumidifierCardConfig;
+  public config!: CardConfig;
 
   @property()
-  public humidifier!: HumidifierObject;
+  public card!: CardObject;
 
   @property()
   private _toggle: boolean;
@@ -65,17 +65,17 @@ export class MiniHumidifierCard extends LitElement {
     this._hass = hass;
     let force = false;
 
-    const humidifier = new HumidifierObject(hass, this.config);
+    const card = new CardObject(hass, this.config);
 
-    if (humidifier.entity && this.humidifier?.entity !== humidifier.entity) {
-      this.humidifier = humidifier;
+    if (card.entity && this.card?.entity !== card.entity) {
+      this.card = card;
       force = true;
     }
 
     this._updateIndicators(force);
     this._updateButtons(force);
     this._updatePowerButton(force);
-    this._updateTargetHumidity(force);
+    this._updateSlider(force);
   }
 
   private _updateIndicators(force: boolean): void {
@@ -139,37 +139,37 @@ export class MiniHumidifierCard extends LitElement {
     }
   }
 
-  private _updateTargetHumidity(force: boolean): void {
+  private _updateSlider(force: boolean): void {
     if (!this._hass || !this.entity) return;
 
-    const config = this.config.targetHumidity;
+    const config = this.config.slider;
     const entity = this._hass?.states[config.state.entity];
 
-    if (force || entity !== this._targetHumidity?.entity) {
-      this._targetHumidity = new TargetHumidity(this._hass, config, entity);
+    if (force || entity !== this._slider?.entity) {
+      this._slider = new Slider(this._hass, config, entity);
     }
   }
 
   protected render(): TemplateResult | void {
-    const cls = this.config.targetHumidity.hide ? 'full' : '';
+    const cls = this.config.slider.hide ? 'full' : '';
     return html`
       <ha-card class=${this._computeClasses()} style=${this._computeStyles()}>
         <div class="mh__bg"></div>
         <div class="mh-humidifier">
           <div class="mh-humidifier__core flex">
-            <div class="entity__icon" ?color=${this.humidifier.isActive}>
-              <ha-icon .icon=${this.humidifier.icon}> </ha-icon>
+            <div class="entity__icon" ?color=${this.card.isActive}>
+              <ha-icon .icon=${this.card.icon}> </ha-icon>
             </div>
             <div class="entity__info">
               <div class="wrap">
                 <div class="entity__info__name_wrap ${cls}" @click=${this._onClick}>
                   <div class="entity__info__name">
-                    ${this.humidifier.name}
+                    ${this.card.name}
                   </div>
                   ${this._renderSecondaryInfo()}
                 </div>
                 <div class="ctl-wrap">
-                  ${this._renderUnavailable()} ${this._renderTargetHumidifier()} ${this._renderPower()}
+                  ${this._renderUnavailable()} ${this._renderSlider()} ${this._renderPower()}
                 </div>
               </div>
               ${this._renderBottomPanel()}
@@ -182,13 +182,13 @@ export class MiniHumidifierCard extends LitElement {
   }
 
   private _renderSecondaryInfo(): TemplateResult | void {
-    if (this.humidifier.isUnavailable) return;
+    if (this.card.isUnavailable) return;
     const type = this.config.secondaryInfo.type;
 
     if (type === 'last-changed') {
       return html`
         <div class="entity__secondary_info ellipsis">
-          <ha-relative-time .hass=${this._hass} .datetime=${this.humidifier.entity.last_changed}> </ha-relative-time>
+          <ha-relative-time .hass=${this._hass} .datetime=${this.card.entity.last_changed}> </ha-relative-time>
         </div>
       `;
     }
@@ -212,7 +212,7 @@ export class MiniHumidifierCard extends LitElement {
   }
 
   private _renderBottomPanel(): TemplateResult | void {
-    if (this.humidifier.isUnavailable) return;
+    if (this.card.isUnavailable) return;
 
     const indicators = Object.entries(this._indicators)
       .map(i => i[1])
@@ -247,7 +247,7 @@ export class MiniHumidifierCard extends LitElement {
   }
 
   private _renderTogglePanel(): TemplateResult | void {
-    if (!this._toggle || this.humidifier.isUnavailable) return;
+    if (!this._toggle || this.card.isUnavailable) return;
 
     const buttons = Object.entries(this._buttons)
       .map(i => i[1])
@@ -272,7 +272,7 @@ export class MiniHumidifierCard extends LitElement {
   }
 
   private _renderUnavailable(): TemplateResult | void {
-    if (!this._hass || !this.humidifier.isUnavailable) return;
+    if (!this._hass || !this.card.isUnavailable) return;
 
     return html`
       <span class="label unavailable ellipsis">
@@ -281,16 +281,16 @@ export class MiniHumidifierCard extends LitElement {
     `;
   }
 
-  private _renderTargetHumidifier(): TemplateResult | void {
-    if (this.humidifier.isUnavailable || this._targetHumidity.hide) return;
+  private _renderSlider(): TemplateResult | void {
+    if (this.card.isUnavailable || this._slider.hide) return;
 
     return html`
-      <mh-target-humidity .targetHumidity=${this._targetHumidity}> </mh-target-humidity>
+      <mh-slider .slider=${this._slider}> </mh-slider>
     `;
   }
 
   private _renderPower(): TemplateResult | void {
-    if (this.humidifier.isUnavailable) return;
+    if (this.card.isUnavailable) return;
 
     return html`
       <mh-power .button="${this._powerButton}"> </mh-power>
@@ -299,7 +299,7 @@ export class MiniHumidifierCard extends LitElement {
 
   private _onClick(ev: ActionHandlerEvent): void {
     ev.preventDefault();
-    handleClick(this, this.humidifier.hass, this.humidifier.tapAction);
+    handleClick(this, this.card.hass, this.card.tapAction);
   }
 
   private _handleToggle(ev: ActionHandlerEvent): void {
@@ -316,8 +316,8 @@ export class MiniHumidifierCard extends LitElement {
       '--initial': true,
       '--group': config.group,
       '--more-info': config.tapAction.action !== TapAction.None,
-      '--inactive': !this.humidifier.isActive,
-      '--unavailable': this.humidifier.isUnavailable,
+      '--inactive': !this.card.isActive,
+      '--unavailable': this.card.isUnavailable,
     } as ClassInfo);
   }
 

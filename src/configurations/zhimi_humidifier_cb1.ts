@@ -11,7 +11,7 @@ export const ZHIMI_HUMIDIFIER_CB1 = (): DefaultModelConfig => ({
       return context.call_service('fan', 'toggle', options);
     },
   },
-  target_humidity: {
+  slider: {
     indicator: { icon: ICON.HUMIDITY, unit: '%' },
     min: 30,
     max: 80,

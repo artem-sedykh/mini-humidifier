@@ -7,13 +7,13 @@ import { localize } from '../localize/localize';
 export class Dropdown {
   private readonly _hass: HomeAssistant;
   private readonly _config: DropdownConfig;
-  private readonly _humidifierEntity: HassEntity;
+  private readonly _cardEntity: HassEntity;
   private readonly _entity: HassEntity;
 
-  constructor(hass: HomeAssistant, config: DropdownConfig, humidifierEntity: HassEntity) {
+  constructor(hass: HomeAssistant, config: DropdownConfig, cardEntity: HassEntity) {
     this._hass = hass;
     this._config = config;
-    this._humidifierEntity = humidifierEntity;
+    this._cardEntity = cardEntity;
     this._entity = hass.states[config.state.entity];
   }
 
@@ -101,7 +101,7 @@ export class Dropdown {
     return {
       call_service: this._hass.callService,
       entity: this._entity,
-      humidifierEntity: this._humidifierEntity,
+      cardEntity: this._cardEntity,
       config: this._config.raw,
       localize: (string: string, fallback: string): string => {
         const lang = this.hass?.selectedLanguage || this.hass?.language || 'en';

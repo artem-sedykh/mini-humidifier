@@ -4,7 +4,7 @@ import { StyleInfo } from 'lit-html/directives/style-map';
 
 export type Primitive = null | undefined | boolean | number | string | symbol | bigint;
 
-export interface HumidifierCardConfig extends LovelaceCardConfig {
+export interface CardConfig extends LovelaceCardConfig {
   readonly type: string;
   readonly entity: string;
   readonly name: string;
@@ -17,7 +17,7 @@ export interface HumidifierCardConfig extends LovelaceCardConfig {
   readonly indicators: IndicatorConfig[];
   readonly buttons: (ButtonConfig | DropdownConfig)[];
   readonly power: PowerButtonConfig;
-  readonly targetHumidity: TargetHumidityConfig;
+  readonly slider: SliderConfig;
   readonly secondaryInfo: SecondaryInfo;
 }
 
@@ -118,7 +118,7 @@ export type PowerButtonConfig = ButtonConfig & {
   type: string;
 };
 
-export type TargetHumidityConfig = {
+export type SliderConfig = {
   indicator: IndicatorConfig;
   min: number;
   max: number;
@@ -134,7 +134,7 @@ export type TargetHumidityConfig = {
 
 export type ExecutionContext = {
   entity: HassEntity;
-  humidifierEntity: HassEntity;
+  cardEntity: HassEntity;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   config: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -144,7 +144,7 @@ export type ExecutionContext = {
 
 export type DefaultModelConfig = {
   power: DefaultPowerButton;
-  target_humidity: DefaultTargetHumidity;
+  slider: DefaultSlider;
   indicators?: { [key: string]: DefaultIndicator };
   buttons?: { [key: string]: DefaultButton | DefaultDropdown };
 };
@@ -204,7 +204,7 @@ export type DefaultDropdown = DefaultElement & {
   active?: (state: Primitive, context: ExecutionContext) => boolean;
 };
 
-export type DefaultTargetHumidity = {
+export type DefaultSlider = {
   indicator: {
     unit?: DefaultUnit | string;
     round?: number;

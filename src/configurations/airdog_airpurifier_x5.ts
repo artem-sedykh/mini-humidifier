@@ -11,7 +11,7 @@ export const AIRDOG_AIRPURIFIER_X5 = (): DefaultModelConfig => ({
       return context.call_service('fan', 'toggle', options);
     },
   },
-  target_humidity: {
+  slider: {
     indicator: { icon: ICON.FAN },
     min: 1,
     max: 4,

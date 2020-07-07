@@ -206,7 +206,7 @@ const style = css`
     min-width: calc(var(--mh-unit) * 0.875);
     margin-right: calc(var(--mh-unit) * -0.125);
   }
-  mh-target-humidity {
+  mh-slider {
     display: flex;
     flex: 1;
   }

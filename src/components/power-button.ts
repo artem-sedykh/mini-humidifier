@@ -3,7 +3,7 @@ import sharedStyle from '../sharedStyle';
 import { PowerButton } from '../models/power-button';
 
 @customElement('mh-power')
-export class HumidifierPowerButton extends LitElement {
+export class CardPowerButton extends LitElement {
   @property() public button!: PowerButton;
   constructor() {
     super();

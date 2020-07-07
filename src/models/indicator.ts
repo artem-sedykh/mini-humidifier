@@ -8,13 +8,13 @@ import { StyleInfo } from 'lit-html/directives/style-map';
 export class Indicator {
   protected readonly _config: IndicatorConfig;
   private readonly _hass: HomeAssistant;
-  protected readonly _humidifierEntity: HassEntity;
+  protected readonly _cardEntity: HassEntity;
   private readonly _entity: HassEntity;
 
-  constructor(hass: HomeAssistant, config: IndicatorConfig, humidifierEntity: HassEntity) {
+  constructor(hass: HomeAssistant, config: IndicatorConfig, cardEntity: HassEntity) {
     this._config = config;
     this._hass = hass;
-    this._humidifierEntity = humidifierEntity;
+    this._cardEntity = cardEntity;
     this._entity = hass.states[config.state.entity];
   }
 
@@ -86,7 +86,7 @@ export class Indicator {
     return {
       call_service: this._hass.callService,
       entity: this._entity,
-      humidifierEntity: this._humidifierEntity,
+      cardEntity: this._cardEntity,
       config: this._config.raw,
       localize: (string: string, fallback: string): string => {
         const lang = this.hass?.selectedLanguage || this.hass?.language || 'en';
