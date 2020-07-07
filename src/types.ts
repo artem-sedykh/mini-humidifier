@@ -162,7 +162,7 @@ export type DefaultIndicator = {
   order?: number;
   fixed?: number;
   tap_action?: TapActionConfig;
-  state?: DefaultState;
+  state?: DefaultState | string;
   icon: DefaultIcon | string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [property: string]: any;
@@ -183,7 +183,7 @@ export type DefaultElement = {
   type: string;
   hide?: boolean;
   order?: number;
-  state?: DefaultState;
+  state?: DefaultState | string;
   label?: (state: Primitive, context: ExecutionContext) => string | undefined;
   disabled?: (state: Primitive, context: ExecutionContext) => boolean;
   style?: (state: Primitive, context: ExecutionContext) => StyleInfo;
