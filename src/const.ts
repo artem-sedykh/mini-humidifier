@@ -17,6 +17,7 @@ const ICON = {
   RPM: 'mdi:speedometer',
   AUTO: 'mdi:alpha-a-circle-outline',
   SLEEP: 'mdi:weather-night',
+  CIRCLE: 'mdi:checkbox-blank-circle',
 };
 
 export default ICON;

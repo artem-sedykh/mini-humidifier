@@ -1,5 +1,6 @@
 import ICON from '../const';
 import { DefaultModelConfig, Primitive } from '../types';
+import { StyleInfo } from 'lit-html/directives/style-map';
 
 export const AIRDOG_AIRPURIFIER_X5 = (): DefaultModelConfig => ({
   power: {
@@ -23,7 +24,16 @@ export const AIRDOG_AIRPURIFIER_X5 = (): DefaultModelConfig => ({
   },
   indicators: {
     aqi: {
-      icon: ICON.AQI,
+      icon: {
+        template: (): string => 'mdi:checkbox-blank-circle',
+        style: (state): StyleInfo => {
+          const value = Number(state);
+          let color = '#1CC09B';
+          color = value > 75 ? '#F88B48' : color;
+          color = value > 150 ? '#E64650' : color;
+          return { color: color, '--mdc-icon-size': '17px', 'margin-top': '1px' };
+        },
+      },
       unit: 'μg/m³',
       state: { attribute: 'aqi' },
     },
