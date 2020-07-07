@@ -13,6 +13,10 @@ const ICON = {
   TOGGLE: 'mdi:dots-horizontal',
   POWER: 'mdi:power',
   TANK: 'mdi:cup-water',
+  AQI: 'mdi:weather-fog',
+  RPM: 'mdi:speedometer',
+  AUTO: 'mdi:alpha-a-circle-outline',
+  SLEEP: 'mdi:weather-night',
 };
 
 export default ICON;
