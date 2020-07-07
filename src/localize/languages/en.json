@@ -13,5 +13,8 @@
   "depth": {
     "liters": "L",
     "percent": "%"
+  },
+  "airdog": {
+    "indicator_speed": "`speed: ${speed}`"
   }
 }

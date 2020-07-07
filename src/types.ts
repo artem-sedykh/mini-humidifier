@@ -212,13 +212,14 @@ export type DefaultSlider = {
     state?: {
       mapper?: (state: Primitive, context: ExecutionContext) => Primitive;
     };
-    icon: DefaultIcon | string;
+    icon?: DefaultIcon | string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [property: string]: any;
   };
   min: number;
   max: number;
   step: number;
+  disabled?: (state: Primitive, context: ExecutionContext) => boolean;
   hide?: boolean;
   action_timeout?: number;
   state?: DefaultState;

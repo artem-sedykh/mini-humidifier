@@ -12,11 +12,21 @@ export const AIRDOG_AIRPURIFIER_X5 = (): DefaultModelConfig => ({
     },
   },
   slider: {
-    indicator: { icon: ICON.FAN },
+    indicator: {
+      state: {
+        mapper: (speed, context): string => {
+          if (context.config._label) return context.config._label(speed);
+          const template = context.localize('airdog.indicator_speed', '`speed: ${speed}`');
+          context.config._label = new Function('speed', `return ${template}`);
+          return context.config._label(speed);
+        },
+      },
+    },
     min: 1,
     max: 4,
     step: 1,
     state: { attribute: 'speed' },
+    disabled: (_state, context): boolean => context.entity.state === 'off',
     change_action: (speed, context): Promise<void> => {
       const options = { entity_id: context.entity.entity_id, speed: speed };
       return context.call_service('fan', 'set_speed', options);

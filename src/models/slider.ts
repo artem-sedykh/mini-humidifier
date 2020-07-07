@@ -63,6 +63,11 @@ export class Slider {
     return this.entity.state;
   }
 
+  get disabled(): boolean {
+    const context = this._getExecutionContext();
+    return this._config.disabled(this.state, context);
+  }
+
   public change(selected: number): Promise<void> {
     const context = this._getExecutionContext();
     return this._config.change(selected, context);

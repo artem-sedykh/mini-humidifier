@@ -47,6 +47,7 @@ export class CardSlider extends LitElement {
     return html`
       <div class="mh-slider flex">
         <ha-slider
+          ?disabled=${this.slider.disabled}
           @change=${this._handleChange}
           @click=${(e: Event): void => e.stopPropagation()}
           min=${this.slider.min}

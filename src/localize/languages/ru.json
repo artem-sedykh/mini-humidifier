@@ -13,5 +13,8 @@
   "depth": {
     "liters": "Л",
     "percent": "%"
+  },
+  "airdog": {
+    "indicator_speed": "`${speed}-я скорость`"
   }
 }
