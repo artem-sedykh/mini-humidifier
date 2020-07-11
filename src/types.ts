@@ -222,7 +222,7 @@ export type DefaultSlider = {
   disabled?: (state: Primitive, context: ExecutionContext) => boolean;
   hide?: boolean;
   action_timeout?: number;
-  state?: DefaultState;
+  state?: DefaultState | string;
   change_action: (selected: Primitive, context: ExecutionContext) => Promise<void>;
 };
 

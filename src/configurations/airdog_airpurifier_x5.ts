@@ -25,7 +25,7 @@ export const AIRDOG_AIRPURIFIER_X5 = (): DefaultModelConfig => ({
     min: 1,
     max: 4,
     step: 1,
-    state: { attribute: 'speed' },
+    state: 'speed',
     disabled: (_state, context): boolean => context.entity.state === 'off',
     change_action: (speed, context): Promise<void> => {
       const options = { entity_id: context.entity.entity_id, speed: speed };
@@ -45,7 +45,7 @@ export const AIRDOG_AIRPURIFIER_X5 = (): DefaultModelConfig => ({
         },
       },
       unit: 'μg/m³',
-      state: { attribute: 'aqi' },
+      state: 'aqi',
     },
   },
   buttons: {
