@@ -118,14 +118,10 @@ const style = css`
     line-height: calc(var(--mh-unit) / 2);
     color: var(--mh-text-color);
     font-weight: var(--mh-name-font-weight);
+    margin-top: auto;
+    margin-bottom: auto;
   }
-  .entity__secondary_info_icon {
-    color: var(--mh-icon-color);
-    height: calc(var(--mh-unit) * 0.5);
-    width: calc(var(--mh-unit) * 0.5);
-    min-width: calc(var(--mh-unit) * 0.5);
-    --mdc-icon-size: calc(var(--mh-unit) * 0.5);
-  }
+
   .entity__secondary_info {
     margin-top: -2px;
   }
@@ -169,6 +165,8 @@ const style = css`
     margin-top: calc(var(--mh-unit) * 0.075);
   }
   .entity__info__name_wrap {
+    display: flex;
+    flex-direction: column;
     margin-right: 0;
     max-width: calc(var(--mh-unit) * 4.25);
     cursor: pointer;

@@ -9,11 +9,14 @@ import style from './style';
 import sharedStyle from './sharedStyle';
 import { ActionHandlerEvent } from 'custom-card-helpers/dist';
 import { handleClick } from './utils/utils';
+import { getLabel } from './utils/getLabel';
 import { Indicator } from './models/indicator';
 import { HassEntity } from 'home-assistant-js-websocket';
 import { Button } from './models/button';
 import { Dropdown } from './models/dropdown';
 import { PowerButton } from './models/power-button';
+import { CardObject } from './models/card';
+import { SecondaryInfo } from './models/secondary-info';
 
 import './components/dropdown';
 import './components/button';
@@ -21,10 +24,10 @@ import './components/power-button';
 import './components/dropdown-base';
 import './components/indicator';
 import './components/slider';
+import './components/secondary-info';
+import './components/secondary-info-dropdown';
 
 import './initialize';
-import { getLabel } from './utils/getLabel';
-import { CardObject } from './models/card';
 
 @customElement('mini-humidifier')
 export class MiniCard extends LitElement {
@@ -32,6 +35,7 @@ export class MiniCard extends LitElement {
   private _buttons: { [id: string]: Button | Dropdown };
   private _powerButton!: PowerButton;
   private _slider!: Slider;
+  private _secondaryInfo!: SecondaryInfo;
 
   constructor() {
     super();
@@ -76,6 +80,7 @@ export class MiniCard extends LitElement {
     this._updateButtons(force);
     this._updatePowerButton(force);
     this._updateSlider(force);
+    this._updateSecondaryInfo(force);
   }
 
   private _updateIndicators(force: boolean): void {
@@ -150,7 +155,20 @@ export class MiniCard extends LitElement {
     }
   }
 
+  private _updateSecondaryInfo(force: boolean): void {
+    if (!this._hass || !this.entity) return;
+
+    const config = this.config.secondaryInfo;
+    const entity = this._hass?.states[config.state.entity];
+
+    if (force || entity !== this._secondaryInfo?.entity) {
+      this._secondaryInfo = new SecondaryInfo(this._hass, config, entity);
+    }
+  }
+
   protected render(): TemplateResult | void {
+    const handle = this.config.secondaryInfo.type !== 'custom-dropdown';
+
     const cls = this.config.slider.hide ? 'full' : '';
     return html`
       <ha-card class=${this._computeClasses()} style=${this._computeStyles()}>
@@ -162,8 +180,8 @@ export class MiniCard extends LitElement {
             </div>
             <div class="entity__info">
               <div class="wrap">
-                <div class="entity__info__name_wrap ${cls}" @click=${this._onClick}>
-                  <div class="entity__info__name">
+                <div class="entity__info__name_wrap ${cls}" @click=${(e): boolean => this._onClick(e, handle)}>
+                  <div class="entity__info__name" @click=${(e): boolean => this._onClick(e, true)}>
                     ${this.card.name}
                   </div>
                   ${this._renderSecondaryInfo()}
@@ -183,31 +201,28 @@ export class MiniCard extends LitElement {
 
   private _renderSecondaryInfo(): TemplateResult | void {
     if (this.card.isUnavailable) return;
-    const type = this.config.secondaryInfo.type;
 
-    if (type === 'last-changed') {
-      return html`
-        <div class="entity__secondary_info ellipsis">
-          <ha-relative-time .hass=${this._hass} .datetime=${this.card.entity.last_changed}> </ha-relative-time>
-        </div>
-      `;
-    }
-
-    if (type in this._buttons) {
-      const button = this._buttons[type];
-
-      if (button.elementType !== ElementType.Dropdown) return;
-      const dropdown = button as Dropdown;
-      const selected = dropdown.selected;
-      const label = selected ? selected.name : dropdown.state;
-      const icon = this.config.secondaryInfo.icon ? this.config.secondaryInfo.icon : dropdown.icon;
-
-      return html`
-        <div class="entity__secondary_info ellipsis">
-          <ha-icon class="entity__secondary_info_icon" .icon=${icon}> </ha-icon>
-          <span class="entity__secondary_info__name">${label}</span>
-        </div>
-      `;
+    switch (this._secondaryInfo.type) {
+      case 'last-changed': {
+        return html`
+          <div class="entity__secondary_info ellipsis">
+            <ha-relative-time .hass=${this._secondaryInfo.hass} .datetime=${this._secondaryInfo.entity.last_changed}>
+            </ha-relative-time>
+          </div>
+        `;
+      }
+      case 'custom': {
+        return html`
+          <mh-secondary-info .secondaryInfo="${this._secondaryInfo}"> </mh-secondary-info>
+        `;
+      }
+      case 'custom-dropdown': {
+        return html`
+          <mh-secondary-info-dropdown .secondaryInfo="${this._secondaryInfo}"> </mh-secondary-info-dropdown>
+        `;
+      }
+      default:
+        return;
     }
   }
 
@@ -297,13 +312,16 @@ export class MiniCard extends LitElement {
     `;
   }
 
-  private _onClick(ev: ActionHandlerEvent): void {
-    ev.preventDefault();
+  private _onClick(ev: ActionHandlerEvent, handle: boolean): boolean {
+    if (!handle) return true;
+
+    ev.stopPropagation();
     handleClick(this, this.card.hass, this.card.tapAction);
+    return false;
   }
 
   private _handleToggle(ev: ActionHandlerEvent): void {
-    ev.preventDefault();
+    ev.stopPropagation();
     this._toggle = !this._toggle;
   }
 

@@ -51,7 +51,7 @@ export class Slider {
     let state = this._state();
     const context = this._getExecutionContext();
     state = this._config.stateMapper(state, context);
-    return state;
+    return Number(state);
   }
 
   public get indicator(): SliderIndicator {

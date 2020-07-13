@@ -15,6 +15,9 @@
     "percent": "%"
   },
   "airdog": {
-    "indicator_speed": "`speed: ${speed}`"
+    "indicator_speed": "`speed: ${speed}`",
+    "mode_auto": "Auto",
+    "mode_sleep": "Sleep",
+    "mode_manual": "Manual"
   }
 }

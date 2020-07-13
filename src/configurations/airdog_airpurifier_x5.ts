@@ -93,4 +93,19 @@ export const AIRDOG_AIRPURIFIER_X5 = (): DefaultModelConfig => ({
       },
     },
   },
+  secondary_info: 'last-changed',
+  supported_secondary_infos: {
+    none: { type: 'none' },
+    'last-changed': { type: 'last-changed' },
+    mode: {
+      type: 'custom',
+      icon: ICON.FAN,
+      state: {
+        attribute: 'mode',
+        mapper: (state, context): Primitive => {
+          return context.localize('airdog.mode_' + state?.toString(), state?.toString() || '');
+        },
+      },
+    },
+  },
 });

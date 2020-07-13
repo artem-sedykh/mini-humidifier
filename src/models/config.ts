@@ -8,11 +8,14 @@ import {
   IndicatorConfig,
   PowerButtonConfig,
   Primitive,
-  SecondaryInfo,
+  SecondaryInfoConfig,
   SliderConfig,
   TapAction,
   TapActionConfig,
   ToggleButtonConfig,
+  IconConfig,
+  StateConfig,
+  ExecutionContext,
 } from '../types';
 import ICON, { ACTION_TIMEOUT } from '../const';
 import DefaultModels from '../default-models';
@@ -37,7 +40,7 @@ export class Config implements CardConfig {
   private readonly _slider: SliderConfig;
   private readonly _indicators: IndicatorConfig[];
   private readonly _buttons: (ButtonConfig | DropdownConfig)[];
-  private readonly _secondaryInfo: SecondaryInfo;
+  private readonly _secondaryInfo: SecondaryInfoConfig;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(config: any) {
@@ -58,8 +61,8 @@ export class Config implements CardConfig {
 
     if ('scale' in config && typeof config.scale === 'number') this._scale = config.scale;
 
-    this._toggle = Config._parseToggle(config.toggle);
-    this._tapAction = Config._parseTapAction(config.tap_action, this.entity, TapAction.MoreInfo);
+    this._toggle = Config._ParseToggle(config.toggle);
+    this._tapAction = Config._ParseTapAction(config.tap_action, this.entity, TapAction.MoreInfo);
 
     if (config.model && config.model in DefaultModels) {
       this._model = config.model;
@@ -73,7 +76,7 @@ export class Config implements CardConfig {
     this._buttons = this._parseButtons();
     this._power = this._parsePowerButton();
     this._slider = this._parseSlider();
-    this._secondaryInfo = Config._parseSecondaryInfo(config.secondary_info);
+    this._secondaryInfo = this._parseSecondaryInfo();
   }
 
   public get type(): string {
@@ -115,12 +118,98 @@ export class Config implements CardConfig {
   public get buttons(): (ButtonConfig | DropdownConfig)[] {
     return this._buttons;
   }
-  public get secondaryInfo(): SecondaryInfo {
+  public get secondaryInfo(): SecondaryInfoConfig {
     return this._secondaryInfo;
   }
 
+  private static _ParseState(
+    model: { state: StateConfig; stateMapper: (state: Primitive, context: ExecutionContext) => Primitive },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    modelObj: any,
+  ): void {
+    if (!modelObj.state) return;
+
+    if (typeof modelObj.state === 'string') {
+      if (modelObj.state.includes('.')) {
+        model.state.entity = modelObj.state;
+      } else {
+        model.state.attribute = modelObj.state;
+      }
+    } else {
+      model.state.attribute = modelObj.state.attribute?.toString();
+      if (modelObj.state.entity) model.state.entity = modelObj.state.entity?.toString();
+
+      if (modelObj.state.mapper) {
+        model.stateMapper = compileTemplate(modelObj.state.mapper);
+      }
+    }
+  }
+
+  private static _ParseDropdownSource(
+    model: {
+      source: DropdownItem[];
+      sourceFilter: (source: DropdownItem[], context: ExecutionContext) => DropdownItem[];
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    modelObj: any,
+  ): void {
+    if (typeof modelObj.source !== 'object') return;
+
+    if (modelObj.source['__filter']) {
+      model.sourceFilter = compileTemplate(modelObj.source['__filter']);
+    }
+
+    model.source = Object.entries(modelObj.source)
+      .filter(([key]) => key !== '__filter')
+      .map(([key, value], order) => {
+        if (typeof value === 'object' && value) {
+          const item: DropdownItem = { id: key, name: `${value['name']}`, order: order, ...value };
+          return item;
+        }
+        const item: DropdownItem = { id: key, name: `${value}`, order: order };
+        return item;
+      })
+      .sort((a, b) => (a.order > b.order ? 1 : b.order > a.order ? -1 : 0));
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private static _parseToggle(toggleObj: any): ToggleButtonConfig {
+  private static _ParseIcon(model: { icon: IconConfig }, modelObj: any): void {
+    if (!('icon' in modelObj)) return;
+    if (!modelObj.icon) return;
+
+    if (typeof modelObj.icon === 'string') {
+      model.icon.template = (): string => modelObj.icon;
+    } else {
+      if (modelObj.icon.template) {
+        model.icon.template = compileTemplate(modelObj.icon.template);
+      }
+
+      if (modelObj.icon.style) {
+        model.icon.style = compileTemplate(modelObj.icon.style);
+      }
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private static _ParseUnit(model: { unit: IconConfig }, modelObj: any): void {
+    if (!('unit' in modelObj)) return;
+    if (!modelObj.unit) return;
+
+    if (typeof modelObj.unit === 'string') {
+      model.unit.template = (): string => modelObj.unit;
+    } else {
+      if (modelObj.unit.template) {
+        model.unit.template = compileTemplate(modelObj.unit.template);
+      }
+
+      if (modelObj.unit.style) {
+        model.unit.style = compileTemplate(modelObj.unit.style);
+      }
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private static _ParseToggle(toggleObj: any): ToggleButtonConfig {
     const toggle: ToggleButtonConfig = {
       default: false,
       hide: false,
@@ -142,7 +231,7 @@ export class Config implements CardConfig {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private static _parseTapAction(tapActionObj: any, entity: string, defaultAction: TapAction): TapActionConfig {
+  private static _ParseTapAction(tapActionObj: any, entity: string, defaultAction: TapAction): TapActionConfig {
     const tapAction: TapActionConfig = {
       entity: entity,
       action: defaultAction,
@@ -209,64 +298,23 @@ export class Config implements CardConfig {
       stateMapper: (value): Primitive => value,
     };
 
-    if ('icon' in indicatorObj && indicatorObj.icon) {
-      if (typeof indicatorObj.icon === 'string') {
-        indicator.icon.template = (): string => indicatorObj.icon;
-      } else {
-        if (indicatorObj.icon.template) {
-          indicator.icon.template = compileTemplate(indicatorObj.icon.template);
-        }
-
-        if (indicatorObj.icon.style) {
-          indicator.icon.style = compileTemplate(indicatorObj.icon.style);
-        }
-      }
-    }
-
-    if ('unit' in indicatorObj && indicatorObj.unit) {
-      if (typeof indicatorObj.unit === 'string') {
-        indicator.unit.template = (): string => indicatorObj.unit;
-      } else {
-        if (indicatorObj.unit.template) {
-          indicator.unit.template = compileTemplate(indicatorObj.unit.template);
-        }
-
-        if (indicatorObj.unit.style) {
-          indicator.unit.style = compileTemplate(indicatorObj.unit.style);
-        }
-      }
-    }
+    Config._ParseIcon(indicator, indicatorObj);
+    Config._ParseUnit(indicator, indicatorObj);
+    Config._ParseState(indicator, indicatorObj);
 
     if ('order' in indicatorObj && typeof indicatorObj.order === 'number') {
       indicator.order = indicatorObj.order;
-    }
-
-    if (indicatorObj.state) {
-      if (typeof indicatorObj.state === 'string') {
-        if (indicatorObj.state.includes('.')) {
-          indicator.state.entity = indicatorObj.state;
-        } else {
-          indicator.state.attribute = indicatorObj.state;
-        }
-      } else {
-        indicator.state.attribute = indicatorObj.state.attribute?.toString();
-        if (indicatorObj.state.entity) indicator.state.entity = indicatorObj.state.entity?.toString();
-
-        if (indicatorObj.state.mapper) {
-          indicator.stateMapper = compileTemplate(indicatorObj.state.mapper);
-        }
-      }
     }
 
     if ('round' in indicatorObj && typeof indicatorObj.round === 'number') {
       if (indicatorObj.round >= 0) indicator.round = indicatorObj.round;
     }
 
-    if ('fixed' in indicatorObj && typeof indicatorObj.fixed === 'number') {
-      if (indicatorObj.fixed >= 0) indicator.fixed = indicatorObj.fixed;
+    if ('fixed' in indicatorObj && typeof indicatorObj.fixed === 'number' && indicatorObj.fixed >= 0) {
+      indicator.fixed = indicatorObj.fixed;
     }
 
-    indicator.tapAction = Config._parseTapAction(indicatorObj.tap_action, indicator.state.entity, TapAction.None);
+    indicator.tapAction = Config._ParseTapAction(indicatorObj.tap_action, indicator.state.entity, TapAction.None);
 
     return indicator;
   }
@@ -335,36 +383,9 @@ export class Config implements CardConfig {
       button.style = compileTemplate(buttonObj.style);
     }
 
-    if (buttonObj.state) {
-      if (typeof buttonObj.state === 'string') {
-        if (buttonObj.state.includes('.')) {
-          button.state.entity = buttonObj.state;
-        } else {
-          button.state.attribute = buttonObj.state;
-        }
-      } else {
-        button.state.attribute = buttonObj.state.attribute?.toString();
-        if (buttonObj.state.entity) button.state.entity = buttonObj.state.entity?.toString();
+    Config._ParseState(button, buttonObj);
+    Config._ParseIcon(button, buttonObj);
 
-        if (buttonObj.state.mapper) {
-          button.stateMapper = compileTemplate(buttonObj.state.mapper);
-        }
-      }
-    }
-
-    if ('icon' in buttonObj && buttonObj.icon) {
-      if (typeof buttonObj.icon === 'string') {
-        button.icon.template = (): string => buttonObj.icon;
-      } else {
-        if (buttonObj.icon.template) {
-          button.icon.template = compileTemplate(buttonObj.icon.template);
-        }
-
-        if (buttonObj.icon.style) {
-          button.icon.style = compileTemplate(buttonObj.icon.style);
-        }
-      }
-    }
     return button;
   }
 
@@ -392,10 +413,17 @@ export class Config implements CardConfig {
         }),
     };
 
+    Config._ParseState(dropdown, dropdownObj);
+    Config._ParseIcon(dropdown, dropdownObj);
+    Config._ParseDropdownSource(dropdown, dropdownObj);
+
     if (typeof dropdownObj.action_timeout === 'number' && dropdownObj.action_timeout >= 0) {
       dropdown.actionTimeout = dropdownObj.action_timeout;
     }
-    if (typeof dropdownObj.order === 'number') dropdown.order = dropdownObj.order;
+
+    if (typeof dropdownObj.order === 'number') {
+      dropdown.order = dropdownObj.order;
+    }
 
     if (dropdownObj.disabled) {
       dropdown.disabled = compileTemplate(dropdownObj.disabled);
@@ -409,61 +437,12 @@ export class Config implements CardConfig {
       dropdown.style = compileTemplate(dropdownObj.style);
     }
 
-    if (dropdownObj.state) {
-      if (typeof dropdownObj.state === 'string') {
-        if (dropdownObj.state.includes('.')) {
-          dropdown.state.entity = dropdownObj.state;
-        } else {
-          dropdown.state.attribute = dropdownObj.state;
-        }
-      } else {
-        dropdown.state.attribute = dropdownObj.state.attribute?.toString();
-        if (dropdownObj.state.entity) dropdown.state.entity = dropdownObj.state.entity?.toString();
-
-        if (dropdownObj.state.mapper) {
-          dropdown.stateMapper = compileTemplate(dropdownObj.state.mapper);
-        }
-      }
-    }
-
     if (dropdownObj.change_action) {
       dropdown.change = compileTemplate(dropdownObj.change_action);
     }
 
     if (dropdownObj.active) {
       dropdown.active = compileTemplate(dropdownObj.active);
-    }
-
-    if (typeof dropdownObj.source === 'object') {
-      if (dropdownObj.source['__filter']) {
-        dropdown.sourceFilter = compileTemplate(dropdownObj.source['__filter']);
-      }
-
-      dropdown.source = Object.entries(dropdownObj.source)
-        .filter(([key]) => key !== '__filter')
-        .map(([key, value], order) => {
-          if (typeof value === 'object' && value) {
-            const item: DropdownItem = { id: key, name: `${value['name']}`, order: order, ...value };
-            return item;
-          }
-          const item: DropdownItem = { id: key, name: `${value}`, order: order };
-          return item;
-        })
-        .sort((a, b) => (a.order > b.order ? 1 : b.order > a.order ? -1 : 0));
-    }
-
-    if ('icon' in dropdownObj && dropdownObj.icon) {
-      if (typeof dropdownObj.icon === 'string') {
-        dropdown.icon.template = (): string => dropdownObj.icon;
-      } else {
-        if (dropdownObj.icon.template) {
-          dropdown.icon.template = compileTemplate(dropdownObj.icon.template);
-        }
-
-        if (dropdownObj.icon.style) {
-          dropdown.icon.style = compileTemplate(dropdownObj.icon.style);
-        }
-      }
     }
 
     return dropdown;
@@ -503,6 +482,9 @@ export class Config implements CardConfig {
         }),
     };
 
+    Config._ParseState(slider, sliderObj);
+    indicator.state = slider.state;
+
     if (typeof sliderObj.min === 'number') slider.min = sliderObj.min;
     if (typeof sliderObj.max === 'number') slider.max = sliderObj.max;
     if (typeof sliderObj.step === 'number') slider.step = sliderObj.step;
@@ -515,25 +497,6 @@ export class Config implements CardConfig {
       slider.actionTimeout = sliderObj.action_timeout;
     }
 
-    if (sliderObj.state) {
-      if (typeof sliderObj.state === 'string') {
-        if (sliderObj.state.includes('.')) {
-          slider.state.entity = sliderObj.state;
-        } else {
-          slider.state.attribute = sliderObj.state;
-        }
-      } else {
-        slider.state.attribute = sliderObj.state.attribute?.toString();
-        if (sliderObj.state.entity) slider.state.entity = sliderObj.state.entity?.toString();
-
-        if (sliderObj.state.mapper) {
-          slider.stateMapper = compileTemplate(sliderObj.state.mapper);
-        }
-      }
-    }
-
-    indicator.state = slider.state;
-
     if (sliderObj.change_action) {
       slider.change = compileTemplate(sliderObj.change_action);
     }
@@ -541,22 +504,97 @@ export class Config implements CardConfig {
     return slider;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private static _parseSecondaryInfo(secondaryInfoObj: any): SecondaryInfo {
-    const secondaryInfo: SecondaryInfo = {
-      type: 'mode',
-      icon: undefined,
-    };
+  private _parseSecondaryInfo(): SecondaryInfoConfig {
+    const supportedSecondaryInfos = this._modelConfig?.supported_secondary_infos || {};
+    let secondaryInfoObj = { type: 'none' };
 
-    if (!secondaryInfoObj) return secondaryInfo;
-
-    if (typeof secondaryInfoObj === 'string') {
-      secondaryInfo.type = secondaryInfoObj;
-      return secondaryInfo;
+    if (typeof this._modelConfig?.secondary_info === 'string') {
+      secondaryInfoObj.type = this._modelConfig?.secondary_info;
     }
 
-    if (typeof secondaryInfoObj.icon === 'string') secondaryInfo.icon = secondaryInfoObj.icon;
-    if (typeof secondaryInfoObj.type === 'string') secondaryInfo.type = secondaryInfoObj.type;
+    if (typeof this._modelConfig?.secondary_info === 'object') {
+      secondaryInfoObj = { ...secondaryInfoObj, ...this._modelConfig.secondary_info };
+    }
+
+    if (typeof this._config.secondary_info === 'string') {
+      secondaryInfoObj.type = this._config.secondary_info;
+    }
+
+    if (typeof this._config.secondary_info === 'object') {
+      secondaryInfoObj = { ...secondaryInfoObj, ...this._config.secondary_info };
+    }
+
+    let defaultSecondaryInfoObj = {};
+    let originalType = '';
+
+    const secondaryInfo: SecondaryInfoConfig = {
+      type: 'none',
+      raw: secondaryInfoObj,
+      icon: { template: (): string | undefined => undefined, style: (): StyleInfo => ({}) },
+      state: { entity: this.entity },
+      stateMapper: (state): Primitive => state,
+      active: (): boolean => false,
+      disabled: (): boolean => false,
+      style: (): StyleInfo => ({}),
+      sourceFilter: (source): DropdownItem[] => source,
+      source: [],
+      actionTimeout: ACTION_TIMEOUT,
+      change: (): Promise<void> =>
+        new Promise(() => {
+          return;
+        }),
+    };
+
+    if (secondaryInfoObj.type in supportedSecondaryInfos) {
+      defaultSecondaryInfoObj = supportedSecondaryInfos[secondaryInfoObj.type];
+      originalType = supportedSecondaryInfos[secondaryInfoObj.type].type;
+    } else {
+      const types = ['none', 'last-changed', 'custom', 'custom-dropdown'];
+      if (!types.includes(secondaryInfoObj.type)) {
+        return secondaryInfo;
+      }
+      originalType = secondaryInfoObj.type;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let mergedSecondaryInfo: any = {
+      ...defaultSecondaryInfoObj,
+      ...secondaryInfoObj,
+    };
+    mergedSecondaryInfo.type = originalType;
+
+    if (mergedSecondaryInfo.target_button_id) {
+      const targetButtonConf = this.buttons.find(b => b.id === mergedSecondaryInfo.target_button_id);
+      if (targetButtonConf) {
+        mergedSecondaryInfo = { ...targetButtonConf.raw, ...mergedSecondaryInfo };
+      }
+    }
+
+    Config._ParseState(secondaryInfo, mergedSecondaryInfo);
+    Config._ParseDropdownSource(secondaryInfo, mergedSecondaryInfo);
+    Config._ParseIcon(secondaryInfo, mergedSecondaryInfo);
+
+    secondaryInfo.type = mergedSecondaryInfo.type;
+
+    if (typeof mergedSecondaryInfo.action_timeout === 'number' && mergedSecondaryInfo.action_timeout >= 0) {
+      secondaryInfo.actionTimeout = mergedSecondaryInfo.action_timeout;
+    }
+
+    if (mergedSecondaryInfo.style) {
+      secondaryInfo.style = compileTemplate(mergedSecondaryInfo.style);
+    }
+
+    if (mergedSecondaryInfo.active) {
+      secondaryInfo.active = compileTemplate(mergedSecondaryInfo.active);
+    }
+
+    if (mergedSecondaryInfo.disabled) {
+      secondaryInfo.disabled = compileTemplate(mergedSecondaryInfo.disabled);
+    }
+
+    if (mergedSecondaryInfo.change_action) {
+      secondaryInfo.change = compileTemplate(mergedSecondaryInfo.change_action);
+    }
 
     return secondaryInfo;
   }

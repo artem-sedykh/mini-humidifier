@@ -95,7 +95,7 @@ export const ZHIMI_HUMIDIFIER_CB1 = (): DefaultModelConfig => ({
     mode: {
       icon: ICON.FAN,
       type: 'dropdown',
-      state: { attribute: 'mode' },
+      state: 'mode',
       source: {
         auto: 'auto',
         silent: 'silent',
@@ -175,5 +175,15 @@ export const ZHIMI_HUMIDIFIER_CB1 = (): DefaultModelConfig => ({
         return context.call_service('xiaomi_miio', service, options);
       },
     },
+  },
+  secondary_info: 'mode',
+  supported_secondary_infos: {
+    none: { type: 'none' },
+    'last-changed': { type: 'last-changed' },
+    mode: {
+      type: 'custom',
+      target_button_id: 'mode',
+    },
+    'mode-dropdown': { type: 'custom-dropdown', target_button_id: 'mode', icon: ICON.FAN },
   },
 });

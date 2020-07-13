@@ -18,7 +18,7 @@ export interface CardConfig extends LovelaceCardConfig {
   readonly buttons: (ButtonConfig | DropdownConfig)[];
   readonly power: PowerButtonConfig;
   readonly slider: SliderConfig;
-  readonly secondaryInfo: SecondaryInfo;
+  readonly secondaryInfo: SecondaryInfoConfig;
 }
 
 export type ToggleButtonConfig = {
@@ -27,9 +27,19 @@ export type ToggleButtonConfig = {
   default: boolean;
 };
 
-export type SecondaryInfo = {
-  icon?: string;
+export type SecondaryInfoConfig = {
   type: string;
+  state: StateConfig;
+  stateMapper: (state: Primitive, context: ExecutionContext) => Primitive;
+  icon: IconConfig;
+  style: (state: Primitive, context: ExecutionContext) => StyleInfo;
+  raw: object;
+  actionTimeout: number;
+  source: DropdownItem[];
+  change: (selected: Primitive, context: ExecutionContext) => Promise<void>;
+  active: (state: Primitive, context: ExecutionContext) => boolean;
+  disabled: (state: Primitive, context: ExecutionContext) => boolean;
+  sourceFilter: (source: DropdownItem[], context: ExecutionContext) => DropdownItem[];
 };
 
 export enum ElementType {
@@ -68,14 +78,14 @@ export type StateConfig = {
 
 export type IndicatorConfig = {
   id: string;
+  state: StateConfig;
+  stateMapper: (state: Primitive, context: ExecutionContext) => Primitive;
   unit: IconConfig;
   round?: number;
   fixed?: number;
   hide: boolean;
   order: number;
   tapAction: TapActionConfig;
-  state: StateConfig;
-  stateMapper: (state: Primitive, context: ExecutionContext) => Primitive;
   icon: IconConfig;
   raw: object;
 };
@@ -90,13 +100,13 @@ export type DropdownItem = {
 
 export type ElementConfigBase = {
   id: string;
+  state: StateConfig;
+  stateMapper: (state: Primitive, context: ExecutionContext) => Primitive;
   icon: IconConfig;
   actionTimeout: number;
   order: number;
   hide: boolean;
   elementType: ElementType;
-  state: StateConfig;
-  stateMapper: (state: Primitive, context: ExecutionContext) => Primitive;
   disabled: (state: Primitive, context: ExecutionContext) => boolean;
   style: (state: Primitive, context: ExecutionContext) => StyleInfo;
   raw: object;
@@ -123,13 +133,13 @@ export type SliderConfig = {
   min: number;
   max: number;
   step: number;
-  state: StateConfig;
   hide: boolean;
   actionTimeout: number;
-  stateMapper: (state: Primitive, context: ExecutionContext) => number;
   change: (selected: number, context: ExecutionContext) => Promise<void>;
   disabled: (state: Primitive, context: ExecutionContext) => boolean;
   raw: object;
+  state: StateConfig;
+  stateMapper: (state: Primitive, context: ExecutionContext) => Primitive;
 };
 
 export type ExecutionContext = {
@@ -147,6 +157,8 @@ export type DefaultModelConfig = {
   slider: DefaultSlider;
   indicators?: { [key: string]: DefaultIndicator };
   buttons?: { [key: string]: DefaultButton | DefaultDropdown };
+  supported_secondary_infos?: { [key: string]: DefaultSecondaryInfo };
+  secondary_info?: DefaultSecondaryInfo | string;
 };
 
 export type DefaultState = {
@@ -230,4 +242,15 @@ export type DefaultDropdownSource = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [property: string]: any;
   __filter?: (source: DropdownItem[], context: ExecutionContext) => DropdownItem[];
+};
+
+export type DefaultSecondaryInfo = {
+  type: string;
+  target_button_id?: string;
+  icon?: DefaultIcon | string;
+  state?: DefaultState | string;
+  source?: DefaultDropdownSource;
+  change_action?: (selected: Primitive, context: ExecutionContext) => Promise<void>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [property: string]: any;
 };
