@@ -1,6 +1,6 @@
 import { CSSResult, customElement, html, LitElement, property, TemplateResult } from 'lit-element';
 import { HomeAssistant } from 'custom-card-helpers';
-import { ButtonConfig, DropdownConfig, ElementType, CardConfig, TapAction } from './types';
+import { ButtonConfig, DropdownConfig, ElementType, GenericFanConfig, TapAction } from './types';
 import { Config } from './models/config';
 import { StyleInfo, styleMap } from 'lit-html/directives/style-map';
 import { Slider } from './models/slider';
@@ -15,7 +15,7 @@ import { HassEntity } from 'home-assistant-js-websocket';
 import { Button } from './models/button';
 import { Dropdown } from './models/dropdown';
 import { PowerButton } from './models/power-button';
-import { CardObject } from './models/card';
+import { GenericFan } from './models/generic-fan';
 import { SecondaryInfo } from './models/secondary-info';
 
 import './components/dropdown';
@@ -30,7 +30,7 @@ import './components/secondary-info-dropdown';
 import './initialize';
 
 @customElement('mini-humidifier')
-export class MiniCard extends LitElement {
+export class MiniGenericFanCard extends LitElement {
   private _indicators: { [id: string]: Indicator };
   private _buttons: { [id: string]: Button | Dropdown };
   private _powerButton!: PowerButton;
@@ -45,10 +45,10 @@ export class MiniCard extends LitElement {
   }
 
   @property()
-  public config!: CardConfig;
+  public config!: GenericFanConfig;
 
   @property()
-  public card!: CardObject;
+  public genericFan!: GenericFan;
 
   @property()
   private _toggle: boolean;
@@ -69,10 +69,10 @@ export class MiniCard extends LitElement {
     this._hass = hass;
     let force = false;
 
-    const card = new CardObject(hass, this.config);
+    const genericFan = new GenericFan(hass, this.config);
 
-    if (card.entity && this.card?.entity !== card.entity) {
-      this.card = card;
+    if (genericFan.entity && this.genericFan?.entity !== genericFan.entity) {
+      this.genericFan = genericFan;
       force = true;
     }
 
@@ -168,21 +168,22 @@ export class MiniCard extends LitElement {
 
   protected render(): TemplateResult | void {
     const handle = this.config.secondaryInfo.type !== 'custom-dropdown';
+    let cls = this.config.slider.hide ? 'full' : '';
+    cls = handle ? `${cls} pointer` : cls;
 
-    const cls = this.config.slider.hide ? 'full' : '';
     return html`
       <ha-card class=${this._computeClasses()} style=${this._computeStyles()}>
         <div class="mh__bg"></div>
         <div class="mh-humidifier">
           <div class="mh-humidifier__core flex">
-            <div class="entity__icon" ?color=${this.card.isActive}>
-              <ha-icon .icon=${this.card.icon}> </ha-icon>
+            <div class="entity__icon" ?color=${this.genericFan.isActive}>
+              <ha-icon .icon=${this.genericFan.icon}> </ha-icon>
             </div>
             <div class="entity__info">
               <div class="wrap">
                 <div class="entity__info__name_wrap ${cls}" @click=${(e): boolean => this._onClick(e, handle)}>
                   <div class="entity__info__name" @click=${(e): boolean => this._onClick(e, true)}>
-                    ${this.card.name}
+                    ${this.genericFan.name}
                   </div>
                   ${this._renderSecondaryInfo()}
                 </div>
@@ -200,7 +201,7 @@ export class MiniCard extends LitElement {
   }
 
   private _renderSecondaryInfo(): TemplateResult | void {
-    if (this.card.isUnavailable) return;
+    if (this.genericFan.isUnavailable) return;
 
     switch (this._secondaryInfo.type) {
       case 'last-changed': {
@@ -227,7 +228,7 @@ export class MiniCard extends LitElement {
   }
 
   private _renderBottomPanel(): TemplateResult | void {
-    if (this.card.isUnavailable) return;
+    if (this.genericFan.isUnavailable) return;
 
     const indicators = Object.entries(this._indicators)
       .map(i => i[1])
@@ -262,7 +263,7 @@ export class MiniCard extends LitElement {
   }
 
   private _renderTogglePanel(): TemplateResult | void {
-    if (!this._toggle || this.card.isUnavailable) return;
+    if (!this._toggle || this.genericFan.isUnavailable) return;
 
     const buttons = Object.entries(this._buttons)
       .map(i => i[1])
@@ -287,7 +288,7 @@ export class MiniCard extends LitElement {
   }
 
   private _renderUnavailable(): TemplateResult | void {
-    if (!this._hass || !this.card.isUnavailable) return;
+    if (!this._hass || !this.genericFan.isUnavailable) return;
 
     return html`
       <span class="label unavailable ellipsis">
@@ -297,7 +298,7 @@ export class MiniCard extends LitElement {
   }
 
   private _renderSlider(): TemplateResult | void {
-    if (this.card.isUnavailable || this._slider.hide) return;
+    if (this.genericFan.isUnavailable || this._slider.hide) return;
 
     return html`
       <mh-slider .slider=${this._slider}> </mh-slider>
@@ -305,7 +306,7 @@ export class MiniCard extends LitElement {
   }
 
   private _renderPower(): TemplateResult | void {
-    if (this.card.isUnavailable) return;
+    if (this.genericFan.isUnavailable) return;
 
     return html`
       <mh-power .button="${this._powerButton}"> </mh-power>
@@ -316,7 +317,7 @@ export class MiniCard extends LitElement {
     if (!handle) return true;
 
     ev.stopPropagation();
-    handleClick(this, this.card.hass, this.card.tapAction);
+    handleClick(this, this.genericFan.hass, this.genericFan.tapAction);
     return false;
   }
 
@@ -334,8 +335,8 @@ export class MiniCard extends LitElement {
       '--initial': true,
       '--group': config.group,
       '--more-info': config.tapAction.action !== TapAction.None,
-      '--inactive': !this.card.isActive,
-      '--unavailable': this.card.isUnavailable,
+      '--inactive': !this.genericFan.isActive,
+      '--unavailable': this.genericFan.isUnavailable,
     } as ClassInfo);
   }
 

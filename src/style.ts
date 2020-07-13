@@ -120,6 +120,7 @@ const style = css`
     font-weight: var(--mh-name-font-weight);
     margin-top: auto;
     margin-bottom: auto;
+    cursor: pointer;
   }
 
   .entity__secondary_info {
@@ -169,7 +170,6 @@ const style = css`
     flex-direction: column;
     margin-right: 0;
     max-width: calc(var(--mh-unit) * 4.25);
-    cursor: pointer;
   }
   .entity__info__name_wrap.full {
     max-width: 80%;
@@ -217,6 +217,9 @@ const style = css`
   mh-dropdown {
     display: flex;
     flex-direction: column;
+  }
+  .pointer {
+    cursor: pointer;
   }
 `;
 

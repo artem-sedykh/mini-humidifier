@@ -4,7 +4,7 @@ import {
   DropdownConfig,
   DropdownItem,
   ElementType,
-  CardConfig,
+  GenericFanConfig,
   IndicatorConfig,
   PowerButtonConfig,
   Primitive,
@@ -23,7 +23,7 @@ import { compileTemplate, parseTapAction } from '../utils/utils';
 import { toggleEntity } from '../utils/toggle-entity';
 import { StyleInfo } from 'lit-html/directives/style-map';
 
-export class Config implements CardConfig {
+export class Config implements GenericFanConfig {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private readonly _config: any;
   private readonly _entity: string;

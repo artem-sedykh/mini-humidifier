@@ -31,7 +31,7 @@ const plugins = [
 
 export default [
   {
-    input: 'src/mini-card.ts',
+    input: 'src/mini-generic-fan-card.ts',
     output: {
       file: 'dist/mini-humidifier-bundle.js',
       format: 'es',

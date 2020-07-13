@@ -4,7 +4,7 @@ import { StyleInfo } from 'lit-html/directives/style-map';
 
 export type Primitive = null | undefined | boolean | number | string | symbol | bigint;
 
-export interface CardConfig extends LovelaceCardConfig {
+export interface GenericFanConfig extends LovelaceCardConfig {
   readonly type: string;
   readonly entity: string;
   readonly name: string;

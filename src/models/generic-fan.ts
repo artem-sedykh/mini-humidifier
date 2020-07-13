@@ -1,14 +1,14 @@
 import { HomeAssistant } from 'custom-card-helpers/dist';
-import { CardConfig, TapActionConfig } from '../types';
+import { GenericFanConfig, TapActionConfig } from '../types';
 import { HassEntity } from 'home-assistant-js-websocket';
 import ICON, { STATES_OFF, UNAVAILABLE_STATES } from '../const';
 
-export class CardObject {
+export class GenericFan {
   private readonly _hass: HomeAssistant;
-  private readonly _config: CardConfig;
+  private readonly _config: GenericFanConfig;
   private readonly _entity: HassEntity;
 
-  constructor(hass: HomeAssistant, config: CardConfig) {
+  constructor(hass: HomeAssistant, config: GenericFanConfig) {
     this._hass = hass;
     this._config = config;
     this._entity = hass.states[config.entity];

@@ -27,7 +27,7 @@ export class CardSecondaryInfoDropdown extends LitElement {
     const icon = this.secondaryInfo.icon ? this.secondaryInfo.icon : item?.icon;
 
     return html`
-      <ha-icon class="icon" .icon=${icon}></ha-icon>
+      <ha-icon class="icon" .icon=${icon} ?disabled=${this.secondaryInfo.disabled}></ha-icon>
       <span class="value">${label}</span>
     `;
   }
@@ -77,7 +77,7 @@ export class CardSecondaryInfoDropdown extends LitElement {
           ?disabled=${this.secondaryInfo.disabled}
           .dynamicAlign=${true}
         >
-          <div class="wrap" slot="dropdown-trigger">
+          <div slot="dropdown-trigger">
             ${this._renderState()}
           </div>
           <paper-listbox slot="dropdown-content" .selected=${this.selectedIndex} @iron-select=${this._handleChange}>
@@ -129,6 +129,10 @@ export class CardSecondaryInfoDropdown extends LitElement {
           width: calc(var(--mh-unit) * 0.5);
           min-width: calc(var(--mh-unit) * 0.5);
           --mdc-icon-size: calc(var(--mh-unit) * 0.5);
+        }
+        ha-icon[disabled] {
+          opacity: 0.5;
+          pointer-events: none;
         }
         .value {
           overflow: hidden;
