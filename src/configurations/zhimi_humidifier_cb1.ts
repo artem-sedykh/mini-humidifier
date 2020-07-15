@@ -180,10 +180,7 @@ export const ZHIMI_HUMIDIFIER_CB1 = (): DefaultModelConfig => ({
   supported_secondary_infos: {
     none: { type: 'none' },
     'last-changed': { type: 'last-changed' },
-    mode: {
-      type: 'custom',
-      target_button_id: 'mode',
-    },
-    'mode-dropdown': { type: 'custom-dropdown', target_button_id: 'mode', icon: ICON.FAN },
+    mode: { type: 'custom', inheritance_button_id: 'mode' },
+    'mode-dropdown': { type: 'custom-dropdown', inheritance_button_id: 'mode', icon: ICON.FAN },
   },
 });

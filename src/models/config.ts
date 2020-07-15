@@ -615,8 +615,8 @@ export class Config implements GenericFanConfig {
     };
     mergedSecondaryInfo.type = originalType;
 
-    if (mergedSecondaryInfo.target_button_id) {
-      const targetButtonConf = this.buttons.find(b => b.id === mergedSecondaryInfo.target_button_id);
+    if (mergedSecondaryInfo.inheritance_button_id) {
+      const targetButtonConf = this.buttons.find(b => b.id === mergedSecondaryInfo.inheritance_button_id);
       if (targetButtonConf) {
         mergedSecondaryInfo = { ...targetButtonConf.raw, ...mergedSecondaryInfo };
       }
