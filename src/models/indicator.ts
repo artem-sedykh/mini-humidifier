@@ -68,10 +68,13 @@ export class Indicator {
     state = this._config.stateMapper(state, context);
 
     if (state !== null && state !== undefined && isNumeric(state)) {
-      if (this._config.fixed !== undefined && this._config.fixed !== null)
+      if (this._config.fixed !== undefined && this._config.fixed !== null) {
         return parseFloat(state.toString()).toFixed(this._config.fixed);
+      }
 
-      if (this._config.round !== undefined && this._config.round !== null) return round(state, this._config.round);
+      if (this._config.round !== undefined && this._config.round !== null) {
+        return round(state, this._config.round);
+      }
     }
 
     return state;
@@ -84,12 +87,12 @@ export class Indicator {
 
   protected _getExecutionContext(): ExecutionContext {
     return {
-      call_service: this._hass.callService,
+      call_service: this.hass.callService,
       entity: this._entity,
       cardEntity: this._cardEntity,
       config: this._config.raw,
       localize: (string: string, fallback: string): string => {
-        const lang = this.hass?.selectedLanguage || this.hass?.language || 'en';
+        const lang = this.hass.selectedLanguage || this.hass.language || 'en';
         return localize(string, lang, fallback);
       },
     };

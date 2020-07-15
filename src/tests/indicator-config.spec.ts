@@ -462,4 +462,20 @@ describe('indicator-config', () => {
       expect(indicator.tapAction).to.deep.equal(test.expected);
     });
   });
+
+  it('empty indicator', () => {
+    const rawConfig = {
+      entity: 'fan.t',
+      model: 'empty',
+      indicators: {
+        undefined_indicator: undefined,
+        null_indicator: null,
+        number_indicator: 10,
+        string_indicator: 'indicator',
+      },
+    };
+
+    const config = new Config(rawConfig);
+    expect(config.indicators.length).to.equal(0);
+  });
 });

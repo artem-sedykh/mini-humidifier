@@ -4,6 +4,8 @@ import { Indicator } from '../models/indicator';
 import { instance, mock, when } from 'ts-mockito';
 import { HomeAssistant } from 'custom-card-helpers/dist';
 import { HassEntity } from 'home-assistant-js-websocket';
+import ICON from '../const';
+import { TapAction } from '../types';
 
 describe('indicator-model', () => {
   const indicatorStateTestSource = [
@@ -47,5 +49,68 @@ describe('indicator-model', () => {
       const model = new Indicator(hass, indicator, entity);
       expect(model.state).to.equal(test.expected);
     });
+  });
+
+  it('indicator', () => {
+    const entityId = 'fan.xiaomi_miio_device';
+    const indicatorId = 'temperature';
+    const hide = false;
+    const order = 10;
+    const attribute = 'temperature';
+    const temperature = 21.4;
+    const rawConfig = {
+      entity: entityId,
+      model: 'empty',
+      indicators: {},
+    };
+
+    rawConfig.indicators[indicatorId] = {
+      icon: ICON.TEMPERATURE,
+      unit: '°C',
+      round: 1,
+      hide: hide,
+      order: order,
+      state: { attribute: attribute },
+    };
+
+    const config = new Config(rawConfig);
+
+    const attributes = {};
+    attributes[attribute] = temperature;
+
+    const entityMock: HassEntity = mock<HassEntity>();
+    when(entityMock.entity_id).thenReturn(entityId);
+    when(entityMock.attributes).thenReturn(attributes);
+    const entity: HassEntity = instance(entityMock);
+
+    const states = {};
+    states[entityId] = entity;
+    const hassMock: HomeAssistant = mock<HomeAssistant>();
+    when(hassMock.states).thenReturn(states);
+    when(hassMock.selectedLanguage).thenReturn('');
+    when(hassMock.language).thenReturn('en');
+    const hass: HomeAssistant = instance(hassMock);
+
+    const indicatorConfig = config.indicators.find(i => i.id === indicatorId);
+    assert.isDefined(indicatorConfig);
+    assert.isNotNull(indicatorConfig);
+    if (indicatorConfig === undefined) {
+      assert.fail('indicatorConfig is undefined');
+    }
+
+    const model = new Indicator(hass, indicatorConfig, entity);
+    expect(model.id).to.equal(indicatorId);
+    expect(model.entity).to.deep.equal(entity);
+    expect(model.hass).to.deep.equal(hass);
+    expect(model.hide).to.equal(hide);
+    expect(model.order).to.equal(order);
+    assert.isDefined(model.tapAction);
+    expect(model.tapAction.action).to.equal(TapAction.None);
+    expect(model.tapAction.entity).to.equal(entityId);
+
+    expect(model.unitStyle).to.deep.equal({});
+    expect(model.iconStyle).to.deep.equal({});
+
+    expect(model.state).to.equal(temperature);
   });
 });

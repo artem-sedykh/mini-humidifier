@@ -49,7 +49,7 @@ export const handleClick = (node: HTMLElement, hass: HomeAssistant, config: TapA
         forwardHaptic('success');
       }
       break;
-    case TapAction.callService: {
+    case TapAction.CallService: {
       if (!config.service) {
         forwardHaptic('failure');
         return;

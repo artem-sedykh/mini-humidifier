@@ -7,18 +7,23 @@ const languages = {
 };
 
 export function localize(string: string, lang: string, fallback = 'unknown'): string {
-  const section = string.split('.')[0];
-  const key = string.split('.')[1];
+  const parts = string.split('.');
 
-  let translated: string;
+  let translated: string | object;
 
   try {
-    translated = languages[lang][section][key];
+    translated = languages[lang];
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      translated = translated[part];
+    }
   } catch (e) {
     return fallback;
   }
 
   if (translated === undefined) return fallback;
 
-  return translated;
+  if (typeof translated === 'string') return translated;
+
+  return fallback;
 }

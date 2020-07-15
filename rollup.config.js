@@ -26,7 +26,7 @@ const plugins = [
     exclude: 'node_modules/**',
   }),
   dev && serve(serveopts),
-  // !dev && terser(),
+  !dev && terser(),
 ];
 
 export default [

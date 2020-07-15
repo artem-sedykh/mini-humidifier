@@ -17,7 +17,7 @@ import {
   StateConfig,
   ExecutionContext,
 } from '../types';
-import ICON, { ACTION_TIMEOUT } from '../const';
+import ICON, { ACTION_TIMEOUT, EmptyPromise } from '../const';
 import DefaultModels from '../default-models';
 import { compileTemplate, parseTapAction } from '../utils/utils';
 import { toggleEntity } from '../utils/toggle-entity';
@@ -35,7 +35,7 @@ export class Config implements GenericFanConfig {
   private readonly _model: string;
   private readonly _toggle: ToggleButtonConfig;
   private readonly _tapAction: TapActionConfig;
-  private readonly _modelConfig?: DefaultModelConfig;
+  private readonly _modelConfig: DefaultModelConfig;
   private readonly _power: PowerButtonConfig;
   private readonly _slider: SliderConfig;
   private readonly _indicators: IndicatorConfig[];
@@ -44,12 +44,19 @@ export class Config implements GenericFanConfig {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(config: any) {
-    if (!config) throw new Error('config not defined!');
+    if (!config) {
+      throw new Error('config not defined!');
+    }
 
-    if (!config.entity) throw new Error('entity not set');
-    const entity = config.entity?.toString();
+    if (!config.entity) {
+      throw new Error('entity not set');
+    }
 
-    if (entity.split('.')[0] !== 'fan') throw new Error('Specify an entity from within the fan domain.');
+    const entity = config.entity.toString();
+
+    if (entity.split('.')[0] !== 'fan') {
+      throw new Error('Specify an entity from within the fan domain.');
+    }
 
     this._config = config;
     this._entity = entity;
@@ -59,10 +66,12 @@ export class Config implements GenericFanConfig {
     this._icon = config.icon?.toString();
     this._scale = 1;
 
-    if ('scale' in config && typeof config.scale === 'number') this._scale = config.scale;
+    if ('scale' in config && typeof config.scale === 'number') {
+      this._scale = config.scale;
+    }
 
     this._toggle = Config._ParseToggle(config.toggle);
-    this._tapAction = Config._ParseTapAction(config.tap_action, this.entity, TapAction.MoreInfo);
+    this._tapAction = Config._ParseTapActionConfig(config.tap_action, this.entity, TapAction.MoreInfo);
 
     if (config.model && config.model in DefaultModels) {
       this._model = config.model;
@@ -123,43 +132,64 @@ export class Config implements GenericFanConfig {
   }
 
   private static _ParseState(
-    model: { state: StateConfig; stateMapper: (state: Primitive, context: ExecutionContext) => Primitive },
+    entity: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    modelObj: any,
-  ): void {
-    if (!modelObj.state) return;
+    stateObj: any,
+  ): { state: StateConfig; stateMapper: (state: Primitive, context: ExecutionContext) => Primitive } {
+    const model: { state: StateConfig; stateMapper: (state: Primitive, context: ExecutionContext) => Primitive } = {
+      state: { entity: entity, attribute: undefined },
+      stateMapper: (value): Primitive => value,
+    };
 
-    if (typeof modelObj.state === 'string') {
-      if (modelObj.state.includes('.')) {
-        model.state.entity = modelObj.state;
+    if (stateObj === null || stateObj === undefined) {
+      return model;
+    }
+
+    if (typeof stateObj === 'string') {
+      if (stateObj.includes('.')) {
+        model.state.entity = stateObj;
       } else {
-        model.state.attribute = modelObj.state;
-      }
-    } else {
-      model.state.attribute = modelObj.state.attribute?.toString();
-      if (modelObj.state.entity) model.state.entity = modelObj.state.entity?.toString();
-
-      if (modelObj.state.mapper) {
-        model.stateMapper = compileTemplate(modelObj.state.mapper);
+        model.state.attribute = stateObj;
       }
     }
+
+    if (typeof stateObj === 'object') {
+      model.state.attribute = stateObj.attribute;
+      if (stateObj.entity) {
+        model.state.entity = stateObj.entity;
+      }
+
+      if (stateObj.mapper) {
+        model.stateMapper = compileTemplate(stateObj.mapper);
+      }
+    }
+
+    return model;
   }
 
   private static _ParseDropdownSource(
-    model: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    sourceObj: any,
+  ): { source: DropdownItem[]; sourceFilter: (source: DropdownItem[], context: ExecutionContext) => DropdownItem[] } {
+    const model: {
       source: DropdownItem[];
       sourceFilter: (source: DropdownItem[], context: ExecutionContext) => DropdownItem[];
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    modelObj: any,
-  ): void {
-    if (typeof modelObj.source !== 'object') return;
+    } = {
+      source: [],
+      sourceFilter: source => source,
+    };
 
-    if (modelObj.source['__filter']) {
-      model.sourceFilter = compileTemplate(modelObj.source['__filter']);
+    if (sourceObj === null || sourceObj === undefined) {
+      return model;
     }
 
-    model.source = Object.entries(modelObj.source)
+    if (typeof sourceObj !== 'object') return model;
+
+    if (sourceObj['__filter']) {
+      model.sourceFilter = compileTemplate(sourceObj['__filter']);
+    }
+
+    model.source = Object.entries(sourceObj)
       .filter(([key]) => key !== '__filter')
       .map(([key, value], order) => {
         if (typeof value === 'object' && value) {
@@ -170,42 +200,36 @@ export class Config implements GenericFanConfig {
         return item;
       })
       .sort((a, b) => (a.order > b.order ? 1 : b.order > a.order ? -1 : 0));
+
+    return model;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private static _ParseIcon(model: { icon: IconConfig }, modelObj: any): void {
-    if (!('icon' in modelObj)) return;
-    if (!modelObj.icon) return;
+  private static _ParseIconConfig(modelObj: any): IconConfig {
+    const model: IconConfig = {
+      template: (): string | undefined => undefined,
+      style: (): StyleInfo => ({}),
+    };
 
-    if (typeof modelObj.icon === 'string') {
-      model.icon.template = (): string => modelObj.icon;
-    } else {
-      if (modelObj.icon.template) {
-        model.icon.template = compileTemplate(modelObj.icon.template);
+    if (modelObj === null || modelObj === undefined) {
+      return model;
+    }
+
+    if (typeof modelObj === 'string') {
+      model.template = (): string => modelObj;
+    }
+
+    if (typeof modelObj === 'object') {
+      if (modelObj.template) {
+        model.template = compileTemplate(modelObj.template);
       }
 
-      if (modelObj.icon.style) {
-        model.icon.style = compileTemplate(modelObj.icon.style);
+      if (modelObj.style) {
+        model.style = compileTemplate(modelObj.style);
       }
     }
-  }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private static _ParseUnit(model: { unit: IconConfig }, modelObj: any): void {
-    if (!('unit' in modelObj)) return;
-    if (!modelObj.unit) return;
-
-    if (typeof modelObj.unit === 'string') {
-      model.unit.template = (): string => modelObj.unit;
-    } else {
-      if (modelObj.unit.template) {
-        model.unit.template = compileTemplate(modelObj.unit.template);
-      }
-
-      if (modelObj.unit.style) {
-        model.unit.style = compileTemplate(modelObj.unit.style);
-      }
-    }
+    return model;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -222,44 +246,82 @@ export class Config implements GenericFanConfig {
     }
 
     if (typeof toggleObj === 'object') {
-      if ('icon' in toggleObj) toggle.icon = toggleObj.icon?.toString();
-      if ('hide' in toggleObj) toggle.hide = !!toggleObj.hide;
-      if ('default' in toggleObj) toggle.default = !!toggleObj.default;
+      if ('icon' in toggleObj && toggleObj.icon) {
+        toggle.icon = toggleObj.icon;
+      }
+
+      if ('hide' in toggleObj) {
+        toggle.hide = !!toggleObj.hide;
+      }
+
+      if ('default' in toggleObj) {
+        toggle.default = !!toggleObj.default;
+      }
     }
 
     return toggle;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private static _ParseTapAction(tapActionObj: any, entity: string, defaultAction: TapAction): TapActionConfig {
+  private static _ParseTapActionConfig(tapActionObj: any, entity: string, defaultAction: TapAction): TapActionConfig {
     const tapAction: TapActionConfig = {
       entity: entity,
       action: defaultAction,
     };
 
-    if (!tapActionObj) return tapAction;
-
-    if (typeof tapActionObj === 'string') {
-      const action = parseTapAction(tapActionObj);
-      if (action) tapAction.action = action;
+    if (!tapActionObj) {
       return tapAction;
     }
 
-    if (typeof tapActionObj === 'object') {
-      if ('action' in tapActionObj) {
-        const action = parseTapAction(tapActionObj.action);
-        if (action) tapAction.action = action;
+    if (typeof tapActionObj === 'string') {
+      const action = parseTapAction(tapActionObj);
+      if (action) {
+        tapAction.action = action;
       }
+      return tapAction;
+    }
 
-      if (tapAction.action === TapAction.Toggle) {
-        if ('entity' in tapActionObj) tapAction.entity = tapActionObj.entity?.toString();
-      } else if (tapAction.action === TapAction.callService) {
-        if ('service' in tapActionObj) tapAction.service = tapActionObj.service?.toString();
-        if ('service_data' in tapActionObj) tapAction.serviceData = tapActionObj.service_data;
-      } else if (tapAction.action === TapAction.Navigate) {
-        if ('navigation_path' in tapActionObj) tapAction.navigationPath = tapActionObj.navigation_path;
-      } else if (tapAction.action === TapAction.Url) {
-        if ('url' in tapActionObj) tapAction.url = tapActionObj.url?.toString();
+    if (typeof tapActionObj !== 'object') {
+      return tapAction;
+    }
+
+    if ('action' in tapActionObj) {
+      const action = parseTapAction(tapActionObj.action);
+      if (action) {
+        tapAction.action = action;
+      }
+    }
+
+    switch (tapAction.action) {
+      case TapAction.Toggle: {
+        if ('entity' in tapActionObj && tapAction.entity) {
+          tapAction.entity = tapActionObj.entity;
+        }
+        break;
+      }
+      case TapAction.CallService: {
+        if ('service' in tapActionObj && tapActionObj.service) {
+          tapAction.service = tapActionObj.service;
+        }
+        if ('service_data' in tapActionObj) {
+          tapAction.serviceData = tapActionObj.service_data;
+        }
+        break;
+      }
+      case TapAction.Navigate: {
+        if ('navigation_path' in tapActionObj) {
+          tapAction.navigationPath = tapActionObj.navigation_path;
+        }
+        break;
+      }
+      case TapAction.Url: {
+        if ('url' in tapActionObj && tapActionObj.url) {
+          tapAction.url = tapActionObj.url;
+        }
+        break;
+      }
+      default: {
+        break;
       }
     }
 
@@ -267,14 +329,14 @@ export class Config implements GenericFanConfig {
   }
 
   private _parseIndicators(): IndicatorConfig[] {
-    const indicators = { ...(this._modelConfig?.indicators || {}) };
+    const indicators = { ...(this._modelConfig.indicators || {}) };
     const data = Object.entries(this._config.indicators || {});
 
     for (let i = 0; i < data.length; i += 1) {
       const key = data[i][0];
-      const value = data[i][1] || {};
+      const value = data[i][1];
 
-      if (typeof value === 'object') {
+      if (typeof value === 'object' && value) {
         indicators[key] = { ...(indicators[key] || {}), ...value };
       }
     }
@@ -286,21 +348,19 @@ export class Config implements GenericFanConfig {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _parseIndicator(id: string, indicatorObj: any, order: number): IndicatorConfig {
+    const stateModel = Config._ParseState(this.entity, indicatorObj.state);
+
     const indicator: IndicatorConfig = {
       id: id,
       raw: indicatorObj,
-      icon: { template: (): string | undefined => undefined, style: (): StyleInfo => ({}) },
-      unit: { template: (): string | undefined => undefined, style: (): StyleInfo => ({}) },
+      icon: Config._ParseIconConfig(indicatorObj.icon),
+      unit: Config._ParseIconConfig(indicatorObj.unit),
       hide: !!indicatorObj.hide,
       order: order,
       tapAction: { action: TapAction.None, entity: this.entity },
-      state: { entity: this.entity, attribute: undefined },
-      stateMapper: (value): Primitive => value,
+      state: stateModel.state,
+      stateMapper: stateModel.stateMapper,
     };
-
-    Config._ParseIcon(indicator, indicatorObj);
-    Config._ParseUnit(indicator, indicatorObj);
-    Config._ParseState(indicator, indicatorObj);
 
     if ('order' in indicatorObj && typeof indicatorObj.order === 'number') {
       indicator.order = indicatorObj.order;
@@ -314,20 +374,20 @@ export class Config implements GenericFanConfig {
       indicator.fixed = indicatorObj.fixed;
     }
 
-    indicator.tapAction = Config._ParseTapAction(indicatorObj.tap_action, indicator.state.entity, TapAction.None);
+    indicator.tapAction = Config._ParseTapActionConfig(indicatorObj.tap_action, indicator.state.entity, TapAction.None);
 
     return indicator;
   }
 
   private _parseButtons(): (ButtonConfig | DropdownConfig)[] {
-    const buttons = { ...(this._modelConfig?.buttons || {}) };
+    const buttons = { ...(this._modelConfig.buttons || {}) };
     const data = Object.entries(this._config.buttons || {});
 
     for (let i = 0; i < data.length; i += 1) {
       const key = data[i][0];
-      const value = data[i][1] || {};
+      const value = data[i][1];
 
-      if (typeof value === 'object') {
+      if (typeof value === 'object' && value) {
         buttons[key] = { ...(buttons[key] || {}), ...value };
       }
     }
@@ -339,24 +399,28 @@ export class Config implements GenericFanConfig {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _parseButtonBase(id: string, buttonObj: any, order: number): ButtonConfig | DropdownConfig {
-    if (buttonObj.type === 'dropdown') return this._parseDropdown(id, buttonObj, order);
+    if (buttonObj.type === 'dropdown') {
+      return this._parseDropdown(id, buttonObj, order);
+    }
 
     return this._parseButton(id, buttonObj, order);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _parseButton(id: string, buttonObj: any, order: number): ButtonConfig {
+    const stateModel = Config._ParseState(this.entity, buttonObj.state);
+
     const button: ButtonConfig = {
       id: id,
       label: (): undefined => undefined,
       raw: buttonObj,
       elementType: ElementType.Button,
-      icon: { template: (): string | undefined => undefined, style: (): StyleInfo => ({}) },
+      icon: Config._ParseIconConfig(buttonObj.icon),
       actionTimeout: ACTION_TIMEOUT,
       order: order,
       hide: !!buttonObj.hide,
-      state: { entity: this.entity, attribute: undefined },
-      stateMapper: (value): Primitive => value,
+      state: stateModel.state,
+      stateMapper: stateModel.stateMapper,
       disabled: () => false,
       style: () => ({}),
       toggleAction: (_state, context): Promise<void> => toggleEntity(context.entity, context.call_service),
@@ -383,39 +447,32 @@ export class Config implements GenericFanConfig {
       button.style = compileTemplate(buttonObj.style);
     }
 
-    Config._ParseState(button, buttonObj);
-    Config._ParseIcon(button, buttonObj);
-
     return button;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _parseDropdown(id: string, dropdownObj: any, order: number): DropdownConfig {
+    const stateModel = Config._ParseState(this.entity, dropdownObj.state);
+    const dropdownSourceModel = Config._ParseDropdownSource(dropdownObj.source);
+
     const dropdown: DropdownConfig = {
       id: id,
       elementType: ElementType.Dropdown,
       label: (): undefined => undefined,
       raw: dropdownObj,
-      icon: { template: (): string => '', style: (): StyleInfo => ({}) },
+      icon: Config._ParseIconConfig(dropdownObj.icon),
       actionTimeout: ACTION_TIMEOUT,
       order: order,
       hide: !!dropdownObj.hide,
-      state: { entity: this.entity },
-      stateMapper: (state): Primitive => state,
+      state: stateModel.state,
+      stateMapper: stateModel.stateMapper,
       active: () => false,
       disabled: () => false,
       style: () => ({}),
-      sourceFilter: source => source,
-      source: [],
-      change: () =>
-        new Promise(() => {
-          return;
-        }),
+      source: dropdownSourceModel.source,
+      sourceFilter: dropdownSourceModel.sourceFilter,
+      change: EmptyPromise,
     };
-
-    Config._ParseState(dropdown, dropdownObj);
-    Config._ParseIcon(dropdown, dropdownObj);
-    Config._ParseDropdownSource(dropdown, dropdownObj);
 
     if (typeof dropdownObj.action_timeout === 'number' && dropdownObj.action_timeout >= 0) {
       dropdown.actionTimeout = dropdownObj.action_timeout;
@@ -450,20 +507,24 @@ export class Config implements GenericFanConfig {
 
   private _parsePowerButton(): PowerButtonConfig {
     if (typeof this._config.power === 'string') {
-      const button = this._parseButton('power', { ...(this._modelConfig?.power || {}) }, 0);
-      return { type: this._config.power, ...button };
+      const button = this._parseButton('power', { ...(this._modelConfig.power || {}) }, 0);
+      const type = this._config.power === 'toggle' ? 'toggle' : 'button';
+      return { type: type, ...button };
     }
-    const powerButtonObj = { ...(this._modelConfig?.power || {}), ...(this._config.power || {}) };
+    const powerButtonObj = { ...(this._modelConfig.power || {}), ...(this._config.power || {}) };
     const button = this._parseButton('power', powerButtonObj, 0);
-    return { type: powerButtonObj.type, ...button };
+    const type = powerButtonObj.type === 'toggle' ? 'toggle' : 'button';
+    return { type: type, ...button };
   }
 
   private _parseSlider(): SliderConfig {
     const sliderObj = {
-      ...(this._modelConfig?.slider || {}),
+      ...(this._modelConfig.slider || {}),
       ...(this._config.slider || {}),
     };
     const indicator = this._parseIndicator('slider', sliderObj.indicator || {}, 0);
+    const stateModel = Config._ParseState(this.entity, sliderObj.state);
+    indicator.state = stateModel.state;
 
     const slider: SliderConfig = {
       indicator: indicator,
@@ -474,16 +535,10 @@ export class Config implements GenericFanConfig {
       hide: !!sliderObj.hide,
       actionTimeout: ACTION_TIMEOUT,
       disabled: () => false,
-      state: { entity: this.entity, attribute: undefined },
-      stateMapper: (value): number => Number(value),
-      change: () =>
-        new Promise(() => {
-          return;
-        }),
+      state: stateModel.state,
+      stateMapper: stateModel.stateMapper,
+      change: EmptyPromise,
     };
-
-    Config._ParseState(slider, sliderObj);
-    indicator.state = slider.state;
 
     if (typeof sliderObj.min === 'number') slider.min = sliderObj.min;
     if (typeof sliderObj.max === 'number') slider.max = sliderObj.max;
@@ -505,14 +560,14 @@ export class Config implements GenericFanConfig {
   }
 
   private _parseSecondaryInfo(): SecondaryInfoConfig {
-    const supportedSecondaryInfos = this._modelConfig?.supported_secondary_infos || {};
+    const supportedSecondaryInfos = this._modelConfig.supported_secondary_infos || {};
     let secondaryInfoObj = { type: 'none' };
 
-    if (typeof this._modelConfig?.secondary_info === 'string') {
-      secondaryInfoObj.type = this._modelConfig?.secondary_info;
+    if (typeof this._modelConfig.secondary_info === 'string') {
+      secondaryInfoObj.type = this._modelConfig.secondary_info;
     }
 
-    if (typeof this._modelConfig?.secondary_info === 'object') {
+    if (typeof this._modelConfig.secondary_info === 'object') {
       secondaryInfoObj = { ...secondaryInfoObj, ...this._modelConfig.secondary_info };
     }
 
@@ -539,10 +594,7 @@ export class Config implements GenericFanConfig {
       sourceFilter: (source): DropdownItem[] => source,
       source: [],
       actionTimeout: ACTION_TIMEOUT,
-      change: (): Promise<void> =>
-        new Promise(() => {
-          return;
-        }),
+      change: EmptyPromise,
     };
 
     if (secondaryInfoObj.type in supportedSecondaryInfos) {
@@ -570,9 +622,15 @@ export class Config implements GenericFanConfig {
       }
     }
 
-    Config._ParseState(secondaryInfo, mergedSecondaryInfo);
-    Config._ParseDropdownSource(secondaryInfo, mergedSecondaryInfo);
-    Config._ParseIcon(secondaryInfo, mergedSecondaryInfo);
+    const stateModel = Config._ParseState(this.entity, mergedSecondaryInfo.state);
+    const dropdownSourceModel = Config._ParseDropdownSource(mergedSecondaryInfo.source);
+
+    secondaryInfo.state = stateModel.state;
+    secondaryInfo.stateMapper = stateModel.stateMapper;
+    secondaryInfo.source = dropdownSourceModel.source;
+    secondaryInfo.sourceFilter = dropdownSourceModel.sourceFilter;
+
+    secondaryInfo.icon = Config._ParseIconConfig(mergedSecondaryInfo);
 
     secondaryInfo.type = mergedSecondaryInfo.type;
 

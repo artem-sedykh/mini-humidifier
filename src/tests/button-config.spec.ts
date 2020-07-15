@@ -1,9 +1,10 @@
 import { Config } from '../models/config';
 import { assert, expect } from 'chai';
 import { StyleInfo } from 'lit-html/directives/style-map';
-import { DropdownConfig, DropdownItem, ElementType, ExecutionContext, Primitive } from '../types';
-import { instance, mock } from 'ts-mockito';
+import { ButtonConfig, DropdownConfig, DropdownItem, ElementType, ExecutionContext, Primitive } from '../types';
+import { anyString, anything, instance, mock, when } from 'ts-mockito';
 import { ACTION_TIMEOUT } from '../const';
+import { HassEntity } from 'home-assistant-js-websocket';
 
 describe('button-config', () => {
   it('button.id', () => {
@@ -564,12 +565,24 @@ describe('button-config', () => {
         source: {
           item1: { name: 'name_item1', order: 2 },
           item2: { name: 'name_item2', order: 10, test_pro: 'test' },
+          item3: { name: 'name_item3', order: 1 },
+          item4: { name: 'name_item4', order: 1 },
         },
       },
       expected: [
+        { id: 'item3', name: 'name_item3', order: 1 },
+        { id: 'item4', name: 'name_item4', order: 1 },
         { id: 'item1', name: 'name_item1', order: 2 },
         { id: 'item2', name: 'name_item2', order: 10, test_pro: 'test' },
       ],
+    },
+    {
+      buttonId: 'test',
+      button: {
+        type: 'dropdown',
+        source: 102,
+      },
+      expected: [],
     },
   ];
 
@@ -721,5 +734,143 @@ describe('button-config', () => {
 
       expect(disabled).to.deep.equals(test.expected);
     });
+  });
+
+  it('empty button', () => {
+    const rawConfig = {
+      entity: 'fan.t',
+      model: 'empty',
+      buttons: {
+        undefined_button: undefined,
+        null_button: null,
+        number_button: 10,
+        string_button: 'button',
+      },
+    };
+
+    const config = new Config(rawConfig);
+    expect(config.buttons.length).to.equal(0);
+  });
+
+  it('toggle_action', () => {
+    const entityId = 'switch.test';
+    let state = 'on';
+
+    const rawConfig = {
+      entity: 'fan.t',
+      model: 'empty',
+      buttons: {},
+    };
+    const buttonId = 'test';
+    rawConfig.buttons[buttonId] = { state: entityId };
+
+    const config = new Config(rawConfig);
+    const button = config.buttons.find(b => b.id === buttonId) as ButtonConfig;
+    if (!button) {
+      assert.fail('button is undefined');
+    }
+
+    expect(button.elementType).to.equal(ElementType.Button);
+    assert.isFunction(button.toggleAction);
+
+    const entityMock: HassEntity = mock<HassEntity>();
+    when(entityMock.entity_id).thenReturn(entityId);
+    when(entityMock.state).thenReturn(state);
+    const entity: HassEntity = instance(entityMock);
+
+    const contextMock: ExecutionContext = mock<ExecutionContext>();
+
+    when(contextMock.entity).thenReturn(entity);
+    when(contextMock.cardEntity).thenReturn(entity);
+    when(contextMock.config).thenReturn(rawConfig.buttons[buttonId]);
+
+    when(contextMock.call_service(anyString(), anyString(), anything())).thenCall((domain: string, service: string) => {
+      if (domain === 'switch') {
+        if (service === 'turn_off') {
+          state = 'off';
+        } else {
+          state = 'on';
+        }
+      }
+      return new Promise<void>(() => {
+        return;
+      });
+    });
+
+    const context: ExecutionContext = instance(contextMock);
+
+    expect(state).to.equal('on');
+
+    Promise.resolve(button.toggleAction('on', context));
+
+    expect(state).to.equal('off');
+  });
+
+  it('parse dropdown', () => {
+    const buttonId = 'dropdown';
+    const rawConfig = {
+      entity: 'fan.t',
+      model: 'empty',
+      buttons: {},
+    };
+
+    rawConfig.buttons[buttonId] = {
+      type: 'dropdown',
+      order: 10,
+    };
+
+    const config = new Config(rawConfig);
+    const dropdown = config.buttons.find(b => b.id === buttonId) as DropdownConfig;
+
+    if (!dropdown) {
+      assert.fail('dropdown is undefined');
+    }
+    const contextMock: ExecutionContext = mock<ExecutionContext>();
+    const context: ExecutionContext = instance(contextMock);
+
+    assert.isUndefined(dropdown.label(undefined, context));
+    assert.isUndefined(dropdown.label('test', context));
+    assert.isUndefined(dropdown.label(10, context));
+
+    assert.isFalse(dropdown.disabled(undefined, context));
+    assert.isFalse(dropdown.disabled('test', context));
+    assert.isFalse(dropdown.disabled(10, context));
+    assert.isFalse(dropdown.disabled(false, context));
+    assert.isFalse(dropdown.disabled(true, context));
+
+    expect(dropdown.style(undefined, context)).to.deep.equal({});
+    expect(dropdown.style('test', context)).to.deep.equal({});
+    expect(dropdown.style(10, context)).to.deep.equal({});
+    expect(dropdown.style(false, context)).to.deep.equal({});
+    expect(dropdown.style(true, context)).to.deep.equal({});
+
+    expect(dropdown.order).to.equal(10);
+  });
+
+  it('dropdown label', () => {
+    const buttonId = 'dropdown';
+    const rawConfig = {
+      entity: 'fan.t',
+      model: 'empty',
+      buttons: {},
+    };
+
+    rawConfig.buttons[buttonId] = {
+      type: 'dropdown',
+      label: (state): string | undefined => state,
+    };
+
+    const config = new Config(rawConfig);
+    const dropdown = config.buttons.find(b => b.id === buttonId) as DropdownConfig;
+
+    if (!dropdown) {
+      assert.fail('dropdown is undefined');
+    }
+    const contextMock: ExecutionContext = mock<ExecutionContext>();
+    const context: ExecutionContext = instance(contextMock);
+
+    expect(dropdown.label(undefined, context)).to.equal(undefined);
+    expect(dropdown.label('test label', context)).to.equal('test label');
+    expect(dropdown.label(10, context)).to.equal(10);
   });
 });

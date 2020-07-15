@@ -1,18 +1,20 @@
 {
-  "led_brightness": {
-    "0": "Bright",
-    "1": "Dim",
-    "2": "Off"
-  },
-  "mode": {
-    "auto": "Auto",
-    "silent": "Silent",
-    "medium": "Medium",
-    "high": "High"
-  },
-  "depth": {
-    "liters": "L",
-    "percent": "%"
+  "zhimi_humidifier_cb1": {
+    "mode": {
+      "auto": "Auto",
+      "silent": "Silent",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "led_brightness": {
+      "0": "Bright",
+      "1": "Dim",
+      "2": "Off"
+    },
+    "depth": {
+      "liters": "L",
+      "percent": "%"
+    }
   },
   "airdog": {
     "indicator_speed": "`speed: ${speed}`",

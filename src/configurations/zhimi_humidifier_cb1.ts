@@ -45,7 +45,7 @@ export const ZHIMI_HUMIDIFIER_CB1 = (): DefaultModelConfig => ({
           const type = context.config.type;
           const depth = entity.attributes.depth;
           if (depth === 127) return '';
-          return context.localize('depth.' + type, '%');
+          return context.localize('zhimi_humidifier_cb1.depth.' + type, '%');
         },
       },
       state: {
@@ -103,7 +103,7 @@ export const ZHIMI_HUMIDIFIER_CB1 = (): DefaultModelConfig => ({
         high: 'high',
         __filter: (source: DropdownItem[], context: ExecutionContext): DropdownItem[] => {
           return source.map(item => {
-            item.name = context.localize('mode.' + item.id, item.name);
+            item.name = context.localize('zhimi_humidifier_cb1.mode.' + item.id, item.name);
             return item;
           });
         },
@@ -133,7 +133,7 @@ export const ZHIMI_HUMIDIFIER_CB1 = (): DefaultModelConfig => ({
         2: 'Off',
         __filter: (source: DropdownItem[], context: ExecutionContext): DropdownItem[] => {
           return source.map(item => {
-            item.name = context.localize('led_brightness.' + item.id, item.name);
+            item.name = context.localize('zhimi_humidifier_cb1.led_brightness.' + item.id, item.name);
             return item;
           });
         },

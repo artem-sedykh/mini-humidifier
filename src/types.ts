@@ -50,7 +50,7 @@ export enum ElementType {
 export enum TapAction {
   MoreInfo = 'more-info',
   Navigate = 'navigate',
-  callService = 'call-service',
+  CallService = 'call-service',
   Url = 'url',
   None = 'none',
   Toggle = 'toggle',

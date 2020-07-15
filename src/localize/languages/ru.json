@@ -1,18 +1,20 @@
 {
-  "led_brightness": {
-    "0": "Ярко",
-    "1": "Тускло",
-    "2": "Выкл."
-  },
-  "mode": {
-    "auto": "Авто",
-    "silent": "Тихий",
-    "medium": "Средний",
-    "high": "Сильный"
-  },
-  "depth": {
-    "liters": "Л",
-    "percent": "%"
+  "zhimi_humidifier_cb1": {
+    "led_brightness": {
+      "0": "Ярко",
+      "1": "Тускло",
+      "2": "Выкл."
+    },
+    "mode": {
+      "auto": "Авто",
+      "silent": "Тихий",
+      "medium": "Средний",
+      "high": "Сильный"
+    },
+    "depth": {
+      "liters": "Л",
+      "percent": "%"
+    }
   },
   "airdog": {
     "indicator_speed": "`${speed}-я скорость`",
