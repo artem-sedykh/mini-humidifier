@@ -59,7 +59,9 @@ export class Slider {
   }
 
   private _state(): Primitive {
-    if (this._config.state.attribute) return this.entity.attributes[this._config.state.attribute];
+    if (this._config.state.attribute) {
+      return this.entity.attributes[this._config.state.attribute];
+    }
     return this.entity.state;
   }
 
@@ -75,12 +77,12 @@ export class Slider {
 
   protected _getExecutionContext(): ExecutionContext {
     return {
-      call_service: this._hass.callService,
+      call_service: this.hass.callService,
       entity: this._entity,
       cardEntity: this._cardEntity,
       config: this._config.raw,
       localize: (string: string, fallback: string): string => {
-        const lang = this.hass?.selectedLanguage || this.hass?.language || 'en';
+        const lang = this.hass.selectedLanguage || this.hass.language || 'en';
         return localize(string, lang, fallback);
       },
     };

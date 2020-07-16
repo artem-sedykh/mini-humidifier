@@ -14,10 +14,13 @@ export class SliderIndicator extends Indicator {
     const val = this._config.stateMapper(value, context);
 
     if (val !== null && val !== undefined && isNumeric(val)) {
-      if (this._config.fixed !== undefined && this._config.fixed !== null)
+      if (this._config.fixed !== undefined && this._config.fixed !== null) {
         return parseFloat(val.toString()).toFixed(this._config.fixed);
+      }
 
-      if (this._config.round !== undefined && this._config.round !== null) return round(val, this._config.round);
+      if (this._config.round !== undefined && this._config.round !== null) {
+        return round(val, this._config.round);
+      }
     }
 
     return val;

@@ -84,7 +84,8 @@ export class Dropdown {
   }
 
   get selected(): DropdownItem | undefined {
-    return this.source.find(s => s.id === this.state?.toString());
+    const state = this.state?.toString();
+    return this.source.find(s => s.id === state);
   }
 
   public isActive(state: string | undefined): boolean {
@@ -99,12 +100,12 @@ export class Dropdown {
 
   protected _getExecutionContext(): ExecutionContext {
     return {
-      call_service: this._hass.callService,
+      call_service: this.hass.callService,
       entity: this._entity,
       cardEntity: this._cardEntity,
       config: this._config.raw,
       localize: (string: string, fallback: string): string => {
-        const lang = this.hass?.selectedLanguage || this.hass?.language || 'en';
+        const lang = this.hass.selectedLanguage || this.hass.language || 'en';
         return localize(string, lang, fallback);
       },
     };

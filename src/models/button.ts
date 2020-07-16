@@ -31,7 +31,12 @@ export class Button {
   }
 
   get isOn(): boolean {
-    const state = this.state?.toString() || '';
+    const state = this.state?.toString();
+
+    if (state === undefined || state === null) {
+      return false;
+    }
+
     return this.entity !== undefined && !STATES_OFF.includes(state) && !UNAVAILABLE_STATES.includes(state);
   }
 
@@ -79,7 +84,12 @@ export class Button {
   }
 
   get isUnavailable(): boolean {
-    const state = this.state?.toString() || '';
+    const state = this.state?.toString();
+
+    if (state === undefined || state === null) {
+      return true;
+    }
+
     return this.entity === undefined || UNAVAILABLE_STATES.includes(state);
   }
 
@@ -95,12 +105,12 @@ export class Button {
 
   protected _getExecutionContext(): ExecutionContext {
     return {
-      call_service: this._hass.callService,
+      call_service: this.hass.callService,
       entity: this._entity,
       cardEntity: this._cardEntity,
       config: this._config.raw,
       localize: (string: string, fallback: string): string => {
-        const lang = this.hass?.selectedLanguage || this.hass?.language || 'en';
+        const lang = this.hass.selectedLanguage || this.hass.language || 'en';
         return localize(string, lang, fallback);
       },
     };

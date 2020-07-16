@@ -1,9 +1,16 @@
-import { expect } from 'chai';
+import { expect, assert } from 'chai';
 import { isNumeric, parseTapAction } from '../utils/utils';
 import { TapAction } from '../types';
 import { computeDomain } from '../utils/compute-domain';
+import { EmptyPromise } from '../const';
 
 describe('utils', () => {
+  it('EmptyPromise', () => {
+    assert.isDefined(EmptyPromise);
+    assert.isFunction(EmptyPromise);
+    Promise.resolve(EmptyPromise());
+  });
+
   const isNumericTestSource = [
     { value: 1, expected: true },
     { value: '1', expected: true },
