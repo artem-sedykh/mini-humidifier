@@ -9,7 +9,6 @@ export interface HASSDomEvent<T> extends Event {
   detail: T;
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const fireEvent = <HassEvent extends ValidHassDomEvent>(
   node: HTMLElement | Window,
   type: HassEvent,
@@ -19,7 +18,7 @@ export const fireEvent = <HassEvent extends ValidHassDomEvent>(
     cancelable?: boolean;
     composed?: boolean;
   },
-) => {
+): Event => {
   options = options || {};
   detail = detail === null || detail === undefined ? {} : detail;
   const event = new Event(type, {

@@ -9,7 +9,12 @@
     "**/*.d.ts",
     "**/*.test.ts",
     "src/**/*.spec.ts",
-    "src/configurations/*.ts"
+    "src/configurations/airdog_airpurifier_x5.ts",
+    "src/configurations/deerma_humidifier_mjjsq.ts",
+    "src/configurations/zhimi_airpurifier_ma2.ts",
+    "src/utils/fire-event.ts",
+    "src/utils/haptic.ts",
+    "src/utils/navigate.ts"
   ],
   "sourceMap": true,
   "reporter": [

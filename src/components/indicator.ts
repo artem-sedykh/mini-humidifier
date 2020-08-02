@@ -3,7 +3,7 @@ import { Indicator } from '../models/indicator';
 import { TapAction } from '../types';
 import { styleMap } from 'lit-html/directives/style-map';
 import { ActionHandlerEvent } from 'custom-card-helpers/dist';
-import { handleClick } from '../utils/utils';
+import { handleClick } from '../utils/handle-click';
 
 @customElement('mh-indicator')
 export class CardIndicator extends LitElement {

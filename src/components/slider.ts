@@ -4,7 +4,7 @@ import { Slider } from '../models/slider';
 import { StyleInfo, styleMap } from 'lit-html/directives/style-map';
 import { TapAction } from '../types';
 import { ActionHandlerEvent } from 'custom-card-helpers/dist';
-import { handleClick } from '../utils/utils';
+import { handleClick } from '../utils/handle-click';
 
 @customElement('mh-slider')
 export class CardSlider extends LitElement {

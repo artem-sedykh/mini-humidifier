@@ -8,7 +8,7 @@ import { ClassInfo, classMap } from 'lit-html/directives/class-map';
 import style from './style';
 import sharedStyle from './sharedStyle';
 import { ActionHandlerEvent } from 'custom-card-helpers/dist';
-import { handleClick } from './utils/utils';
+import { handleClick } from './utils/handle-click';
 import { getLabel } from './utils/getLabel';
 import { Indicator } from './models/indicator';
 import { HassEntity } from 'home-assistant-js-websocket';
