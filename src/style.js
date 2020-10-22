@@ -166,6 +166,9 @@ const style = css`
     margin-top: calc(var(--mh-unit) * .075);
   }
   .entity__info__name_wrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     margin-right: 0;
     max-width: calc(var(--mh-unit) * 4.25);
     cursor: pointer;
