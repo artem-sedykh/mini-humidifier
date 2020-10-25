@@ -85,6 +85,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | **secondary_info** | object | optional | v2.1.1 | secondary_info config. [secondary info examples](#secondary-info)
 | secondary_info: `type` | string | optional | v2.1.1 | available types: `last-changed, mode`
 | secondary_info: `icon` | string | optional | v2.1.1 | icon for type: `mode`
+| secondary_info: `hide` | boolean | optional | v2.2.5 | Hide secondary info, default `False`
 | **power** | object | optional | v2.0.1 | Power button, [example](#power-button).
 | power: `type` | string | optional | v2.0.1 | `toggle` or `button`, default `button`
 | power: `icon` | string | optional | v2.0.1 | Specify a custom icon from any of the available mdi icons, default `mdi:power`

@@ -514,6 +514,10 @@ class MiniHumidifier extends LitElement {
     if (this.humidifier.isUnavailable)
       return '';
 
+    if (this.config.secondary_info.hide) {
+      return '';
+    }
+
     if (this.config.secondary_info.type === 'last-changed') {
       return html`
       <div class='entity__secondary_info ellipsis'>
