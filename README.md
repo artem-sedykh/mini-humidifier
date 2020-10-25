@@ -29,7 +29,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=2.2.5
+    - url: /local/mini-humidifier-bundle.js?v=2.2.6
       type: module
   ```
 
@@ -40,14 +40,14 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 2. Grab `mini-humidifier-bundle.js`
 
   ```console
-  $ wget https://github.com/artem-sedykh/mini-humidifier/releases/download/v2.2.5/mini-humidifier-bundle.js
+  $ wget https://github.com/artem-sedykh/mini-humidifier/releases/download/v2.2.6/mini-humidifier-bundle.js
   ```
 
 3. Add a reference to `mini-humidifier-bundle.js` inside your `ui-lovelace.yaml`.
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=2.2.5
+    - url: /local/mini-humidifier-bundle.js?v=2.2.6
       type: module
   ```
 
@@ -60,7 +60,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=2.2.5
+    - url: /local/mini-humidifier-bundle.js?v=2.2.6
       type: module
   ```
 
@@ -85,7 +85,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | **secondary_info** | object | optional | v2.1.1 | secondary_info config. [secondary info examples](#secondary-info)
 | secondary_info: `type` | string | optional | v2.1.1 | available types: `last-changed, mode`
 | secondary_info: `icon` | string | optional | v2.1.1 | icon for type: `mode`
-| secondary_info: `hide` | boolean | optional | v2.2.5 | Hide secondary info, default `False`
+| secondary_info: `hide` | boolean | optional | v2.2.6 | Hide secondary info, default `False`
 | **power** | object | optional | v2.0.1 | Power button, [example](#power-button).
 | power: `type` | string | optional | v2.0.1 | `toggle` or `button`, default `button`
 | power: `icon` | string | optional | v2.0.1 | Specify a custom icon from any of the available mdi icons, default `mdi:power`
