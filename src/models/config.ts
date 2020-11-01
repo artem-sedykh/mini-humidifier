@@ -4,18 +4,18 @@ import {
   DropdownConfig,
   DropdownItem,
   ElementType,
+  ExecutionContext,
   GenericFanConfig,
+  IconConfig,
   IndicatorConfig,
   PowerButtonConfig,
   Primitive,
   SecondaryInfoConfig,
   SliderConfig,
+  StateConfig,
   TapAction,
   TapActionConfig,
   ToggleButtonConfig,
-  IconConfig,
-  StateConfig,
-  ExecutionContext,
 } from '../types';
 import ICON, { ACTION_TIMEOUT, EmptyPromise } from '../const';
 import DefaultModels from '../default-models';
@@ -293,6 +293,12 @@ export class Config implements GenericFanConfig {
     }
 
     switch (tapAction.action) {
+      case TapAction.MoreInfo: {
+        if ('entity' in tapActionObj && tapAction.entity) {
+          tapAction.entity = tapActionObj.entity;
+        }
+        break;
+      }
       case TapAction.Toggle: {
         if ('entity' in tapActionObj && tapAction.entity) {
           tapAction.entity = tapActionObj.entity;
@@ -653,7 +659,6 @@ export class Config implements GenericFanConfig {
     if (mergedSecondaryInfo.change_action) {
       secondaryInfo.change = compileTemplate(mergedSecondaryInfo.change_action);
     }
-
     return secondaryInfo;
   }
 }
