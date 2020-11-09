@@ -66,7 +66,7 @@ const ZHIMI_AIRPURIFIER_MA2 = () => ({
       icon: ICON.LEDBUTTON,
       state: { attribute: 'led', mapper: state => (state ? 'on' : 'off') },
       toggle_action: (state, entity) => {
-        const service = state === 'on' ? 'remote_set_led_off' : 'remote_set_led_on';
+        const service = state === 'on' ? 'fan_set_led_off' : 'fan_set_led_on';
         const options = { entity_id: entity.entity_id };
         return this.call_service('xiaomi_miio', service, options);
       },
