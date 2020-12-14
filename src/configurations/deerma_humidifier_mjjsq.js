@@ -22,7 +22,7 @@ const DEERMA_HUMIDIFIER_MJJSQ = () => ({
     state: { attribute: 'target_humidity' },
     change_action: (selected, state, entity) => {
       const options = { entity_id: entity.entity_id, humidity: selected };
-      return this.call_service('fan', 'xiaomi_miio_set_target_humidity', options);
+      return this.call_service('xiaomi_miio_airpurifier', 'fan_set_target_humidity', options);
     },
   },
   indicators: {
