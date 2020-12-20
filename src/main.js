@@ -6,8 +6,7 @@ import style from './style';
 import sharedStyle from './sharedStyle';
 import handleClick from './utils/handleClick';
 import { compileTemplate, toggleState } from './utils/utils';
-import ICON from './const';
-
+import { ICON, SUPPORTED_DOMAINS } from './const';
 import './components/dropdown';
 import './components/indicators';
 import './components/buttons';
@@ -21,6 +20,7 @@ import HumidifierObject from './models/humidifier';
 import getLabel from './utils/getLabel';
 import './initialize';
 import HUMIDIFIERS from './humidifiers';
+
 
 if (!customElements.get('ha-slider')) {
   customElements.define(
@@ -327,8 +327,11 @@ class MiniHumidifier extends LitElement {
   }
 
   setConfig(config) {
-    if (!config.entity || config.entity.split('.')[0] !== 'fan')
-      throw new Error('Specify an entity from within the fan domain.');
+    const domain = config.entity && config.entity.split('.')[0].toLowerCase();
+
+    if (SUPPORTED_DOMAINS.includes(domain) === false) {
+      throw new Error(`Specify an entity from within ${SUPPORTED_DOMAINS.join(' ,')} domains.`);
+    }
 
     let modelConfiguration;
     const { model } = config;

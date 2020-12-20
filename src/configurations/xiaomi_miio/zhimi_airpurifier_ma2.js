@@ -1,4 +1,4 @@
-import ICON from '../../const';
+import { ICON } from '../../const';
 
 const ZHIMI_AIRPURIFIER_MA2 = () => ({
   power: {

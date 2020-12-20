@@ -1,4 +1,4 @@
-import ICON from '../../const';
+import { ICON } from '../../const';
 
 const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CB1 = () => ({
   power: {

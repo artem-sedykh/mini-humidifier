@@ -1,4 +1,4 @@
-import ICON from '../../const';
+import { ICON } from '../../const';
 
 const DEERMA_HUMIDIFIER_MJJSQ = () => ({
   power: {
