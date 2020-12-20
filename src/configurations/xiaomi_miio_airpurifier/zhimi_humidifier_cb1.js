@@ -1,8 +1,6 @@
-import ICON from '../const';
+import ICON from '../../const';
 
-// for integration https://github.com/syssi/xiaomi_airpurifier
-// because xiaomi_miio from home assistant not support water level
-const ZHIMI_HUMIDIFIER_CA4_XIAOMI_MIIO_AIRPURIFIER.js = () => ({
+const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CB1 = () => ({
   power: {
     icon: ICON.POWER,
     type: 'button',
@@ -33,8 +31,17 @@ const ZHIMI_HUMIDIFIER_CA4_XIAOMI_MIIO_AIRPURIFIER.js = () => ({
       unit: '%',
       round: 0,
       order: 0,
+      max_value: 125,
+      volume: 4,
+      type: 'percent',
       hide: false,
-      source: { attribute: 'water_level' },
+      source: {
+        attribute: 'depth',
+        mapper: (val) => {
+          const value = (100 * (val || 0)) / this.max_value;
+          return this.type === 'liters' ? (value * this.volume) / 100 : value;
+        },
+      },
     },
     temperature: {
       icon: ICON.TEMPERATURE,
@@ -51,14 +58,6 @@ const ZHIMI_HUMIDIFIER_CA4_XIAOMI_MIIO_AIRPURIFIER.js = () => ({
       order: 2,
       hide: false,
       source: { attribute: 'humidity' },
-    },
-    motor_speed: {
-      icon: ICON.RPM,
-      unit: 'rpm',
-      round: 0,
-      order: 3,
-      hide: false,
-      source: { attribute: 'motor_speed' },
     },
   },
   buttons: {
@@ -79,10 +78,10 @@ const ZHIMI_HUMIDIFIER_CA4_XIAOMI_MIIO_AIRPURIFIER.js = () => ({
       hide: false,
       order: 1,
       source: {
-        Auto: 'auto',
-        Low: 'low',
-        Mid: 'medium',
-        High: 'high',
+        auto: 'auto',
+        silent: 'silent',
+        medium: 'medium',
+        high: 'high',
       },
       active: (state, entity) => (entity.state !== 'off'),
       disabled: (state, entity) => (entity.attributes.depth === 0),
@@ -97,8 +96,8 @@ const ZHIMI_HUMIDIFIER_CA4_XIAOMI_MIIO_AIRPURIFIER.js = () => ({
       type: 'dropdown',
       hide: false,
       order: 2,
-      active: state => (state !== 0 && state !== '0'),
-      source: { 0: 'Off', 1: 'Dim', 2: 'Bright' },
+      active: state => (state !== 2 && state !== '2'),
+      source: { 0: 'Bright', 1: 'Dim', 2: 'Off' },
       state: { attribute: 'led_brightness' },
       change_action: (selected, state, entity) => {
         const options = { entity_id: entity.entity_id, brightness: selected };
@@ -130,4 +129,4 @@ const ZHIMI_HUMIDIFIER_CA4_XIAOMI_MIIO_AIRPURIFIER.js = () => ({
   },
 });
 
-export default ZHIMI_HUMIDIFIER_CA4_XIAOMI_MIIO_AIRPURIFIER;
+export default XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CB1;

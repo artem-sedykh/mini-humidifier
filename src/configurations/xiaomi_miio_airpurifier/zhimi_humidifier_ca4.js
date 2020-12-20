@@ -1,6 +1,6 @@
-import ICON from '../const';
+import ICON from '../../const';
 
-const SYSSI_DEERMA_HUMIDIFIER_MJJSQ = () => ({
+const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CA4 = () => ({
   power: {
     icon: ICON.POWER,
     type: 'button',
@@ -16,7 +16,7 @@ const SYSSI_DEERMA_HUMIDIFIER_MJJSQ = () => ({
     unit: '%',
     min: 30,
     max: 80,
-    step: 1,
+    step: 10,
     hide: false,
     hide_indicator: false,
     state: { attribute: 'target_humidity' },
@@ -26,6 +26,14 @@ const SYSSI_DEERMA_HUMIDIFIER_MJJSQ = () => ({
     },
   },
   indicators: {
+    depth: {
+      icon: ICON.DEPTH,
+      unit: '%',
+      round: 0,
+      order: 0,
+      hide: false,
+      source: { attribute: 'water_level' },
+    },
     temperature: {
       icon: ICON.TEMPERATURE,
       unit: '°C',
@@ -42,30 +50,40 @@ const SYSSI_DEERMA_HUMIDIFIER_MJJSQ = () => ({
       hide: false,
       source: { attribute: 'humidity' },
     },
-    status: {
-      icon: ICON.TANK,
+    motor_speed: {
+      icon: ICON.RPM,
+      unit: 'rpm',
+      round: 0,
       order: 3,
-      empty: 'Empty',
-      filled: 'Filled',
-      source: {
-        attribute: 'no_water',
-        mapper: val => (val ? this.empty : this.filled),
-      },
+      hide: false,
+      source: { attribute: 'motor_speed' },
     },
   },
   buttons: {
+    dry: {
+      icon: ICON.DRY,
+      hide: false,
+      order: 0,
+      state: { attribute: 'dry', mapper: state => (state ? 'on' : 'off') },
+      toggle_action: (state, entity) => {
+        const service = state === 'on' ? 'fan_set_dry_off' : 'fan_set_dry_on';
+        const options = { entity_id: entity.entity_id };
+        return this.call_service('xiaomi_miio_airpurifier', service, options);
+      },
+    },
     mode: {
       icon: ICON.FAN,
       type: 'dropdown',
       hide: false,
       order: 1,
       source: {
-        humidity: 'auto',
-        low: 'low',
-        medium: 'medium',
-        high: 'high',
+        Auto: 'auto',
+        Low: 'low',
+        Mid: 'medium',
+        High: 'high',
       },
       active: (state, entity) => (entity.state !== 'off'),
+      disabled: (state, entity) => (entity.attributes.depth === 0),
       state: { attribute: 'mode' },
       change_action: (selected, state, entity) => {
         const options = { entity_id: entity.entity_id, speed: selected };
@@ -74,20 +92,20 @@ const SYSSI_DEERMA_HUMIDIFIER_MJJSQ = () => ({
     },
     led: {
       icon: ICON.LEDBUTTON,
-      type: 'button',
+      type: 'dropdown',
       hide: false,
       order: 2,
-      state: { attribute: 'led', mapper: state => (state ? 'on' : 'off') },
-      toggle_action: (state, entity) => {
-        const service = state === 'on' ? 'fan_set_led_off' : 'fan_set_led_on';
-        const options = { entity_id: entity.entity_id };
-        return this.call_service('xiaomi_miio_airpurifier', service, options);
+      active: state => (state !== 0 && state !== '0'),
+      source: { 0: 'Off', 1: 'Dim', 2: 'Bright' },
+      state: { attribute: 'led_brightness' },
+      change_action: (selected, state, entity) => {
+        const options = { entity_id: entity.entity_id, brightness: selected };
+        return this.call_service('xiaomi_miio_airpurifier', 'fan_set_led_brightness', options);
       },
     },
     buzzer: {
       icon: ICON.BUZZER,
       hide: false,
-      type: 'button',
       order: 3,
       state: { attribute: 'buzzer', mapper: state => (state ? 'on' : 'off') },
       toggle_action: (state, entity) => {
@@ -96,7 +114,18 @@ const SYSSI_DEERMA_HUMIDIFIER_MJJSQ = () => ({
         return this.call_service('xiaomi_miio_airpurifier', service, options);
       },
     },
+    child_lock: {
+      icon: ICON.CHILDLOCK,
+      hide: false,
+      order: 4,
+      state: { attribute: 'child_lock', mapper: state => (state ? 'on' : 'off') },
+      toggle_action: (state, entity) => {
+        const service = state === 'on' ? 'fan_set_child_lock_off' : 'fan_set_child_lock_on';
+        const options = { entity_id: entity.entity_id };
+        return this.call_service('xiaomi_miio_airpurifier', service, options);
+      },
+    },
   },
 });
 
-export default SYSSI_DEERMA_HUMIDIFIER_MJJSQ;
+export default XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CA4;

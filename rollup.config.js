@@ -3,12 +3,15 @@ import json from '@rollup/plugin-json';
 
 const path = require('path');
 
-const configurationPath = path.resolve('./src/configurations/');
+const configurationPaths = [
+  path.resolve('./src/configurations/'),
+  path.resolve('./src/configurations/xiaomi_miio/'),
+  path.resolve('./src/configurations/xiaomi_miio_airpurifier')];
 
 export default {
   input: 'src/main.js',
   moduleContext(id) {
-    if (path.parse(id).dir === configurationPath) {
+    if (configurationPaths.includes(path.parse(id).dir)) {
       return 'this';
     }
   },
