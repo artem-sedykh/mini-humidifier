@@ -148,8 +148,8 @@ class MiniHumidifier extends LitElement {
   }
 
   updateTargetHumidity(force) {
-    const entityId = (this.config.target_humidity.source
-      && this.config.target_humidity.source.entity) || this.config.entity;
+    const entityId = (this.config.target_humidity.state
+      && this.config.target_humidity.state.entity) || this.config.entity;
 
     const entity = this.hass.states[entityId];
     const targetHumidity = new TargetHumidityObject(entity, this.config, this.humidifier);
