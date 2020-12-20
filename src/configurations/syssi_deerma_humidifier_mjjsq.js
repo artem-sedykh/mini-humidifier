@@ -1,6 +1,6 @@
 import ICON from '../const';
 
-const DEERMA_HUMIDIFIER_MJJSQ = () => ({
+const SYSSI_DEERMA_HUMIDIFIER_MJJSQ = () => ({
   power: {
     icon: ICON.POWER,
     type: 'button',
@@ -22,7 +22,7 @@ const DEERMA_HUMIDIFIER_MJJSQ = () => ({
     state: { attribute: 'target_humidity' },
     change_action: (selected, state, entity) => {
       const options = { entity_id: entity.entity_id, humidity: selected };
-      return this.call_service('xiaomi_miio', 'fan_set_target_humidity', options);
+      return this.call_service('xiaomi_miio_airpurifier', 'fan_set_target_humidity', options);
     },
   },
   indicators: {
@@ -81,7 +81,7 @@ const DEERMA_HUMIDIFIER_MJJSQ = () => ({
       toggle_action: (state, entity) => {
         const service = state === 'on' ? 'fan_set_led_off' : 'fan_set_led_on';
         const options = { entity_id: entity.entity_id };
-        return this.call_service('xiaomi_miio', service, options);
+        return this.call_service('xiaomi_miio_airpurifier', service, options);
       },
     },
     buzzer: {
@@ -93,10 +93,10 @@ const DEERMA_HUMIDIFIER_MJJSQ = () => ({
       toggle_action: (state, entity) => {
         const service = state === 'on' ? 'fan_set_buzzer_off' : 'fan_set_buzzer_on';
         const options = { entity_id: entity.entity_id };
-        return this.call_service('xiaomi_miio', service, options);
+        return this.call_service('xiaomi_miio_airpurifier', service, options);
       },
     },
   },
 });
 
-export default DEERMA_HUMIDIFIER_MJJSQ;
+export default SYSSI_DEERMA_HUMIDIFIER_MJJSQ;
