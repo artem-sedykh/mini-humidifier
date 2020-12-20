@@ -186,7 +186,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
  #### Available default configurations
  `zhimi.humidifier.cb1` - [xiaomi_miio integration](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
  `deerma.humidifier.mjjsq` by @dedors [xiaomi_miio integration](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
- `zhimi.airpurifier.ma2` [xiaomi_miio integration](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
+ `zhimi.airpurifier.ma2` - [xiaomi_miio integration](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
  
  `xiaomi_miio_airpurifier:zhimi.humidifier.cb1` - [xiaomi_miio_airpurifier integration](https://github.com/syssi/xiaomi_airpurifier) 
  `xiaomi_miio_airpurifier:zhimi.humidifier.ca4` by @ravikwow - [xiaomi_miio_airpurifier integration](https://github.com/syssi/xiaomi_airpurifier)
