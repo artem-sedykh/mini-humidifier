@@ -24,7 +24,34 @@ const ZHIMI_AIRPURIFIER_MA2 = () => ({
   },
   indicators: {
     aqi: {
-      icon: ICON.AQI,
+      round: 0,
+      order: 0,
+      hide: false,
+      levels: {
+        good: { min: 0, max: 50, color: '#1CC09B' },
+        moderate: { min: 51, max: 100, color: '#FFDE33' },
+        unhealthy_sensitive_groups: { min: 101, max: 150, color: '#F88B48' },
+        unhealthy: { min: 151, max: 200, color: '#E64650' },
+        very_unhealthy: { min: 201, max: 300, color: '#660099' },
+        hazardous: { min: 301, max: 100000, color: '#7E0023' },
+      },
+      icon: {
+        template: () => 'mdi:checkbox-blank-circle',
+        style: (state) => {
+          const style = { '--mdc-icon-size': '17px', 'margin-top': '1px' };
+          const value = Number(state);
+          const entries = Object.entries(this.levels || {});
+
+          for (let i = 0; i < entries.length; i += 1) {
+            const level = entries[i][1] || {};
+            if (value >= level.min && value <= level.max) {
+              style.color = level.color;
+            }
+          }
+
+          return style;
+        },
+      },
       unit: 'μg/m³',
       source: { attribute: 'aqi' },
     },
