@@ -74,7 +74,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 | Name | Type | Default | Since | Description |
 |------|------|---------|-------|-------------|
 | type | string | **required** | v1.0.1 | `custom:mini-humidifier`
-| entity | string | **required** | v1.0.1 | An entity_id from an entity within the `fan` domain.
+| entity | string | **required** | v1.0.1 | An entity_id from an entity within the `fan` or `humidifier` domain.
 | name | string | optional | v1.0.1 | Override the entities friendly name.
 | icon | string | optional | v1.0.1 | Specify a custom icon from any of the available mdi icons.
 | group | boolean | optional | v1.0.1 | Removes paddings, background color and box-shadow. [example](#group)
