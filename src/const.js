@@ -14,6 +14,7 @@ export const ICON = {
   TANK: 'mdi:cup-water',
   AQI: 'mdi:weather-fog',
   RPM: 'mdi:speedometer',
+  DISHWASHER: 'mdi:dishwasher',
 };
 
 export const STATES_OFF = ['closed', 'locked', 'off'];
