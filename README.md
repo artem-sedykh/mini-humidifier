@@ -180,7 +180,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 ### Adding the default configuration for the new model
 
  1. Read the documentation
- 2. See an example for [zhimi.humidifier.cb1](https://github.com/artem-sedykh/mini-humidifier/blob/master/src/configurations/zhimi_humidifier_cb1.js)
+ 2. See an example for [zhimi.humidifier.cb1](https://github.com/artem-sedykh/mini-humidifier/blob/master/src/configurations/xiaomi_miio/zhimi_humidifier_cb1.js)
  3. Create a pull request or issue with the configuration file.
  
  #### Available default configurations
