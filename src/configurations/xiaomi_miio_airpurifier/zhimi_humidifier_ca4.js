@@ -125,6 +125,23 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CA4 = () => ({
         return this.call_service('xiaomi_miio_airpurifier', service, options);
       },
     },
+    clean: {
+      icon: ICON.DISHWASHER,
+      hide: false,
+      order: 5,
+      state: { attribute: 'clean_mode', mapper: state => (state ? 'on' : 'off') },
+      toggle_action: (state, entity) => {
+        if (state === 'on') {
+          const selected = entity.attributes.preset_mode;
+          const options = { entity_id: entity.entity_id, preset_mode: selected };
+          return this.call_service('fan', 'set_preset_mode', options);
+        } else {
+          const service = 'fan_set_clean_mode_on';
+          const options = { entity_id: entity.entity_id };
+          return this.call_service('xiaomi_miio_airpurifier', service, options);
+        }
+      },
+    },
   },
 });
 
