@@ -15,6 +15,7 @@ export const ICON = {
   AQI: 'mdi:weather-fog',
   RPM: 'mdi:speedometer',
   CO2: 'mdi:molecule-co2',
+  DISHWASHER: 'mdi:dishwasher',
 };
 
 export const STATES_OFF = ['closed', 'locked', 'off'];
