@@ -26,7 +26,7 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CA4 = () => ({
     },
   },
   indicators: {
-    depth: {
+    water_level: {
       icon: ICON.DEPTH,
       unit: '%',
       round: 0,
@@ -83,8 +83,8 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CA4 = () => ({
         High: 'high',
       },
       active: (state, entity) => (entity.state !== 'off'),
-      disabled: (state, entity) => (entity.attributes.depth === 0),
-      state: { attribute: 'mode' },
+      disabled: (state, entity) => (entity.attributes.water_level === 0),
+      state: { attribute: 'preset_mode' },
       change_action: (selected, state, entity) => {
         const options = { entity_id: entity.entity_id, preset_mode: selected };
         return this.call_service('fan', 'set_preset_mode', options);
@@ -131,15 +131,17 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CA4 = () => ({
       order: 5,
       state: { attribute: 'clean_mode', mapper: state => (state ? 'on' : 'off') },
       toggle_action: (state, entity) => {
-        if (state === 'on') {
-          const selected = entity.attributes.preset_mode;
-          const options = { entity_id: entity.entity_id, preset_mode: selected };
+        const cleanMode = entity.attributes.clean_mode;
+        const selected = entity.attributes.preset_mode;
+        const options = { entity_id: entity.entity_id };
+
+        // hack
+        if (cleanMode) {
+          options.preset_mode = selected;
           return this.call_service('fan', 'set_preset_mode', options);
-        } else {
-          const service = 'fan_set_clean_mode_on';
-          const options = { entity_id: entity.entity_id };
-          return this.call_service('xiaomi_miio_airpurifier', service, options);
         }
+
+        return this.call_service('xiaomi_miio_airpurifier', 'fan_set_clean_mode_on', options);
       },
     },
   },
