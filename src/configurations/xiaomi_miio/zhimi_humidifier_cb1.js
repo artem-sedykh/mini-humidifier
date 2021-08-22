@@ -19,10 +19,10 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
     step: 10,
     hide: false,
     hide_indicator: false,
-    state: { attribute: 'target_humidity' },
+    state: { attribute: 'humidity' },
     change_action: (selected, state, entity) => {
       const options = { entity_id: entity.entity_id, humidity: selected };
-      return this.call_service('xiaomi_miio', 'fan_set_target_humidity', options);
+      return this.call_service('humidifier', 'set_humidity', options);
     },
   },
   indicators: {
@@ -31,16 +31,12 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
       unit: '%',
       round: 0,
       order: 0,
-      max_value: 125,
       volume: 4,
       type: 'percent',
       hide: false,
       source: {
-        attribute: 'depth',
-        mapper: (val) => {
-          const value = (100 * (val || 0)) / this.max_value;
-          return this.type === 'liters' ? (value * this.volume) / 100 : value;
-        },
+        entity: 'sensor.{entity_id}_water_level',
+        mapper: value => (this.type === 'liters' ? (value * this.volume) / 100 : value),
       },
     },
     temperature: {
@@ -49,7 +45,7 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
       round: 1,
       order: 1,
       hide: false,
-      source: { attribute: 'temperature' },
+      source: { entity: 'sensor.{entity_id}_temperature' },
     },
     humidity: {
       icon: ICON.HUMIDITY,
@@ -57,7 +53,7 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
       round: 1,
       order: 2,
       hide: false,
-      source: { attribute: 'humidity' },
+      source: { entity: 'sensor.{entity_id}_humidity' },
     },
   },
   buttons: {
@@ -65,11 +61,11 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
       icon: ICON.DRY,
       hide: false,
       order: 0,
-      state: { attribute: 'dry', mapper: state => (state ? 'on' : 'off') },
+      state: { entity: 'switch.{entity_id}_dry_mode' },
       toggle_action: (state, entity) => {
-        const service = state === 'on' ? 'fan_set_dry_off' : 'fan_set_dry_on';
+        const service = state === 'on' ? 'turn_off' : 'turn_on';
         const options = { entity_id: entity.entity_id };
-        return this.call_service('xiaomi_miio', service, options);
+        return this.call_service('switch', service, options);
       },
     },
     mode: {
@@ -78,17 +74,16 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
       hide: false,
       order: 1,
       source: {
-        auto: 'auto',
-        silent: 'silent',
-        medium: 'medium',
-        high: 'high',
+        Auto: 'auto',
+        Silent: 'silent',
+        Medium: 'medium',
+        High: 'high',
       },
       active: (state, entity) => (entity.state !== 'off'),
-      disabled: (state, entity) => (entity.attributes.depth === 0),
       state: { attribute: 'mode' },
       change_action: (selected, state, entity) => {
-        const options = { entity_id: entity.entity_id, speed: selected };
-        return this.call_service('fan', 'set_speed', options);
+        const options = { entity_id: entity.entity_id, mode: selected };
+        return this.call_service('humidifier', 'set_mode', options);
       },
     },
     led: {
@@ -96,34 +91,37 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
       type: 'dropdown',
       hide: false,
       order: 2,
-      active: state => (state !== 2 && state !== '2'),
-      source: { 0: 'Bright', 1: 'Dim', 2: 'Off' },
-      state: { attribute: 'led_brightness' },
+      active: (state) => {
+        console.log(state);
+        return state !== 'off';
+      },
+      source: { bright: 'Bright', dim: 'Dim', off: 'Off' },
+      state: { entity: 'select.{entity_id}_led_brightness' },
       change_action: (selected, state, entity) => {
-        const options = { entity_id: entity.entity_id, brightness: selected };
-        return this.call_service('xiaomi_miio', 'fan_set_led_brightness', options);
+        const options = { entity_id: entity.entity_id, option: selected };
+        return this.call_service('select', 'select_option', options);
       },
     },
     buzzer: {
       icon: ICON.BUZZER,
       hide: false,
       order: 3,
-      state: { attribute: 'buzzer', mapper: state => (state ? 'on' : 'off') },
+      state: { entity: 'switch.{entity_id}_buzzer' },
       toggle_action: (state, entity) => {
-        const service = state === 'on' ? 'fan_set_buzzer_off' : 'fan_set_buzzer_on';
+        const service = state === 'on' ? 'turn_off' : 'turn_on';
         const options = { entity_id: entity.entity_id };
-        return this.call_service('xiaomi_miio', service, options);
+        return this.call_service('switch', service, options);
       },
     },
     child_lock: {
       icon: ICON.CHILDLOCK,
       hide: false,
       order: 4,
-      state: { attribute: 'child_lock', mapper: state => (state ? 'on' : 'off') },
+      state: { entity: 'switch.{entity_id}_child_lock' },
       toggle_action: (state, entity) => {
-        const service = state === 'on' ? 'fan_set_child_lock_off' : 'fan_set_child_lock_on';
+        const service = state === 'on' ? 'turn_off' : 'turn_on';
         const options = { entity_id: entity.entity_id };
-        return this.call_service('xiaomi_miio', service, options);
+        return this.call_service('switch', service, options);
       },
     },
   },

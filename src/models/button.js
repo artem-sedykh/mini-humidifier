@@ -7,6 +7,21 @@ export default class ButtonObject {
     this.entity = entity || {};
     this.humidifier = humidifier || {};
     this._hass = hass || {};
+
+    if (entity) {
+      this._last_changed = entity.last_changed;
+      this._last_updated = entity.last_updated;
+    }
+  }
+
+  changed(entity) {
+    const e = entity || {};
+    const changed = this._last_changed !== e.last_changed || this._last_updated !== e.last_updated;
+    if (changed) {
+      console.log(`${this.id}: changed: ${changed}`);
+    }
+
+    return changed;
   }
 
   get id() {
@@ -115,7 +130,9 @@ export default class ButtonObject {
     if (state === undefined || state === null)
       return undefined;
 
-    return this.source.find(s => s.id === state.toString());
+    const selected = this.source.find(s => s.id === state.toString());
+    console.log(selected);
+    return selected;
   }
 
   get actionTimeout() {

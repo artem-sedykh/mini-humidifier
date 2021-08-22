@@ -91,6 +91,14 @@ class MiniHumidifier extends LitElement {
     return this.config.name || this.humidifier.name;
   }
 
+  evalEntityId(entityId) {
+    if (entityId) {
+      const name = this.config.entity && this.config.entity.split('.')[1].toLowerCase();
+      return entityId.replaceAll('{entity_id}', name);
+    }
+    return entityId;
+  }
+
   updateIndicators(force) {
     const indicators = { };
     let changed = false;
@@ -99,7 +107,7 @@ class MiniHumidifier extends LitElement {
       const config = this.config.indicators[i];
       const { id } = config;
 
-      const entityId = config.source.entity || this.humidifier.id;
+      const entityId = this.evalEntityId(config.source.entity || this.humidifier.id);
       const entity = this.hass.states[entityId];
 
       if (entity) {
@@ -122,24 +130,28 @@ class MiniHumidifier extends LitElement {
       const config = this.config.buttons[i];
       const { id } = config;
 
-      const entityId = (config.state && config.state.entity) || this.humidifier.id;
+      const entityId = this.evalEntityId((config.state && config.state.entity)
+          || this.humidifier.id);
+
       const entity = this.hass.states[entityId];
 
       if (entity) {
         buttons[id] = new ButtonObject(entity, config, this.humidifier, this.hass);
       }
 
-      if (entity !== (this.buttons[id] && this.buttons[id].entity))
+      if (this.buttons[id] && this.buttons[id].changed(entity))
         changed = true;
     }
 
-    if (changed || force)
+    if (changed || force) {
       this.buttons = buttons;
+      console.log('buttons changed');
+    }
   }
 
   updatePower(force) {
     const config = this.config.power;
-    const entityId = (config.state && config.state.entity) || this.humidifier.id;
+    const entityId = this.evalEntityId((config.state && config.state.entity) || this.humidifier.id);
     const entity = this.hass.states[entityId];
     const power = entity ? new ButtonObject(entity, config, this.humidifier, this.hass) : {};
 
@@ -148,8 +160,8 @@ class MiniHumidifier extends LitElement {
   }
 
   updateTargetHumidity(force) {
-    const entityId = (this.config.target_humidity.state
-      && this.config.target_humidity.state.entity) || this.config.entity;
+    const entityId = this.evalEntityId((this.config.target_humidity.state
+      && this.config.target_humidity.state.entity) || this.config.entity);
 
     const entity = this.hass.states[entityId];
     const targetHumidity = new TargetHumidityObject(entity, this.config, this.humidifier);
