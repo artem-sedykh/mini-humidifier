@@ -14,11 +14,19 @@ export default class ButtonObject {
     }
   }
 
+  get lastChanged() {
+    return this._last_changed;
+  }
+
+  get lastUpdated() {
+    return this._last_updated;
+  }
+
   changed(entity) {
     const e = entity || {};
-    const changed = this._last_changed !== e.last_changed || this._last_updated !== e.last_updated;
+    const changed = this.lastChanged !== e.last_changed || this.lastUpdated !== e.last_updated;
     if (changed) {
-      console.log(`${this.id}: changed: ${changed}`);
+      // console.log(`${this.id}: old_value: ${this.entity.state} new_value: ${entity.state}`);
     }
 
     return changed;
@@ -131,7 +139,6 @@ export default class ButtonObject {
       return undefined;
 
     const selected = this.source.find(s => s.id === state.toString());
-    console.log(selected);
     return selected;
   }
 

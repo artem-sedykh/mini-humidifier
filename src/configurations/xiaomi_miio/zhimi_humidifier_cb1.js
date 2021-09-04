@@ -8,7 +8,7 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
     toggle_action: (state, entity) => {
       const service = state === 'on' ? 'turn_off' : 'turn_on';
       const options = { entity_id: entity.entity_id };
-      return this.call_service('fan', service, options);
+      return this.call_service('humidifier', service, options);
     },
   },
   target_humidity: {
@@ -19,16 +19,31 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
     step: 10,
     hide: false,
     hide_indicator: false,
-    state: { attribute: 'humidity' },
+    state: {
+      attribute: 'humidity',
+      mapper: (val) => {
+        // eslint-disable-next-line use-isnan
+        if (val === NaN || val === undefined || val === 'unknown') {
+          return 100;
+        }
+        return val;
+      },
+    },
     change_action: (selected, state, entity) => {
       const options = { entity_id: entity.entity_id, humidity: selected };
       return this.call_service('humidifier', 'set_humidity', options);
     },
   },
   indicators: {
-    depth: {
-      icon: ICON.DEPTH,
-      unit: '%',
+    water_level: {
+      tap_action: 'more-info',
+      icon: {
+        // eslint-disable-next-line max-len,use-isnan
+        template: val => ((val === '') ? 'mdi:tray-remove' : 'mdi:tray-full'),
+      },
+      unit: {
+        template: val => ((val === '') ? '' : '%'),
+      },
       round: 0,
       order: 0,
       volume: 4,
@@ -36,10 +51,17 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
       hide: false,
       source: {
         entity: 'sensor.{entity_id}_water_level',
-        mapper: value => (this.type === 'liters' ? (value * this.volume) / 100 : value),
+        mapper: (val) => {
+          // eslint-disable-next-line use-isnan
+          if (val === NaN || val === undefined || val === 'unknown') {
+            return '';
+          }
+          return this.type === 'liters' ? (val * this.volume) / 100 : val;
+        },
       },
     },
     temperature: {
+      tap_action: 'more-info',
       icon: ICON.TEMPERATURE,
       unit: '°C',
       round: 1,
@@ -48,12 +70,22 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
       source: { entity: 'sensor.{entity_id}_temperature' },
     },
     humidity: {
+      tap_action: 'more-info',
       icon: ICON.HUMIDITY,
       unit: '%',
       round: 1,
       order: 2,
       hide: false,
       source: { entity: 'sensor.{entity_id}_humidity' },
+    },
+    motor_speed: {
+      tap_action: 'more-info',
+      icon: ICON.MOTORSPEED,
+      unit: 'rpm',
+      round: 1,
+      order: 3,
+      hide: false,
+      source: { entity: 'sensor.{entity_id}_motor_speed' },
     },
   },
   buttons: {
@@ -91,10 +123,7 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
       type: 'dropdown',
       hide: false,
       order: 2,
-      active: (state) => {
-        console.log(state);
-        return state !== 'off';
-      },
+      active: state => state !== 'off',
       source: { bright: 'Bright', dim: 'Dim', off: 'Off' },
       state: { entity: 'select.{entity_id}_led_brightness' },
       change_action: (selected, state, entity) => {

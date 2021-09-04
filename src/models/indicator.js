@@ -6,6 +6,29 @@ export default class IndicatorObject {
     this.entity = entity || {};
     this.humidifier = humidifier || {};
     this._hass = hass;
+
+    if (entity) {
+      this._last_changed = entity.last_changed;
+      this._last_updated = entity.last_updated;
+    }
+  }
+
+  get lastChanged() {
+    return this._last_changed;
+  }
+
+  get lastUpdated() {
+    return this._last_updated;
+  }
+
+  changed(entity) {
+    const e = entity || {};
+    const changed = this.lastUpdated !== e.last_changed || this.lastChanged !== e.last_updated;
+    if (changed) {
+      // console.log(`${this.id}: old_value: ${this.entity.state} new_value: ${entity.state}`);
+    }
+
+    return changed;
   }
 
   get id() {
@@ -24,18 +47,24 @@ export default class IndicatorObject {
     let value = this.originalValue;
 
     if (this.config.functions.mapper) {
-      value = this.config.functions.mapper(value, this.entity,
-        this.humidifier.entity);
+      value = this.config.functions.mapper(value, this.entity, this.humidifier.entity);
     }
 
-    if ('round' in this.config && Number.isNaN(value) === false)
+    if ('round' in this.config && Number.isNaN(value) === false && value !== '')
       value = round(value, this.config.round);
 
     return value;
   }
 
   get unit() {
-    return this.config.unit;
+    if (this.config.functions.unit && this.config.functions.unit.template) {
+      return this.config.functions.unit.template(this.value, this.entity,
+        this.humidifier.entity);
+    } else if (this.config.unit && typeof this.config.unit === 'string') {
+      return this.config.unit;
+    }
+
+    return '';
   }
 
   get hide() {

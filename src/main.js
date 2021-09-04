@@ -46,6 +46,8 @@ class MiniHumidifier extends LitElement {
     this.targetHumidity = {};
     this.power = {};
     this.config = {};
+    this.updateIndicatorsTimer = undefined;
+    this.updateButtonsTimer = undefined;
   }
 
   static get properties() {
@@ -71,7 +73,7 @@ class MiniHumidifier extends LitElement {
     let force = false;
     this._hass = hass;
 
-    if (entity && this.entity !== entity) {
+    if (entity && (!this.humidifier || this.humidifier.changed(entity))) {
       this.entity = entity;
       this.humidifier = new HumidifierObject(hass, this.config, entity);
       force = true;
@@ -114,12 +116,16 @@ class MiniHumidifier extends LitElement {
         indicators[id] = new IndicatorObject(entity, config, this.humidifier, this.hass);
       }
 
-      if (entity !== (this.indicators[id] && this.indicators[id].entity))
+      if (this.indicators[id] && this.indicators[id].changed(entity)) {
         changed = true;
+      }
     }
 
-    if (changed || force)
+    if (changed || force) {
       this.indicators = indicators;
+      clearTimeout(this.updateIndicatorsTimer);
+      this.updateIndicatorsTimer = setTimeout(async () => this.requestUpdate('indicators'), 500);
+    }
   }
 
   updateButtons(force) {
@@ -145,7 +151,8 @@ class MiniHumidifier extends LitElement {
 
     if (changed || force) {
       this.buttons = buttons;
-      console.log('buttons changed');
+      clearTimeout(this.updateButtonsTimer);
+      this.updateButtonsTimer = setTimeout(async () => this.requestUpdate('buttons'), 500);
     }
   }
 
@@ -201,6 +208,13 @@ class MiniHumidifier extends LitElement {
 
       if (item.icon.style)
         item.functions.icon.style = compileTemplate(item.icon.style, context);
+    }
+
+    if (typeof item.unit === 'object') {
+      item.functions.unit = {};
+
+      if (item.unit.template)
+        item.functions.unit.template = compileTemplate(item.unit.template, context);
     }
 
     return item;

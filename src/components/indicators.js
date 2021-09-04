@@ -6,7 +6,7 @@ import { TAP_ACTIONS } from '../const';
 class HumidifierIndicators extends LitElement {
   static get properties() {
     return {
-      indicators: { type: Object },
+      indicators: {},
     };
   }
 
@@ -37,6 +37,7 @@ class HumidifierIndicators extends LitElement {
     const action = indicator.config && indicator.config.tap_action
       && indicator.config.tap_action.action;
     const cls = action && TAP_ACTIONS.includes(action) ? 'pointer' : '';
+    // console.log(`render ${indicator.id} value: ${indicator.value}`);
 
     return html`
        <div class='state ${cls}' @click=${e => this.handlePopup(e, indicator)}>
@@ -49,6 +50,7 @@ class HumidifierIndicators extends LitElement {
 
   render() {
     const context = this;
+    // console.log('render Indicators');
 
     return html`
      <div class='mh-indicators__container'>
