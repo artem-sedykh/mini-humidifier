@@ -37,12 +37,18 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
   indicators: {
     water_level: {
       tap_action: 'more-info',
+      default_icon: ICON.WATERLEVEL,
+      detached_icon: ICON.WATERTANKDETACHED,
       icon: {
-        // eslint-disable-next-line max-len,use-isnan
-        template: val => ((val === '') ? 'mdi:tray-remove' : 'mdi:tray-full'),
+        template: val => ((val === '') ? this.detached_icon : this.default_icon),
       },
       unit: {
-        template: val => ((val === '') ? '' : '%'),
+        template: (val) => {
+          if (val === '')
+            return '';
+          const { type } = this;
+          return this.localize(`zhimi_humidifier_cb1.water_level.${type}`, '%');
+        },
       },
       round: 0,
       order: 0,

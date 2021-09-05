@@ -196,6 +196,11 @@ class MiniHumidifier extends LitElement {
     context.entity_config = config;
     context.toggle_state = toggleState;
 
+    context.localize = (str, fallback) => {
+      const lang = this.hass.selectedLanguage || this.hass.language || 'en';
+      return localize(str, lang, fallback);
+    };
+
     if (item.source.mapper) {
       item.functions.mapper = compileTemplate(item.source.mapper, context);
     }
@@ -338,6 +343,11 @@ class MiniHumidifier extends LitElement {
     );
     context.entity_config = config;
     context.toggle_state = toggleState;
+
+    context.localize = (str, fallback) => {
+      const lang = this.hass.selectedLanguage || this.hass.language || 'en';
+      return localize(str, lang, fallback);
+    };
 
     if (typeof item.icon === 'object') {
       if (item.icon.template)
