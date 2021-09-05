@@ -24,7 +24,7 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
       mapper: (val) => {
         // eslint-disable-next-line use-isnan
         if (val === NaN || val === undefined || val === 'unknown') {
-          return 100;
+          return 80;
         }
         return val;
       },
