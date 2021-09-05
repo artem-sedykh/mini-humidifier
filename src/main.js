@@ -20,7 +20,7 @@ import HumidifierObject from './models/humidifier';
 import getLabel from './utils/getLabel';
 import './initialize';
 import HUMIDIFIERS from './humidifiers';
-
+import localize from './localize/localize';
 
 if (!customElements.get('ha-slider')) {
   customElements.define(
@@ -254,6 +254,11 @@ class MiniHumidifier extends LitElement {
     context.entity_config = config;
     context.toggle_state = toggleState;
 
+    context.localize = (str, fallback) => {
+      const lang = this.hass.selectedLanguage || this.hass.language || 'en';
+      return localize(str, lang, fallback);
+    };
+
     if (item.disabled) {
       item.functions.disabled = compileTemplate(item.disabled, context);
     }
@@ -266,8 +271,13 @@ class MiniHumidifier extends LitElement {
       item.functions.active = compileTemplate(item.active, context);
     }
 
+    if (item.source && item.source.__init) {
+      item.functions.source = { __init: compileTemplate(item.source.__init, context) };
+    }
+
     if (item.source && item.source.__filter) {
-      item.functions.source = { filter: compileTemplate(item.source.__filter, context) };
+      item.functions.source = item.functions.source || {};
+      item.functions.source.filter = compileTemplate(item.source.__filter, context);
     }
 
     if (item.toggle_action) {

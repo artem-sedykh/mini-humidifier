@@ -106,10 +106,10 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
       hide: false,
       order: 1,
       source: {
-        Auto: 'auto',
-        Silent: 'silent',
-        Medium: 'medium',
-        High: 'high',
+        __init: (entity) => {
+          const modes = entity.attributes.available_modes || [];
+          return modes.map(mode => ({ id: mode, name: this.localize(`zhimi_humidifier_cb1.mode.${mode}`) }));
+        },
       },
       active: (state, entity) => (entity.state !== 'off'),
       state: { attribute: 'mode' },
@@ -124,7 +124,15 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
       hide: false,
       order: 2,
       active: state => state !== 'off',
-      source: { bright: 'Bright', dim: 'Dim', off: 'Off' },
+      source: {
+        bright: 'Bright',
+        dim: 'Dim',
+        off: 'Off',
+        __filter: source => source.map((item) => {
+          const name = this.localize(`zhimi_humidifier_cb1.led_brightness.${item.id}`, item.name);
+          return { id: item.id, name };
+        }),
+      },
       state: { entity: 'select.{entity_id}_led_brightness' },
       change_action: (selected, state, entity) => {
         const options = { entity_id: entity.entity_id, option: selected };
