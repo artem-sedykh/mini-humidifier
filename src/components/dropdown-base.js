@@ -15,7 +15,8 @@ class HumidifierDropdownBase extends LitElement {
   }
 
   get selectedId() {
-    return this.items.map(item => item.id).indexOf(this.selected);
+    return this.items.map(item => item.id.toString().toUpperCase())
+      .indexOf(this.selected.toString().toUpperCase());
   }
 
   onChange(e) {
