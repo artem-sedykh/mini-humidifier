@@ -15,7 +15,7 @@ const ZHIMI_AIRFRESH_VA2 = () => ({
     unit: '%',
     min: 1,
     max: 100,
-    step: { attribute: 'percentage_step' },
+    step: 1,
     state: { attribute: 'percentage' },
     change_action: (selected, state, entity) => {
       const options = { entity_id: entity.entity_id, percentage: selected };
