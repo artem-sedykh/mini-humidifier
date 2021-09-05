@@ -27,8 +27,19 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CB1 = () => ({
   },
   indicators: {
     depth: {
-      icon: ICON.DEPTH,
-      unit: '%',
+      default_icon: ICON.DEPTH,
+      detached_icon: ICON.WATERTANKDETACHED,
+      icon: {
+        template: val => ((val === '') ? this.detached_icon : this.default_icon),
+      },
+      unit: {
+        template: (val) => {
+          if (val === '')
+            return '';
+          const { type } = this;
+          return this.localize(`zhimi_humidifier_cb1.water_level.${type}`, '%');
+        },
+      },
       round: 0,
       order: 0,
       max_value: 125,
@@ -38,6 +49,9 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CB1 = () => ({
       source: {
         attribute: 'depth',
         mapper: (val) => {
+          if (val === 127)
+            return '';
+
           const value = (100 * (val || 0)) / this.max_value;
           return this.type === 'liters' ? (value * this.volume) / 100 : value;
         },
@@ -59,6 +73,14 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CB1 = () => ({
       hide: false,
       source: { attribute: 'humidity' },
     },
+    motor_speed: {
+      icon: ICON.MOTORSPEED,
+      unit: 'rpm',
+      round: 0,
+      order: 3,
+      hide: false,
+      source: { attribute: 'motor_speed' },
+    },
   },
   buttons: {
     dry: {
@@ -78,11 +100,14 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CB1 = () => ({
       hide: false,
       order: 1,
       source: {
-        __init: entity => entity.attributes.available_modes.map(mode => ({ id: mode, name: mode })),
+        __init: (entity) => {
+          const modes = entity.attributes.preset_modes || [];
+          return modes.map(mode => ({ id: mode, name: this.localize(`zhimi_humidifier_cb1.mode.${mode}`) }));
+        },
       },
       active: (state, entity) => (entity.state !== 'off'),
       disabled: (state, entity) => (entity.attributes.depth === 0),
-      state: { attribute: 'mode' },
+      state: { attribute: 'preset_mode' },
       change_action: (selected, state, entity) => {
         const options = { entity_id: entity.entity_id, preset_mode: selected };
         return this.call_service('fan', 'set_preset_mode', options);
@@ -94,7 +119,15 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CB1 = () => ({
       hide: false,
       order: 2,
       active: state => (state !== 2 && state !== '2'),
-      source: { 0: 'Bright', 1: 'Dim', 2: 'Off' },
+      source: {
+        0: 'Bright',
+        1: 'Dim',
+        2: 'Off',
+        __filter: source => source.map((item) => {
+          const name = this.localize(`zhimi_humidifier_cb1.led_brightness.${item.id}`, item.name);
+          return { id: item.id, name };
+        }),
+      },
       state: { attribute: 'led_brightness' },
       change_action: (selected, state, entity) => {
         const options = { entity_id: entity.entity_id, brightness: selected };

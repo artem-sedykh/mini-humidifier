@@ -79,10 +79,12 @@ class MiniHumidifier extends LitElement {
       force = true;
     }
 
-    this.updateIndicators(force);
-    this.updateButtons(force);
-    this.updateTargetHumidity(force);
-    this.updatePower(force);
+    if (this.humidifier) {
+      this.updateIndicators(force);
+      this.updateButtons(force);
+      this.updateTargetHumidity(force);
+      this.updatePower(force);
+    }
   }
 
   get hass() {

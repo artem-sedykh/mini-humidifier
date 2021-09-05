@@ -137,8 +137,8 @@ export default class ButtonObject {
     const { state } = this;
     if (state === undefined || state === null)
       return undefined;
-
-    const selected = this.source.find(s => s.id === state.toString());
+    const find = state.toString().toUpperCase();
+    const selected = this.source.find(s => s.id.toString().toUpperCase() === find);
     return selected;
   }
 

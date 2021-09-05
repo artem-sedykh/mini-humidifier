@@ -88,7 +88,7 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
       tap_action: 'more-info',
       icon: ICON.MOTORSPEED,
       unit: 'rpm',
-      round: 1,
+      round: 0,
       order: 3,
       hide: false,
       source: { entity: 'sensor.{entity_id}_motor_speed' },
