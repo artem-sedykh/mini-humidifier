@@ -24,9 +24,8 @@ const ZHIMI_AIRPURIFIER_MA2 = () => ({
   },
   indicators: {
     aqi: {
-      round: 0,
-      order: 0,
       hide: false,
+      order: 0,
       levels: {
         good: { min: 0, max: 50, color: '#1CC09B' },
         moderate: { min: 51, max: 100, color: '#FFDE33' },
@@ -53,24 +52,40 @@ const ZHIMI_AIRPURIFIER_MA2 = () => ({
         },
       },
       unit: 'μg/m³',
+      round: 0,
       source: { entity: 'sensor.{entity_id}_pm2_5' },
     },
     temperature: {
       icon: ICON.TEMPERATURE,
+      hide: false,
+      order: 1,
       unit: '°C',
       round: 1,
       source: { entity: 'sensor.{entity_id}_temperature' },
     },
     humidity: {
       icon: ICON.HUMIDITY,
+      hide: false,
+      order: 2,
       unit: '%',
       round: 1,
       source: { entity: 'sensor.{entity_id}_humidity' },
     },
     motor_speed: {
       icon: ICON.RPM,
+      hide: false,
+      order: 3,
       unit: 'rpm',
+      round: 0,
       source: { entity: 'sensor.{entity_id}_motor_speed' },
+    },
+    filter_use: {
+      icon: ICON.CLOCK,
+      hide: false,
+      order: 4,
+      unit: 'h',
+      round: 0,
+      source: { entity: 'sensor.{entity_id}_filter_use' },
     },
   },
   buttons: {
