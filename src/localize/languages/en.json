@@ -1,0 +1,26 @@
+{
+  "zhimi_humidifier_cb1": {
+    "mode": {
+      "auto": "Auto",
+      "silent": "Silent",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "led_brightness": {
+      "0": "Bright",
+      "1": "Dim",
+      "2": "Off",
+      "bright": "Bright",
+      "dim": "Dim",
+      "off": "Off"
+    },
+    "water_level": {
+      "liters": "L",
+      "percent": "%"
+    },
+    "depth": {
+      "liters": "L",
+      "percent": "%"
+    }
+  }
+}

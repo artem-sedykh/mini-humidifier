@@ -78,10 +78,7 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CB1 = () => ({
       hide: false,
       order: 1,
       source: {
-        auto: 'auto',
-        silent: 'silent',
-        medium: 'medium',
-        high: 'high',
+        __init: entity => entity.attributes.available_modes.map(mode => ({ id: mode, name: mode })),
       },
       active: (state, entity) => (entity.state !== 'off'),
       disabled: (state, entity) => (entity.attributes.depth === 0),

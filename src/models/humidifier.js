@@ -17,6 +17,26 @@ export default class HumidifierObject {
       led_brightness: 0,
       ...entity.attributes || {},
     };
+
+    if (entity) {
+      this._last_changed = entity.last_changed;
+      this._last_updated = entity.last_updated;
+    }
+  }
+
+  get lastChanged() {
+    return this._last_changed;
+  }
+
+  get lastUpdated() {
+    return this._last_updated;
+  }
+
+  changed(entity) {
+    const e = entity || {};
+    const changed = this.lastChanged !== e.last_changed || this.lastUpdated !== e.last_updated;
+
+    return changed;
   }
 
   get id() {

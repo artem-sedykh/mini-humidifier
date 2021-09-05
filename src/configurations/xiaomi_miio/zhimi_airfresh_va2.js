@@ -12,8 +12,15 @@ const ZHIMI_AIRFRESH_VA2 = () => ({
     },
   },
   target_humidity: {
-    hide: true,
-    hide_indicator: true,
+    unit: '%',
+    min: 1,
+    max: 100,
+    step: { attribute: 'percentage_step' },
+    state: { attribute: 'percentage' },
+    change_action: (selected, state, entity) => {
+      const options = { entity_id: entity.entity_id, percentage: selected };
+      return this.call_service('fan', 'set_percentage', options);
+    },
   },
   indicators: {
     aqi: {
@@ -45,7 +52,7 @@ const ZHIMI_AIRFRESH_VA2 = () => ({
         },
       },
       unit: 'μg/m³',
-      source: { attribute: 'aqi' },
+      source: { entity: 'sensor.{entity_id}_pm2_5' },
     },
     temperature: {
       icon: ICON.TEMPERATURE,
@@ -53,7 +60,7 @@ const ZHIMI_AIRFRESH_VA2 = () => ({
       round: 1,
       order: 1,
       hide: false,
-      source: { attribute: 'temperature' },
+      source: { entity: 'sensor.{entity_id}_temperature' },
     },
     humidity: {
       icon: ICON.HUMIDITY,
@@ -61,14 +68,14 @@ const ZHIMI_AIRFRESH_VA2 = () => ({
       round: 1,
       order: 2,
       hide: false,
-      source: { attribute: 'humidity' },
+      source: { entity: 'sensor.{entity_id}_humidity' },
     },
     motor_speed: {
       icon: ICON.RPM,
       unit: 'rpm',
       round: 0,
       order: 3,
-      hide: false,
+      hide: true,
       source: { attribute: 'motor_speed' },
     },
     co2: {
@@ -77,7 +84,15 @@ const ZHIMI_AIRFRESH_VA2 = () => ({
       round: 0,
       order: 4,
       hide: false,
-      source: { attribute: 'co2' },
+      source: { entity: 'sensor.{entity_id}_carbon_dioxide' },
+    },
+    filter_use: {
+      icon: ICON.CLOCK,
+      unit: 'h',
+      round: 0,
+      order: 5,
+      hide: false,
+      source: { entity: 'sensor.{entity_id}_filter_use' },
     },
   },
   buttons: {
@@ -85,17 +100,11 @@ const ZHIMI_AIRFRESH_VA2 = () => ({
       icon: ICON.FAN,
       type: 'dropdown',
       hide: false,
-      order: 1,
+      order: 0,
       source: {
-        auto: 'auto',
-        silent: 'silent',
-        low: 'low',
-        middle: 'medium',
-        strong: 'high',
-        interval: 'schedule',
+        __init: entity => entity.attributes.speed_list.map(mode => ({ id: mode, name: mode })),
       },
       active: (state, entity) => (entity.state !== 'off'),
-      disabled: (state, entity) => (entity.attributes.depth === 0),
       state: { attribute: 'mode' },
       change_action: (selected, state, entity) => {
         const options = { entity_id: entity.entity_id, speed: selected };
@@ -106,35 +115,34 @@ const ZHIMI_AIRFRESH_VA2 = () => ({
       icon: ICON.LEDBUTTON,
       type: 'dropdown',
       hide: false,
-      order: 2,
-      active: state => (state !== 2 && state !== '2'),
-      source: { 0: 'Bright', 1: 'Dim', 2: 'Off' },
-      state: { attribute: 'led_brightness' },
+      order: 1,
+      source: { bright: 'Bright', dim: 'Dim', off: 'Off' },
+      state: { entity: 'select.{entity_id}_led_brightness' },
       change_action: (selected, state, entity) => {
-        const options = { entity_id: entity.entity_id, brightness: selected };
-        return this.call_service('xiaomi_miio', 'fan_set_led_brightness', options);
+        const options = { entity_id: entity.entity_id, option: selected };
+        return this.call_service('select', 'select_option', options);
       },
     },
     buzzer: {
       icon: ICON.BUZZER,
       hide: false,
-      order: 3,
-      state: { attribute: 'buzzer', mapper: state => (state ? 'on' : 'off') },
+      order: 2,
+      state: { entity: 'switch.{entity_id}_buzzer' },
       toggle_action: (state, entity) => {
-        const service = state === 'on' ? 'fan_set_buzzer_off' : 'fan_set_buzzer_on';
+        const service = state === 'on' ? 'turn_off' : 'turn_on';
         const options = { entity_id: entity.entity_id };
-        return this.call_service('xiaomi_miio', service, options);
+        return this.call_service('switch', service, options);
       },
     },
     child_lock: {
       icon: ICON.CHILDLOCK,
       hide: false,
-      order: 4,
-      state: { attribute: 'child_lock', mapper: state => (state ? 'on' : 'off') },
+      order: 3,
+      state: { entity: 'switch.{entity_id}_child_lock' },
       toggle_action: (state, entity) => {
-        const service = state === 'on' ? 'fan_set_child_lock_off' : 'fan_set_child_lock_on';
+        const service = state === 'on' ? 'turn_off' : 'turn_on';
         const options = { entity_id: entity.entity_id };
-        return this.call_service('xiaomi_miio', service, options);
+        return this.call_service('switch', service, options);
       },
     },
   },

@@ -20,7 +20,7 @@ import HumidifierObject from './models/humidifier';
 import getLabel from './utils/getLabel';
 import './initialize';
 import HUMIDIFIERS from './humidifiers';
-
+import localize from './localize/localize';
 
 if (!customElements.get('ha-slider')) {
   customElements.define(
@@ -46,6 +46,8 @@ class MiniHumidifier extends LitElement {
     this.targetHumidity = {};
     this.power = {};
     this.config = {};
+    this.updateIndicatorsTimer = undefined;
+    this.updateButtonsTimer = undefined;
   }
 
   static get properties() {
@@ -71,7 +73,7 @@ class MiniHumidifier extends LitElement {
     let force = false;
     this._hass = hass;
 
-    if (entity && this.entity !== entity) {
+    if (entity && (!this.humidifier || this.humidifier.changed(entity))) {
       this.entity = entity;
       this.humidifier = new HumidifierObject(hass, this.config, entity);
       force = true;
@@ -91,6 +93,14 @@ class MiniHumidifier extends LitElement {
     return this.config.name || this.humidifier.name;
   }
 
+  evalEntityId(entityId) {
+    if (entityId) {
+      const name = this.config.entity && this.config.entity.split('.')[1].toLowerCase();
+      return entityId.replaceAll('{entity_id}', name);
+    }
+    return entityId;
+  }
+
   updateIndicators(force) {
     const indicators = { };
     let changed = false;
@@ -99,19 +109,23 @@ class MiniHumidifier extends LitElement {
       const config = this.config.indicators[i];
       const { id } = config;
 
-      const entityId = config.source.entity || this.humidifier.id;
+      const entityId = this.evalEntityId(config.source.entity || this.humidifier.id);
       const entity = this.hass.states[entityId];
 
       if (entity) {
         indicators[id] = new IndicatorObject(entity, config, this.humidifier, this.hass);
       }
 
-      if (entity !== (this.indicators[id] && this.indicators[id].entity))
+      if (this.indicators[id] && this.indicators[id].changed(entity)) {
         changed = true;
+      }
     }
 
-    if (changed || force)
+    if (changed || force) {
       this.indicators = indicators;
+      clearTimeout(this.updateIndicatorsTimer);
+      this.updateIndicatorsTimer = setTimeout(async () => this.requestUpdate('indicators'), 500);
+    }
   }
 
   updateButtons(force) {
@@ -122,24 +136,29 @@ class MiniHumidifier extends LitElement {
       const config = this.config.buttons[i];
       const { id } = config;
 
-      const entityId = (config.state && config.state.entity) || this.humidifier.id;
+      const entityId = this.evalEntityId((config.state && config.state.entity)
+          || this.humidifier.id);
+
       const entity = this.hass.states[entityId];
 
       if (entity) {
         buttons[id] = new ButtonObject(entity, config, this.humidifier, this.hass);
       }
 
-      if (entity !== (this.buttons[id] && this.buttons[id].entity))
+      if (this.buttons[id] && this.buttons[id].changed(entity))
         changed = true;
     }
 
-    if (changed || force)
+    if (changed || force) {
       this.buttons = buttons;
+      clearTimeout(this.updateButtonsTimer);
+      this.updateButtonsTimer = setTimeout(async () => this.requestUpdate('buttons'), 500);
+    }
   }
 
   updatePower(force) {
     const config = this.config.power;
-    const entityId = (config.state && config.state.entity) || this.humidifier.id;
+    const entityId = this.evalEntityId((config.state && config.state.entity) || this.humidifier.id);
     const entity = this.hass.states[entityId];
     const power = entity ? new ButtonObject(entity, config, this.humidifier, this.hass) : {};
 
@@ -148,8 +167,8 @@ class MiniHumidifier extends LitElement {
   }
 
   updateTargetHumidity(force) {
-    const entityId = (this.config.target_humidity.state
-      && this.config.target_humidity.state.entity) || this.config.entity;
+    const entityId = this.evalEntityId((this.config.target_humidity.state
+      && this.config.target_humidity.state.entity) || this.config.entity);
 
     const entity = this.hass.states[entityId];
     const targetHumidity = new TargetHumidityObject(entity, this.config, this.humidifier);
@@ -191,6 +210,13 @@ class MiniHumidifier extends LitElement {
         item.functions.icon.style = compileTemplate(item.icon.style, context);
     }
 
+    if (typeof item.unit === 'object') {
+      item.functions.unit = {};
+
+      if (item.unit.template)
+        item.functions.unit.template = compileTemplate(item.unit.template, context);
+    }
+
     return item;
   }
 
@@ -228,6 +254,11 @@ class MiniHumidifier extends LitElement {
     context.entity_config = config;
     context.toggle_state = toggleState;
 
+    context.localize = (str, fallback) => {
+      const lang = this.hass.selectedLanguage || this.hass.language || 'en';
+      return localize(str, lang, fallback);
+    };
+
     if (item.disabled) {
       item.functions.disabled = compileTemplate(item.disabled, context);
     }
@@ -240,8 +271,13 @@ class MiniHumidifier extends LitElement {
       item.functions.active = compileTemplate(item.active, context);
     }
 
+    if (item.source && item.source.__init) {
+      item.functions.source = { __init: compileTemplate(item.source.__init, context) };
+    }
+
     if (item.source && item.source.__filter) {
-      item.functions.source = { filter: compileTemplate(item.source.__filter, context) };
+      item.functions.source = item.functions.source || {};
+      item.functions.source.filter = compileTemplate(item.source.__filter, context);
     }
 
     if (item.toggle_action) {

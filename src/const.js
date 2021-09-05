@@ -5,6 +5,8 @@ export const ICON = {
   HUMIDITY: 'mdi:water',
   TEMPERATURE: 'mdi:thermometer-low',
   DEPTH: 'mdi:tray-full',
+  WATERLEVEL: 'mdi:tray-full',
+  WATERTANKDETACHED: 'mdi:tray-remove',
   DRY: 'mdi:weather-sunny',
   BUZZER: 'mdi:bell-outline',
   LEDBUTTON: 'mdi:lightbulb-on-outline',
@@ -16,6 +18,8 @@ export const ICON = {
   RPM: 'mdi:speedometer',
   CO2: 'mdi:molecule-co2',
   DISHWASHER: 'mdi:dishwasher',
+  MOTORSPEED: 'mdi:fan',
+  CLOCK: 'mdi:clock-outline',
 };
 
 export const STATES_OFF = ['closed', 'locked', 'off'];
