@@ -13,7 +13,6 @@ class HumidifierButtons extends LitElement {
   renderButton(button) {
     if (button.isUnavailable)
       return '';
-
     return html`
        <mh-button
          class="custom-button"

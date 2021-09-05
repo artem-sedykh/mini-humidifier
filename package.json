@@ -1,6 +1,6 @@
 {
   "name": "mini-humidifier",
-  "version": "v2.4.1",
+  "version": "v2.5.1",
   "description": "humidifier card for Home Assistant Lovelace UI",
   "keywords": [
     "home-assistant",
@@ -17,8 +17,8 @@
   "author": "Artem Sedykh <anavrin72@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "lit-element": "^2.2.1",
-    "lit-html": "^1.1.2",
+    "lit-element": "^2.5.1",
+    "lit-html": "^1.4.1",
     "resize-observer-polyfill": "^1.5.1"
   },
   "devDependencies": {

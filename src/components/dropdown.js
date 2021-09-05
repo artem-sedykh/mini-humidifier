@@ -26,8 +26,7 @@ class HumidifierDropDown extends LitElement {
 
     this.dropdown.handleChange(selected);
 
-    if (this.timer)
-      clearTimeout(this.timer);
+    clearTimeout(this.timer);
 
     this.timer = setTimeout(async () => {
       if (this.dropdown.entity === entity) {
@@ -42,6 +41,8 @@ class HumidifierDropDown extends LitElement {
   }
 
   render() {
+    clearTimeout(this.timer);
+
     return html`
       <mh-dropdown-base
         style=${styleMap(this.dropdown.style)}
@@ -60,8 +61,7 @@ class HumidifierDropDown extends LitElement {
       this._state = (this.dropdown.state !== undefined && this.dropdown.state !== null)
         ? this.dropdown.state.toString() : '';
 
-      if (this.timer)
-        clearTimeout(this.timer);
+      clearTimeout(this.timer);
 
       return this.requestUpdate('_state');
     }

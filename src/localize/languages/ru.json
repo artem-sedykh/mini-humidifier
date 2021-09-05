@@ -1,0 +1,26 @@
+{
+  "zhimi_humidifier_cb1": {
+    "led_brightness": {
+      "0": "Ярко",
+      "1": "Тускло",
+      "2": "Выкл.",
+      "bright": "Ярко",
+      "dim": "Тускло",
+      "off": "Откл."
+    },
+    "mode": {
+      "auto": "Авто",
+      "silent": "Тихий",
+      "medium": "Средний",
+      "high": "Сильный"
+    },
+    "water_level": {
+      "liters": "Л",
+      "percent": "%"
+    },
+    "depth": {
+      "liters": "Л",
+      "percent": "%"
+    }
+  }
+}

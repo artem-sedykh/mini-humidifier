@@ -9,6 +9,8 @@ const HUMIDIFIERS = {
   default: ZHIMI_HUMIDIFIER_CB1,
   // xiaomi_miio integration (default home assistant)
   'zhimi.humidifier.cb1': ZHIMI_HUMIDIFIER_CB1,
+  'zhimi.humidifier.ca1': ZHIMI_HUMIDIFIER_CB1,
+  'zhimi.humidifier.ca4': ZHIMI_HUMIDIFIER_CB1,
   'zhimi.airpurifier.ma2': ZHIMI_AIRPURIFIER_MA2,
   'zhimi.airfresh.va2': ZHIMI_AIRFRESH_VA2,
 

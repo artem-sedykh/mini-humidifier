@@ -17,16 +17,21 @@ class HumidifierButton extends LitElement {
 
   handleToggle(e) {
     e.stopPropagation();
-    const { entity } = this.button;
 
     this._isOn = !this._isOn;
+    const { lastChanged } = this.button;
+    const { lastUpdated } = this.button;
+
     this.button.handleToggle();
 
-    if (this.timer)
-      clearTimeout(this.timer);
+    clearTimeout(this.timer);
 
+    const context = this;
     this.timer = setTimeout(async () => {
-      if (this.button.entity === entity) {
+      const { button } = context;
+      const changed = lastChanged !== button.lastChanged || lastUpdated !== button.lastUpdated;
+
+      if (changed === false) {
         this._isOn = this.button.isOn;
         return this.requestUpdate('_isOn');
       }
@@ -36,6 +41,8 @@ class HumidifierButton extends LitElement {
   }
 
   render() {
+    clearTimeout(this.timer);
+
     return html`
        <ha-icon-button
          style=${styleMap(this.button.style)}
@@ -51,8 +58,7 @@ class HumidifierButton extends LitElement {
     if (changedProps.has('button')) {
       this._isOn = this.button.isOn;
 
-      if (this.timer)
-        clearTimeout(this.timer);
+      clearTimeout(this.timer);
 
       return this.requestUpdate('_isOn');
     }
