@@ -32,5 +32,13 @@
       "auto": "Авто",
       "interval": "Расписание"
     }
+  },
+  "zhimi_airpurifier_ma2": {
+    "mode": {
+      "auto": "Авто",
+      "silent": "Тихий",
+      "favorite": "Заданный",
+      "idle": "Ожидание"
+    }
   }
 }

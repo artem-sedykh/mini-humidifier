@@ -32,5 +32,13 @@
       "auto": "Auto",
       "interval": "Interval"
     }
+  },
+  "zhimi_airpurifier_ma2": {
+    "mode": {
+      "auto": "Auto",
+      "silent": "Silent",
+      "favorite": "Favorite",
+      "idle": "Idle"
+    }
   }
 }
