@@ -29,7 +29,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=2.4.1
+    - url: /local/mini-humidifier-bundle.js?v=2.5.1
       type: module
   ```
 
@@ -40,14 +40,14 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 2. Grab `mini-humidifier-bundle.js`
 
   ```console
-  $ wget https://github.com/artem-sedykh/mini-humidifier/releases/download/v2.4.1/mini-humidifier-bundle.js
+  $ wget https://github.com/artem-sedykh/mini-humidifier/releases/download/v2.5.1/mini-humidifier-bundle.js
   ```
 
 3. Add a reference to `mini-humidifier-bundle.js` inside your `configuration.yaml`.
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=2.4.1
+    - url: /local/mini-humidifier-bundle.js?v=2.5.1
       type: module
   ```
 
@@ -60,7 +60,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=2.4.1
+    - url: /local/mini-humidifier-bundle.js?v=2.5.1
       type: module
   ```
 
@@ -184,13 +184,14 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
  3. Create a pull request or issue with the configuration file.
  
  #### Available default configurations
- `zhimi.humidifier.cb1` - [xiaomi_miio integration](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
- `deerma.humidifier.mjjsq` [xiaomi_miio_airpurifier integration](https://github.com/syssi/xiaomi_airpurifier)
- `xiaomi_miio_airpurifier:deerma.humidifier.mjjsq` - [xiaomi_miio_airpurifier integration](https://github.com/syssi/xiaomi_airpurifier)
- `zhimi.airpurifier.ma2` - [xiaomi_miio integration](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
- 
- `xiaomi_miio_airpurifier:zhimi.humidifier.cb1` - [xiaomi_miio_airpurifier integration](https://github.com/syssi/xiaomi_airpurifier) 
- `xiaomi_miio_airpurifier:zhimi.humidifier.ca4` by @ravikwow - [xiaomi_miio_airpurifier integration](https://github.com/syssi/xiaomi_airpurifier)
+ `zhimi.humidifier.cb1` - [xiaomi_miio integration](https://www.home-assistant.io/integrations/xiaomi_miio#air-humidifier-cb-zhimihumidifiercb1)  
+ `zhimi.humidifier.ca1` - [xiaomi_miio integration](https://www.home-assistant.io/integrations/xiaomi_miio#air-humidifier-ca-zhimihumidifierca1)  
+ `zhimi.humidifier.ca4` - [xiaomi_miio integration](https://www.home-assistant.io/integrations/xiaomi_miio#air-humidifier-ca-zhimihumidifierca4)  
+
+ `xiaomi_miio_airpurifier:deerma.humidifier.mjjsq` - [xiaomi_miio_airpurifier integration](https://github.com/syssi/xiaomi_airpurifier)  
+ `zhimi.airpurifier.ma2` - [xiaomi_miio integration](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)  
+ `xiaomi_miio_airpurifier:zhimi.humidifier.cb1` - [xiaomi_miio_airpurifier integration](https://github.com/syssi/xiaomi_airpurifier)  
+ `xiaomi_miio_airpurifier:zhimi.humidifier.ca4` by @ravikwow - [xiaomi_miio_airpurifier integration](https://github.com/syssi/xiaomi_airpurifier)  
  
 > Using the default configuration for a specific model
 
@@ -201,7 +202,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
   model: 'zhimi.humidifier.cb1' 
 ```
 
-[deerma.humidifier.mjjsq](https://github.com/artem-sedykh/mini-humidifier/blob/master/src/configurations/deerma_humidifier_mjjsq.js)
+[deerma.humidifier.mjjsq](https://github.com/artem-sedykh/mini-humidifier/blob/master/src/configurations/xiaomi_miio_airpurifier/deerma_humidifier_mjjsq.js)
 ```yaml
 - type: custom:mini-humidifier
   entity: fan.xiaomi_miio_device
