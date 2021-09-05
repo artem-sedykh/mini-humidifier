@@ -102,7 +102,10 @@ const ZHIMI_AIRFRESH_VA2 = () => ({
       hide: false,
       order: 0,
       source: {
-        __init: entity => entity.attributes.speed_list.map(mode => ({ id: mode, name: mode })),
+        __init: (entity) => {
+          const modes = entity.attributes.speed_list || [];
+          return modes.map(mode => ({ id: mode, name: this.localize(`zhimi_airfresh_va2.mode.${mode}`) }));
+        },
       },
       active: (state, entity) => (entity.state !== 'off'),
       state: { attribute: 'mode' },

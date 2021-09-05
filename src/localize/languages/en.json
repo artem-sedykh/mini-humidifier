@@ -22,5 +22,15 @@
       "liters": "L",
       "percent": "%"
     }
+  },
+  "zhimi_airfresh_va2": {
+    "mode": {
+      "off": "Off",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "auto": "Auto",
+      "interval": "Interval"
+    }
   }
 }

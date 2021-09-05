@@ -22,5 +22,15 @@
       "liters": "Л",
       "percent": "%"
     }
+  },
+  "zhimi_airfresh_va2": {
+    "mode": {
+      "off": "Откл.",
+      "low": "Слабый",
+      "medium": "Средний",
+      "high": "Сильный",
+      "auto": "Авто",
+      "interval": "Расписание"
+    }
   }
 }
