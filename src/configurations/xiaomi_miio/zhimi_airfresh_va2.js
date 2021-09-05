@@ -86,6 +86,14 @@ const ZHIMI_AIRFRESH_VA2 = () => ({
       hide: false,
       source: { entity: 'sensor.{entity_id}_carbon_dioxide' },
     },
+    filter_use: {
+      icon: ICON.CLOCK,
+      unit: 'h',
+      round: 0,
+      order: 5,
+      hide: false,
+      source: { entity: 'sensor.{entity_id}_filter_use' },
+    },
   },
   buttons: {
     mode: {

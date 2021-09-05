@@ -19,6 +19,7 @@ export const ICON = {
   CO2: 'mdi:molecule-co2',
   DISHWASHER: 'mdi:dishwasher',
   MOTORSPEED: 'mdi:fan',
+  CLOCK: 'mdi:clock-outline',
 };
 
 export const STATES_OFF = ['closed', 'locked', 'off'];
