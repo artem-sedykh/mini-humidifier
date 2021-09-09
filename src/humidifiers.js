@@ -4,6 +4,7 @@ import ZHIMI_AIRFRESH_VA2 from './configurations/xiaomi_miio/zhimi_airfresh_va2'
 import XIAOMI_MIIO_AIRPURIFIER_DEERMA_HUMIDIFIER_MJJSQ from './configurations/xiaomi_miio_airpurifier/deerma_humidifier_mjjsq';
 import XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CB1 from './configurations/xiaomi_miio_airpurifier/zhimi_humidifier_cb1';
 import XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CA4 from './configurations/xiaomi_miio_airpurifier/zhimi_humidifier_ca4';
+import XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRFRESH_VA2 from './configurations/xiaomi_miio_airpurifier/zhimi_airfresh_va2';
 
 const HUMIDIFIERS = {
   default: ZHIMI_HUMIDIFIER_CB1,
@@ -19,6 +20,7 @@ const HUMIDIFIERS = {
   'xiaomi_miio_airpurifier:zhimi.humidifier.ca4': XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CA4,
   'xiaomi_miio_airpurifier:deerma.humidifier.mjjsq': XIAOMI_MIIO_AIRPURIFIER_DEERMA_HUMIDIFIER_MJJSQ,
   'deerma.humidifier.mjjsq': XIAOMI_MIIO_AIRPURIFIER_DEERMA_HUMIDIFIER_MJJSQ,
+  'xiaomi_miio_airpurifier:zhimi.airfresh.va2': XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRFRESH_VA2,
 };
 
 export default HUMIDIFIERS;
