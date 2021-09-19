@@ -40,5 +40,17 @@
       "favorite": "Favorite",
       "idle": "Idle"
     }
+  },
+  "deerma_humidifier_jsq": {
+    "mode": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "humidity": "Humidity"
+    },
+    "water_tank_empty": {
+      "empty": "empty",
+      "filled": "filled"
+    }
   }
 }

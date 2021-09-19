@@ -6,6 +6,7 @@ export const ICON = {
   TEMPERATURE: 'mdi:thermometer-low',
   DEPTH: 'mdi:tray-full',
   WATERLEVEL: 'mdi:tray-full',
+  WATERTANKEMPTY: 'mdi:tray',
   WATERTANKDETACHED: 'mdi:tray-remove',
   DRY: 'mdi:weather-sunny',
   BUZZER: 'mdi:bell-outline',

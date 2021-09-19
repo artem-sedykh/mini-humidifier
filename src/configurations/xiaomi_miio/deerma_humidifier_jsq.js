@@ -1,6 +1,6 @@
 import { ICON } from '../../const';
 
-const ZHIMI_HUMIDIFIER_CB1 = () => ({
+const DEERMA_HUMIDIFIER_JSQ = () => ({
   power: {
     icon: ICON.POWER,
     type: 'button',
@@ -25,10 +25,6 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
     step: 10,
     hide: false,
     hide_indicator: false,
-    disabled: (state, entity, humidifier) => {
-      const mode = humidifier.attributes.mode.toUpperCase();
-      return mode !== 'AUTO';
-    },
     state: {
       attribute: 'humidity',
       mapper: (val) => {
@@ -45,34 +41,44 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
     },
   },
   indicators: {
-    water_level: {
+    water_tank_empty: {
       tap_action: 'more-info',
-      default_icon: ICON.WATERLEVEL,
+      order: 0,
+      hide: false,
+      full_icon: ICON.WATERLEVEL,
+      empty_icon: ICON.WATERLEVEL,
       detached_icon: ICON.WATERTANKDETACHED,
+      empty: undefined,
+      filled: undefined,
       icon: {
-        template: val => ((val === '') ? this.detached_icon : this.default_icon),
-      },
-      unit: {
-        template: (val) => {
-          if (val === '')
-            return '';
-          const { type } = this;
-          return this.localize(`zhimi_humidifier_cb1.water_level.${type}`, '%');
+        template: (_, entity) => {
+          if (entity.state === 'on') {
+            return this.empty_icon;
+          }
+          if (entity.state === 'off') {
+            return this.full_icon;
+          }
+          return this.detached_icon;
         },
       },
-      round: 0,
-      order: 0,
-      volume: 4,
-      type: 'percent',
-      hide: false,
+      unit: {
+        // eslint-disable-next-line no-unused-vars
+        template: val => '',
+      },
       source: {
-        entity: 'sensor.{entity_id}_water_level',
+        entity: 'binary_sensor.{entity_id}_water_tank_empty',
         mapper: (val) => {
-          // eslint-disable-next-line use-isnan
-          if (val === NaN || val === undefined || val === 'unknown') {
-            return '';
+          if (val === 'on') {
+            if (this.empty !== undefined)
+              return this.empty;
+            return this.localize('deerma_humidifier_jsq.water_tank_empty.empty', 'empty');
           }
-          return this.type === 'liters' ? (val * this.volume) / 100 : val;
+          if (val === 'off') {
+            if (this.filled !== undefined)
+              return this.filled;
+            return this.localize('deerma_humidifier_jsq.water_tank_empty.filled', 'filled');
+          }
+          return '';
         },
       },
     },
@@ -94,28 +100,8 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
       hide: false,
       source: { entity: 'sensor.{entity_id}_humidity' },
     },
-    motor_speed: {
-      tap_action: 'more-info',
-      icon: ICON.MOTORSPEED,
-      unit: 'rpm',
-      round: 0,
-      order: 3,
-      hide: false,
-      source: { entity: 'sensor.{entity_id}_motor_speed' },
-    },
   },
   buttons: {
-    dry: {
-      icon: ICON.DRY,
-      hide: false,
-      order: 0,
-      state: { entity: 'switch.{entity_id}_dry_mode' },
-      toggle_action: (state, entity) => {
-        const service = state === 'on' ? 'turn_off' : 'turn_on';
-        const options = { entity_id: entity.entity_id };
-        return this.call_service('switch', service, options);
-      },
-    },
     mode: {
       icon: ICON.FAN,
       type: 'dropdown',
@@ -124,7 +110,7 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
       source: {
         __init: (entity) => {
           const modes = entity.attributes.available_modes || [];
-          return modes.map(mode => ({ id: mode, name: this.localize(`zhimi_humidifier_cb1.mode.${mode}`, mode) }));
+          return modes.map(mode => ({ id: mode, name: this.localize(`deerma_humidifier_jsq.mode.${mode}`, mode) }));
         },
       },
       active: (state, entity) => (entity.state !== 'off'),
@@ -136,41 +122,20 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
     },
     led: {
       icon: ICON.LEDBUTTON,
-      type: 'dropdown',
       hide: false,
-      order: 2,
-      active: state => state !== 'off',
-      source: {
-        bright: 'Bright',
-        dim: 'Dim',
-        off: 'Off',
-        __filter: source => source.map((item) => {
-          const name = this.localize(`zhimi_humidifier_cb1.led_brightness.${item.id}`, item.name);
-          return { id: item.id, name };
-        }),
-      },
-      state: { entity: 'select.{entity_id}_led_brightness' },
-      change_action: (selected, state, entity) => {
-        const options = { entity_id: entity.entity_id, option: selected };
-        return this.call_service('select', 'select_option', options);
-      },
-    },
-    buzzer: {
-      icon: ICON.BUZZER,
-      hide: false,
-      order: 3,
-      state: { entity: 'switch.{entity_id}_buzzer' },
+      order: 1,
+      state: { entity: 'switch.{entity_id}_led' },
       toggle_action: (state, entity) => {
         const service = state === 'on' ? 'turn_off' : 'turn_on';
         const options = { entity_id: entity.entity_id };
         return this.call_service('switch', service, options);
       },
     },
-    child_lock: {
-      icon: ICON.CHILDLOCK,
+    buzzer: {
+      icon: ICON.BUZZER,
       hide: false,
-      order: 4,
-      state: { entity: 'switch.{entity_id}_child_lock' },
+      order: 2,
+      state: { entity: 'switch.{entity_id}_buzzer' },
       toggle_action: (state, entity) => {
         const service = state === 'on' ? 'turn_off' : 'turn_on';
         const options = { entity_id: entity.entity_id };
@@ -180,4 +145,4 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
   },
 });
 
-export default ZHIMI_HUMIDIFIER_CB1;
+export default DEERMA_HUMIDIFIER_JSQ;
