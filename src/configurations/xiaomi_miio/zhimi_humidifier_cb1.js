@@ -13,18 +13,28 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
   },
   target_humidity: {
     icon: ICON.HUMIDITY,
-    unit: '%',
+    unit: {
+      template: (val) => {
+        if (val === '')
+          return '';
+        return '%';
+      },
+    },
     min: 30,
     max: 80,
     step: 10,
     hide: false,
     hide_indicator: false,
+    disabled: (state, entity, humidifier) => {
+      const mode = humidifier.attributes.mode.toUpperCase();
+      return mode !== 'AUTO';
+    },
     state: {
       attribute: 'humidity',
       mapper: (val) => {
         // eslint-disable-next-line use-isnan
         if (val === NaN || val === undefined || val === 'unknown') {
-          return 80;
+          return '';
         }
         return val;
       },

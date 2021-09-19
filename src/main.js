@@ -351,6 +351,10 @@ class MiniHumidifier extends LitElement {
       return localize(str, lang, fallback);
     };
 
+    if (item.disabled) {
+      item.functions.disabled = compileTemplate(item.disabled, context);
+    }
+
     if (typeof item.icon === 'object') {
       if (item.icon.template)
         item.functions.icon.template = compileTemplate(item.icon.template, context);
@@ -365,6 +369,13 @@ class MiniHumidifier extends LitElement {
 
     if (item.state && item.state.mapper) {
       item.functions.state = { mapper: compileTemplate(item.state.mapper, context) };
+    }
+
+    if (typeof item.unit === 'object') {
+      item.functions.unit = {};
+
+      if (item.unit.template)
+        item.functions.unit.template = compileTemplate(item.unit.template, context);
     }
 
     return item;

@@ -57,6 +57,7 @@ class TargetHumidity extends LitElement {
         <ha-slider
           @change=${e => this.handleChange(e)}
           @click=${e => e.stopPropagation()}
+          ?disabled="${this.targetHumidity.disabled}"
           min=${this.targetHumidity.min}
           max=${this.targetHumidity.max}
           step=${this.targetHumidity.step}
