@@ -185,9 +185,12 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
  `zhimi.humidifier.cb1` - [xiaomi_miio integration](https://www.home-assistant.io/integrations/xiaomi_miio#air-humidifier-cb-zhimihumidifiercb1)  
  `zhimi.humidifier.ca1` - [xiaomi_miio integration](https://www.home-assistant.io/integrations/xiaomi_miio#air-humidifier-ca-zhimihumidifierca1)  
  `zhimi.humidifier.ca4` - [xiaomi_miio integration](https://www.home-assistant.io/integrations/xiaomi_miio#air-humidifier-ca-zhimihumidifierca4)  
+ `deerma.humidifier.jsq` - [xiaomi_miio integration](https://www.home-assistant.io/integrations/xiaomi_miio/#air-humidifier-jsqjsq1mjjsq-deermahumidifierjsqdeermahumidifierjsq1deermahumidifiermjjsq)  
+ `deerma.humidifier.jsq1` - [xiaomi_miio integration](https://www.home-assistant.io/integrations/xiaomi_miio/#air-humidifier-jsqjsq1mjjsq-deermahumidifierjsqdeermahumidifierjsq1deermahumidifiermjjsq)  
+ `deerma.humidifier.mjjsq` - [xiaomi_miio integration](https://www.home-assistant.io/integrations/xiaomi_miio/#air-humidifier-jsqjsq1mjjsq-deermahumidifierjsqdeermahumidifierjsq1deermahumidifiermjjsq)  
+ `zhimi.airpurifier.ma2` - [xiaomi_miio integration](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)  
 
  `xiaomi_miio_airpurifier:deerma.humidifier.mjjsq` - [xiaomi_miio_airpurifier integration](https://github.com/syssi/xiaomi_airpurifier)  
- `zhimi.airpurifier.ma2` - [xiaomi_miio integration](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)  
  `xiaomi_miio_airpurifier:zhimi.humidifier.cb1` - [xiaomi_miio_airpurifier integration](https://github.com/syssi/xiaomi_airpurifier)  
  `xiaomi_miio_airpurifier:zhimi.humidifier.ca4` by @ravikwow - [xiaomi_miio_airpurifier integration](https://github.com/syssi/xiaomi_airpurifier)  
  
@@ -204,7 +207,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 ```yaml
 - type: custom:mini-humidifier
   entity: fan.xiaomi_miio_device
-  model: 'deerma.humidifier.mjjsq' 
+  model: 'xiaomi_miio_airpurifier:deerma.humidifier.mjjsq' 
 ```
 > localize status indicator
 ```yaml
