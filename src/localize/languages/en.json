@@ -46,7 +46,7 @@
       "low": "Low",
       "medium": "Medium",
       "high": "High",
-      "humidity": "Humidity"
+      "humidity": "Auto"
     },
     "water_tank_empty": {
       "empty": "empty",
