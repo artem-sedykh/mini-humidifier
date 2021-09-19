@@ -25,6 +25,10 @@ const DEERMA_HUMIDIFIER_JSQ = () => ({
     step: 10,
     hide: false,
     hide_indicator: false,
+    disabled: (state, entity, humidifier) => {
+      const mode = humidifier.attributes.mode.toUpperCase();
+      return mode !== 'HUMIDITY';
+    },
     state: {
       attribute: 'humidity',
       mapper: (val) => {

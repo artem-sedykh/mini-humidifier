@@ -47,7 +47,7 @@
       "low": "Слабый",
       "medium": "Средний",
       "high": "Сильный",
-      "humidity": "Влажность"
+      "humidity": "Авто"
     },
     "water_tank_empty": {
       "empty": "Пустой",
