@@ -46,10 +46,10 @@ class HumidifierButton extends LitElement {
     return html`
        <ha-icon-button
          style=${styleMap(this.button.style)}
-         .icon=${this.button.icon}
          @click=${e => this.handleToggle(e)}
          ?disabled="${this.button.disabled || this.button.isUnavailable}"
          ?color=${this._isOn}>
+         <ha-icon icon="${this.button.icon}"></ha-icon>
         </ha-icon-button>
     `;
   }

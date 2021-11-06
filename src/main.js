@@ -557,8 +557,8 @@ class MiniHumidifier extends LitElement {
     const cls = this.toggle ? 'open' : '';
     return html`
         <ha-icon-button class='toggle-button ${cls}'
-          .icon=${this.config.toggle.icon}
           @click=${e => this.handleToggle(e)}>
+          <ha-icon icon="${this.config.toggle.icon}"></ha-icon>
         </ha-icon-button>
     `;
   }

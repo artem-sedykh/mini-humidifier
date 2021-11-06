@@ -41,9 +41,9 @@ class HumidifierDropdownBase extends LitElement {
         ?disabled=${this.disabled}
         @click=${e => e.stopPropagation()}>
         <ha-icon-button class='mh-dropdown__button icon' slot='dropdown-trigger'
-          .icon=${this.icon}
           ?disabled=${this.disabled}
           ?color=${this.active}>
+          <ha-icon icon="${this.icon}"></ha-icon>
         </ha-icon-button>
         <paper-listbox slot="dropdown-content" .selected=${this.selectedId} @iron-select=${this.onChange}>
           ${this.items.map(item => html`
