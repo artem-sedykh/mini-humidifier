@@ -41,5 +41,17 @@
       "favorite": "Заданный",
       "idle": "Ожидание"
     }
+  },
+  "deerma_humidifier_jsq": {
+    "mode": {
+      "low": "Слабый",
+      "medium": "Средний",
+      "high": "Сильный",
+      "humidity": "Авто"
+    },
+    "water_tank_empty": {
+      "empty": "Пустой",
+      "filled": "Полный"
+    }
   }
 }

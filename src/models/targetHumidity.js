@@ -68,7 +68,14 @@ export default class TargetHumidityObject {
   }
 
   get unit() {
-    return this.config.target_humidity.unit;
+    const config = this.config.target_humidity;
+    if (config.functions.unit && config.functions.unit.template) {
+      return config.functions.unit.template(this.value, this.entity, this.humidifier.entity);
+    } else if (config.unit && typeof config.unit === 'string') {
+      return config.unit;
+    }
+
+    return '';
   }
 
   get actionTimeout() {
@@ -76,6 +83,15 @@ export default class TargetHumidityObject {
       return this.config.target_humidity.action_timeout;
 
     return ACTION_TIMEOUT;
+  }
+
+  get disabled() {
+    if (this.config.target_humidity.functions.disabled) {
+      return this.config.target_humidity.functions.disabled(this.state, this.entity,
+        this.humidifier.entity);
+    }
+
+    return false;
   }
 
   handleChange(value) {
