@@ -209,6 +209,7 @@ const style = css`
     margin-left: auto;
     min-width: calc(var(--mh-unit) * .875);
     margin-right: calc(var(--mh-unit) * -0.125);
+    --ha-icon-display: flex;
   }
   mh-target-humidity {
     display: flex;
