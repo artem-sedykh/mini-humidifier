@@ -1,0 +1,56 @@
+{
+  "zhimi_humidifier_cb1": {
+    "mode": {
+      "auto": "Авто",
+      "silent": "Тихий",
+      "medium": "Середній",
+      "high": "Сильний"
+    },
+    "led_brightness": {
+      "0": "Яскраво",
+      "1": "Тьмяно",
+      "2": "Вимкнено",
+      "bright": "Яскраво",
+      "dim": "Тьмяно",
+      "off": "Вимкнено"
+    },
+    "water_level": {
+      "liters": "Л",
+      "percent": "%"
+    },
+    "depth": {
+      "liters": "Л",
+      "percent": "%"
+    }
+  },
+  "zhimi_airfresh_va2": {
+    "mode": {
+      "off": "Вимкнено",
+      "low": "Слабкий",
+      "medium": "Середній",
+      "high": "Сильний",
+      "auto": "АВто",
+      "interval": "Інтервал"
+    }
+  },
+  "zhimi_airpurifier_ma2": {
+    "mode": {
+      "auto": "Авто",
+      "silent": "Тихий",
+      "favorite": "Улюблений",
+      "idle": "Очікування"
+    }
+  },
+  "deerma_humidifier_jsq": {
+    "mode": {
+      "low": "Слабкий",
+      "medium": "Середній",
+      "high": "Сильний",
+      "humidity": "Авто"
+    },
+    "water_tank_empty": {
+      "empty": "порожній",
+      "filled": "повний"
+    }
+  }
+}
