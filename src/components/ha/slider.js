@@ -1,10 +1,10 @@
-import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
-import buildElementDefinitions from '../../utils/buildElementDefinitions';
+if (!customElements.get('ha-slider')) {
+  customElements.define(
+    'ha-slider',
+    class extends customElements.get('paper-slider') {},
+  );
+}
 
-export default class HumidifierSlider extends ScopedRegistryHost(customElements.get('ha-slider')) {
+export default class HumidifierSlider extends customElements.get('ha-slider') {
   static get defineId() { return 'ha-slider'; }
-
-  static get elementDefinitions() {
-    return buildElementDefinitions();
-  }
 }
