@@ -85,7 +85,6 @@ export default class HumidifierDropDown extends ScopedRegistryHost(LitElement) {
         margin: 0;
         overflow: hidden;
         transition: background .5s;
-        --paper-item-min-height: var(--mh-unit);
         --mh-dropdown-unit: var(--mh-unit);
       }
       :host([color]) {

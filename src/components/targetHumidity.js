@@ -1,7 +1,17 @@
 import { css, html, LitElement } from 'lit';
 import { styleMap } from 'lit/directives/style-map';
+import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
+import buildElementDefinitions from '../utils/buildElementDefinitions';
+import HumidifierSlider from './ha/slider';
+import HumidifierIcon from './ha/icon';
 
-export default class HumidifierTargetHumidity extends LitElement {
+export default class HumidifierTargetHumidity extends ScopedRegistryHost(LitElement) {
+  static get defineId() { return 'mh-target-humidity'; }
+
+  static get elementDefinitions() {
+    return buildElementDefinitions([HumidifierSlider, HumidifierIcon]);
+  }
+
   static get properties() {
     return {
       targetHumidity: { type: Object },

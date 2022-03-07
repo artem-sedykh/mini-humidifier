@@ -1,9 +1,19 @@
 import { LitElement, html, css } from 'lit';
+import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
 import { styleMap } from 'lit/directives/style-map';
 import handleClick from '../utils/handleClick';
 import { TAP_ACTIONS } from '../const';
+import HumidifierIcon from './ha/icon';
+import buildElementDefinitions from '../utils/buildElementDefinitions';
 
-export default class HumidifierIndicators extends LitElement {
+
+export default class HumidifierIndicators extends ScopedRegistryHost(LitElement) {
+  static get defineId() { return 'mh-indicators'; }
+
+  static get elementDefinitions() {
+    return buildElementDefinitions([HumidifierIcon]);
+  }
+
   static get properties() {
     return {
       indicators: {},

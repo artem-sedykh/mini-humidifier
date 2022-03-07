@@ -112,10 +112,10 @@ export default class HumidifierDropdownBase extends ScopedRegistryHost(LitElemen
         mwc-item > *:nth-child(2) {
           margin-left: 4px;
         }
-        .mc-dropdown[focused] ha-icon-button {
+        .mh-dropdown[focused] ha-icon-button {
           color: var(--mh-accent-color);
         }
-        .mc-dropdown[focused] ha-icon-button[focused] {
+        .mh-dropdown[focused] ha-icon-button[focused] {
           color: var(--mh-text-color);
           transform: rotate(0deg);
         }

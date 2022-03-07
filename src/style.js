@@ -12,12 +12,11 @@ const style = css`
     --mh-accent-color: var(--mini-humidifier-accent-color, var(--accent-color, #f39c12));
     --mh-text-color: var(--mini-humidifier-base-color, var(--primary-text-color, #000));
     --mh-active-color: var(--mh-accent-color);
-    --mh-button-color: var(--mini-humidifier-button-color, var(--paper-item-icon-color, #44739e));
+    --mh-button-color: var(--mini-humidifier-button-color, #44739e);
     --mh-icon-color:
       var(--mini-humidifier-icon-color,
-        var(--mini-humidifier-base-color,
-          var(--paper-item-icon-color, #44739e)));
-    --mh-icon-active-color: var(--paper-item-icon-active-color, --mh-active-color);
+        var(--mini-humidifier-base-color, #44739e));
+    --mh-icon-active-color: var(--mh-active-color);
     --mh-info-opacity: 1;
     --mh-bg-opacity: var(--mini-humidifier-background-opacity, 1);
     color: var(--mh-text-color);
@@ -48,7 +47,7 @@ const style = css`
     display: none;
   }
   .mh__bg {
-    background: var(--ha-card-background, var(--card-background-color, var(--paper-card-background-color, white)));
+    background: var(--ha-card-background, var(--card-background-color, white));
     position: absolute;
     top: 0; right: 0; bottom: 0; left: 0;
     overflow: hidden;
