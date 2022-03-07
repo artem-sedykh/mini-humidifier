@@ -1,7 +1,7 @@
-import { css, html, LitElement } from 'lit-element';
-import { styleMap } from 'lit-html/directives/style-map';
+import { css, html, LitElement } from 'lit';
+import { styleMap } from 'lit/directives/style-map';
 
-class TargetHumidity extends LitElement {
+export default class HumidifierTargetHumidity extends LitElement {
   static get properties() {
     return {
       targetHumidity: { type: Object },
@@ -27,11 +27,11 @@ class TargetHumidity extends LitElement {
     this.timer = setTimeout(async () => {
       if (this.targetHumidity.entity === entity) {
         this.sliderValue = this.targetHumidity.value;
-        return this.requestUpdate('sliderValue');
+        this.requestUpdate('sliderValue');
       }
     }, this.targetHumidity.actionTimeout);
 
-    return this.requestUpdate('sliderValue');
+    this.requestUpdate('sliderValue');
   }
 
   renderState() {
@@ -123,5 +123,3 @@ class TargetHumidity extends LitElement {
     `;
   }
 }
-
-customElements.define('mh-target-humidity', TargetHumidity);

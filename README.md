@@ -15,6 +15,9 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
 ![Preview Image](https://user-images.githubusercontent.com/861063/83651482-3171c700-a5c2-11ea-8053-f66472a8d539.png)
 
+## Notice
+v3 is only compatible from version 2022.3 onwards
+
 ## Install
 
 *This card is available in [HACS](https://github.com/custom-components/hacs) (Home Assistant Community Store)*

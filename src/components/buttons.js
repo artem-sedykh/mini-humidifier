@@ -1,9 +1,17 @@
-import { LitElement, html, css } from 'lit-element';
+import { LitElement, html, css } from 'lit';
+import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
 import sharedStyle from '../sharedStyle';
-import './dropdown';
-import './button';
+import HumidifierButton from './button';
+import HumidifierDropDown from './dropdown';
+import buildElementDefinitions from '../utils/buildElementDefinitions';
 
-class HumidifierButtons extends LitElement {
+export default class HumidifierButtons extends ScopedRegistryHost(LitElement) {
+  static get defineId() { return 'mh-buttons'; }
+
+  static get elementDefinitions() {
+    return buildElementDefinitions([HumidifierDropDown, HumidifierButton]);
+  }
+
   static get properties() {
     return {
       buttons: {},
@@ -70,5 +78,3 @@ class HumidifierButtons extends LitElement {
     `];
   }
 }
-
-customElements.define('mh-buttons', HumidifierButtons);

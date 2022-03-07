@@ -1,8 +1,8 @@
-import { css, html, LitElement } from 'lit-element';
+import { css, html, LitElement } from 'lit';
 import sharedStyle from '../sharedStyle';
 import './button';
 
-class PowerButton extends LitElement {
+export default class HumidifierPower extends LitElement {
   constructor() {
     super();
     this._isOn = false;
@@ -54,5 +54,3 @@ class PowerButton extends LitElement {
     `];
   }
 }
-
-customElements.define('mh-power', PowerButton);

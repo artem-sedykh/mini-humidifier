@@ -1,9 +1,9 @@
-import { LitElement, html, css } from 'lit-element';
-import { styleMap } from 'lit-html/directives/style-map';
+import { LitElement, html, css } from 'lit';
+import { styleMap } from 'lit/directives/style-map';
 import handleClick from '../utils/handleClick';
 import { TAP_ACTIONS } from '../const';
 
-class HumidifierIndicators extends LitElement {
+export default class HumidifierIndicators extends LitElement {
   static get properties() {
     return {
       indicators: {},
@@ -106,5 +106,3 @@ class HumidifierIndicators extends LitElement {
     `;
   }
 }
-
-customElements.define('mh-indicators', HumidifierIndicators);
