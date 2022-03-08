@@ -12,11 +12,12 @@ const style = css`
     --mh-accent-color: var(--mini-humidifier-accent-color, var(--accent-color, #f39c12));
     --mh-text-color: var(--mini-humidifier-base-color, var(--primary-text-color, #000));
     --mh-active-color: var(--mh-accent-color);
-    --mh-button-color: var(--mini-humidifier-button-color, #44739e);
+    --mh-button-color: var(--mini-humidifier-button-color, var(--state-icon-color, #44739e));
     --mh-icon-color:
       var(--mini-humidifier-icon-color,
-        var(--mini-humidifier-base-color, #44739e));
-    --mh-icon-active-color: var(--mh-active-color);
+        var(--mini-humidifier-base-color,
+          var(--state-icon-color, #44739e)));
+    --mh-icon-active-color: var(--state-icon-active-color, --mh-active-color);
     --mh-info-opacity: 1;
     --mh-bg-opacity: var(--mini-humidifier-background-opacity, 1);
     color: var(--mh-text-color);
