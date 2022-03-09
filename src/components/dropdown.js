@@ -9,7 +9,7 @@ export default class HumidifierDropDown extends ScopedRegistryHost(LitElement) {
   static get defineId() { return 'mh-dropdown'; }
 
   static get elementDefinitions() {
-    return buildElementDefinitions([HumidifierDropdownBase]);
+    return buildElementDefinitions([HumidifierDropdownBase], HumidifierDropDown);
   }
 
   constructor() {

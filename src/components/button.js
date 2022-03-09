@@ -2,15 +2,17 @@ import { LitElement, html, css } from 'lit';
 import { styleMap } from 'lit/directives/style-map';
 import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
 import sharedStyle from '../sharedStyle';
-import HumidifierIcon from './ha/icon';
-import HumidifierIconButton from './ha/icon-button';
 import buildElementDefinitions from '../utils/buildElementDefinitions';
+import globalElementLoader from '../utils/globalElementLoader';
 
 export default class HumidifierButton extends ScopedRegistryHost(LitElement) {
   static get defineId() { return 'mh-button'; }
 
   static get elementDefinitions() {
-    return buildElementDefinitions([HumidifierIcon, HumidifierIconButton]);
+    return buildElementDefinitions([
+      globalElementLoader('ha-icon'),
+      globalElementLoader('ha-icon-button'),
+    ], HumidifierButton);
   }
 
   constructor() {

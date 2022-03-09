@@ -7,7 +7,7 @@ export default class HumidifierMenuSurface extends ScopedRegistryHost(MenuSurfac
   static get defineId() { return 'mwc-menu-surface'; }
 
   static get elementDefinitions() {
-    return buildElementDefinitions();
+    return buildElementDefinitions([], HumidifierMenuSurface);
   }
 
   static get styles() {

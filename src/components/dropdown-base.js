@@ -3,20 +3,19 @@ import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
 import sharedStyle from '../sharedStyle';
 import HumidifierMenu from './mwc/menu';
 import HumidifierListItem from './mwc/list-item';
-import HumidifierIcon from './ha/icon';
-import HumidifierIconButton from './ha/icon-button';
 import buildElementDefinitions from '../utils/buildElementDefinitions';
+import globalElementLoader from '../utils/globalElementLoader';
 
 export default class HumidifierDropdownBase extends ScopedRegistryHost(LitElement) {
   static get defineId() { return 'mh-dropdown-base'; }
 
   static get elementDefinitions() {
     return buildElementDefinitions([
-      HumidifierIcon,
-      HumidifierIconButton,
+      globalElementLoader('ha-icon'),
+      globalElementLoader('ha-icon-button'),
       HumidifierMenu,
       HumidifierListItem,
-    ]);
+    ], HumidifierDropdownBase);
   }
 
   static get properties() {

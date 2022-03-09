@@ -17,28 +17,25 @@ import getLabel from './utils/getLabel';
 import './initialize';
 import HUMIDIFIERS from './humidifiers';
 import localize from './localize/localize';
-import HumidifierCard from './components/ha/card';
-import HumidifierIcon from './components/ha/icon';
 import HumidifierTargetHumidity from './components/targetHumidity';
 import HumidifierPower from './components/power';
 import HumidifierIndicators from './components/indicators';
-import HumidifierIconButton from './components/ha/icon-button';
 import HumidifierButtons from './components/buttons';
-import HumidifierRelativeTime from './components/ha/relative-time';
 import buildElementDefinitions from './utils/buildElementDefinitions';
+import globalElementLoader from './utils/globalElementLoader';
 
 class MiniHumidifier extends ScopedRegistryHost(LitElement) {
   static get elementDefinitions() {
     return buildElementDefinitions([
-      HumidifierCard,
-      HumidifierIcon,
-      HumidifierRelativeTime,
+      globalElementLoader('ha-card'),
+      globalElementLoader('ha-icon'),
+      globalElementLoader('ha-relative-time'),
       HumidifierTargetHumidity,
       HumidifierPower,
       HumidifierIndicators,
-      HumidifierIconButton,
+      globalElementLoader('ha-icon-button'),
       HumidifierButtons,
-    ]);
+    ], MiniHumidifier);
   }
 
   constructor() {

@@ -8,7 +8,7 @@ export default class HumidifierList extends ScopedRegistryHost(ListBase) {
   static get defineId() { return 'mwc-list'; }
 
   static get elementDefinitions() {
-    return buildElementDefinitions([HumidifierListItem]);
+    return buildElementDefinitions([HumidifierListItem], HumidifierList);
   }
 
   static get styles() {

@@ -7,7 +7,7 @@ export default class HumidifierRipple extends ScopedRegistryHost(RippleBase) {
   static get defineId() { return 'mwc-ripple'; }
 
   static get elementDefinitions() {
-    return buildElementDefinitions();
+    return buildElementDefinitions([], HumidifierRipple);
   }
 
   static get styles() {

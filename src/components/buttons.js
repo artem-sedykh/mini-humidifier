@@ -9,7 +9,7 @@ export default class HumidifierButtons extends ScopedRegistryHost(LitElement) {
   static get defineId() { return 'mh-buttons'; }
 
   static get elementDefinitions() {
-    return buildElementDefinitions([HumidifierDropDown, HumidifierButton]);
+    return buildElementDefinitions([HumidifierDropDown, HumidifierButton], HumidifierButtons);
   }
 
   static get properties() {
