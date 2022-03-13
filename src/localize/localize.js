@@ -1,9 +1,11 @@
 import * as en from './languages/en.json';
 import * as ru from './languages/ru.json';
+import * as uk from './languages/uk.json';
 
 const languages = {
   en,
   ru,
+  uk,
 };
 
 const getPropertyValue = (obj, property) => {
