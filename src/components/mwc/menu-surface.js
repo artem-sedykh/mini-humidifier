@@ -1,6 +1,7 @@
 import { MenuSurfaceBase } from '@material/mwc-menu/mwc-menu-surface-base';
 import { styles as menuSurfaceStyles } from '@material/mwc-menu/mwc-menu-surface.css';
 import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
+import { css } from 'lit';
 import buildElementDefinitions from '../../utils/buildElementDefinitions';
 
 export default class HumidifierMenuSurface extends ScopedRegistryHost(MenuSurfaceBase) {
@@ -11,6 +12,13 @@ export default class HumidifierMenuSurface extends ScopedRegistryHost(MenuSurfac
   }
 
   static get styles() {
-    return menuSurfaceStyles;
+    return [
+      menuSurfaceStyles,
+      css`
+        .mdc-menu-surface {
+          position: fixed!important;
+        }
+      `,
+    ];
   }
 }

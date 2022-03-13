@@ -60,7 +60,7 @@ export default class HumidifierDropdownBase extends ScopedRegistryHost(LitElemen
                         ?color=${this.active}>
           <ha-icon .icon=${this.icon}></ha-icon>
         </ha-icon-button>
-        <mwc-menu fixed
+        <mwc-menu absolute
                   id=${'menu'}
                   ?quick=${true}
                   .menuCorner=${'END'}
