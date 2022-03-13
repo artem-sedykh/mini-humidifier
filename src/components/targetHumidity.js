@@ -1,7 +1,19 @@
-import { css, html, LitElement } from 'lit-element';
-import { styleMap } from 'lit-html/directives/style-map';
+import { css, html, LitElement } from 'lit';
+import { styleMap } from 'lit/directives/style-map';
+import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
+import buildElementDefinitions from '../utils/buildElementDefinitions';
+import globalElementLoader from '../utils/globalElementLoader';
 
-class TargetHumidity extends LitElement {
+export default class HumidifierTargetHumidity extends ScopedRegistryHost(LitElement) {
+  static get defineId() { return 'mh-target-humidity'; }
+
+  static get elementDefinitions() {
+    return buildElementDefinitions([
+      globalElementLoader('ha-slider'),
+      globalElementLoader('ha-icon'),
+    ], HumidifierTargetHumidity);
+  }
+
   static get properties() {
     return {
       targetHumidity: { type: Object },
@@ -27,11 +39,11 @@ class TargetHumidity extends LitElement {
     this.timer = setTimeout(async () => {
       if (this.targetHumidity.entity === entity) {
         this.sliderValue = this.targetHumidity.value;
-        return this.requestUpdate('sliderValue');
+        this.requestUpdate('sliderValue');
       }
     }, this.targetHumidity.actionTimeout);
 
-    return this.requestUpdate('sliderValue');
+    this.requestUpdate('sliderValue');
   }
 
   renderState() {
@@ -123,5 +135,3 @@ class TargetHumidity extends LitElement {
     `;
   }
 }
-
-customElements.define('mh-target-humidity', TargetHumidity);

@@ -1,17 +1,13 @@
-import { html, LitElement } from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
-import { styleMap } from 'lit-html/directives/style-map';
+import { html, LitElement } from 'lit';
+import { classMap } from 'lit/directives/class-map';
+import { styleMap } from 'lit/directives/style-map';
+import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
 
 import style from './style';
 import sharedStyle from './sharedStyle';
 import handleClick from './utils/handleClick';
 import { compileTemplate, toggleState } from './utils/utils';
 import { ICON, SUPPORTED_DOMAINS } from './const';
-import './components/dropdown';
-import './components/indicators';
-import './components/buttons';
-import './components/targetHumidity';
-import './components/power';
 
 import IndicatorObject from './models/indicator';
 import ButtonObject from './models/button';
@@ -21,22 +17,27 @@ import getLabel from './utils/getLabel';
 import './initialize';
 import HUMIDIFIERS from './humidifiers';
 import localize from './localize/localize';
+import HumidifierTargetHumidity from './components/targetHumidity';
+import HumidifierPower from './components/power';
+import HumidifierIndicators from './components/indicators';
+import HumidifierButtons from './components/buttons';
+import buildElementDefinitions from './utils/buildElementDefinitions';
+import globalElementLoader from './utils/globalElementLoader';
 
-if (!customElements.get('ha-slider')) {
-  customElements.define(
-    'ha-slider',
-    class extends customElements.get('paper-slider') {},
-  );
-}
+class MiniHumidifier extends ScopedRegistryHost(LitElement) {
+  static get elementDefinitions() {
+    return buildElementDefinitions([
+      globalElementLoader('ha-card'),
+      globalElementLoader('ha-icon'),
+      globalElementLoader('ha-relative-time'),
+      HumidifierTargetHumidity,
+      HumidifierPower,
+      HumidifierIndicators,
+      globalElementLoader('ha-icon-button'),
+      HumidifierButtons,
+    ], MiniHumidifier);
+  }
 
-if (!customElements.get('ha-icon-button')) {
-  customElements.define(
-    'ha-icon-button',
-    class extends customElements.get('paper-icon-button') {},
-  );
-}
-
-class MiniHumidifier extends LitElement {
   constructor() {
     super();
     this.initial = true;

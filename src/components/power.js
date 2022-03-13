@@ -1,8 +1,20 @@
-import { css, html, LitElement } from 'lit-element';
+import { css, html, LitElement } from 'lit';
+import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
 import sharedStyle from '../sharedStyle';
-import './button';
+import buildElementDefinitions from '../utils/buildElementDefinitions';
+import HumidifierButton from './button';
+import globalElementLoader from '../utils/globalElementLoader';
 
-class PowerButton extends LitElement {
+export default class HumidifierPower extends ScopedRegistryHost(LitElement) {
+  static get defineId() { return 'mh-power'; }
+
+  static get elementDefinitions() {
+    return buildElementDefinitions([
+      HumidifierButton,
+      globalElementLoader('ha-entity-toggle'),
+    ], HumidifierPower);
+  }
+
   constructor() {
     super();
     this._isOn = false;
@@ -54,5 +66,3 @@ class PowerButton extends LitElement {
     `];
   }
 }
-
-customElements.define('mh-power', PowerButton);

@@ -1,8 +1,20 @@
-import { LitElement, html, css } from 'lit-element';
-import { styleMap } from 'lit-html/directives/style-map';
+import { LitElement, html, css } from 'lit';
+import { styleMap } from 'lit/directives/style-map';
+import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
 import sharedStyle from '../sharedStyle';
+import buildElementDefinitions from '../utils/buildElementDefinitions';
+import globalElementLoader from '../utils/globalElementLoader';
 
-class HumidifierButton extends LitElement {
+export default class HumidifierButton extends ScopedRegistryHost(LitElement) {
+  static get defineId() { return 'mh-button'; }
+
+  static get elementDefinitions() {
+    return buildElementDefinitions([
+      globalElementLoader('ha-icon'),
+      globalElementLoader('ha-icon-button'),
+    ], HumidifierButton);
+  }
+
   constructor() {
     super();
     this._isOn = false;
@@ -33,11 +45,11 @@ class HumidifierButton extends LitElement {
 
       if (changed === false) {
         this._isOn = this.button.isOn;
-        return this.requestUpdate('_isOn');
+        this.requestUpdate('_isOn');
       }
     }, this.button.actionTimeout);
 
-    return this.requestUpdate('_isOn');
+    this.requestUpdate('_isOn');
   }
 
   render() {
@@ -60,7 +72,7 @@ class HumidifierButton extends LitElement {
 
       clearTimeout(this.timer);
 
-      return this.requestUpdate('_isOn');
+      this.requestUpdate('_isOn');
     }
   }
 
@@ -74,7 +86,6 @@ class HumidifierButton extends LitElement {
         margin: 0;
         overflow: hidden;
         transition: background .5s;
-        --paper-item-min-height: var(--mh-unit);
         --mh-dropdown-unit: var(--mh-unit);
       }
       :host([color]) {
@@ -89,5 +100,3 @@ class HumidifierButton extends LitElement {
     `];
   }
 }
-
-customElements.define('mh-button', HumidifierButton);
