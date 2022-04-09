@@ -16,6 +16,7 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRPURIFIER_MB3 = () => ({
     min: 0,
     max: 14,
     step: 1,
+    hide: (state, entity) => (entity.preset_mode !== 'Favorite'),
     state: { entity: 'input_number.{entity_id}_favorite_level' },
     change_action: (selected, state, entity) => {
       const options = { entity_id: entity.entity_id, value: selected };
@@ -80,7 +81,7 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRPURIFIER_MB3 = () => ({
   },
   buttons: {
     mode: {
-      icon: ICON.FAN,
+      icon: 'mdi:form-select',
       type: 'dropdown',
       hide: false,
       order: 1,
@@ -108,6 +109,7 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRPURIFIER_MB3 = () => ({
         2: 'Medium',
         3: 'High',
       },
+      active: (state, entity) => (entity.preset_mode === 'Fan'),
       state: { attribute: 'fan_level' },
       change_action: (selected, state, entity) => {
         const options = { entity_id: entity.entity_id, level: selected };
