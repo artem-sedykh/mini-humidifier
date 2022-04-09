@@ -14,13 +14,13 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRPURIFIER_MB3 = () => ({
   target_humidity: {
     unit: '',
     min: 0,
-    max: 14,
+    max: 16,
     step: 1,
     disabled: (state, entity) => (entity.state !== 'on' || entity.attributes.preset_mode !== 'Favorite'),
     state: { attribute: 'favorite_level' },
     change_action: (selected, state, entity) => {
-      const options = { entity_id: entity.entity_id, speed: selected };
-      return this.call_service('xiaomi_miio_airpurifier', 'fan_set_favorite_speed', options);
+      const options = { entity_id: entity.entity_id, level: selected };
+      return this.call_service('xiaomi_miio_airpurifier', 'fan_set_favorite_level', options);
     },
   },
   indicators: {
