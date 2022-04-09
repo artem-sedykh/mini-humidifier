@@ -29,7 +29,7 @@ v3 is only compatible from version 2022.3 onwards
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=3.0.2
+    - url: /local/mini-humidifier-bundle.js?v=3.0.3
       type: module
   ```
 
@@ -40,14 +40,14 @@ v3 is only compatible from version 2022.3 onwards
 2. Grab `mini-humidifier-bundle.js`
 
   ```console
-  $ wget https://github.com/artem-sedykh/mini-humidifier/releases/download/v3.0.2/mini-humidifier-bundle.js
+  $ wget https://github.com/artem-sedykh/mini-humidifier/releases/download/v3.0.3/mini-humidifier-bundle.js
   ```
 
 3. Add a reference to `mini-humidifier-bundle.js` inside your `configuration.yaml`.
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=3.0.2
+    - url: /local/mini-humidifier-bundle.js?v=3.0.3
       type: module
   ```
 
@@ -60,7 +60,7 @@ v3 is only compatible from version 2022.3 onwards
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=3.0.2
+    - url: /local/mini-humidifier-bundle.js?v=3.0.3
       type: module
   ```
 
@@ -195,6 +195,7 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
  `xiaomi_miio_airpurifier:deerma.humidifier.mjjsq` - [xiaomi_miio_airpurifier integration](https://github.com/syssi/xiaomi_airpurifier)  
  `xiaomi_miio_airpurifier:zhimi.humidifier.cb1` - [xiaomi_miio_airpurifier integration](https://github.com/syssi/xiaomi_airpurifier)  
  `xiaomi_miio_airpurifier:zhimi.humidifier.ca4` by @ravikwow - [xiaomi_miio_airpurifier integration](https://github.com/syssi/xiaomi_airpurifier)  
+ `xiaomi_miio_airpurifier:zhimi.airpurifier.mb3` by @regevbr - [xiaomi_miio_airpurifier integration](https://github.com/syssi/xiaomi_airpurifier)  
  
 > Using the default configuration for a specific model
 
