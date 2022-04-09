@@ -16,8 +16,8 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRPURIFIER_MB3 = () => ({
     min: 0,
     max: 14,
     step: 1,
-    disabled: (state, entity, humidEntity) => (humidEntity.state !== 'on' || humidEntity.attributes.preset_mode !== 'Favorite'),
-    state: { entity: 'input_number.{entity_id}_favorite_level' },
+    disabled: (state, entity) => (entity.state !== 'on' || entity.attributes.preset_mode !== 'Favorite'),
+    state: { attribute: 'favorite_level' },
     change_action: (selected, state, entity) => {
       const options = { entity_id: entity.entity_id, value: selected };
       return this.call_service('input_number', 'set_value', options);
