@@ -4,11 +4,8 @@ const buildElementDefinitions = (elements, constructor) => elements.reduce(
       // eslint-disable-next-line no-param-reassign
       aggregate[element.defineId] = element;
     } else {
-      element.promise.then((clazz) => {
-        if (constructor.registry.get(element.name) === undefined) {
-          constructor.registry.define(element.name, clazz);
-        }
-      });
+      // eslint-disable-next-line no-param-reassign
+      aggregate[element.name] = element.element;
     }
     return aggregate;
   }, {},
