@@ -4,18 +4,17 @@ import sharedStyle from '../sharedStyle';
 import HumidifierMenu from './mwc/menu';
 import HumidifierListItem from './mwc/list-item';
 import buildElementDefinitions from '../utils/buildElementDefinitions';
-import globalElementLoader from '../utils/globalElementLoader';
 
 export default class HumidifierDropdownBase extends ScopedRegistryHost(LitElement) {
   static get defineId() { return 'mh-dropdown-base'; }
 
   static get elementDefinitions() {
     return buildElementDefinitions([
-      globalElementLoader('ha-icon'),
-      globalElementLoader('ha-icon-button'),
+      'ha-icon',
+      'ha-icon-button',
       HumidifierMenu,
       HumidifierListItem,
-    ], HumidifierDropdownBase);
+    ]);
   }
 
   static get properties() {

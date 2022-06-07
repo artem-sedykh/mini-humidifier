@@ -3,16 +3,12 @@ import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
 import sharedStyle from '../sharedStyle';
 import buildElementDefinitions from '../utils/buildElementDefinitions';
 import HumidifierButton from './button';
-import globalElementLoader from '../utils/globalElementLoader';
 
 export default class HumidifierPower extends ScopedRegistryHost(LitElement) {
   static get defineId() { return 'mh-power'; }
 
   static get elementDefinitions() {
-    return buildElementDefinitions([
-      HumidifierButton,
-      globalElementLoader('ha-entity-toggle'),
-    ], HumidifierPower);
+    return buildElementDefinitions([HumidifierButton, 'ha-entity-toggle']);
   }
 
   constructor() {

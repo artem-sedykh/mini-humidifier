@@ -4,14 +4,13 @@ import { styleMap } from 'lit/directives/style-map';
 import handleClick from '../utils/handleClick';
 import { TAP_ACTIONS } from '../const';
 import buildElementDefinitions from '../utils/buildElementDefinitions';
-import globalElementLoader from '../utils/globalElementLoader';
 
 
 export default class HumidifierIndicators extends ScopedRegistryHost(LitElement) {
   static get defineId() { return 'mh-indicators'; }
 
   static get elementDefinitions() {
-    return buildElementDefinitions([globalElementLoader('ha-icon')], HumidifierIndicators);
+    return buildElementDefinitions(['ha-icon']);
   }
 
   static get properties() {

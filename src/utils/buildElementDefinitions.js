@@ -1,11 +1,11 @@
-const buildElementDefinitions = (elements, constructor) => elements.reduce(
+const buildElementDefinitions = elements => elements.reduce(
   (aggregate, element) => {
     if (element.defineId) {
       // eslint-disable-next-line no-param-reassign
       aggregate[element.defineId] = element;
-    } else {
+    } else if (typeof element === 'string') {
       // eslint-disable-next-line no-param-reassign
-      aggregate[element.name] = element.element;
+      aggregate[element] = customElements.get(element);
     }
     return aggregate;
   }, {},
