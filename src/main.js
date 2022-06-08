@@ -22,18 +22,17 @@ import HumidifierPower from './components/power';
 import HumidifierIndicators from './components/indicators';
 import HumidifierButtons from './components/buttons';
 import buildElementDefinitions from './utils/buildElementDefinitions';
-import globalElementLoader from './utils/globalElementLoader';
 
 class MiniHumidifier extends ScopedRegistryHost(LitElement) {
   static get elementDefinitions() {
     return buildElementDefinitions([
-      globalElementLoader('ha-card'),
-      globalElementLoader('ha-icon'),
-      globalElementLoader('ha-relative-time'),
+      'ha-card',
+      'ha-icon',
+      'ha-relative-time',
       HumidifierTargetHumidity,
       HumidifierPower,
       HumidifierIndicators,
-      globalElementLoader('ha-icon-button'),
+      'ha-icon-button',
       HumidifierButtons,
     ], MiniHumidifier);
   }
@@ -439,6 +438,10 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
   }
 
   render() {
+    if (!MiniHumidifier.elementDefinitionsLoaded) {
+      return html``;
+    }
+
     const cls = this.config.target_humidity.hide ? 'full' : '';
     return html`
       <ha-card
