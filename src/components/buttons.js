@@ -45,6 +45,10 @@ export default class HumidifierButtons extends ScopedRegistryHost(LitElement) {
   }
 
   render() {
+    if (!HumidifierButtons.elementDefinitionsLoaded) {
+      return html``;
+    }
+
     const context = this;
     return html`${Object.entries(this.buttons)
       .map(b => b[1])

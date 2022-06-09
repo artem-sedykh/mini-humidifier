@@ -49,6 +49,10 @@ export default class HumidifierDropDown extends ScopedRegistryHost(LitElement) {
   }
 
   render() {
+    if (!HumidifierDropDown.elementDefinitionsLoaded) {
+      return html``;
+    }
+
     clearTimeout(this.timer);
 
     return html`
