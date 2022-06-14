@@ -4,12 +4,8 @@
 
 A minimalistic yet customizable humidifier card for [Home Assistant](https://github.com/home-assistant/home-assistant) Lovelace UI.
 
-Tested on [zhimi.humidifier.cb1](https://www.home-assistant.io/integrations/fan.xiaomi_miio/)
-
-> Attention! The config version *v1.0.8* **very differs** from version >= *v2.0.1*  
-> Read the [README](https://github.com/artem-sedykh/mini-humidifier)  before upgrading
-
-![Preview Image](https://user-images.githubusercontent.com/861063/83651482-3171c700-a5c2-11ea-8053-f66472a8d539.png)
-
+<p align="center">
+  <img src="https://raw.githubusercontent.com/artem-sedykh/mini-climate-card/master/images/preview.png" />
+</p>
 
 **Check the [repository](https://github.com/artem-sedykh/mini-humidifier) for card options & example configurations**  

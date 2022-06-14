@@ -12,7 +12,9 @@ Please ⭐️ this repo if you find it useful
 
 Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 
-![Preview Image](https://raw.githubusercontent.com/artem-sedykh/mini-climate-card/master/images/preview.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/artem-sedykh/mini-climate-card/master/images/preview.png" />
+</p>
 
 ## Notice
 v3 is only compatible from version 2022.3 onwards
