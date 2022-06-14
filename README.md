@@ -29,7 +29,7 @@ v3 is only compatible from version 2022.3 onwards
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=3.0.4
+    - url: /local/mini-humidifier-bundle.js?v=3.1.0
       type: module
   ```
 
@@ -40,14 +40,14 @@ v3 is only compatible from version 2022.3 onwards
 2. Grab `mini-humidifier-bundle.js`
 
   ```console
-  $ wget https://github.com/artem-sedykh/mini-humidifier/releases/download/v3.0.4/mini-humidifier-bundle.js
+  $ wget https://github.com/artem-sedykh/mini-humidifier/releases/download/v3.1.0/mini-humidifier-bundle.js
   ```
 
 3. Add a reference to `mini-humidifier-bundle.js` inside your `configuration.yaml`.
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=3.0.4
+    - url: /local/mini-humidifier-bundle.js?v=3.1.0
       type: module
   ```
 
@@ -60,7 +60,7 @@ v3 is only compatible from version 2022.3 onwards
 
   ```yaml
   resources:
-    - url: /local/mini-humidifier-bundle.js?v=3.0.4
+    - url: /local/mini-humidifier-bundle.js?v=3.1.0
       type: module
   ```
 
@@ -200,27 +200,27 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 > Using the default configuration for a specific model
 
 ```yaml
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  # zhimi.humidifier.cb1 default value may be omitted, added for example.
-  model: 'zhimi.humidifier.cb1' 
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+# zhimi.humidifier.cb1 default value may be omitted, added for example.
+model: 'zhimi.humidifier.cb1' 
 ```
 
 [deerma.humidifier.mjjsq](https://github.com/artem-sedykh/mini-humidifier/blob/master/src/configurations/xiaomi_miio_airpurifier/deerma_humidifier_mjjsq.js)
 ```yaml
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  model: 'xiaomi_miio_airpurifier:deerma.humidifier.mjjsq' 
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+model: 'xiaomi_miio_airpurifier:deerma.humidifier.mjjsq' 
 ```
 > localize status indicator
 ```yaml
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  model: 'deerma.humidifier.mjjsq'
-  indicators:
-    status:
-      empty: пустой
-      filled: полный
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+model: 'deerma.humidifier.mjjsq'
+indicators:
+  status:
+    empty: пустой
+    filled: полный
 ```
 
 #### target humidity
@@ -248,25 +248,25 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 
 > Configuration example for the target_humidity:  
 ```yaml
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  target_humidity:
-    state:
-      attribute: target_humidity
-      mapper: (current_value, entity, humidifier_entity) => current_value
-    icon:
-      template: (current_value, entity, humidifier_entity) => 'mdi:tray-full'
-      style: "(current_value, entity, humidifier_entity) => ({ color: 'red' })"
-    unit: '%'
-    hide: off
-    min: 30
-    max: 80
-    step: 10
-    change_action: >
-      (value, current_value, entity, humidifier_entity) => {
-        const options = { entity_id: entity.entity_id, humidity: value };
-        return this.call_service('xiaomi_miio', 'fan_set_target_humidity', options);
-      }
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+target_humidity:
+  state:
+    attribute: target_humidity
+    mapper: (current_value, entity, humidifier_entity) => current_value
+  icon:
+    template: (current_value, entity, humidifier_entity) => 'mdi:tray-full'
+    style: "(current_value, entity, humidifier_entity) => ({ color: 'red' })"
+  unit: '%'
+  hide: off
+  min: 30
+  max: 80
+  step: 10
+  change_action: >
+    (value, current_value, entity, humidifier_entity) => {
+      const options = { entity_id: entity.entity_id, humidity: value };
+      return this.call_service('xiaomi_miio', 'fan_set_target_humidity', options);
+    }
 ``` 
 
 > The default configuration is configured for `zhimi.humidifier.cb1`,  
@@ -274,21 +274,21 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 > Example:
 
 ```yaml
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  target_humidity:
-    icon: 'mdi:water'
-    state:
-      attribute: target_humidity
-    unit: '%'
-    min: 30
-    max: 80
-    step: 10
-    change_action: >
-      (selected, state, entity) => {
-        const options = { entity_id: entity.entity_id, humidity: selected };
-        return this.call_service('xiaomi_miio', 'fan_set_target_humidity', options);
-      }
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+target_humidity:
+  icon: 'mdi:water'
+  state:
+    attribute: target_humidity
+  unit: '%'
+  min: 30
+  max: 80
+  step: 10
+  change_action: >
+    (selected, state, entity) => {
+      const options = { entity_id: entity.entity_id, humidity: selected };
+      return this.call_service('xiaomi_miio', 'fan_set_target_humidity', options);
+    }
 ``` 
 #### power button
 
@@ -319,49 +319,49 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 > Configuration example for the power button type `toggle`: 
   
 ```yaml
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  power:
-    hide: off
-  state:
-    mapper: (state, entity, humidifier_entity) => state
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+power:
+  hide: off
+state:
+  mapper: (state, entity, humidifier_entity) => state
 ``` 
 
 > Configuration example for the power button type `button`: 
   
 ```yaml
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  power:
-    icon: 'mdi:power'
-    type: button
-    state:
-      mapper: (state, entity, humidifier_entity) => state
-    hide: off
-    disabled: (state, entity, humidifier_entity) => false
-    style: "(state, entity, humidifier_entity) => ({ color: 'red' })"
-    toggle_action: >
-      (state, entity) => {
-        const service = state === 'on' ? 'turn_off' : 'turn_on';
-        return this.call_service('fan', service, { entity_id: entity.entity_id });
-      }
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+power:
+  icon: 'mdi:power'
+  type: button
+  state:
+    mapper: (state, entity, humidifier_entity) => state
+  hide: off
+  disabled: (state, entity, humidifier_entity) => false
+  style: "(state, entity, humidifier_entity) => ({ color: 'red' })"
+  toggle_action: >
+    (state, entity) => {
+      const service = state === 'on' ? 'turn_off' : 'turn_on';
+      return this.call_service('fan', service, { entity_id: entity.entity_id });
+    }
 ``` 
 > The default configuration is configured for `zhimi.humidifier.cb1`,  
 > to on / off, use the service `fan.turn_on`, `fan.turn_off`
 > Example:
 
  ```yaml
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  power:
-    icon: 'mdi:power'
-    type: button
-    hide: off
-    toggle_action: >
-       (current_state, entity) => {
-         const service = current_state === 'on' ? 'turn_off' : 'turn_on';
-         return this.call_service('fan', service, { entity_id: entity.entity_id });
-       }
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+power:
+  icon: 'mdi:power'
+  type: button
+  hide: off
+  toggle_action: >
+     (current_state, entity) => {
+       const service = current_state === 'on' ? 'turn_off' : 'turn_on';
+       return this.call_service('fan', service, { entity_id: entity.entity_id });
+     }
  ``` 
 
 #### Indicators
@@ -372,15 +372,15 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 
 > Adding a simple indicator:
 ```yaml
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  indicators:
-    test:
-      icon: mdi:water
-      unit: '%'
-      round: 1
-      source:
-        entity: sensor.humidity
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+indicators:
+  test:
+    icon: mdi:water
+    unit: '%'
+    round: 1
+    source:
+      entity: sensor.humidity
 ```
 ##### indicator functions
 
@@ -403,26 +403,26 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 > For zhimi.humidifier.cb1, a maximum depth value of 125 is used, which is 4 liters of tank,
 > let's get how much water is left in liters or in percent
 ```yaml
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  indicators:
-    depth:
-      icon: 'mdi:tray-full'
-      unit: '%'
-      round: 0
-      # variable used in mapper
-      max_value: 125
-      # variable used in mapper
-      volume: 4
-      # variable used in mapper
-      type: 'percent'
-      source:
-        attribute: depth
-        mapper: > 
-          (val) => {
-            const value = (100 * (val || 0)) / this.max_value;
-            return this.type === 'liters' ? (value * this.volume) / 100 : value;
-          }
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+indicators:
+  depth:
+    icon: 'mdi:tray-full'
+    unit: '%'
+    round: 0
+    # variable used in mapper
+    max_value: 125
+    # variable used in mapper
+    volume: 4
+    # variable used in mapper
+    type: 'percent'
+    source:
+      attribute: depth
+      mapper: > 
+        (val) => {
+          const value = (100 * (val || 0)) / this.max_value;
+          return this.type === 'liters' ? (value * this.volume) / 100 : value;
+        }
 ```
 
 ##### icon template, style
@@ -430,46 +430,46 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 > The indicator icon can be calculated dynamically
   for example:
 ```yaml
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  indicators:
-    depth:
-      icon:
-        template: >
-          (value) => {
-            if (value === 0)
-              return 'mdi:tray';
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+indicators:
+  depth:
+    icon:
+      template: >
+        (value) => {
+          if (value === 0)
+            return 'mdi:tray';
 
-            if (value <= 20)
-              return 'mdi:tray-minus';
+          if (value <= 20)
+            return 'mdi:tray-minus';
 
-            return 'mdi:tray-full';
-          }
-        style: >
-          (value) => {
-            if (value === 0)
-              return { color: 'red' };
+          return 'mdi:tray-full';
+        }
+      style: >
+        (value) => {
+          if (value === 0)
+            return { color: 'red' };
 
-            if (value <= 20)
-              return { color: '#FD451D' };
+          if (value <= 20)
+            return { color: '#FD451D' };
 
-            return {};
-          }
-      unit: '%'
-      round: 0
-      # variable used in mapper
-      max_value: 125
-      # variable used in mapper
-      volume: 4
-      # variable used in mapper
-      type: 'liters'
-      source:
-        attribute: depth
-        mapper: > 
-          (val) => {
-            const value = (100 * (val || 0)) / this.max_value;
-            return this.type === 'liters' ? (value * this.volume) / 100 : value;
-          }
+          return {};
+        }
+    unit: '%'
+    round: 0
+    # variable used in mapper
+    max_value: 125
+    # variable used in mapper
+    volume: 4
+    # variable used in mapper
+    type: 'liters'
+    source:
+      attribute: depth
+      mapper: > 
+        (val) => {
+          const value = (100 * (val || 0)) / this.max_value;
+          return this.type === 'liters' ? (value * this.volume) / 100 : value;
+        }
 ```
 
 ##### default-indicators
@@ -478,54 +478,54 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 > Their configuration looks like this:
 
 ```yaml
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  indicators:
-    depth:
-      icon: 'mdi:tray-full'
-      unit: '%'
-      round: 0
-      order: 0
-      max_value: 125
-      volume: 4
-      type: 'percent'
-      source:
-        attribute: depth
-        mapper: >
-          (val) => {
-            const value = (100 * (val || 0)) / this.max_value;
-            return this.type === 'liters' ? (value * this.volume) / 100 : value;
-          }
-    temperature:
-      icon: 'mdi:thermometer-low'
-      unit: '°C'
-      round: 1
-      order: 1
-      source:
-        attribute: temperature
-    humidity:
-      icon: 'mdi:water'
-      unit: '%'
-      round: 1
-      order: 2
-      source:
-        attribute: humidity
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+indicators:
+  depth:
+    icon: 'mdi:tray-full'
+    unit: '%'
+    round: 0
+    order: 0
+    max_value: 125
+    volume: 4
+    type: 'percent'
+    source:
+      attribute: depth
+      mapper: >
+        (val) => {
+          const value = (100 * (val || 0)) / this.max_value;
+          return this.type === 'liters' ? (value * this.volume) / 100 : value;
+        }
+  temperature:
+    icon: 'mdi:thermometer-low'
+    unit: '°C'
+    round: 1
+    order: 1
+    source:
+      attribute: temperature
+  humidity:
+    icon: 'mdi:water'
+    unit: '%'
+    round: 1
+    order: 2
+    source:
+      attribute: humidity
 ```
 
 > You can override the default indicators or even hide them and add your own
 > We will display the depth value in liters and change the humidity icon as well as hide the temperature:
 
 ```yaml
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  indicators:
-    depth:
-      unit: 'L'
-      type: 'liters'
-    humidity:
-      icon: 'mdi:water-outline'
-    temperature:
-      hide: on
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+indicators:
+  depth:
+    unit: 'L'
+    type: 'liters'
+  humidity:
+    icon: 'mdi:water-outline'
+  temperature:
+    hide: on
 ```
 
 #### Buttons
@@ -565,112 +565,112 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 > It looks like this:
 
 ```yaml
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  buttons:
-    dry:
-      icon: 'mdi:weather-sunny'
-      order: 0
-      state:
-        attribute: dry
-        # the dry attribute is of type boolean, for the button the state should be on/off/closed/locked/unavailable/unknown 
-        mapper: "(state) => (state ? 'on' : 'off')"
-        # service is used xiaomi_miio.fan_set_dry_on or xiaomi_miio.fan_set_dry_off
-      toggle_action: >
-          (state, entity) => {
-            const service = state === 'on' ? 'fan_set_dry_off' : 'fan_set_dry_on';
-            const options = { entity_id: entity.entity_id };
-            return this.call_service('xiaomi_miio', service, options);
-          }
-    # dropdown example
-    mode:
-      icon: 'mdi:fan'
-      order: 1
-      type: dropdown
-      state:
-        attribute: mode
-      source:
-        auto: auto
-        silent: silent
-        medium: medium
-        high: high
-      # The button will light up when the humidifier is on.
-      active: "(state, entity) => (entity.state !== 'off')"
-      # the button will be locked when depth is 0
-      # zhimi.humidifier.cb1 does not allow changing the mode when there is no water
-      disabled: "(state, entity) => (entity.attributes.depth === 0)"
-      # using service: fan.set_speed
-      change_action: >
-        (selected, state, entity) => {
-          const options = { entity_id: entity.entity_id, speed: selected };
-          return this.call_service('fan', 'set_speed', options);
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+buttons:
+  dry:
+    icon: 'mdi:weather-sunny'
+    order: 0
+    state:
+      attribute: dry
+      # the dry attribute is of type boolean, for the button the state should be on/off/closed/locked/unavailable/unknown 
+      mapper: "(state) => (state ? 'on' : 'off')"
+      # service is used xiaomi_miio.fan_set_dry_on or xiaomi_miio.fan_set_dry_off
+    toggle_action: >
+        (state, entity) => {
+          const service = state === 'on' ? 'fan_set_dry_off' : 'fan_set_dry_on';
+          const options = { entity_id: entity.entity_id };
+          return this.call_service('xiaomi_miio', service, options);
         }
-    led:
-      icon: mdi:lightbulb-on-outline
-      order: 2
-      type: dropdown
-      state:
-        attribute: led_brightness
-      source:
-        0: Bright
-        1: Dim
-        2: Off
-      # button is active while any state except 2 is selected
-      active: "state => (state !== 2 && state !== '2')"
-      # using service: xiaomi_miio.fan_set_led_brightness
-      change_action: >
-        (selected, state, entity) => {
-          const options = { entity_id: entity.entity_id, brightness: selected };
-          return this.call_service('xiaomi_miio', 'fan_set_led_brightness', options);
+  # dropdown example
+  mode:
+    icon: 'mdi:fan'
+    order: 1
+    type: dropdown
+    state:
+      attribute: mode
+    source:
+      auto: auto
+      silent: silent
+      medium: medium
+      high: high
+    # The button will light up when the humidifier is on.
+    active: "(state, entity) => (entity.state !== 'off')"
+    # the button will be locked when depth is 0
+    # zhimi.humidifier.cb1 does not allow changing the mode when there is no water
+    disabled: "(state, entity) => (entity.attributes.depth === 0)"
+    # using service: fan.set_speed
+    change_action: >
+      (selected, state, entity) => {
+        const options = { entity_id: entity.entity_id, speed: selected };
+        return this.call_service('fan', 'set_speed', options);
+      }
+  led:
+    icon: mdi:lightbulb-on-outline
+    order: 2
+    type: dropdown
+    state:
+      attribute: led_brightness
+    source:
+      0: Bright
+      1: Dim
+      2: Off
+    # button is active while any state except 2 is selected
+    active: "state => (state !== 2 && state !== '2')"
+    # using service: xiaomi_miio.fan_set_led_brightness
+    change_action: >
+      (selected, state, entity) => {
+        const options = { entity_id: entity.entity_id, brightness: selected };
+        return this.call_service('xiaomi_miio', 'fan_set_led_brightness', options);
+      }
+  buzzer:
+    icon: 'mdi:bell-outline'
+    order: 3
+    state:
+      attribute: buzzer
+      mapper: "(state) => (state ? 'on' : 'off')"
+      # using service: xiaomi_miio.fan_set_buzzer_on and xiaomi_miio.fan_set_buzzer_off
+    toggle_action: >
+        (state, entity) => {
+          const service = state === 'on' ? 'fan_set_buzzer_off' : 'fan_set_buzzer_on';
+          const options = { entity_id: entity.entity_id };
+          return this.call_service('xiaomi_miio', service, options);
         }
-    buzzer:
-      icon: 'mdi:bell-outline'
-      order: 3
-      state:
-        attribute: buzzer
-        mapper: "(state) => (state ? 'on' : 'off')"
-        # using service: xiaomi_miio.fan_set_buzzer_on and xiaomi_miio.fan_set_buzzer_off
-      toggle_action: >
-          (state, entity) => {
-            const service = state === 'on' ? 'fan_set_buzzer_off' : 'fan_set_buzzer_on';
-            const options = { entity_id: entity.entity_id };
-            return this.call_service('xiaomi_miio', service, options);
-          }
-    child_lock:
-      icon: 'mdi:lock'
-      order: 4
-      state:
-        attribute: child_lock
-        mapper: "(state) => (state ? 'on' : 'off')"
-        # using service: xiaomi_miio.fan_set_child_lock_on and xiaomi_miio.fan_set_child_lock_off
-      toggle_action: >
-          (state, entity) => {
-            const service = state === 'on' ? 'fan_set_child_lock_off' : 'fan_set_child_lock_on';
-            const options = { entity_id: entity.entity_id };
-            return this.call_service('xiaomi_miio', service, options);
-          }
+  child_lock:
+    icon: 'mdi:lock'
+    order: 4
+    state:
+      attribute: child_lock
+      mapper: "(state) => (state ? 'on' : 'off')"
+      # using service: xiaomi_miio.fan_set_child_lock_on and xiaomi_miio.fan_set_child_lock_off
+    toggle_action: >
+        (state, entity) => {
+          const service = state === 'on' ? 'fan_set_child_lock_off' : 'fan_set_child_lock_on';
+          const options = { entity_id: entity.entity_id };
+          return this.call_service('xiaomi_miio', service, options);
+        }
 ```
 
 > You can override the default buttons or even hide them and add your own
 > Let's add translations for the mode and led buttons and hide the child_lock button
 
 ```yaml
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  buttons:
-    mode:
-      source:
-        auto: Авто
-        silent: Тихий
-        medium: Средний
-        high: Высокий
-    led:
-      source:
-        0: Ярко
-        1: Тускло
-        2: Выкл
-    child_lock:
-      hide: on
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+buttons:
+  mode:
+    source:
+      auto: Авто
+      silent: Тихий
+      medium: Средний
+      high: Высокий
+  led:
+    source:
+      0: Ярко
+      1: Тускло
+      2: Выкл
+  child_lock:
+    hide: on
 ```
 
 > For some models of humidifiers, there are only two button backlight modes,
@@ -680,49 +680,49 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 > 1. override current led button
 
 ```yaml
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  buttons:
-    led:
-      type: 'button'
-      on_states: [0, 1]
-      off_value: 2
-      on_value: 1
-      state:
-        attribute: led_brightness
-        mapper: "(value) => (this.on_states.includes(value) ? 'on' : 'off')"
-      toggle_action: >
-          (state, entity) => {
-            const value = state === 'on' ? this.off_value : this.on_value;
-            const options = { entity_id: entity.entity_id, brightness: value };
-            return this.call_service('xiaomi_miio', 'fan_set_led_brightness', options);
-          }
-```
-
-> 2. Hide led button and add new
-
-```yaml
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  buttons:
-    led:
-      hide: on
-    new_led:
-      icon: 'mdi:lightbulb-on-outline'
-      type: 'button'
-      order: 2
-      on_states: [0, 1]
-      off_value: 2
-      on_value: 1
-      state:
-        attribute: led_brightness
-        mapper: "(value) => (this.on_states.includes(value) ? 'on' : 'off')"
-      toggle_action: >
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+buttons:
+  led:
+    type: 'button'
+    on_states: [0, 1]
+    off_value: 2
+    on_value: 1
+    state:
+      attribute: led_brightness
+      mapper: "(value) => (this.on_states.includes(value) ? 'on' : 'off')"
+    toggle_action: >
         (state, entity) => {
           const value = state === 'on' ? this.off_value : this.on_value;
           const options = { entity_id: entity.entity_id, brightness: value };
           return this.call_service('xiaomi_miio', 'fan_set_led_brightness', options);
         }
+```
+
+> 2. Hide led button and add new
+
+```yaml
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+buttons:
+  led:
+    hide: on
+  new_led:
+    icon: 'mdi:lightbulb-on-outline'
+    type: 'button'
+    order: 2
+    on_states: [0, 1]
+    off_value: 2
+    on_value: 1
+    state:
+      attribute: led_brightness
+      mapper: "(value) => (this.on_states.includes(value) ? 'on' : 'off')"
+    toggle_action: >
+      (state, entity) => {
+        const value = state === 'on' ? this.off_value : this.on_value;
+        const options = { entity_id: entity.entity_id, brightness: value };
+        return this.call_service('xiaomi_miio', 'fan_set_led_brightness', options);
+      }
 ```
 
 #### toggle button
@@ -732,24 +732,24 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 > For example, we want to always show control buttons, and toggle button hide:
 
 ```yaml
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  toggle:
-    default: on
-    hide: on
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+toggle:
+  default: on
+  hide: on
 ```
 
 #### secondary info
 
 ```yaml
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  secondary_info: last-changed
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+secondary_info: last-changed
 
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  secondary_info: #default type mode, changing icon
-    icon: 'mdi:fan'
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+secondary_info: #default type mode, changing icon
+  icon: 'mdi:fan'
 ```
 
 #### group
@@ -757,59 +757,59 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 > To display entities inside the container, set the group configuration parameter to `on`
 
 ```yaml
-- type: entities
-  title: Climate
-  show_header_toggle: true
-  state_color: true
-  entities:
-    - entity: fan.xiaomi_miio_device
-      type: custom:mini-humidifier
-      group: on
+type: entities
+title: Climate
+show_header_toggle: true
+state_color: true
+entities:
+  - entity: fan.xiaomi_miio_device
+    type: custom:mini-humidifier
+    group: on
 ```
 
 #### Action object options examples
 
 ```yaml
 # toggle example
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  tap_action:
-    action: toggle
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+tap_action:
+  action: toggle
 
 # call-service example
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  tap_action:
-    action: call-service
-    service: xiaomi_miio.fan_set_led_brightness
-    service_data:
-      brightness: 1
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+tap_action:
+  action: call-service
+  service: xiaomi_miio.fan_set_led_brightness
+  service_data:
+    brightness: 1
 
 # navigate example
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  tap_action:
-    action: navigate
-    navigation_path: '/lovelace/4'
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+tap_action:
+  action: navigate
+  navigation_path: '/lovelace/4'
 
 # navigate example
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  tap_action:
-    action: url
-    url: 'https://www.google.com/'
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+tap_action:
+  action: url
+  url: 'https://www.google.com/'
 
 # none example
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  tap_action: none
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+tap_action: none
 
 # more-info for custom entity example
-- type: custom:mini-humidifier
-  entity: fan.xiaomi_miio_device
-  tap_action:
-    action: more-info
-    entity: sensor.humidity
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+tap_action:
+  action: more-info
+  entity: sensor.humidity
 ```
 
 ## Development

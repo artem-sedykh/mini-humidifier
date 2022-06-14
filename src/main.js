@@ -37,6 +37,14 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
     ], MiniHumidifier);
   }
 
+  static getStubConfig(hass, unusedEntities, allEntities) {
+    let entity = unusedEntities.find(eid => eid.split('.')[0] === 'fan');
+    if (!entity) {
+      entity = allEntities.find(eid => eid.split('.')[0] === 'fan');
+    }
+    return { entity };
+  }
+
   constructor() {
     super();
     this.initial = true;
@@ -632,3 +640,11 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
 }
 
 customElements.define('mini-humidifier', MiniHumidifier);
+window.customCards = window.customCards || [];
+window.customCards.push({
+  type: 'mini-humidifier',
+  name: 'Mini Humidifier',
+  preview: true,
+  description: 'A custom humidifier card',
+  documentationURL: 'https://github.com/artem-sedykh/mini-humidifier',
+});
