@@ -2,9 +2,8 @@ name: Hacs Validation
 
 on:
   push:
-    branches: ['*']
-  schedule:
-    - cron: '0 0 * * *'
+    branches:
+      - master
 
 jobs:
   validate:
