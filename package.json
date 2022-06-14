@@ -36,7 +36,7 @@
     "babel-preset-minify": "^0.5.1",
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "2.16.0",
+    "eslint-plugin-import": "^2.26.0",
     "rollup": "^2.10.5",
     "rollup-plugin-node-resolve": "^3.4.0"
   },
