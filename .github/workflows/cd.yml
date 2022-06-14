@@ -39,6 +39,9 @@ jobs:
         shell: bash
         run: |
           r=$(cat release_notes/v${{ env.RELEASE_VERSION }}.md)
+          r="${r//'%'/'%25'}"                               # Multiline escape sequences for %
+          r="${r//$'\n'/'%0A'}"                             # Multiline escape sequences for '\n'
+          r="${r//$'\r'/'%0D'}"                             # Multiline escape sequences for '\r'
           echo "::set-output name=RELEASE_BODY::$r"
       - name: Upload the release file
         uses: svenstaro/upload-release-action@v2
@@ -46,4 +49,5 @@ jobs:
           file: dist/*
           file_glob: true
           overwrite: true
-          body: ${{ steps.release.outputs.RELEASE_BODY }}
+          body: |
+            ${{ steps.release.outputs.RELEASE_BODY }}
