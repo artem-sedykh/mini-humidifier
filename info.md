@@ -5,7 +5,7 @@
 A minimalistic yet customizable humidifier card for [Home Assistant](https://github.com/home-assistant/home-assistant) Lovelace UI.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/artem-sedykh/mini-climate-card/master/images/preview.png" />
+  <img src="https://raw.githubusercontent.com/artem-sedykh/mini-humidifier/master/images/preview.png" />
 </p>
 
 **Check the [repository](https://github.com/artem-sedykh/mini-humidifier) for card options & example configurations**  
