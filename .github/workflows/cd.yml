@@ -49,5 +49,6 @@ jobs:
           file: dist/*
           file_glob: true
           overwrite: true
+          promote: true
           body: |
             ${{ steps.release.outputs.RELEASE_BODY }}
