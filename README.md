@@ -17,7 +17,7 @@ Inspired by [mini media player](https://github.com/kalkih/mini-media-player).
 </p>
 
 ## Notice
-v3 is only compatible from version 2022.3 onwards
+v3 is only compatible from version 2022.11 onwards
 
 ## Install
 
