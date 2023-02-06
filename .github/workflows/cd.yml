@@ -44,11 +44,10 @@ jobs:
           r="${r//$'\r'/'%0D'}"                             # Multiline escape sequences for '\r'
           echo "::set-output name=RELEASE_BODY::$r"
       - name: Upload the release file
-        uses: regevbr/upload-release-action@body
+        uses: svenstaro/upload-release-action@v2
         with:
           file: dist/*
           file_glob: true
           overwrite: true
-          promote: true
           body: |
             ${{ steps.release.outputs.RELEASE_BODY }}
