@@ -21,7 +21,7 @@ const sharedStyle = css`
     transition: color .25s;
   }
   ha-icon-button[color] {
-    color: rgb(var(--mh-icon-active-color)) !important;
+    color: var(--mh-icon-active-color) !important;
     opacity: 1 !important;
   }
   ha-icon-button[inactive] {

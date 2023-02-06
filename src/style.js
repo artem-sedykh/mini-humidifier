@@ -17,7 +17,7 @@ const style = css`
       var(--mini-humidifier-icon-color,
         var(--mini-humidifier-base-color,
           var(--paper-item-icon-color, #44739e)));
-    --mh-icon-active-color: var(--rgb-state-binary-sensor-color);
+    --mh-icon-active-color: var(--state-binary_sensor-active-color, #ffc107);
     --mh-info-opacity: 1;
     --mh-bg-opacity: var(--mini-humidifier-background-opacity, 1);
     color: var(--mh-text-color);
@@ -92,7 +92,7 @@ const style = css`
     white-space: nowrap;
   }
   .entity__icon[color] {
-    color: rgb(var(--mh-icon-active-color));
+    color: var(--mh-icon-active-color);
   }
   .entity__icon {
     animation: fade-in .25s ease-out;
