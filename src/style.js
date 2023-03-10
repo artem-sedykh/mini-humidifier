@@ -56,7 +56,12 @@ const style = css`
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
     opacity: var(--mh-bg-opacity);
-    border-radius: var(--ha-card-border-radius, 0);
+    box-shadow: var(--ha-card-box-shadow, none);
+    box-sizing: border-box;
+    border-radius: var(--ha-card-border-radius, 12px);
+    border-width: var(--ha-card-border-width, 1px);
+    border-style: solid;
+    border-color: var(--ha-card-border-color, var(--divider-color, #e0e0e0) );
   }
   ha-card.--group .mh__bg {
     background: none;
