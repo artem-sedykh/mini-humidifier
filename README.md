@@ -106,8 +106,8 @@ v3 is only compatible from version 2022.11 onwards
 | target_humidity: `icon:template` | function | optional | v2.0.1 | icon retrieval function
 | target_humidity: `icon:style` | function | optional | v2.0.1 | function to get icon styles
 | target_humidity: `hide` | boolean | optional | v1.0.1 | Hide target_humidity control, default value `False`
+| target_humidity: `disabled` | boolean | optional | v2.5.3 | disable target_humidity slider, default value `True` when no [model](#adding-the-default-configuration-for-the-new-model) is specified
 | target_humidity: `hide_indicator` | boolean | optional | v2.2.1 | Hide indicator, default value `False`
-| target_humidity: `disabled` | boolean | optional | v2.1.1 | disable target_humidity slider, default value `True` when no [model](#adding-the-default-configuration-for-the-new-model) is specified
 | target_humidity: `unit` | string | optional | v1.0.1 | display unit, default `%`
 | target_humidity: `min` | number | optional | v1.0.1 | minimum target humidity, default value `30`
 | target_humidity: `max` | number | optional | v1.0.1 | maximum target humidity, default value `80`
