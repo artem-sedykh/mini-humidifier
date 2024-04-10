@@ -105,7 +105,7 @@ v3 is only compatible from version 2022.11 onwards
 | target_humidity: `icon` | object | optional | v2.0.1 | icon config
 | target_humidity: `icon:template` | function | optional | v2.0.1 | icon retrieval function
 | target_humidity: `icon:style` | function | optional | v2.0.1 | function to get icon styles
-| target_humidity: `hide` | boolean | optional | v1.0.1 | Hide target_humidity control, default value `False`
+| target_humidity: `hide` | boolean, function | optional | v1.0.1 | Hide target_humidity control, default value `False`
 | target_humidity: `disabled` | boolean | optional | v2.5.3 | disable target_humidity slider, default value taken from the defined [model](#adding-the-default-configuration-for-the-new-model) and if not set, from the default [model](https://github.com/artem-sedykh/mini-humidifier/blob/master/src/configurations/xiaomi_miio/zhimi_humidifier_cb1.js#L28)
 | target_humidity: `hide_indicator` | boolean | optional | v2.2.1 | Hide indicator, default value `False`
 | target_humidity: `unit` | string | optional | v1.0.1 | display unit, default `%`
