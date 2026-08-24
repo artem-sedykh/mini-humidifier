@@ -29,7 +29,13 @@ export default {
   // that `this` - it is what `rollup.config.mjs` sets `moduleContext` for - and
   // `compileTemplate` re-parses their source, so the rewrite reaches the card
   // as `void 0.call_service(...)`.
-  plugins: [json({ include: ['**/*.json'] }), esbuildPlugin({ ts: true })],
+  plugins: [
+    json({ include: ['**/*.json'] }),
+    // `tsconfig` is not optional here: without it esbuild defines class fields,
+    // and a declaration-only field then assigns undefined over lit's accessor -
+    // the components render, and none of their properties arrive.
+    esbuildPlugin({ ts: true, tsconfig: 'tsconfig.json' }),
+  ],
   // No polyfill and no page of its own: the card registers its elements in the
   // global registry, so the tests run against the same registry a browser gives
   // it in Home Assistant. Until #166 this file had to load

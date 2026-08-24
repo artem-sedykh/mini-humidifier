@@ -1,24 +1,32 @@
 import { LitElement, html, css } from 'lit';
+import type { PropertyValues } from 'lit';
 import { styleMap } from 'lit/directives/style-map.js';
 import sharedStyle from '../sharedStyle';
 import './dropdown-base';
 import define from '../utils/define';
+import type ButtonObject from '../models/button';
 
 export default class HumidifierDropDown extends LitElement {
+  dropdown!: ButtonObject;
+
+  private timer: ReturnType<typeof setTimeout> | undefined;
+
+  private _state: string | undefined;
+
   constructor() {
     super();
-    this.dropdown = {};
+    this.dropdown = {} as ButtonObject;
     this.timer = undefined;
     this._state = undefined;
   }
 
-  static get properties() {
+  static override get properties() {
     return {
       dropdown: { type: Object },
     };
   }
 
-  handleChange(e) {
+  handleChange(e: CustomEvent) {
     e.stopPropagation();
 
     const selected = e.detail.id;
@@ -43,13 +51,13 @@ export default class HumidifierDropDown extends LitElement {
     this.requestUpdate('_state');
   }
 
-  render() {
+  override render() {
     clearTimeout(this.timer);
 
     return html`
       <mh-dropdown-base
         style=${styleMap(this.dropdown.style)}
-        @change=${e => this.handleChange(e)}
+        @change=${(e: CustomEvent) => this.handleChange(e)}
         .items=${this.dropdown.source}
         .icon=${this.dropdown.icon}
         .disabled="${this.dropdown.disabled}"
@@ -61,7 +69,7 @@ export default class HumidifierDropDown extends LitElement {
 
   // Same as mh-button: derive `_state` before the render that needs it, rather
   // than asking for another render afterwards.
-  willUpdate(changedProps) {
+  override willUpdate(changedProps: PropertyValues) {
     if (changedProps.has('dropdown')) {
       this._state =
         this.dropdown.state !== undefined && this.dropdown.state !== null
@@ -72,7 +80,7 @@ export default class HumidifierDropDown extends LitElement {
     }
   }
 
-  static get styles() {
+  static override get styles() {
     return [
       sharedStyle,
       css`

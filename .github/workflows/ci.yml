@@ -4,7 +4,13 @@ on:
   push:
     branches: ['*']
   pull_request:
-    branches: ['*']
+    # `**`, not `*`: the single star stops at a slash, so a pull request whose
+    # base is a branch like `refactor/typescript-models` - which is how one step
+    # of a migration is reviewed on top of the one before it - matched nothing
+    # and ran no checks at all. The push trigger keeps `*` deliberately: it is
+    # there for master, and matching every branch would run everything twice
+    # for every pull request.
+    branches: ['**']
 
 permissions:
   contents: read

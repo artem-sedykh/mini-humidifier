@@ -1,6 +1,8 @@
 import { LitElement, html, css } from 'lit';
+import type { PropertyValues } from 'lit';
 import sharedStyle from '../sharedStyle';
 import define from '../utils/define';
+import type { SourceItem } from '../types';
 
 // The menu behind every dropdown on the card: an icon button that opens a list
 // of options, one of which is the current one.
@@ -23,7 +25,7 @@ import define from '../utils/define';
 const MENU_MARGIN = 8;
 
 export default class HumidifierDropdownBase extends LitElement {
-  static get properties() {
+  static override get properties() {
     return {
       items: { type: Array },
       label: { type: String },
@@ -35,6 +37,26 @@ export default class HumidifierDropdownBase extends LitElement {
     };
   }
 
+  items!: SourceItem[];
+
+  label: string | undefined;
+
+  selected: string | undefined;
+
+  icon: string | undefined;
+
+  active: boolean | undefined;
+
+  disabled: boolean | undefined;
+
+  open: boolean;
+
+  private onDocumentPointerDown: (event: Event) => void;
+
+  private onDocumentKeydown: (event: KeyboardEvent) => void;
+
+  private onViewportChange: () => void;
+
   constructor() {
     super();
     this.items = [];
@@ -44,7 +66,7 @@ export default class HumidifierDropdownBase extends LitElement {
     this.onViewportChange = () => this.close();
   }
 
-  disconnectedCallback() {
+  override disconnectedCallback() {
     // The listeners below live on the document, so a card removed while its
     // menu is open would leave them behind.
     this.stopListening();
@@ -59,16 +81,18 @@ export default class HumidifierDropdownBase extends LitElement {
       .indexOf(this.selected.toString().toUpperCase());
   }
 
-  get menu() {
+  get menu(): HTMLElement | null {
     return this.shadowRoot && this.shadowRoot.getElementById('menu');
   }
 
-  get button() {
+  get button(): HTMLElement | null {
     return this.shadowRoot && this.shadowRoot.getElementById('button');
   }
 
-  get options() {
-    return this.menu ? [...this.menu.querySelectorAll('.mh-dropdown__item')] : [];
+  get options(): HTMLButtonElement[] {
+    return this.menu
+      ? [...this.menu.querySelectorAll<HTMLButtonElement>('.mh-dropdown__item')]
+      : [];
   }
 
   handleClick() {
@@ -77,7 +101,7 @@ export default class HumidifierDropdownBase extends LitElement {
     this.open = !this.open;
   }
 
-  select(index) {
+  select(index: number) {
     const item = this.items[index];
 
     this.close();
@@ -95,11 +119,11 @@ export default class HumidifierDropdownBase extends LitElement {
 
   // Keys inside the menu. Enter and Space are the button's own, so they are not
   // handled here.
-  handleKeydown(event) {
+  handleKeydown(event: KeyboardEvent) {
     const { options } = this;
-    const current = options.indexOf(this.shadowRoot.activeElement);
+    const current = options.indexOf(this.shadowRoot!.activeElement as HTMLButtonElement);
 
-    const focus = index => {
+    const focus = (index: number) => {
       event.preventDefault();
       const option = options[(index + options.length) % options.length];
       if (option) option.focus();
@@ -128,7 +152,7 @@ export default class HumidifierDropdownBase extends LitElement {
     }
   }
 
-  handleDocumentKeydown(event) {
+  handleDocumentKeydown(event: KeyboardEvent) {
     if (event.key !== 'Escape') return;
 
     event.stopPropagation();
@@ -136,7 +160,7 @@ export default class HumidifierDropdownBase extends LitElement {
     if (this.button) this.button.focus();
   }
 
-  handleDocumentPointerDown(event) {
+  handleDocumentPointerDown(event: Event) {
     // `composedPath` sees through the shadow root, which a click target does
     // not: without it every click looks like it came from the card.
     if (event.composedPath().includes(this)) return;
@@ -161,7 +185,7 @@ export default class HumidifierDropdownBase extends LitElement {
   }
 
   // Position and focus, after the menu is in the DOM and can be measured.
-  updated(changedProps) {
+  override updated(changedProps: PropertyValues) {
     if (!changedProps.has('open')) return;
 
     if (!this.open) {
@@ -233,7 +257,7 @@ export default class HumidifierDropdownBase extends LitElement {
     `;
   }
 
-  render() {
+  override render() {
     return html`
       <div class='mh-dropdown'>
         <ha-icon-button class='mh-dropdown__button icon'
@@ -251,7 +275,7 @@ export default class HumidifierDropdownBase extends LitElement {
     `;
   }
 
-  static get styles() {
+  static override get styles() {
     return [
       sharedStyle,
       css`

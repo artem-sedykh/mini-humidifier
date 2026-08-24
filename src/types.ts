@@ -55,9 +55,20 @@ export interface SourceItem {
   name: string;
 }
 
+/** What a tap does, from the Lovelace vocabulary the card supports. */
+export interface TapAction {
+  action?: string;
+  entity?: string;
+  navigation_path?: string;
+  service?: string;
+  service_data?: Record<string, unknown>;
+  url?: string;
+}
+
 export interface IndicatorConfig {
   id: string;
   source: Source;
+  tap_action?: TapAction;
   icon?: string | { template?: string; style?: string };
   unit?: string | { template?: string };
   round?: number;
@@ -72,9 +83,14 @@ export interface IndicatorConfig {
 
 export interface ButtonConfig {
   id: string;
-  type?: 'button' | 'dropdown';
+  /**
+   * `toggle` is undocumented and no bundled model uses it, but the power
+   * control reads it - a user's YAML can still ask for `ha-entity-toggle`.
+   */
+  type?: 'button' | 'dropdown' | 'toggle';
   icon?: string;
-  order?: number;
+  /** Always set: `getButtonsConfig` numbers the buttons the YAML leaves out. */
+  order: number;
   hide?: boolean;
   state?: Source;
   source?: Record<string, string>;

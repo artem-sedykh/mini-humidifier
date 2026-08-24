@@ -1,22 +1,31 @@
 import { LitElement, html, css } from 'lit';
+import type { PropertyValues } from 'lit';
 import { styleMap } from 'lit/directives/style-map.js';
 import sharedStyle from '../sharedStyle';
 import define from '../utils/define';
+import type ButtonObject from '../models/button';
 
 export default class HumidifierButton extends LitElement {
+  // Set by mh-buttons and mh-power, never by an attribute.
+  button!: ButtonObject;
+
+  private _isOn: boolean;
+
+  private timer: ReturnType<typeof setTimeout> | undefined;
+
   constructor() {
     super();
     this._isOn = false;
     this.timer = undefined;
   }
 
-  static get properties() {
+  static override get properties() {
     return {
       button: { type: Object },
     };
   }
 
-  handleToggle(e) {
+  handleToggle(e: Event) {
     e.stopPropagation();
 
     this._isOn = !this._isOn;
@@ -27,9 +36,8 @@ export default class HumidifierButton extends LitElement {
 
     clearTimeout(this.timer);
 
-    const context = this;
     this.timer = setTimeout(async () => {
-      const { button } = context;
+      const { button } = this;
       const changed = lastChanged !== button.lastChanged || lastUpdated !== button.lastUpdated;
 
       if (changed === false) {
@@ -41,13 +49,13 @@ export default class HumidifierButton extends LitElement {
     this.requestUpdate('_isOn');
   }
 
-  render() {
+  override render() {
     clearTimeout(this.timer);
 
     return html`
        <ha-icon-button
          style=${styleMap(this.button.style)}
-         @click=${e => this.handleToggle(e)}
+         @click=${(e: Event) => this.handleToggle(e)}
          ?disabled="${this.button.disabled || this.button.isUnavailable}"
          ?color=${this._isOn}>
          <ha-icon icon="${this.button.icon}"></ha-icon>
@@ -60,7 +68,7 @@ export default class HumidifierButton extends LitElement {
   // this had to ask for the update by hand - and that request, arriving after
   // the update it was made from had completed, is what lit warned about. From
   // here the value is simply picked up by the render that is already coming.
-  willUpdate(changedProps) {
+  override willUpdate(changedProps: PropertyValues) {
     if (changedProps.has('button')) {
       this._isOn = this.button.isOn;
 
@@ -68,7 +76,7 @@ export default class HumidifierButton extends LitElement {
     }
   }
 
-  static get styles() {
+  static override get styles() {
     return [
       sharedStyle,
       css`

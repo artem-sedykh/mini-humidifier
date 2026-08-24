@@ -1,6 +1,8 @@
 import { css, html, LitElement } from 'lit';
+import type { PropertyValues } from 'lit';
 import { styleMap } from 'lit/directives/style-map.js';
 import define from '../utils/define';
+import type TargetHumidityObject from '../models/targetHumidity';
 
 // Home Assistant has shipped three different `ha-slider` implementations across
 // the versions this card supports, and they do not lay out alike:
@@ -19,7 +21,7 @@ import define from '../utils/define';
 // from the WebAwesome slider and exist on neither predecessor. If Home
 // Assistant ever renames both, this falls back to the legacy layout - wrong,
 // but not broken.
-let isWebAwesome = null;
+let isWebAwesome: boolean | null = null;
 
 const usesWebAwesomeSlider = () => {
   if (isWebAwesome === null) {
@@ -32,22 +34,28 @@ const usesWebAwesomeSlider = () => {
 };
 
 export default class HumidifierTargetHumidity extends LitElement {
-  static get properties() {
+  static override get properties() {
     return {
       targetHumidity: { type: Object },
       sliderValue: { type: Number },
     };
   }
 
+  targetHumidity!: TargetHumidityObject;
+
+  sliderValue: number | undefined;
+
+  private timer: ReturnType<typeof setTimeout> | undefined;
+
   constructor() {
     super();
-    this.targetHumidity = {};
+    this.targetHumidity = {} as TargetHumidityObject;
     this.timer = undefined;
   }
 
-  handleChange(e) {
+  handleChange(e: Event) {
     e.stopPropagation();
-    this.sliderValue = e.target.value;
+    this.sliderValue = (e.target as HTMLInputElement & { value: number }).value;
     const { entity } = this.targetHumidity;
     this.targetHumidity.handleChange(this.sliderValue);
 
@@ -95,7 +103,7 @@ export default class HumidifierTargetHumidity extends LitElement {
     `;
   }
 
-  render() {
+  override render() {
     // min/max/step/value are bound as properties, not attributes, on every
     // flavour. On the WebAwesome slider the `value` attribute maps to
     // `defaultValue`, so once the user has dragged the thumb, writing the
@@ -107,8 +115,8 @@ export default class HumidifierTargetHumidity extends LitElement {
     return html`
       <div class='mh-target_humidifier --slider flex ${webAwesome ? 'wa' : 'legacy'}'>
         <ha-slider
-          @change=${e => this.handleChange(e)}
-          @click=${e => e.stopPropagation()}
+          @change=${(e: Event) => this.handleChange(e)}
+          @click=${(e: Event) => e.stopPropagation()}
           ?disabled="${this.targetHumidity.disabled}"
           ?pin=${!webAwesome}
           ?ignore-bar-touch=${!webAwesome}
@@ -118,7 +126,7 @@ export default class HumidifierTargetHumidity extends LitElement {
           .value=${Number(this.sliderValue) || this.sliderMin}
           dir=${'ltr'}>
         </ha-slider>
-        ${this.renderState(this.sliderValue)}
+        ${this.renderState()}
       </div>`;
   }
 
@@ -128,13 +136,13 @@ export default class HumidifierTargetHumidity extends LitElement {
   // development build reported it. `willUpdate` is the hook meant for deriving
   // state from changed properties: the assignment lands in the update that is
   // already running.
-  willUpdate(changedProps) {
+  override willUpdate(changedProps: PropertyValues) {
     if (changedProps.has('targetHumidity')) {
       this.sliderValue = this.targetHumidity.value;
     }
   }
 
-  static get styles() {
+  static override get styles() {
     return css`
      :host {
         position: relative;

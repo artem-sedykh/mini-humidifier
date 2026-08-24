@@ -59,7 +59,7 @@ export default class ButtonObject {
     return this.config.type;
   }
 
-  get order(): number | undefined {
+  get order(): number {
     return this.config.order;
   }
 
