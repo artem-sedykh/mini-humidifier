@@ -72,7 +72,9 @@ export default class HumidifierDropDown extends ScopedRegistryHost(LitElement) {
     `;
   }
 
-  updated(changedProps) {
+  // Same as mh-button: derive `_state` before the render that needs it, rather
+  // than asking for another render afterwards.
+  willUpdate(changedProps) {
     if (changedProps.has('dropdown')) {
       this._state =
         this.dropdown.state !== undefined && this.dropdown.state !== null
@@ -80,8 +82,6 @@ export default class HumidifierDropDown extends ScopedRegistryHost(LitElement) {
           : '';
 
       clearTimeout(this.timer);
-
-      this.requestUpdate('_state');
     }
   }
 

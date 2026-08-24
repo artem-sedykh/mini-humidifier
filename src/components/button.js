@@ -68,13 +68,16 @@ export default class HumidifierButton extends ScopedRegistryHost(LitElement) {
     `;
   }
 
-  updated(changedProps) {
+  // See the note in targetHumidity.js: deriving state from a changed property
+  // belongs in `willUpdate`. `_isOn` is not a reactive property, which is why
+  // this had to ask for the update by hand - and that request, arriving after
+  // the update it was made from had completed, is what lit warned about. From
+  // here the value is simply picked up by the render that is already coming.
+  willUpdate(changedProps) {
     if (changedProps.has('button')) {
       this._isOn = this.button.isOn;
 
       clearTimeout(this.timer);
-
-      this.requestUpdate('_isOn');
     }
   }
 
