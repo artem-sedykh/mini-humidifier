@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build:
-    name: Lint and build
+    name: Lint, test and build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -31,6 +31,9 @@ jobs:
 
       - name: Format
         run: npm run format:check
+
+      - name: Unit tests
+        run: npm test
 
       - name: Build
         run: npm run rollup
