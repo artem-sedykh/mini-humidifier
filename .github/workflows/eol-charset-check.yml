@@ -19,7 +19,7 @@ jobs:
     name: EOL and charset
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Mark directory as safe
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
@@ -58,7 +58,7 @@ jobs:
     # What .gitattributes cannot express: it only knows EOL and text/binary.
     # Everything else Windows silently breaks is checked here.
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Reserved Windows file names
         run: |
