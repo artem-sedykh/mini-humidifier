@@ -47,11 +47,13 @@ built bundle so Home Assistant serves it, and how to iterate.
 A few things worth knowing before you start, all of them in
 [AGENTS.md](AGENTS.md):
 
-- **The tests stop at the browser.** `npm test` covers the pure logic and
-  `npm run check:bundle` covers the build output, but nothing exercises the
-  card as Home Assistant renders it. Please load your change into a running
-  Home Assistant, say which version you tested on, and be plain about what you
-  could not check.
+- **The tests stop at Home Assistant's own elements.** `npm test` covers the
+  pure logic, `npm run check:bundle` covers the build output, and
+  `npm run test:browser` renders the card in Chromium - but against stand-ins
+  for `ha-card`, `ha-slider` and the rest, because those exist only inside a
+  running frontend and are where this card has broken before. Please load your
+  change into a running Home Assistant, say which version you tested on, and be
+  plain about what you could not check.
 - The elements the card renders belong to the Home Assistant frontend and are
   not a stable API. Feature-detect them rather than branching on a version
   string.
@@ -63,10 +65,12 @@ A few things worth knowing before you start, all of them in
 Commits follow [Conventional Commits](https://www.conventionalcommits.org/)
 without a scope: `fix:`, `feat:`, `ci:`, `build:`, `docs:`.
 
-CI runs lint, formatting, the unit tests, the build, assertions on the built
-bundle, HACS validation, and a gate that catches CRLF and BOM.
-`npm run format:check && npm run build` locally covers most of it - `build`
-already chains lint, tests, the bundle and its checks.
+CI runs lint, formatting, the unit tests, the component tests in Chromium, the
+build, assertions on the built bundle, HACS validation, and a gate that catches
+CRLF and BOM. `npm run format:check && npm run build` locally covers most of it
+- `build` already chains lint, tests, the bundle and its checks. The component
+tests are the one part it leaves out, because they need a browser installed:
+`npx playwright install chromium`, then `npm run test:browser`.
 
 ## Releasing
 

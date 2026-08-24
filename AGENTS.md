@@ -29,6 +29,7 @@ npm ci             # install exactly what the lockfile says
 npm run lint       # eslint
 npm run format     # prettier --write
 npm test           # vitest, the unit tests under test/
+npm run test:browser  # @web/test-runner, the component tests in Chromium
 npm run rollup     # bundle src/main.js -> dist/mini-humidifier-bundle.js
 npm run check:bundle  # assertions on the built bundle (needs a build first)
 npm run dev        # the same as rollup, unminified
@@ -42,15 +43,19 @@ Node version comes from `.nvmrc`. Use it; CI reads the same file.
 which is what you want while debugging in the browser. The difference is large -
 206 KB against 541 KB - so never publish a dev build.
 
-The tests cover the build output and the pure logic, and nothing else. What
-the card looks like and how it behaves once Home Assistant renders it is still
-only verifiable by hand - see below. Say plainly what you could not check,
-rather than letting a green `npm test` imply the change was tried.
+`npm run test:browser` needs a browser to run: `npx playwright install
+chromium` once, which is what CI does on every run.
+
+The tests cover the build output, the pure logic, and the card as a browser
+renders it against stand-ins for the Home Assistant elements. What they cannot
+cover is those elements themselves - they are Home Assistant's, they change
+between releases, and only a real frontend has them - so a change to anything
+that talks to one is still verifiable by hand alone. Say plainly what you could
+not check, rather than letting a green test run imply the change was tried.
 
 ## Tests
 
-Two layers, both run by CI. Neither of them opens a browser, so neither of them
-can tell you the card renders.
+Three layers, all run by CI, in the order of how much they cost to run.
 
 **`npm run check:bundle`** - `scripts/check-bundle.mjs`, assertions on
 `dist/mini-humidifier-bundle.js` after `npm run rollup`. Every regression this
@@ -76,9 +81,38 @@ merging in `main.js`. The merging tests need a DOM to construct the element, so
 `setConfig` only reads and merges, and the element is never connected, so
 nothing renders.
 
-Component tests in a real browser - the slider flavour detection, a dropdown
-dispatching exactly one change, an unavailable entity rendering - are
-[issue #156](https://github.com/artem-sedykh/mini-humidifier/issues/156).
+**`npm run test:browser`** - `@web/test-runner` over `test/browser/`, in
+Chromium, driven by playwright. This is the layer that renders the card: it
+mounts `<mini-humidifier>` with a `hass` of its own and asserts on what comes
+out of the shadow roots. What it covers, and why each one is there:
+
+- **the slider flavour detection**, one file per generation of `ha-slider`.
+  The detection caches its answer in a module variable and a custom element
+  name can be registered only once, so a page that has seen one flavour cannot
+  be asked about another - hence three files rather than three cases.
+- **a dropdown sends the command once.** Counted rather than argued from the
+  code, for the reason under "Counting service calls" below.
+- **an unavailable entity renders.** This is what broke when the frontend
+  dropped `hass.resources` and every label lookup started throwing.
+- **a state change costs one render pass per component.** Deriving state in
+  `updated()` instead of `willUpdate()` asks for a second pass; three
+  components did that until #160, and nothing in the layers above could say so.
+
+The cost of this layer is in `test/browser/helpers/`, not in the assertions.
+`ha-card`, `ha-icon`, `ha-icon-button`, `ha-relative-time`, `ha-entity-toggle`
+and `ha-slider` exist only inside a running Home Assistant, so the helpers
+define stand-ins - the card only passes properties into them and reads nothing
+back. Two more things are needed to get that far, both in
+`web-test-runner.config.mjs`: `@webcomponents/scoped-custom-element-registry`,
+because the card registers its components through
+`@lit-labs/scoped-registry-mixin` and Chromium does not honour the
+`attachShadow({ customElements })` the mixin calls; and the JSON translations
+declared as JavaScript through `mimeTypes`, so the rollup plugin that turns
+them into modules is allowed to run.
+
+Because the elements are stand-ins, this layer says the card renders and
+behaves - not that it renders correctly against the real ones. That distinction
+is the whole of "Home Assistant compatibility" below.
 
 ## Verifying a change by hand
 
@@ -145,6 +179,8 @@ src/
   style.js           card styles
   sharedStyle.js     styles shared with the sub-elements
 test/                vitest unit tests, one file per unit under test
+  browser/           component tests, run in Chromium by @web/test-runner
+    helpers/         the fake hass and the Home Assistant element stand-ins
 scripts/             build-time checks that are not part of the bundle
 ```
 
@@ -271,10 +307,9 @@ versions over gating the release.
 
 ## Known debt
 
-- No component tests: nothing exercises the card in a browser, so anything that
-  only shows up once Home Assistant renders the elements is still caught by
-  hand or not at all.
-  [#156](https://github.com/artem-sedykh/mini-humidifier/issues/156).
+- The component tests render the card against stand-ins, so anything that only
+  shows up against Home Assistant's own elements - which is where this card has
+  broken before - is still caught by hand or not at all.
 - Several bundled model configurations call `fan.set_speed`, a service Home
   Assistant removed in 2023.7, so those mode dropdowns are dead on any
   currently supported version.

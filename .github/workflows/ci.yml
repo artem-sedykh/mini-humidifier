@@ -41,6 +41,15 @@ jobs:
       - name: Unit tests
         run: npm test
 
+      - name: Browser
+        # The component tests need one, and the runner image's own Chrome is
+        # whatever the image happens to carry that week. Playwright pins it to
+        # the version in the lockfile, so a failure here is the card's.
+        run: npx playwright install --with-deps chromium
+
+      - name: Component tests
+        run: npm run test:browser
+
       - name: Build
         run: npm run rollup
 

@@ -43,6 +43,7 @@ npm run build      # lint + test + rollup + check:bundle
 npm run lint       # eslint
 npm run format     # prettier
 npm test           # vitest, the unit tests under test/
+npm run test:browser  # @web/test-runner, the component tests in Chromium
 npm run check:bundle  # assertions on the built bundle
 ```
 
@@ -55,9 +56,12 @@ stale bundle looks exactly like a change that did nothing.
 ## Before opening a pull request
 
 - `npm run build` and `npm run format:check` are clean. CI runs the same.
-- The card was actually loaded in a running Home Assistant. The tests cover the
-  pure logic and the built bundle, not what the card renders, so this is still
-  the only check on the part users see.
+- `npm run test:browser` is clean. It needs a browser once:
+  `npx playwright install chromium`. `npm run build` leaves this one out for
+  that reason, so run it yourself when you have touched a component.
+- The card was actually loaded in a running Home Assistant. The component tests
+  render it against stand-ins for Home Assistant's elements, never the real
+  ones, so this is still the only check on the part users see.
 - Say which Home Assistant version you tested on. The card renders Home
   Assistant's own frontend elements, and they differ between releases - see
   [AGENTS.md](../AGENTS.md#home-assistant-compatibility).
