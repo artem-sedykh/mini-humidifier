@@ -29,17 +29,16 @@ npm ci             # install exactly what the lockfile says
 npm run lint       # eslint
 npm run format     # prettier --write
 npm run rollup     # bundle src/main.js -> dist/mini-humidifier-bundle.js
-npm run babel      # transpile and minify that bundle in place
-npm run build      # lint + rollup + babel
-npm run watch      # rollup in watch mode
+npm run dev        # the same, unminified
+npm run build      # lint + rollup
+npm run watch      # unminified, rebuilding on save
 ```
 
 Node version comes from `.nvmrc`. Use it; CI reads the same file.
 
-`npm run rollup` alone produces an unminified bundle that still works in the
-browser, which is what you want while developing. The `babel` step is what
-minifies, and it is not optional for a release: skipping it roughly doubles the
-asset size.
+`npm run rollup` minifies; `npm run dev` produces the same bundle unminified,
+which is what you want while debugging in the browser. The difference is large -
+206 KB against 541 KB - so never publish a dev build.
 
 There is no test suite. This is the single biggest risk in the repository: the
 only way to know a change works is to load the bundle into a running Home
@@ -54,7 +53,43 @@ implying a change is tested.
 3. Reference it from a dashboard resource with a cache-busting query string
    (`/local/mini-humidifier-bundle.js?v=<anything-new>`).
 4. Hard-reload the browser. The frontend caches resources aggressively, and a
-   stale bundle looks exactly like a change that did nothing.
+   stale bundle looks exactly like a change that did nothing. The console
+   banner prints the version from `package.json`, which is the only reliable
+   way to tell which build is actually running.
+
+### Counting service calls
+
+Before blaming the card for sending a command more than once, count the
+commands. Paste this into the browser console, then use the control:
+
+```js
+(() => {
+  const c = document.querySelector('home-assistant').hass.connection;
+  if (c.__patched) return 'already patched';
+  c.__patched = 1;
+  const original = c.sendMessagePromise.bind(c);
+  let n = 0;
+  c.sendMessagePromise = m => {
+    if (m && m.type === 'call_service')
+      console.log('CALL #' + ++n, m.domain + '.' + m.service, JSON.stringify(m.service_data || {}));
+    return original(m);
+  };
+  return 'patched';
+})();
+```
+
+Every service call goes through this one websocket connection, whichever
+`hass` object a component happens to hold, so nothing escapes it.
+
+This has already settled one false alarm. A humidifier beeped three times
+whenever a mode was picked, which looked exactly like the card dispatching
+the change three times. It sends one - the device was beeping because its
+water tank was empty, and would have done so whatever was clicked.
+
+Worth noting how that went wrong, because the pattern repeats: two
+plausible explanations were argued from the code before anyone counted the
+calls, and both were false. The card was displaying the answer the whole
+time, in its own first indicator - water level, 0%.
 
 ## Layout
 
@@ -200,9 +235,6 @@ versions over gating the release.
 ## Known debt
 
 - No tests.
-- `rollup-plugin-node-resolve` is the deprecated pre-scope package, unmaintained
-  since 2019, and rollup is still on 2.x.
-- `babel-preset-minify` is unmaintained and drags in `core-js` 2.
 - Several bundled model configurations call `fan.set_speed`, a service Home
   Assistant removed in 2023.7, so those mode dropdowns are dead on any
   currently supported version.

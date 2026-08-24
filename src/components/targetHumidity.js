@@ -1,5 +1,5 @@
 import { css, html, LitElement } from 'lit';
-import { styleMap } from 'lit/directives/style-map';
+import { styleMap } from 'lit/directives/style-map.js';
 import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
 import buildElementDefinitions from '../utils/buildElementDefinitions';
 
