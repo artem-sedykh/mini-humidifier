@@ -1,3 +1,4 @@
+import type { ModelConfiguration } from './types';
 import ZHIMI_HUMIDIFIER_CB1 from './configurations/xiaomi_miio/zhimi_humidifier_cb1';
 import ZHIMI_AIRPURIFIER_MA2 from './configurations/xiaomi_miio/zhimi_airpurifier_ma2';
 import ZHIMI_AIRFRESH_VA2 from './configurations/xiaomi_miio/zhimi_airfresh_va2';
@@ -10,7 +11,7 @@ import XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CA4 from './configurations/xiaom
 import XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRFRESH_VA2 from './configurations/xiaomi_miio_airpurifier/zhimi_airfresh_va2';
 import XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRPURIFIER_MB3 from './configurations/xiaomi_miio_airpurifier/zhimi_airpurifier_mb3';
 
-const HUMIDIFIERS = {
+const HUMIDIFIERS: Record<string, () => ModelConfiguration> = {
   default: ZHIMI_HUMIDIFIER_CB1,
   // xiaomi_miio integration (default home assistant)
   'zhimi.humidifier.cb1': ZHIMI_HUMIDIFIER_CB1,

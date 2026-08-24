@@ -200,27 +200,49 @@ test/                vitest unit tests, one file per unit under test
 scripts/             build-time checks that are not part of the bundle
 ```
 
-## TypeScript, halfway
+## TypeScript
 
-`main.ts`, `src/models/`, `src/components/` and `src/types.ts` are TypeScript.
-`src/utils/`, `src/localize/`, `src/humidifiers.js` and `src/configurations/`
-are still JavaScript, and both build side by side.
+Everything in `src/` is TypeScript except `src/configurations/`, which stays
+JavaScript on purpose - see below. `allowJs` is on for that reason, and
+`checkJs` is off: those files are template source text more than they are code.
+
+It arrived file by file, over four pull requests, because #152 asks for that -
+the one attempt at doing it in a single pass was abandoned with 39k lines
+changed.
 
 `src/types.ts` is where the configuration is described, in two halves that are
 worth keeping apart: **`RawCardConfig`** is the YAML a person wrote - almost
 everything optional, several options accepting two shapes - and **`CardConfig`**
 is what `setConfig` leaves behind, with the model's defaults merged in and every
 template compiled into a callback. An option that is in neither is an option the
-card does not read. That is deliberate - #152 asks for a
-migration file by file, because the one attempt at doing it in a single pass
-was abandoned with 39k lines changed. `allowJs` is on and `checkJs` is off: the
-JavaScript that is left is covered by eslint and by the tests, and turning the
-checker loose on all of it would report the whole card at once.
+card does not read.
 
 `npm run typecheck` is `tsc --noEmit`. Nothing else type checks: rollup and the
 browser tests both strip types with esbuild, which does not look at them.
 
-Two things to know before migrating the next file:
+### Why the model configurations stay JavaScript
+
+They are the one part of `src/` that TypeScript cannot describe without
+changing what it describes. Each callback in them is written against a `this`
+that only exists at runtime: `compileTemplate` takes the function's **source
+text**, re-parses it with `new Function`, and calls the result with the card as
+`this`. rollup keeps that text intact through `moduleContext`.
+
+TypeScript disagrees on both counts. `this` at the top level of a module is
+undefined, so the checker reports the callbacks; and esbuild, which strips the
+types, rewrites that `this` to `void 0` - so the text `compileTemplate` gets
+back reads `void 0.call_service(...)`.
+
+This was measured, not assumed: moving one configuration to `.ts` and building
+gives "62 calls through `this`, 6 through `void 0`" from `npm run check:bundle`.
+The card would load, render, and do nothing when any control of that model is
+touched.
+
+If they are ever migrated, the shape of the fix is to give each factory an
+explicit `this` parameter so the `this` inside is function-scoped rather than
+module-scoped. Nothing needs it today.
+
+### Three things to know before migrating anything else
 
 - **`useDefineForClassFields` must stay false.** A declaration-only field
   (`hass: HomeAssistant;`) has to erase. With class fields defined it would
@@ -230,19 +252,17 @@ Two things to know before migrating the next file:
   plugin defines class fields, and a declaration-only field then assigns
   `undefined` over lit's accessor: the components render and none of their
   properties arrive. The dropdown tests caught exactly that.
-- **esbuild must not touch the JavaScript.** `rollup.config.mjs` restricts it to
-  `/\.ts$/` and the browser tests pass no `target`, both for the same reason:
-  esbuild is right that a module's top-level `this` is undefined in ESM, and
-  wrong about this card. The model configurations are written against that
-  `this`, rollup arranges it with `moduleContext`, and `compileTemplate`
-  re-parses their source at runtime - so an esbuild pass over them ships
-  `void 0.call_service(...)`, and every button on the card goes quiet. The
-  bundle assertions now count that, because nothing else notices: the size
-  barely moves and every other check passes.
+- **esbuild must not touch the JavaScript that is left.**
+  `rollup.config.mjs` restricts it to `/\.ts$/` and the browser tests pass no
+  `target`, both to keep it away from `src/configurations/` for the reason
+  above. `check:bundle` counts the damage if that ever slips, because nothing
+  else notices: the size barely moves and every other check passes.
+
+## Registering the elements
 
 Every component registers itself at the bottom of its own module -
 `define('mh-button', HumidifierButton)` - and `main.ts` imports those modules
-for that alone. `src/utils/define.js` is `customElements.define` without the
+for that alone. `src/utils/define.ts` is `customElements.define` without the
 throw when the name is already taken, which is what a page that loads the
 bundle twice does.
 

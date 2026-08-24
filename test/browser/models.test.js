@@ -1,6 +1,6 @@
 import { expect } from '@open-wc/testing';
 import { components, mountCard, settle } from './helpers/card.js';
-import HUMIDIFIERS from '../../src/humidifiers.js';
+import HUMIDIFIERS from '../../src/humidifiers.ts';
 
 // The union of what the bundled configurations read off the entity. A model
 // whose configuration reaches for an attribute that is not here renders the

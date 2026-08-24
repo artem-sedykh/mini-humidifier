@@ -7,7 +7,9 @@
 // in, and it returns an empty string for a key it does not know.
 //
 // Same fix as artem-sedykh/mini-climate-card#176.
-const getLabel = (hass, label, fallback = 'unknown') => {
+import type { HomeAssistant } from '../types';
+
+const getLabel = (hass: HomeAssistant, label: string, fallback = 'unknown'): string => {
   if (!hass || typeof hass.localize !== 'function') return fallback;
 
   return hass.localize(label) || fallback;
