@@ -68,8 +68,8 @@ const XIAOMI_MIIO_AIRPURIFIER_DEERMA_HUMIDIFIER_MJJSQ = () => ({
       active: (state, entity) => entity.state !== 'off',
       state: { attribute: 'mode' },
       change_action: (selected, state, entity) => {
-        const options = { entity_id: entity.entity_id, speed: selected };
-        return this.call_service('fan', 'set_speed', options);
+        const options = { entity_id: entity.entity_id, preset_mode: selected };
+        return this.call_service('fan', 'set_preset_mode', options);
       },
     },
     led: {
