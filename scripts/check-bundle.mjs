@@ -38,10 +38,10 @@ try {
 
 const baseline = JSON.parse(read(path.join(root, 'scripts', 'bundle-baseline.json')));
 
-// The model ids are read out of the source rather than imported: src is ESM
-// while package.json has no "type": "module", so node cannot load it directly.
+// The model ids are read out of the source rather than imported: it is
+// TypeScript now, and was ESM before that, so node cannot load it either way.
 const modelIds = (() => {
-  const source = read(path.join(root, 'src', 'humidifiers.js'));
+  const source = read(path.join(root, 'src', 'humidifiers.ts'));
   const registry = source.slice(source.indexOf('const HUMIDIFIERS = {'));
   return [...registry.matchAll(/^\s*'([^']+)':/gm)].map(match => match[1]);
 })();
