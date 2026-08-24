@@ -154,12 +154,36 @@ When you touch anything that talks to a Home Assistant element:
    (`"v3.1.5"`), which is unusual but load-bearing: the README badge reads it.
 2. Write `release_notes/v<version>.md`. The release job reads that exact path
    and fails if it is missing.
+
+   Start straight at the content - no `## v<version>` heading and no badges.
+   That file is the release body, and HACS shows it in the update dialog under
+   a heading it draws itself, so a version heading of our own appears twice and
+   a shields.io badge is clutter in a narrow dialog. Lead with one sentence on
+   why the release matters, then `### Fixed` / `### Changed` lists. Keep links
+   absolute.
 3. Tag `v<version>` and push the tag. `.github/workflows/cd.yml` builds, checks
    that the tag and `package.json` agree, and publishes the bundle with those
    notes as the release body.
 
-HACS shows `info.md`, not `README.md` (`"render_readme": false` in
-`hacs.json`). Update it when the install instructions or the pitch change.
+### What HACS shows
+
+HACS renders **`README.md`**, and only that. The `info.md` convention is dead:
+`async_get_info_file_contents` in `hacs/repositories/base.py` hardcodes the
+filename list to variants of `readme`, so `info.md` is never read and the
+`render_readme` manifest key no longer changes anything. Both were removed
+from this repository.
+
+Two consequences worth remembering:
+
+- **Relative links do not work in HACS.** It hands the raw markdown to the
+  Home Assistant frontend, which resolves `docs/models.md` against
+  `/hacs/repository/<id>` and 404s. Links in `README.md` are absolute for
+  that reason - do not "tidy" them back to relative paths.
+- **HACS renders the README from the tag of the version the user has
+  installed**, not from the default branch (`get_documentation` uses
+  `data.installed_version`). A README fix therefore only reaches users with
+  the next release, and the repository page keeps showing the old text until
+  they update.
 
 ### HACS and Home Assistant versions
 
