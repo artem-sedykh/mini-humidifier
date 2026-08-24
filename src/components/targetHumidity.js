@@ -45,6 +45,21 @@ export default class HumidifierTargetHumidity extends ScopedRegistryHost(LitElem
     this.requestUpdate('sliderValue');
   }
 
+  get sliderMin() {
+    const { min } = this.targetHumidity;
+    return typeof min === 'number' ? min : 0;
+  }
+
+  get sliderMax() {
+    const { max } = this.targetHumidity;
+    return typeof max === 'number' ? max : 100;
+  }
+
+  get sliderStep() {
+    const { step } = this.targetHumidity;
+    return typeof step === 'number' ? step : 1;
+  }
+
   renderState() {
     if (this.targetHumidity.hideIndicator)
       return html`<div class="mh-target_humidifier__state"></div>`;
@@ -73,12 +88,11 @@ export default class HumidifierTargetHumidity extends ScopedRegistryHost(LitElem
           @change=${e => this.handleChange(e)}
           @click=${e => e.stopPropagation()}
           ?disabled="${this.targetHumidity.disabled}"
-          min=${this.targetHumidity.min}
-          max=${this.targetHumidity.max}
-          step=${this.targetHumidity.step}
-          value=${this.sliderValue}
-          dir=${'ltr'}
-          ignore-bar-touch pin>
+          .min=${this.sliderMin}
+          .max=${this.sliderMax}
+          .step=${this.sliderStep}
+          .value=${Number(this.sliderValue) || this.sliderMin}
+          dir=${'ltr'}>
         </ha-slider>
         ${this.renderState(this.sliderValue)}
       </div>`;
@@ -101,21 +115,31 @@ export default class HumidifierTargetHumidity extends ScopedRegistryHost(LitElem
       .mh-target_humidifier.flex {
         display: flex;
         flex-direction: column-reverse;
+        justify-content: center;
         align-items: center;
         height: var(--mh-unit);
         width: 100%;
       }
+      /* ha-slider has no intrinsic height of its own: it is a column flexbox
+         whose only sized child is the 4px track, packed to the top. So the row
+         must set the height and do the centering itself - stretching the slider
+         with flex:1 pins the track to the top of the row instead. */
       .mh-target_humidifier ha-slider {
-        flex: 1;
+        flex: 0 0 auto;
+        box-sizing: border-box;
         width: 100%;
-        margin-top: calc(var(--mh-unit) * -.35);
+        min-width: 0;
+        height: calc(var(--mh-unit) * .5);
+        /* half a thumb on each side, so it is not clipped at min/max */
+        padding: 0 8px;
+        justify-content: center;
+        margin: 0;
         line-height: normal;
       }
       .mh-target_humidifier__state {
         position: relative;
         display: flex;
         flex-wrap: nowrap;
-        margin-top: calc(var(--mh-unit) * -.1);
         height: calc(var(--mh-unit) * .45);
      }
      .state__value_icon {

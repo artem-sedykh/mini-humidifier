@@ -108,6 +108,7 @@ export default class HumidifierDropdownBase extends ScopedRegistryHost(LitElemen
           width: calc(var(--mh-dropdown-unit));
           height: calc(var(--mh-dropdown-unit));
           --mdc-icon-button-size: calc(var(--mh-dropdown-unit));
+          --ha-icon-button-size: calc(var(--mh-dropdown-unit));
         }
         mwc-item > *:nth-child(2) {
           margin-left: 4px;

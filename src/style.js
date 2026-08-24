@@ -156,6 +156,7 @@ const style = css`
     width: calc(var(--mh-unit) * .75);
     height: calc(var(--mh-unit) * .75);
     --mdc-icon-button-size: calc(var(--mh-unit) * .75);
+    --ha-icon-button-size: calc(var(--mh-unit) * .75);
     --ha-icon-display: flex;
     color: var(--mh-icon-color);
     margin-left: auto;
