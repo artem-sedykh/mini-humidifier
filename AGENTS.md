@@ -41,7 +41,7 @@ Node version comes from `.nvmrc`. Use it; CI reads the same file.
 
 `npm run rollup` minifies; `npm run dev` produces the same bundle unminified,
 which is what you want while debugging in the browser. The difference is large -
-206 KB against 541 KB - so never publish a dev build.
+89 KB against 264 KB - so never publish a dev build.
 
 `npm run test:browser` needs a browser to run: `npx playwright install
 chromium` once, which is what CI does on every run.
@@ -179,8 +179,7 @@ src/
   configurations/    per-model defaults, grouped by the integration that
     xiaomi_miio/               provides the entity
     xiaomi_miio_airpurifier/
-  components/        the sub-elements the card renders
-    mwc/             thin wrappers around @material/mwc-* elements
+  components/        the sub-elements the card renders, the dropdown among them
   models/            wrappers that turn raw hass state into what a component
                      renders (humidifier, button, indicator, targetHumidity)
   utils/             template compilation, click handling, element definitions
@@ -232,8 +231,9 @@ Document the new model in the options reference, and in
 
 ## Home Assistant compatibility
 
-The card renders Home Assistant's own frontend elements (`ha-card`, `ha-slider`,
-`ha-icon-button`, `ha-entity-toggle`, `mwc-*`). None of them are a stable API:
+The card renders Home Assistant's own frontend elements (`ha-card`, `ha-icon`,
+`ha-icon-button`, `ha-relative-time`, `ha-slider`, `ha-entity-toggle`). None of
+them are a stable API:
 they are internal frontend components that change between releases without
 notice, and they have broken this card before.
 
@@ -252,6 +252,39 @@ When you touch anything that talks to a Home Assistant element:
   map to a "default" that stops applying after the first interaction.
 - Feature-detect the element. Do not branch on the Home Assistant version
   string unless there is no way to detect the behaviour itself.
+
+## The dropdown
+
+`src/components/dropdown-base.js` is the card's own menu, and it is worth
+knowing why rather than reaching for a component library again.
+
+It used to be `@material/mwc-menu` and `@material/mwc-list`, wrapped in scoped
+registries so the card's copies would not collide with Home Assistant's. Those
+packages are end of life on lit 2, which pinned the whole card to lit 2
+(#148), and they cost 95 KB of a 182 KB bundle for a list of four modes. Home
+Assistant's own menu was not a way out either: `ha-button-menu` was
+[removed from the frontend](https://github.com/home-assistant/frontend/pull/29134)
+in January 2026 in favour of a WebAwesome `ha-dropdown` with an unrelated API,
+so following it would mean carrying two of them.
+
+What the card needs is small - a button, a list of `{ id, name }` options, one
+of them current - and that is what the component does. Two details are not
+obvious:
+
+- **The menu is positioned by hand.** The card clips its own overflow, so a
+  menu that stayed in flow would be cut off. Where the browser has the popover
+  API the menu is also put in the top layer, which survives a transformed
+  ancestor - Home Assistant creates one while a dashboard is being edited. The
+  popover call is an enhancement, not a requirement: without it the same fixed
+  coordinates still apply.
+- **Dismissal is the card's own.** `popover="manual"` means no light dismiss
+  from the browser, so the component listens for a press outside itself, for
+  Escape, and for the page scrolling, and closes on all three. Doing it by hand
+  is what makes it behave the same whatever the engine, which matters for the
+  Android companion app.
+
+The browser tests cover the parts worth guarding: one command per selection,
+what the menu shows, and the keyboard.
 
 ## Conventions
 

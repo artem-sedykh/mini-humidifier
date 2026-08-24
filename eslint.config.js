@@ -24,7 +24,7 @@ const rules = {
 
 module.exports = [
   {
-    ignores: ['dist/**', 'node_modules/**', 'rollup-plugins/**'],
+    ignores: ['dist/**', 'node_modules/**'],
   },
   js.configs.recommended,
   {
