@@ -33,9 +33,7 @@ jobs:
         run: npm run format:check
 
       - name: Build
-        run: |
-          npm run rollup
-          npm run babel
+        run: npm run rollup
 
       - name: Bundle must not be empty
         run: |

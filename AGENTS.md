@@ -29,17 +29,16 @@ npm ci             # install exactly what the lockfile says
 npm run lint       # eslint
 npm run format     # prettier --write
 npm run rollup     # bundle src/main.js -> dist/mini-humidifier-bundle.js
-npm run babel      # transpile and minify that bundle in place
-npm run build      # lint + rollup + babel
-npm run watch      # rollup in watch mode
+npm run dev        # the same, unminified
+npm run build      # lint + rollup
+npm run watch      # unminified, rebuilding on save
 ```
 
 Node version comes from `.nvmrc`. Use it; CI reads the same file.
 
-`npm run rollup` alone produces an unminified bundle that still works in the
-browser, which is what you want while developing. The `babel` step is what
-minifies, and it is not optional for a release: skipping it roughly doubles the
-asset size.
+`npm run rollup` minifies; `npm run dev` produces the same bundle unminified,
+which is what you want while debugging in the browser. The difference is large -
+206 KB against 541 KB - so never publish a dev build.
 
 There is no test suite. This is the single biggest risk in the repository: the
 only way to know a change works is to load the bundle into a running Home
@@ -200,9 +199,6 @@ versions over gating the release.
 ## Known debt
 
 - No tests.
-- `rollup-plugin-node-resolve` is the deprecated pre-scope package, unmaintained
-  since 2019, and rollup is still on 2.x.
-- `babel-preset-minify` is unmaintained and drags in `core-js` 2.
 - Several bundled model configurations call `fan.set_speed`, a service Home
   Assistant removed in 2023.7, so those mode dropdowns are dead on any
   currently supported version.

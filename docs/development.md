@@ -36,16 +36,16 @@ On a dashboard in storage mode, add the same URL through
 ## Build
 
 ```console
-npm run rollup     # bundle only - readable output, what you want while working
+npm run dev        # bundle unminified - readable output, what you want while working
 npm run watch      # the same, rebuilding on save
-npm run build      # lint + bundle + minify, what a release ships
+npm run rollup     # bundle minified, what a release ships
+npm run build      # lint + rollup
 npm run lint       # eslint
 npm run format     # prettier
 ```
 
-`npm run rollup` writes `dist/mini-humidifier-bundle.js` unminified. That file
-works in the browser as-is and is far easier to debug. The extra `npm run babel`
-step in `npm run build` is what minifies it.
+Both write `dist/mini-humidifier-bundle.js`. The unminified one works in the
+browser exactly the same and is far easier to debug, at 541 KB against 206 KB.
 
 After each build, reload the browser with the cache cleared or disabled. A
 stale bundle looks exactly like a change that did nothing.
