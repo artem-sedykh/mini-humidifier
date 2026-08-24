@@ -1,7 +1,6 @@
 import { LitElement, html, css } from 'lit';
-import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
 import sharedStyle from '../sharedStyle';
-import buildElementDefinitions from '../utils/buildElementDefinitions';
+import define from '../utils/define';
 
 // The menu behind every dropdown on the card: an icon button that opens a list
 // of options, one of which is the current one.
@@ -23,15 +22,7 @@ import buildElementDefinitions from '../utils/buildElementDefinitions';
 // dashboards are being edited.
 const MENU_MARGIN = 8;
 
-export default class HumidifierDropdownBase extends ScopedRegistryHost(LitElement) {
-  static get defineId() {
-    return 'mh-dropdown-base';
-  }
-
-  static get elementDefinitions() {
-    return buildElementDefinitions(['ha-icon', 'ha-icon-button'], HumidifierDropdownBase);
-  }
-
+export default class HumidifierDropdownBase extends LitElement {
   static get properties() {
     return {
       items: { type: Array },
@@ -243,10 +234,6 @@ export default class HumidifierDropdownBase extends ScopedRegistryHost(LitElemen
   }
 
   render() {
-    if (!HumidifierDropdownBase.elementDefinitionsLoaded) {
-      return html``;
-    }
-
     return html`
       <div class='mh-dropdown'>
         <ha-icon-button class='mh-dropdown__button icon'
@@ -360,3 +347,5 @@ export default class HumidifierDropdownBase extends ScopedRegistryHost(LitElemen
     ];
   }
 }
+
+define('mh-dropdown-base', HumidifierDropdownBase);

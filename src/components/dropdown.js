@@ -1,19 +1,10 @@
 import { LitElement, html, css } from 'lit';
 import { styleMap } from 'lit/directives/style-map.js';
-import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
 import sharedStyle from '../sharedStyle';
-import HumidifierDropdownBase from './dropdown-base';
-import buildElementDefinitions from '../utils/buildElementDefinitions';
+import './dropdown-base';
+import define from '../utils/define';
 
-export default class HumidifierDropDown extends ScopedRegistryHost(LitElement) {
-  static get defineId() {
-    return 'mh-dropdown';
-  }
-
-  static get elementDefinitions() {
-    return buildElementDefinitions([HumidifierDropdownBase], HumidifierDropDown);
-  }
-
+export default class HumidifierDropDown extends LitElement {
   constructor() {
     super();
     this.dropdown = {};
@@ -53,10 +44,6 @@ export default class HumidifierDropDown extends ScopedRegistryHost(LitElement) {
   }
 
   render() {
-    if (!HumidifierDropDown.elementDefinitionsLoaded) {
-      return html``;
-    }
-
     clearTimeout(this.timer);
 
     return html`
@@ -110,3 +97,5 @@ export default class HumidifierDropDown extends ScopedRegistryHost(LitElement) {
     ];
   }
 }
+
+define('mh-dropdown', HumidifierDropDown);

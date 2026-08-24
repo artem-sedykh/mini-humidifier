@@ -1,18 +1,9 @@
 import { css, html, LitElement } from 'lit';
-import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
 import sharedStyle from '../sharedStyle';
-import buildElementDefinitions from '../utils/buildElementDefinitions';
-import HumidifierButton from './button';
+import './button';
+import define from '../utils/define';
 
-export default class HumidifierPower extends ScopedRegistryHost(LitElement) {
-  static get defineId() {
-    return 'mh-power';
-  }
-
-  static get elementDefinitions() {
-    return buildElementDefinitions([HumidifierButton, 'ha-entity-toggle'], HumidifierPower);
-  }
-
+export default class HumidifierPower extends LitElement {
   constructor() {
     super();
     this._isOn = false;
@@ -25,10 +16,6 @@ export default class HumidifierPower extends ScopedRegistryHost(LitElement) {
   }
 
   render() {
-    if (!HumidifierPower.elementDefinitionsLoaded) {
-      return html``;
-    }
-
     if (this.power.hide) return html``;
 
     if (this.power.type === 'toggle') {
@@ -68,3 +55,5 @@ export default class HumidifierPower extends ScopedRegistryHost(LitElement) {
     ];
   }
 }
+
+define('mh-power', HumidifierPower);

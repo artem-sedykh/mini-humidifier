@@ -17,7 +17,6 @@
   "author": "Artem Sedykh <anavrin72@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@lit-labs/scoped-registry-mixin": "^1.0.4",
     "lit": "^3.3.3"
   },
   "devDependencies": {
@@ -29,7 +28,6 @@
     "@web/dev-server-rollup": "^1.0.0",
     "@web/test-runner": "^1.0.0",
     "@web/test-runner-playwright": "^1.0.0",
-    "@webcomponents/scoped-custom-element-registry": "^0.0.10",
     "eslint": "^10.9.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.11.0",

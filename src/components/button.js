@@ -1,18 +1,9 @@
 import { LitElement, html, css } from 'lit';
 import { styleMap } from 'lit/directives/style-map.js';
-import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
 import sharedStyle from '../sharedStyle';
-import buildElementDefinitions from '../utils/buildElementDefinitions';
+import define from '../utils/define';
 
-export default class HumidifierButton extends ScopedRegistryHost(LitElement) {
-  static get defineId() {
-    return 'mh-button';
-  }
-
-  static get elementDefinitions() {
-    return buildElementDefinitions(['ha-icon', 'ha-icon-button'], HumidifierButton);
-  }
-
+export default class HumidifierButton extends LitElement {
   constructor() {
     super();
     this._isOn = false;
@@ -51,10 +42,6 @@ export default class HumidifierButton extends ScopedRegistryHost(LitElement) {
   }
 
   render() {
-    if (!HumidifierButton.elementDefinitionsLoaded) {
-      return html``;
-    }
-
     clearTimeout(this.timer);
 
     return html`
@@ -106,3 +93,5 @@ export default class HumidifierButton extends ScopedRegistryHost(LitElement) {
     ];
   }
 }
+
+define('mh-button', HumidifierButton);

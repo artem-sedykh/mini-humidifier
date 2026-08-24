@@ -1,7 +1,6 @@
 import { css, html, LitElement } from 'lit';
 import { styleMap } from 'lit/directives/style-map.js';
-import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
-import buildElementDefinitions from '../utils/buildElementDefinitions';
+import define from '../utils/define';
 
 // Home Assistant has shipped three different `ha-slider` implementations across
 // the versions this card supports, and they do not lay out alike:
@@ -32,15 +31,7 @@ const usesWebAwesomeSlider = () => {
   return isWebAwesome;
 };
 
-export default class HumidifierTargetHumidity extends ScopedRegistryHost(LitElement) {
-  static get defineId() {
-    return 'mh-target-humidity';
-  }
-
-  static get elementDefinitions() {
-    return buildElementDefinitions(['ha-slider', 'ha-icon'], HumidifierTargetHumidity);
-  }
-
+export default class HumidifierTargetHumidity extends LitElement {
   static get properties() {
     return {
       targetHumidity: { type: Object },
@@ -105,10 +96,6 @@ export default class HumidifierTargetHumidity extends ScopedRegistryHost(LitElem
   }
 
   render() {
-    if (!HumidifierTargetHumidity.elementDefinitionsLoaded) {
-      return html``;
-    }
-
     // min/max/step/value are bound as properties, not attributes, on every
     // flavour. On the WebAwesome slider the `value` attribute maps to
     // `defaultValue`, so once the user has dragged the thumb, writing the
@@ -216,3 +203,5 @@ export default class HumidifierTargetHumidity extends ScopedRegistryHost(LitElem
     `;
   }
 }
+
+define('mh-target-humidity', HumidifierTargetHumidity);
