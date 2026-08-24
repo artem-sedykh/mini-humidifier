@@ -21,6 +21,14 @@ export const createHass = ({ state = 'on', attributes = {} } = {}) => {
   const calls = [];
   const stamp = new Date('2026-01-01T00:00:00Z').toISOString();
 
+  // Deliberately later than `last_changed` on the sensors below. Home Assistant
+  // stamps `last_changed` when the state changes and `last_updated` when
+  // anything does, so the two are equal only until the first attribute-only
+  // update - which for a sensor is usually within a minute of it appearing.
+  // Code that compares the two kinds of stamp to each other looks right for as
+  // long as a fixture keeps them equal.
+  const updated = new Date('2026-01-01T00:00:30Z').toISOString();
+
   const entity = {
     entity_id: ENTITY_ID,
     state,
@@ -41,7 +49,7 @@ export const createHass = ({ state = 'on', attributes = {} } = {}) => {
       entity_id: `sensor.bedroom_${id}`,
       state: value,
       last_changed: stamp,
-      last_updated: stamp,
+      last_updated: updated,
       attributes: { unit_of_measurement: unit },
     },
   ];

@@ -1,4 +1,4 @@
-import { expect } from '@open-wc/testing';
+import { aTimeout, expect } from '@open-wc/testing';
 import { components, countRenders, mountCard, settle } from './helpers/card.js';
 import { ENTITY_ID } from './helpers/hass.js';
 
@@ -71,6 +71,35 @@ describe('the card in a browser', () => {
     expect(card.shadowRoot.querySelector('.label.unavailable').textContent.trim()).to.equal(
       'Unavailable',
     );
+  });
+
+  it('renders nothing again when the same state comes back', async () => {
+    // Home Assistant assigns `hass` on every state change anywhere in the
+    // installation, not just on this card's entities, so an assignment that
+    // carries no news has to cost nothing. The indicators are where that went
+    // wrong: they compared `last_changed` against `last_updated`, which differ
+    // on any entity that has been updated since it last changed state, so every
+    // assignment looked like news and asked for a render 500ms later.
+    const { card, hass } = await mountCard();
+
+    card.toggle = true;
+    await settle(card);
+
+    // The card asks for one more render 500ms after it first sees state, by
+    // design - `updateIndicators` debounces. Let that one pass before counting,
+    // or it lands in the middle of the wait below and is mistaken for churn.
+    await aTimeout(600);
+    await settle(card);
+
+    const counts = countRenders([card, ...components(card)]);
+
+    card.hass = hass;
+    await aTimeout(600);
+    await settle(card);
+
+    for (const [element, renders] of counts) {
+      expect(renders, element.localName).to.equal(0);
+    }
   });
 
   it('costs one render pass per component when the entity changes', async () => {

@@ -21,14 +21,17 @@ export default class IndicatorObject {
     return this._last_updated;
   }
 
+  // Like for like: `last_changed` against `last_changed`. Crossed over - which
+  // is how this read until #162 - the comparison reports a change for any
+  // entity whose two stamps differ, and they differ on every entity that has
+  // been updated since it last changed state. Home Assistant assigns `hass` on
+  // every state change in the installation, so the card was rebuilding its
+  // indicators and asking for a render half a second later, over and over,
+  // whether or not anything it shows had moved.
   changed(entity) {
     const e = entity || {};
-    const changed = this.lastUpdated !== e.last_changed || this.lastChanged !== e.last_updated;
-    if (changed) {
-      // console.log(`${this.id}: old_value: ${this.entity.state} new_value: ${entity.state}`);
-    }
 
-    return changed;
+    return this.lastChanged !== e.last_changed || this.lastUpdated !== e.last_updated;
   }
 
   get id() {

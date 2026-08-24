@@ -113,20 +113,36 @@ describe('IndicatorObject', () => {
     });
   });
 
-  it('notices when the entity was stamped again', () => {
-    // Both timestamps move together on a state change, which is what the card
-    // acts on. Note that this comparison is crosswise - `lastUpdated` against
-    // `last_changed` - so it does not tell the two kinds of change apart the
-    // way ButtonObject.changed does.
-    const model = indicator({});
+  describe('changed', () => {
+    it('says no when the same entity comes back', () => {
+      const model = indicator({});
 
-    expect(model.changed(entity('45.678'))).toBe(false);
-    expect(
-      model.changed({
-        ...entity('50'),
-        last_changed: '2026-01-01T00:01:00Z',
-        last_updated: '2026-01-01T00:01:00Z',
-      }),
-    ).toBe(true);
+      expect(model.changed(entity('45.678'))).toBe(false);
+    });
+
+    it('says no even when the entity was updated after it last changed', () => {
+      // The case that made this worth a test: `last_changed` and `last_updated`
+      // are equal only until the first attribute-only update, and comparing one
+      // against the other then reports a change on every single assignment of
+      // `hass` - which the frontend does on every state change in the whole
+      // installation. See #162.
+      const stale = {
+        ...entity('45.678'),
+        last_changed: '2026-01-01T00:00:00Z',
+        last_updated: '2026-01-01T00:00:30Z',
+      };
+      const model = new IndicatorObject(stale, { functions: {} }, {}, {});
+
+      expect(model.changed(stale)).toBe(false);
+    });
+
+    it('says yes when either timestamp moves', () => {
+      const model = indicator({});
+
+      expect(model.changed({ ...entity('50'), last_changed: '2026-01-01T00:01:00Z' })).toBe(true);
+      expect(model.changed({ ...entity('45.678'), last_updated: '2026-01-01T00:01:00Z' })).toBe(
+        true,
+      );
+    });
   });
 });

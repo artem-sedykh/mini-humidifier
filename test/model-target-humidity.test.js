@@ -97,21 +97,35 @@ describe('TargetHumidityObject', () => {
     });
   });
 
-  it('is enabled unless the configuration decides otherwise', () => {
-    // Every bundled configuration decides from the entity - the cb1 slider is
-    // disabled outside auto mode, because the device ignores it there. The
-    // first argument this callback is handed is not the current value, and no
-    // configuration reads it.
-    expect(targetHumidity({}).disabled).toBe(false);
-
-    const disabled = targetHumidity({
-      functions: {
-        icon: {},
-        disabled: (state, e, humidifier) => humidifier.attributes.mode !== 'auto',
-      },
+  describe('disabled', () => {
+    it('is false unless the configuration decides otherwise', () => {
+      expect(targetHumidity({}).disabled).toBe(false);
     });
 
-    expect(disabled.disabled).toBe(true);
+    it('asks the configured callback, which every bundled one answers from the entity', () => {
+      // The cb1 slider is disabled outside auto mode, because the device
+      // ignores it there.
+      const model = targetHumidity({
+        functions: {
+          icon: {},
+          disabled: (value, e, humidifier) => humidifier.attributes.mode !== 'auto',
+        },
+      });
+
+      expect(model.disabled).toBe(true);
+    });
+
+    it('hands that callback the value the slider shows', () => {
+      // It used to hand over `this.state`, which this class does not define, so
+      // the first argument was always undefined while the signature said
+      // otherwise. See #163.
+      const model = targetHumidity({
+        state: { attribute: 'humidity' },
+        functions: { icon: {}, disabled: value => value === 50 },
+      });
+
+      expect(model.disabled).toBe(true);
+    });
   });
 
   describe('moving the slider', () => {
