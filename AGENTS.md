@@ -183,7 +183,8 @@ src/
   configurations/    per-model defaults, grouped by the integration that
     xiaomi_miio/               provides the entity
     xiaomi_miio_airpurifier/
-  components/        the sub-elements the card renders, the dropdown among them
+  components/        the sub-elements the card renders, the dropdown among
+                     them, TypeScript
   models/            wrappers that turn raw hass state into what a component
                      renders (humidifier, button, indicator, targetHumidity),
                      TypeScript
@@ -201,8 +202,9 @@ scripts/             build-time checks that are not part of the bundle
 
 ## TypeScript, halfway
 
-`src/models/` and `src/types.ts` are TypeScript; everything else is still
-JavaScript, and both build side by side. That is deliberate - #152 asks for a
+`src/models/`, `src/components/` and `src/types.ts` are TypeScript. `main.js`,
+`src/utils/`, `src/localize/` and `src/configurations/` are still JavaScript,
+and both build side by side. That is deliberate - #152 asks for a
 migration file by file, because the one attempt at doing it in a single pass
 was abandoned with 39k lines changed. `allowJs` is on and `checkJs` is off: the
 JavaScript that is left is covered by eslint and by the tests, and turning the
@@ -217,6 +219,10 @@ Two things to know before migrating the next file:
   (`hass: HomeAssistant;`) has to erase. With class fields defined it would
   assign `undefined` at construction instead, and once the components follow,
   that assignment lands on top of lit's own accessors.
+- **The browser tests need `tsconfig` passed to esbuild too.** Without it the
+  plugin defines class fields, and a declaration-only field then assigns
+  `undefined` over lit's accessor: the components render and none of their
+  properties arrive. The dropdown tests caught exactly that.
 - **esbuild must not touch the JavaScript.** `rollup.config.mjs` restricts it to
   `/\.ts$/` and the browser tests pass no `target`, both for the same reason:
   esbuild is right that a module's top-level `this` is undefined in ESM, and

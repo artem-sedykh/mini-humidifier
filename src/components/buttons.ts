@@ -3,15 +3,19 @@ import sharedStyle from '../sharedStyle';
 import './button';
 import './dropdown';
 import define from '../utils/define';
+import type ButtonObject from '../models/button';
 
 export default class HumidifierButtons extends LitElement {
-  static get properties() {
+  /** The buttons of the model configuration, by id. */
+  buttons!: Record<string, ButtonObject>;
+
+  static override get properties() {
     return {
       buttons: {},
     };
   }
 
-  renderButton(button) {
+  renderButton(button: ButtonObject) {
     if (button.isUnavailable) return '';
     return html`
        <mh-button
@@ -21,7 +25,7 @@ export default class HumidifierButtons extends LitElement {
     `;
   }
 
-  renderDropdown(dropdown) {
+  renderDropdown(dropdown: ButtonObject) {
     return html`
       <mh-dropdown
         .dropdown=${dropdown}>
@@ -29,22 +33,20 @@ export default class HumidifierButtons extends LitElement {
     `;
   }
 
-  renderInternal(button) {
+  renderInternal(button: ButtonObject) {
     if (button.type === 'dropdown') return this.renderDropdown(button);
 
     return this.renderButton(button);
   }
 
-  render() {
-    const context = this;
-    return html`${Object.entries(this.buttons)
-      .map(b => b[1])
+  override render() {
+    return html`${Object.values(this.buttons)
       .filter(b => !b.hide)
       .sort((a, b) => (a.order > b.order ? 1 : b.order > a.order ? -1 : 0))
-      .map(button => context.renderInternal(button))}`;
+      .map(button => this.renderInternal(button))}`;
   }
 
-  static get styles() {
+  static override get styles() {
     return [
       sharedStyle,
       css`

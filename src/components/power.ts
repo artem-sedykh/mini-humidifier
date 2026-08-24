@@ -2,20 +2,18 @@ import { css, html, LitElement } from 'lit';
 import sharedStyle from '../sharedStyle';
 import './button';
 import define from '../utils/define';
+import type ButtonObject from '../models/button';
 
 export default class HumidifierPower extends LitElement {
-  constructor() {
-    super();
-    this._isOn = false;
-  }
+  power!: ButtonObject;
 
-  static get properties() {
+  static override get properties() {
     return {
       power: { type: Object },
     };
   }
 
-  render() {
+  override render() {
     if (this.power.hide) return html``;
 
     if (this.power.type === 'toggle') {
@@ -35,13 +33,7 @@ export default class HumidifierPower extends LitElement {
     `;
   }
 
-  updated(changedProps) {
-    if (changedProps.has('power')) {
-      this._isOn = this.power.isOn;
-    }
-  }
-
-  static get styles() {
+  static override get styles() {
     return [
       sharedStyle,
       css`

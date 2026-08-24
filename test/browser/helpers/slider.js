@@ -1,7 +1,7 @@
 import { fixture } from '@open-wc/testing';
 import { defineHaElements } from './ha-elements.js';
 // Importing the component registers it: `mh-target-humidity` is a global name.
-import '../../../src/components/targetHumidity.js';
+import '../../../src/components/targetHumidity.ts';
 
 // One generation of `ha-slider` per test file, because the answer is cached in
 // the module and a custom element name can only be registered once - a page

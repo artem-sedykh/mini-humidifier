@@ -3,20 +3,24 @@ import { styleMap } from 'lit/directives/style-map.js';
 import handleClick from '../utils/handleClick';
 import { TAP_ACTIONS } from '../const';
 import define from '../utils/define';
+import type IndicatorObject from '../models/indicator';
 
 export default class HumidifierIndicators extends LitElement {
-  static get properties() {
+  /** The indicators of the model configuration, by id. */
+  indicators!: Record<string, IndicatorObject>;
+
+  static override get properties() {
     return {
       indicators: {},
     };
   }
 
-  handlePopup(e, indicator) {
+  handlePopup(e: Event, indicator: IndicatorObject) {
     e.stopPropagation();
     handleClick(this, indicator.hass, indicator.config.tap_action, indicator.entity.entity_id);
   }
 
-  renderIcon(indicator) {
+  renderIcon(indicator: IndicatorObject) {
     const { icon } = indicator;
 
     if (!icon) return '';
@@ -24,13 +28,13 @@ export default class HumidifierIndicators extends LitElement {
     return html`<ha-icon style=${styleMap(indicator.iconStyle)} class='state__value_icon' .icon=${icon}></ha-icon>`;
   }
 
-  renderUnit(unit) {
+  renderUnit(unit: string) {
     if (!unit) return '';
 
     return html`<span class='state__uom'>${unit}</span>`;
   }
 
-  renderIndicator(indicator) {
+  renderIndicator(indicator: IndicatorObject) {
     if (!indicator) return '';
     const action =
       indicator.config && indicator.config.tap_action && indicator.config.tap_action.action;
@@ -38,7 +42,7 @@ export default class HumidifierIndicators extends LitElement {
     // console.log(`render ${indicator.id} value: ${indicator.value}`);
 
     return html`
-       <div class='state ${cls}' @click=${e => this.handlePopup(e, indicator)}>
+       <div class='state ${cls}' @click=${(e: Event) => this.handlePopup(e, indicator)}>
          ${this.renderIcon(indicator)}
          <span class='state__value'>${indicator.value}</span>
          ${this.renderUnit(indicator.unit)}
@@ -46,22 +50,24 @@ export default class HumidifierIndicators extends LitElement {
     `;
   }
 
-  render() {
-    const context = this;
+  // The indicators render in the order the configuration built them. There was
+  // a sort by `order` here, but `IndicatorObject` exposes no such property, so
+  // the comparator returned 0 for every pair and the option that
+  // `docs/indicators.md` documents has never done anything. Removing a sort
+  // that cannot sort is a no-op; making the option work is a fix of its own.
+  override render() {
     // console.log('render Indicators');
 
     return html`
      <div class='mh-indicators__container'>
-       ${Object.entries(this.indicators)
-         .map(i => i[1])
+       ${Object.values(this.indicators)
          .filter(i => !i.hide)
-         .sort((a, b) => (a.order > b.order ? 1 : b.order > a.order ? -1 : 0))
-         .map(i => context.renderIndicator(i))}
+         .map(i => this.renderIndicator(i))}
      </div>
     `;
   }
 
-  static get styles() {
+  static override get styles() {
     return css`
      :host {
         position: relative;
