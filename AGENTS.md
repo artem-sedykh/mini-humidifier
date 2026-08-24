@@ -28,9 +28,11 @@ external contributors who do not read Russian.
 npm ci             # install exactly what the lockfile says
 npm run lint       # eslint
 npm run format     # prettier --write
+npm test           # vitest, the unit tests under test/
 npm run rollup     # bundle src/main.js -> dist/mini-humidifier-bundle.js
-npm run dev        # the same, unminified
-npm run build      # lint + rollup
+npm run check:bundle  # assertions on the built bundle (needs a build first)
+npm run dev        # the same as rollup, unminified
+npm run build      # lint + test + rollup + check:bundle
 npm run watch      # unminified, rebuilding on save
 ```
 
@@ -40,10 +42,43 @@ Node version comes from `.nvmrc`. Use it; CI reads the same file.
 which is what you want while debugging in the browser. The difference is large -
 206 KB against 541 KB - so never publish a dev build.
 
-There is no test suite. This is the single biggest risk in the repository: the
-only way to know a change works is to load the bundle into a running Home
-Assistant. Say so plainly when you cannot verify something, rather than
-implying a change is tested.
+The tests cover the build output and the pure logic, and nothing else. What
+the card looks like and how it behaves once Home Assistant renders it is still
+only verifiable by hand - see below. Say plainly what you could not check,
+rather than letting a green `npm test` imply the change was tried.
+
+## Tests
+
+Two layers, both run by CI. Neither of them opens a browser, so neither of them
+can tell you the card renders.
+
+**`npm run check:bundle`** - `scripts/check-bundle.mjs`, assertions on
+`dist/mini-humidifier-bundle.js` after `npm run rollup`. Every regression this
+repository has shipped so far lived in the build rather than in the source: a
+development build of lit reaching users, two copies of `@lit/reactive-element`
+in one bundle, a lit directive left unresolved and emitted as an external
+`require`. None of them is visible in the source, all of them are visible in the
+output file. The script checks that the bundle registers the element, resolves
+every import, is not lit's development build, holds exactly one copy of each lit
+package, carries every model id from `src/humidifiers.js`, and stays within a
+tolerance of a recorded size.
+
+That last one has a baseline in `scripts/bundle-baseline.json`. When a change
+legitimately moves the size past the tolerance, update the file in the same
+commit and say why in the message. Do not widen the tolerance to make a build
+pass - the 11 KB the duplicated `@lit/reactive-element` added is exactly the
+size of change it is there to catch.
+
+**`npm test`** - vitest over `test/`, node environment. `localize`, `getLabel`,
+the helpers in `src/utils/utils.js`, the model registry, and the configuration
+merging in `main.js`. The merging tests need a DOM to construct the element, so
+`test/config.test.js` asks for jsdom with a `@vitest-environment` docblock;
+`setConfig` only reads and merges, and the element is never connected, so
+nothing renders.
+
+Component tests in a real browser - the slider flavour detection, a dropdown
+dispatching exactly one change, an unavailable entity rendering - are
+[issue #156](https://github.com/artem-sedykh/mini-humidifier/issues/156).
 
 ## Verifying a change by hand
 
@@ -109,6 +144,8 @@ src/
   localize/          en, ru, uk
   style.js           card styles
   sharedStyle.js     styles shared with the sub-elements
+test/                vitest unit tests, one file per unit under test
+scripts/             build-time checks that are not part of the bundle
 ```
 
 ## How a card configuration is resolved
@@ -234,7 +271,10 @@ versions over gating the release.
 
 ## Known debt
 
-- No tests.
+- No component tests: nothing exercises the card in a browser, so anything that
+  only shows up once Home Assistant renders the elements is still caught by
+  hand or not at all.
+  [#156](https://github.com/artem-sedykh/mini-humidifier/issues/156).
 - Several bundled model configurations call `fan.set_speed`, a service Home
   Assistant removed in 2023.7, so those mode dropdowns are dead on any
   currently supported version.

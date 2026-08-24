@@ -47,9 +47,11 @@ built bundle so Home Assistant serves it, and how to iterate.
 A few things worth knowing before you start, all of them in
 [AGENTS.md](AGENTS.md):
 
-- **There is no test suite.** Nothing is verified until the card runs inside
-  Home Assistant. Please say which version you tested on, and be plain about
-  what you could not check.
+- **The tests stop at the browser.** `npm test` covers the pure logic and
+  `npm run check:bundle` covers the build output, but nothing exercises the
+  card as Home Assistant renders it. Please load your change into a running
+  Home Assistant, say which version you tested on, and be plain about what you
+  could not check.
 - The elements the card renders belong to the Home Assistant frontend and are
   not a stable API. Feature-detect them rather than branching on a version
   string.
@@ -61,9 +63,10 @@ A few things worth knowing before you start, all of them in
 Commits follow [Conventional Commits](https://www.conventionalcommits.org/)
 without a scope: `fix:`, `feat:`, `ci:`, `build:`, `docs:`.
 
-CI runs lint, formatting, the build, HACS validation, and a gate that catches
-CRLF and BOM. `npm run lint && npm run format:check && npm run build` locally
-covers most of it.
+CI runs lint, formatting, the unit tests, the build, assertions on the built
+bundle, HACS validation, and a gate that catches CRLF and BOM.
+`npm run format:check && npm run build` locally covers most of it - `build`
+already chains lint, tests, the bundle and its checks.
 
 ## Releasing
 

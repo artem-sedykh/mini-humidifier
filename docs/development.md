@@ -39,9 +39,11 @@ On a dashboard in storage mode, add the same URL through
 npm run dev        # bundle unminified - readable output, what you want while working
 npm run watch      # the same, rebuilding on save
 npm run rollup     # bundle minified, what a release ships
-npm run build      # lint + rollup
+npm run build      # lint + test + rollup + check:bundle
 npm run lint       # eslint
 npm run format     # prettier
+npm test           # vitest, the unit tests under test/
+npm run check:bundle  # assertions on the built bundle
 ```
 
 Both write `dist/mini-humidifier-bundle.js`. The unminified one works in the
@@ -52,9 +54,10 @@ stale bundle looks exactly like a change that did nothing.
 
 ## Before opening a pull request
 
-- `npm run lint` and `npm run format` are clean. CI runs both.
-- The card was actually loaded in a running Home Assistant. There is no test
-  suite, so this is the only real check.
+- `npm run build` and `npm run format:check` are clean. CI runs the same.
+- The card was actually loaded in a running Home Assistant. The tests cover the
+  pure logic and the built bundle, not what the card renders, so this is still
+  the only check on the part users see.
 - Say which Home Assistant version you tested on. The card renders Home
   Assistant's own frontend elements, and they differ between releases - see
   [AGENTS.md](../AGENTS.md#home-assistant-compatibility).
