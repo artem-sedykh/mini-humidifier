@@ -34,7 +34,7 @@
     "@rollup/plugin-terser": "^1.0.0",
     "eslint": "^10.9.0",
     "eslint-config-prettier": "^10.1.8",
-    "globals": "^16.4.0",
+    "globals": "^17.11.0",
     "jsdom": "^30.0.1",
     "prettier": "^3.9.6",
     "rollup": "^4.62.5",
