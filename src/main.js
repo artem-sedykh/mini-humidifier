@@ -134,7 +134,7 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
     if (changed || force) {
       this.indicators = indicators;
       clearTimeout(this.updateIndicatorsTimer);
-      this.updateIndicatorsTimer = setTimeout(async () => this.requestUpdate('indicators'), 500);
+      this.updateIndicatorsTimer = setTimeout(() => this.requestUpdate('indicators'), 500);
     }
   }
 
@@ -162,7 +162,7 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
     if (changed || force) {
       this.buttons = buttons;
       clearTimeout(this.updateButtonsTimer);
-      this.updateButtonsTimer = setTimeout(async () => this.requestUpdate('buttons'), 500);
+      this.updateButtonsTimer = setTimeout(() => this.requestUpdate('buttons'), 500);
     }
   }
 

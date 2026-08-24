@@ -135,7 +135,13 @@ export default class HumidifierTargetHumidity extends ScopedRegistryHost(LitElem
       </div>`;
   }
 
-  updated(changedProps) {
+  // Before render, not after. Assigning a reactive property from `updated`
+  // schedules a second update for a value that was already known when the
+  // first one started, so every state change cost two render passes and lit's
+  // development build reported it. `willUpdate` is the hook meant for deriving
+  // state from changed properties: the assignment lands in the update that is
+  // already running.
+  willUpdate(changedProps) {
     if (changedProps.has('targetHumidity')) {
       this.sliderValue = this.targetHumidity.value;
     }
