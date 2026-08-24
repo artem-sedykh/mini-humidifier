@@ -12,12 +12,6 @@ updates:
         dependency-type: development
       production-dependencies:
         dependency-type: production
-    ignore:
-      # lit 3 cannot land while @material/mwc-* requires lit ^2: the bundle
-      # would carry both majors. Tracked in #148 - remove this when the mwc
-      # components are replaced.
-      - dependency-name: lit
-        update-types: ['version-update:semver-major']
 
   - package-ecosystem: github-actions
     directory: /

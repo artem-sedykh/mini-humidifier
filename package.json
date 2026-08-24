@@ -18,10 +18,7 @@
   "license": "MIT",
   "dependencies": {
     "@lit-labs/scoped-registry-mixin": "^1.0.4",
-    "lit": "^2.8.0"
-  },
-  "overrides": {
-    "@lit/reactive-element": "^1.6.3"
+    "lit": "^3.3.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

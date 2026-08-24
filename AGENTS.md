@@ -261,7 +261,7 @@ knowing why rather than reaching for a component library again.
 It used to be `@material/mwc-menu` and `@material/mwc-list`, wrapped in scoped
 registries so the card's copies would not collide with Home Assistant's. Those
 packages are end of life on lit 2, which pinned the whole card to lit 2
-(#148), and they cost 95 KB of a 182 KB bundle for a list of four modes. Home
+until #148, and they cost 95 KB of a 182 KB bundle for a list of four modes. Home
 Assistant's own menu was not a way out either: `ha-button-menu` was
 [removed from the frontend](https://github.com/home-assistant/frontend/pull/29134)
 in January 2026 in favour of a WebAwesome `ha-dropdown` with an unrelated API,
