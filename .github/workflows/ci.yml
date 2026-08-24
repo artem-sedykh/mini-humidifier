@@ -11,7 +11,11 @@ permissions:
 
 jobs:
   build:
-    name: Lint, test and build
+    # This name is a required status check on master. Renaming the job renames
+    # the check, and the old name then sits "expected, waiting for status to be
+    # reported" forever, blocking every pull request. Change the branch
+    # protection rule first, or leave the name alone.
+    name: Lint and build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
