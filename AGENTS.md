@@ -75,8 +75,9 @@ pass - the 11 KB the duplicated `@lit/reactive-element` added is exactly the
 size of change it is there to catch.
 
 **`npm test`** - vitest over `test/`, node environment. `localize`, `getLabel`,
-the helpers in `src/utils/utils.js`, the model registry, and the configuration
-merging in `main.js`. The merging tests need a DOM to construct the element, so
+the helpers in `src/utils/utils.js`, the model registry, the four wrappers in
+`src/models/` that turn raw entity state into what a component renders, and the
+configuration merging in `main.js`. The merging tests need a DOM to construct the element, so
 `test/config.test.js` asks for jsdom with a `@vitest-environment` docblock;
 `setConfig` only reads and merges, and the element is never connected, so
 nothing renders.
@@ -97,6 +98,14 @@ out of the shadow roots. What it covers, and why each one is there:
 - **a state change costs one render pass per component.** Deriving state in
   `updated()` instead of `willUpdate()` asks for a second pass; three
   components did that until #160, and nothing in the layers above could say so.
+- **the slider, the power button and a toggle button each send one command**,
+  counted the same way, because all four controls are built the same.
+- **every model in the registry renders.** A model configuration is a file of
+  callbacks that only run once the card renders, so a model can pass the layers
+  above and still throw the moment it is put on a dashboard.
+- **`more-info` opens once** when the entity name is clicked, and
+  **`secondary_info: last-changed`** hands `ha-relative-time` both the
+  timestamp and `hass`.
 
 The cost of this layer is in `test/browser/helpers/`, not in the assertions.
 `ha-card`, `ha-icon`, `ha-icon-button`, `ha-relative-time`, `ha-entity-toggle`

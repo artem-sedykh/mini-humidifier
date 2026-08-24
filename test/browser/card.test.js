@@ -23,6 +23,28 @@ describe('the card in a browser', () => {
     }
   });
 
+  it('names the current mode under the entity name', async () => {
+    const { card } = await mountCard();
+
+    // The default `secondary_info`. It reads the label out of the dropdown's
+    // own source list rather than the raw attribute, so this is also the one
+    // place a card shows a translated mode without a dropdown being open.
+    expect(
+      card.shadowRoot.querySelector('.entity__secondary_info__name').textContent.trim(),
+    ).to.equal('Auto');
+  });
+
+  it('hands the timestamp to ha-relative-time for last-changed', async () => {
+    const { card, hass } = await mountCard({ config: { secondary_info: 'last-changed' } });
+    const relative = card.shadowRoot.querySelector('ha-relative-time');
+
+    // The only element the card renders that it also has to keep fed: it needs
+    // `hass` to know the language and `datetime` to count from.
+    expect(relative).to.exist;
+    expect(relative.datetime).to.equal(hass.states[ENTITY_ID].last_changed);
+    expect(relative.hass).to.equal(hass);
+  });
+
   it('renders an unavailable entity instead of throwing', async () => {
     // What broke when the frontend dropped `hass.resources`: the label lookup
     // for this one state threw, so an entity going unavailable took the whole
