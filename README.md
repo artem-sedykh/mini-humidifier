@@ -105,7 +105,8 @@ secondary_info: last-changed
 | [Examples](docs/examples.md) | `tap_action` snippets |
 | [Development](docs/development.md) | Building the card locally |
 
-Contributors, and agents in particular, should also read [AGENTS.md](AGENTS.md).
+Contributing: [CONTRIBUTING.md](CONTRIBUTING.md). Agents working on this
+repository should read [AGENTS.md](AGENTS.md).
 
 ## Supported models
 
