@@ -23,6 +23,15 @@ const getEntityValue = (entity: HassEntity | undefined, config?: Source): any =>
   return entity.state;
 };
 
+// Two things without an order compare as equal, which leaves a stable sort
+// holding them where they were. `undefined > undefined` did the same, back when
+// this comparison was written inline and against a property that did not exist.
+const byOrder = (a: number | undefined, b: number | undefined): number => {
+  if (a === undefined || b === undefined) return 0;
+
+  return a > b ? 1 : b > a ? -1 : 0;
+};
+
 const round = (value: any, decimals?: number): number =>
   Number(`${Math.round(Number(`${value}e${decimals}`))}e-${decimals}`);
 
@@ -41,4 +50,4 @@ const compileTemplate = (template: any, context?: Record<string, unknown>): any 
   }
 };
 
-export { round, compileTemplate, getEntityValue, toggleState };
+export { byOrder, round, compileTemplate, getEntityValue, toggleState };

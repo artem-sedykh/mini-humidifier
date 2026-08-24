@@ -57,6 +57,10 @@ export default class IndicatorObject {
     return this.config.id;
   }
 
+  get order(): number | undefined {
+    return this.config.order;
+  }
+
   get hass(): HomeAssistant {
     return this._hass;
   }

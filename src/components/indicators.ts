@@ -3,6 +3,7 @@ import { styleMap } from 'lit/directives/style-map.js';
 import handleClick from '../utils/handleClick';
 import { TAP_ACTIONS } from '../const';
 import define from '../utils/define';
+import { byOrder } from '../utils/utils';
 import type IndicatorObject from '../models/indicator';
 
 export default class HumidifierIndicators extends LitElement {
@@ -50,11 +51,6 @@ export default class HumidifierIndicators extends LitElement {
     `;
   }
 
-  // The indicators render in the order the configuration built them. There was
-  // a sort by `order` here, but `IndicatorObject` exposes no such property, so
-  // the comparator returned 0 for every pair and the option that
-  // `docs/indicators.md` documents has never done anything. Removing a sort
-  // that cannot sort is a no-op; making the option work is a fix of its own.
   override render() {
     // console.log('render Indicators');
 
@@ -62,6 +58,7 @@ export default class HumidifierIndicators extends LitElement {
      <div class='mh-indicators__container'>
        ${Object.values(this.indicators)
          .filter(i => !i.hide)
+         .sort((a, b) => byOrder(a.order, b.order))
          .map(i => this.renderIndicator(i))}
      </div>
     `;

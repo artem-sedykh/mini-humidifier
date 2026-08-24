@@ -15,7 +15,7 @@ Options under `indicators: <name>:`, where `<name>` is yours to choose.
 | `unit` | string | | Display unit. |
 | `round` | number | | Number of decimals to round the value to. |
 | `hide` | boolean | `false` | Hide the indicator. |
-| `order` | number | | Sort order among the indicators. |
+| `order` | number | its position | Sort order among the indicators, lowest first. |
 | `tap_action` | [action object](configuration.md#action-object-options) | optional | Action on click/tap. |
 | `source` | object | | Where to read the value from. |
 | `source: entity` | string | current entity | Entity to read the value from. |
