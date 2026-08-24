@@ -6,6 +6,7 @@
 
 # Explicit text declarations, so the gate does not depend on git's heuristics.
 *.js       text eol=lf
+*.mjs      text eol=lf
 *.json     text eol=lf
 *.md       text eol=lf
 *.yml      text eol=lf

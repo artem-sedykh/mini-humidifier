@@ -41,11 +41,12 @@
     "vitest": "^4.1.11"
   },
   "scripts": {
-    "build": "npm run lint && npm run test && npm run rollup",
+    "build": "npm run lint && npm run test && npm run rollup && npm run check:bundle",
     "rollup": "rollup -c",
+    "check:bundle": "node scripts/check-bundle.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint src test",
+    "lint": "eslint src test scripts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "watch": "rollup -c --watch --environment BUILD:development",

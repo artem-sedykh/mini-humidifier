@@ -38,12 +38,12 @@ jobs:
       - name: Build
         run: npm run rollup
 
-      - name: Bundle must not be empty
-        run: |
-          # A broken rollup config can still exit 0 and emit a stub, and the
-          # result only shows up as a blank card in the browser.
-          test -s dist/mini-humidifier-bundle.js
-          grep -q 'mini-humidifier' dist/mini-humidifier-bundle.js
+      - name: Bundle assertions
+        # Everything that has gone wrong in this repository so far went wrong in
+        # the build rather than in the source - a development build of lit, a
+        # duplicated dependency, a directive left unresolved - and all of it is
+        # visible in the output file. See scripts/check-bundle.mjs.
+        run: npm run check:bundle
 
       - name: Upload bundle
         uses: actions/upload-artifact@v7
