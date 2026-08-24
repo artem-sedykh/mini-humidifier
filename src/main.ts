@@ -280,7 +280,16 @@ class MiniHumidifier extends LitElement {
     }
 
     return Object.entries(defaultIndicators)
-      .map(i => this.getIndicatorConfig(i[0], i[1], config))
+      .map((entry, i) => {
+        const indicator = this.getIndicatorConfig(entry[0], entry[1], config);
+
+        // Same rule as the buttons: an indicator the configuration does not
+        // number takes its position. Without it the sort in `mh-indicators`
+        // would compare against `undefined` and leave the order to chance.
+        if (!('order' in indicator)) indicator.order = i;
+
+        return indicator;
+      })
       .filter(i => !i.hide);
   }
 

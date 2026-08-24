@@ -11,7 +11,7 @@ Options under `buttons: <name>:`, where `<name>` is yours to choose.
 |------|------|---------|-------------|
 | `icon` | string | | Specify a custom icon from any of the available mdi icons. |
 | `type` | string | `button` | `button` or `dropdown`. |
-| `order` | number | | Sort order among the buttons. |
+| `order` | number | its position | Sort order among the buttons, lowest first. |
 | `hide` | boolean | `false` | Hide the button. |
 | `action_timeout` | number | `3500` | Milliseconds to wait before the card re-reads the entity state after a change. |
 | `state` | object | | Where to read the button state from. |

@@ -113,6 +113,13 @@ describe('IndicatorObject', () => {
     });
   });
 
+  it('reports the order the configuration gave it', () => {
+    // What `mh-indicators` sorts by. There was no such getter until #171, so
+    // the sort compared `undefined` against `undefined` and did nothing.
+    expect(indicator({ order: 2 }).order).toBe(2);
+    expect(indicator({}).order).toBeUndefined();
+  });
+
   describe('changed', () => {
     it('says no when the same entity comes back', () => {
       const model = indicator({});

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { compileTemplate, getEntityValue, round, toggleState } from '../src/utils/utils';
+import { byOrder, compileTemplate, getEntityValue, round, toggleState } from '../src/utils/utils';
 
 describe('round', () => {
   it('rounds to the requested number of decimals', () => {
@@ -104,5 +104,20 @@ describe('compileTemplate', () => {
   it('reports the source it could not compile', () => {
     expect(() => compileTemplate('=> not a function', {})).toThrow(/COMPILE ERROR/);
     expect(() => compileTemplate('=> not a function', {})).toThrow(/=> not a function/);
+  });
+});
+
+describe('byOrder', () => {
+  it('sorts by the number', () => {
+    expect([3, 1, 2].sort(byOrder)).toEqual([1, 2, 3]);
+  });
+
+  it('treats a missing order as equal to anything', () => {
+    // Both panels rely on that: an entry the configuration does not number
+    // keeps the place a stable sort leaves it in, rather than being flung to
+    // one end by a comparison against undefined.
+    expect(byOrder(undefined, 5)).toBe(0);
+    expect(byOrder(5, undefined)).toBe(0);
+    expect(byOrder(undefined, undefined)).toBe(0);
   });
 });
