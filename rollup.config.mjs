@@ -40,7 +40,15 @@ export default {
     // different bundle here than in CI. lit ships a separate development
     // build behind that condition: it carries assertions and warnings that
     // are useful while developing and must not reach users.
-    nodeResolve({ exportConditions: [development ? 'development' : 'production'] }),
+    nodeResolve({
+      exportConditions: [development ? 'development' : 'production'],
+      // Without this, a nested copy of any of these under node_modules is a
+      // separate module to rollup and gets bundled twice. Two ReactiveElement
+      // classes in one bundle break the update cycle: the card ends up
+      // dispatching a change per duplicated lifecycle, which reaches the
+      // device as several identical service calls.
+      dedupe: ['lit', 'lit-html', 'lit-element', '@lit/reactive-element'],
+    }),
     json(),
     ignore({
       // These are pulled in transitively but the card registers its own

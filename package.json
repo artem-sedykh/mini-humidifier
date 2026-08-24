@@ -24,6 +24,9 @@
     "lit": "^2.7.5",
     "resize-observer-polyfill": "^1.5.1"
   },
+  "overrides": {
+    "@lit/reactive-element": "^1.6.3"
+  },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@rollup/plugin-json": "^6.1.0",
