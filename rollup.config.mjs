@@ -18,7 +18,7 @@ const configurationPaths = [
 ];
 
 export default {
-  input: 'src/main.js',
+  input: 'src/main.ts',
   moduleContext(id) {
     if (configurationPaths.includes(path.parse(id).dir)) {
       return 'this';

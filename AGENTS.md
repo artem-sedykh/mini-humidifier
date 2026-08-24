@@ -31,7 +31,7 @@ npm run format     # prettier --write
 npm run typecheck  # tsc --noEmit over src, both languages
 npm test           # vitest, the unit tests under test/
 npm run test:browser  # @web/test-runner, the component tests in Chromium
-npm run rollup     # bundle src/main.js -> dist/mini-humidifier-bundle.js
+npm run rollup     # bundle src/main.ts -> dist/mini-humidifier-bundle.js
 npm run check:bundle  # assertions on the built bundle (needs a build first)
 npm run dev        # the same as rollup, unminified
 npm run build      # lint + typecheck + test + rollup + check:bundle
@@ -79,7 +79,7 @@ size of change it is there to catch.
 **`npm test`** - vitest over `test/`, node environment. `localize`, `getLabel`,
 the helpers in `src/utils/utils.js`, the model registry, the four wrappers in
 `src/models/` that turn raw entity state into what a component renders, and the
-configuration merging in `main.js`. The merging tests need a DOM to construct the element, so
+configuration merging in `main.ts`. The merging tests need a DOM to construct the element, so
 `test/config.test.js` asks for jsdom with a `@vitest-environment` docblock;
 `setConfig` only reads and merges, and the element is never connected, so
 nothing renders.
@@ -177,7 +177,7 @@ time, in its own first indicator - water level, 0%.
 
 ```
 src/
-  main.js            <mini-humidifier>, the card element: config parsing,
+  main.ts            <mini-humidifier>, the card element: config parsing,
                      state plumbing, and the top-level render
   humidifiers.js     model id -> configuration factory registry
   configurations/    per-model defaults, grouped by the integration that
@@ -202,9 +202,16 @@ scripts/             build-time checks that are not part of the bundle
 
 ## TypeScript, halfway
 
-`src/models/`, `src/components/` and `src/types.ts` are TypeScript. `main.js`,
-`src/utils/`, `src/localize/` and `src/configurations/` are still JavaScript,
-and both build side by side. That is deliberate - #152 asks for a
+`main.ts`, `src/models/`, `src/components/` and `src/types.ts` are TypeScript.
+`src/utils/`, `src/localize/`, `src/humidifiers.js` and `src/configurations/`
+are still JavaScript, and both build side by side.
+
+`src/types.ts` is where the configuration is described, in two halves that are
+worth keeping apart: **`RawCardConfig`** is the YAML a person wrote - almost
+everything optional, several options accepting two shapes - and **`CardConfig`**
+is what `setConfig` leaves behind, with the model's defaults merged in and every
+template compiled into a callback. An option that is in neither is an option the
+card does not read. That is deliberate - #152 asks for a
 migration file by file, because the one attempt at doing it in a single pass
 was abandoned with 39k lines changed. `allowJs` is on and `checkJs` is off: the
 JavaScript that is left is covered by eslint and by the tests, and turning the
@@ -234,7 +241,7 @@ Two things to know before migrating the next file:
   barely moves and every other check passes.
 
 Every component registers itself at the bottom of its own module -
-`define('mh-button', HumidifierButton)` - and `main.js` imports those modules
+`define('mh-button', HumidifierButton)` - and `main.ts` imports those modules
 for that alone. `src/utils/define.js` is `customElements.define` without the
 throw when the name is already taken, which is what a page that loads the
 bundle twice does.
@@ -261,7 +268,7 @@ This is the part worth understanding before changing anything about options.
 2. `HUMIDIFIERS[model]()` in `src/humidifiers.js` returns that model's defaults.
    An unknown model silently falls back to `HUMIDIFIERS.default`, so a typo in
    `model:` produces a working but wrong card rather than an error.
-3. `main.js` merges the user's YAML over those defaults, per section
+3. `main.ts` merges the user's YAML over those defaults, per section
    (`getPowerConfig`, `getTargetHumidityConfig`, `getIndicatorsConfig`,
    `getButtonsConfig`).
 

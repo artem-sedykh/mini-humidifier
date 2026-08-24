@@ -11,8 +11,8 @@
     "humidifier",
     "custom-cards"
   ],
-  "main": "src/main.js",
-  "module": "src/main.js",
+  "main": "src/main.ts",
+  "module": "src/main.ts",
   "repository": "git@github.com:artem-sedykh/mini-humidifier.git",
   "author": "Artem Sedykh <anavrin72@gmail.com>",
   "license": "MIT",

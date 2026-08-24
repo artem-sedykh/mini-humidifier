@@ -1,4 +1,5 @@
 import { html, LitElement } from 'lit';
+import type { PropertyDeclarations } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
 
@@ -16,13 +17,55 @@ import getLabel from './utils/getLabel';
 import './initialize';
 import HUMIDIFIERS from './humidifiers';
 import localize from './localize/localize';
+import type {
+  ButtonConfig,
+  CardConfig,
+  HassEntity,
+  HomeAssistant,
+  IndicatorConfig,
+  ModelConfiguration,
+  RawCardConfig,
+  TargetHumidityConfig,
+} from './types';
 import './components/targetHumidity';
 import './components/power';
 import './components/indicators';
 import './components/buttons';
 
 class MiniHumidifier extends LitElement {
-  static getStubConfig(hass, unusedEntities, allEntities) {
+  config!: CardConfig;
+
+  // Both are set by the `hass` setter before anything renders, and the card has
+  // always read them without checking.
+  entity!: HassEntity;
+
+  humidifier!: HumidifierObject;
+
+  initial: boolean;
+
+  toggle: boolean;
+
+  indicators: Record<string, IndicatorObject>;
+
+  buttons: Record<string, ButtonObject>;
+
+  power: ButtonObject;
+
+  targetHumidity: TargetHumidityObject;
+
+  private _hass: HomeAssistant | undefined;
+
+  private updateIndicatorsTimer: ReturnType<typeof setTimeout> | undefined;
+
+  private updateButtonsTimer: ReturnType<typeof setTimeout> | undefined;
+
+  // `_hass` is part of the signature Home Assistant calls this with, and is not
+  // needed to pick an entity out of the two lists that follow it.
+  static getStubConfig(
+    _hass: HomeAssistant,
+    unusedEntities: string[],
+    allEntities: string[],
+  ): { entity: string | undefined } {
     let entity = unusedEntities.find(eid => eid.split('.')[0] === 'fan');
     if (!entity) {
       entity = allEntities.find(eid => eid.split('.')[0] === 'fan');
@@ -36,28 +79,33 @@ class MiniHumidifier extends LitElement {
     this.toggle = false;
     this.indicators = {};
     this.buttons = {};
-    this.targetHumidity = {};
-    this.power = {};
-    this.config = {};
+    // Empty until `setConfig` and the first `hass`, which is how the card is
+    // built: constructed, configured, then given state.
+    this.targetHumidity = {} as TargetHumidityObject;
+    this.power = {} as ButtonObject;
+    this.config = {} as CardConfig;
     this.updateIndicatorsTimer = undefined;
     this.updateButtonsTimer = undefined;
   }
 
-  static get properties() {
+  // `initial` and `toggle` were declared as `Boolean` here. lit reads the value
+  // as a declaration and looks for `type` on it; a constructor has none, so it
+  // used the defaults - which is what `{}` says, and says on purpose.
+  static override get properties(): PropertyDeclarations {
     return {
       config: {},
       entity: {},
       humidifier: {},
-      initial: Boolean,
-      toggle: Boolean,
+      initial: {},
+      toggle: {},
     };
   }
 
-  static get styles() {
+  static override get styles() {
     return [sharedStyle, style];
   }
 
-  set hass(hass) {
+  set hass(hass: HomeAssistant) {
     if (!hass) return;
     const entity = hass.states[this.config.entity];
     let force = false;
@@ -77,15 +125,17 @@ class MiniHumidifier extends LitElement {
     }
   }
 
-  get hass() {
-    return this._hass;
+  get hass(): HomeAssistant {
+    // Only read after the setter has run: everything that reads it renders, and
+    // nothing renders before Home Assistant has handed the card its first one.
+    return this._hass as HomeAssistant;
   }
 
-  get name() {
+  get name(): string {
     return this.config.name || this.humidifier.name;
   }
 
-  evalEntityId(entityId) {
+  evalEntityId(entityId: string): string {
     if (entityId) {
       const name = this.config.entity && this.config.entity.split('.')[1].toLowerCase();
       return entityId.replaceAll('{entity_id}', name);
@@ -93,8 +143,8 @@ class MiniHumidifier extends LitElement {
     return entityId;
   }
 
-  updateIndicators(force) {
-    const indicators = {};
+  updateIndicators(force: boolean) {
+    const indicators: Record<string, IndicatorObject> = {};
     let changed = false;
 
     for (let i = 0; i < this.config.indicators.length; i += 1) {
@@ -120,8 +170,8 @@ class MiniHumidifier extends LitElement {
     }
   }
 
-  updateButtons(force) {
-    const buttons = {};
+  updateButtons(force: boolean) {
+    const buttons: Record<string, ButtonObject> = {};
     let changed = false;
 
     for (let i = 0; i < this.config.buttons.length; i += 1) {
@@ -148,16 +198,18 @@ class MiniHumidifier extends LitElement {
     }
   }
 
-  updatePower(force) {
+  updatePower(force: boolean) {
     const config = this.config.power;
     const entityId = this.evalEntityId((config.state && config.state.entity) || this.humidifier.id);
     const entity = this.hass.states[entityId];
-    const power = entity ? new ButtonObject(entity, config, this.humidifier, this.hass) : {};
+    const power = entity
+      ? new ButtonObject(entity, config, this.humidifier, this.hass)
+      : ({} as ButtonObject);
 
     if (entity !== (this.power && this.power.entity) || force) this.power = power;
   }
 
-  updateTargetHumidity(force) {
+  updateTargetHumidity(force: boolean) {
     const entityId = this.evalEntityId(
       (this.config.target_humidity.state && this.config.target_humidity.state.entity) ||
         this.config.entity,
@@ -171,7 +223,7 @@ class MiniHumidifier extends LitElement {
     }
   }
 
-  getIndicatorConfig(key, value, config) {
+  getIndicatorConfig(key: string, value: any, config: RawCardConfig): IndicatorConfig {
     const item = {
       id: key,
       source: { enitity: undefined, attribute: undefined, mapper: undefined },
@@ -187,7 +239,7 @@ class MiniHumidifier extends LitElement {
     context.entity_config = config;
     context.toggle_state = toggleState;
 
-    context.localize = (str, fallback) => {
+    context.localize = (str: string, fallback?: string) => {
       const lang = this.hass.selectedLanguage || this.hass.language || 'en';
       return localize(str, lang, fallback);
     };
@@ -215,7 +267,7 @@ class MiniHumidifier extends LitElement {
     return item;
   }
 
-  getIndicatorsConfig(config, indicatorsConfig) {
+  getIndicatorsConfig(config: RawCardConfig, indicatorsConfig: any): IndicatorConfig[] {
     const defaultIndicators = indicatorsConfig || {};
 
     const data = Object.entries(config.indicators || {});
@@ -232,7 +284,7 @@ class MiniHumidifier extends LitElement {
       .filter(i => !i.hide);
   }
 
-  getButtonConfig(value, config) {
+  getButtonConfig(value: any, config: RawCardConfig): ButtonConfig {
     const item = {
       icon: 'mdi:radiobox-marked',
       type: 'button',
@@ -243,12 +295,12 @@ class MiniHumidifier extends LitElement {
     item.functions = {};
 
     const context = { ...value };
-    context.call_service = (domain, service, options) =>
+    context.call_service = (domain: string, service: string, options: Record<string, unknown>) =>
       this.hass.callService(domain, service, options);
     context.entity_config = config;
     context.toggle_state = toggleState;
 
-    context.localize = (str, fallback) => {
+    context.localize = (str: string, fallback?: string) => {
       const lang = this.hass.selectedLanguage || this.hass.language || 'en';
       return localize(str, lang, fallback);
     };
@@ -287,7 +339,7 @@ class MiniHumidifier extends LitElement {
     return item;
   }
 
-  getButtonsConfig(config, buttonsConfig) {
+  getButtonsConfig(config: RawCardConfig, buttonsConfig: any): ButtonConfig[] {
     const defaultButtonsConfig = { ...(buttonsConfig || {}) };
 
     const entries = Object.entries(config.buttons || {});
@@ -317,7 +369,7 @@ class MiniHumidifier extends LitElement {
     return buttons;
   }
 
-  getTargetHumidityConfig(config, targetHumidityConfig) {
+  getTargetHumidityConfig(config: RawCardConfig, targetHumidityConfig: any): TargetHumidityConfig {
     const item = {
       ...(targetHumidityConfig || {}),
       ...(config.target_humidity || {}),
@@ -325,12 +377,12 @@ class MiniHumidifier extends LitElement {
 
     item.functions = { icon: {} };
     const context = { ...(config.target_humidity || {}) };
-    context.call_service = (domain, service, options) =>
+    context.call_service = (domain: string, service: string, options: Record<string, unknown>) =>
       this.hass.callService(domain, service, options);
     context.entity_config = config;
     context.toggle_state = toggleState;
 
-    context.localize = (str, fallback) => {
+    context.localize = (str: string, fallback?: string) => {
       const lang = this.hass.selectedLanguage || this.hass.language || 'en';
       return localize(str, lang, fallback);
     };
@@ -364,23 +416,28 @@ class MiniHumidifier extends LitElement {
     return item;
   }
 
-  getPowerConfig(config, powerConfig) {
+  getPowerConfig(config: RawCardConfig, powerConfig: any): ButtonConfig {
     return this.getButtonConfig({ ...(powerConfig || {}), ...(config.power || {}) }, config);
   }
 
-  setConfig(config) {
+  setConfig(config: RawCardConfig) {
     const domain = config.entity && config.entity.split('.')[0].toLowerCase();
 
     if (SUPPORTED_DOMAINS.includes(domain) === false) {
       throw new Error(`Specify an entity from within ${SUPPORTED_DOMAINS.join(' ,')} domains.`);
     }
 
-    let modelConfiguration;
+    // `humidifiers.js` is still JavaScript, so its registry arrives as an object
+    // literal rather than a lookup table.
+    const models = HUMIDIFIERS as Record<string, () => ModelConfiguration>;
+    let modelConfiguration: ModelConfiguration;
     const { model } = config;
 
-    if (model in HUMIDIFIERS) modelConfiguration = HUMIDIFIERS[model]();
-    else modelConfiguration = HUMIDIFIERS.default();
+    if (model !== undefined && model in models) modelConfiguration = models[model]();
+    else modelConfiguration = models.default();
 
+    // The sections below are filled in immediately after, which is what makes
+    // this a `CardConfig` rather than the YAML it starts as.
     this.config = {
       model: 'zhimi.humidifier.cb1',
       tap_action: {
@@ -392,7 +449,9 @@ class MiniHumidifier extends LitElement {
         service_data: {},
       },
       ...config,
-    };
+      // Not a `CardConfig` yet: every section below is replaced with its
+      // resolved form in the statements that follow, and only then is it one.
+    } as unknown as CardConfig;
     this.config.toggle = {
       icon: ICON.TOGGLE,
       hide: false,
@@ -420,7 +479,7 @@ class MiniHumidifier extends LitElement {
     this.toggle = this.config.toggle.default;
   }
 
-  render() {
+  override render() {
     const cls = this.config.target_humidity.hide ? 'full' : '';
     return html`
       <ha-card
@@ -434,7 +493,7 @@ class MiniHumidifier extends LitElement {
             <div class='entity__info'>
               <div class="wrap">
                 <div class="entity__info__name_wrap ${cls}" 
-                  @click=${e => this.handlePopup(e)}>
+                  @click=${(e: Event) => this.handlePopup(e)}>
                   ${this.renderEntityName()}
                 </div>
                 <div class="ctl-wrap">
@@ -482,12 +541,12 @@ class MiniHumidifier extends LitElement {
       `;
   }
 
-  handlePopup(e) {
+  handlePopup(e: Event) {
     e.stopPropagation();
     handleClick(this, this.hass, this.config.tap_action, this.humidifier.id);
   }
 
-  handleToggle(e) {
+  handleToggle(e: Event) {
     e.stopPropagation();
     this.toggle = !this.toggle;
   }
@@ -533,7 +592,7 @@ class MiniHumidifier extends LitElement {
     const cls = this.toggle ? 'open' : '';
     return html`
         <ha-icon-button class='toggle-button ${cls}'
-          @click=${e => this.handleToggle(e)}>
+          @click=${(e: Event) => this.handleToggle(e)}>
           <ha-icon icon="${this.config.toggle.icon}"></ha-icon>
         </ha-icon-button>
     `;
@@ -586,8 +645,8 @@ class MiniHumidifier extends LitElement {
   computeClasses({ config } = this) {
     return classMap({
       '--initial': this.initial,
-      '--collapse': config.collapse,
-      '--group': config.group,
+      '--collapse': !!config.collapse,
+      '--group': !!config.group,
       '--more-info': config.tap_action !== 'none',
       '--inactive': !this.humidifier.isActive,
       '--unavailable': this.humidifier.isUnavailable,
@@ -603,6 +662,14 @@ class MiniHumidifier extends LitElement {
 }
 
 customElements.define('mini-humidifier', MiniHumidifier);
+
+declare global {
+  interface Window {
+    /** The list Home Assistant reads to offer a card in the picker. */
+    customCards: Record<string, unknown>[];
+  }
+}
+
 window.customCards = window.customCards || [];
 window.customCards.push({
   type: 'mini-humidifier',

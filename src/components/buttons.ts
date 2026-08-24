@@ -5,6 +5,14 @@ import './dropdown';
 import define from '../utils/define';
 import type ButtonObject from '../models/button';
 
+// Two buttons without an order compare as equal, which is what
+// `undefined > undefined` did before this was typed.
+const byOrder = (a: number | undefined, b: number | undefined): number => {
+  if (a === undefined || b === undefined) return 0;
+
+  return a > b ? 1 : b > a ? -1 : 0;
+};
+
 export default class HumidifierButtons extends LitElement {
   /** The buttons of the model configuration, by id. */
   buttons!: Record<string, ButtonObject>;
@@ -42,7 +50,7 @@ export default class HumidifierButtons extends LitElement {
   override render() {
     return html`${Object.values(this.buttons)
       .filter(b => !b.hide)
-      .sort((a, b) => (a.order > b.order ? 1 : b.order > a.order ? -1 : 0))
+      .sort((a, b) => byOrder(a.order, b.order))
       .map(button => this.renderInternal(button))}`;
   }
 

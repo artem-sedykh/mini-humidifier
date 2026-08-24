@@ -89,8 +89,12 @@ export interface ButtonConfig {
    */
   type?: 'button' | 'dropdown' | 'toggle';
   icon?: string;
-  /** Always set: `getButtonsConfig` numbers the buttons the YAML leaves out. */
-  order: number;
+  /**
+   * `getButtonsConfig` numbers the buttons the YAML leaves out, so every button
+   * the panel renders has one. The power control goes through the same builder
+   * and never gets one, which is why this is optional.
+   */
+  order?: number;
   hide?: boolean;
   state?: Source;
   source?: Record<string, string>;
@@ -144,15 +148,85 @@ export interface TargetHumidityConfig {
 }
 
 /**
- * The card's own configuration, as `setConfig` leaves it.
+ * What a model configuration factory in `src/configurations/` returns: four
+ * sections of defaults, still untyped inside. Those files are the last thing
+ * #152 migrates - they are evaluated with `this` bound to the card - so what is
+ * described here is their shape, not their contents.
+ */
+export interface ModelConfiguration {
+  power: Record<string, any>;
+  target_humidity: Record<string, any>;
+  indicators: Record<string, Record<string, any>>;
+  buttons: Record<string, Record<string, any>>;
+}
+
+/** How the entity name is annotated underneath itself. */
+export interface SecondaryInfoConfig {
+  type?: string;
+  icon?: string;
+  hide?: boolean;
+}
+
+/** The button panel's own toggle, the one that opens the row of buttons. */
+export interface ToggleConfig {
+  icon: string;
+  hide: boolean;
+  default: boolean;
+}
+
+/**
+ * The card's configuration as the user wrote it.
  *
- * Only the parts the models read are described so far. The whole of it - the
- * type the option reference in `docs/` could eventually be checked against - is
- * the prize named in #152 and comes with `main.js`.
+ * Everything is optional and several options accept two shapes, because this is
+ * YAML that a person typed. `setConfig` is where it stops being this and starts
+ * being a `CardConfig`.
+ */
+export interface RawCardConfig {
+  entity: string;
+  model?: string;
+  name?: string;
+  icon?: string;
+  scale?: number;
+  group?: boolean;
+  collapse?: boolean;
+  tap_action?: string | TapAction;
+  toggle?: Partial<ToggleConfig>;
+  secondary_info?: string | SecondaryInfoConfig;
+  power?: Record<string, any>;
+  target_humidity?: Record<string, any>;
+  indicators?: Record<string, Record<string, any> | undefined>;
+  buttons?: Record<string, Record<string, any> | undefined>;
+  [key: string]: unknown;
+}
+
+/**
+ * The card's configuration as `setConfig` leaves it: the user's YAML merged
+ * over the defaults of the model it names, with every template compiled into a
+ * callback.
+ *
+ * This is the type #152 calls the prize - the one the option reference in
+ * `docs/` could be checked against. It describes what the card reads, not
+ * everything a user may write: an option that is not here is not one the card
+ * looks at.
  */
 export interface CardConfig {
   entity: string;
   model: string;
+  name?: string;
+  icon?: string;
+  scale?: number;
+  group?: boolean;
+  collapse?: boolean;
+  /**
+   * Whatever the YAML had, unchanged: `setConfig` spreads the user's options
+   * over its defaults, so `tap_action: none` written as a string arrives here
+   * as one. `computeClasses` compares against that string, and `handleClick`
+   * reads `.action` off the object form.
+   */
+  tap_action: TapAction | string;
+  toggle: ToggleConfig;
+  secondary_info: SecondaryInfoConfig;
+  power: ButtonConfig;
   target_humidity: TargetHumidityConfig;
   indicators: IndicatorConfig[];
   buttons: ButtonConfig[];
