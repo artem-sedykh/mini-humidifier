@@ -48,7 +48,7 @@ npm run check:bundle  # assertions on the built bundle
 ```
 
 Both write `dist/mini-humidifier-bundle.js`. The unminified one works in the
-browser exactly the same and is far easier to debug, at 541 KB against 206 KB.
+browser exactly the same and is far easier to debug, at 264 KB against 89 KB.
 
 After each build, reload the browser with the cache cleared or disabled. A
 stale bundle looks exactly like a change that did nothing.

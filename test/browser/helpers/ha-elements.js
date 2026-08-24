@@ -18,17 +18,33 @@ const define = (name, element) => {
   if (!customElements.get(name)) customElements.define(name, element);
 };
 
+// The real elements bring their own `display`, and the card's styles size them
+// on the strength of it - an inline stand-in collapses, and anything that
+// measures the layout then measures nothing.
+const shadow = (element, styles) => {
+  if (!element.shadowRoot)
+    element.attachShadow({ mode: 'open' }).innerHTML = `<style>${styles}</style><slot></slot>`;
+};
+
 class HaCard extends HTMLElement {
   connectedCallback() {
-    if (!this.shadowRoot) this.attachShadow({ mode: 'open' }).innerHTML = '<slot></slot>';
+    shadow(this, ':host { display: block; }');
   }
 }
 
-class HaIcon extends HTMLElement {}
+class HaIcon extends HTMLElement {
+  connectedCallback() {
+    shadow(this, ':host { display: inline-block; }');
+  }
+}
 
 class HaIconButton extends HTMLElement {
   connectedCallback() {
-    if (!this.shadowRoot) this.attachShadow({ mode: 'open' }).innerHTML = '<slot></slot>';
+    shadow(this, ':host { display: inline-flex; align-items: center; justify-content: center; }');
+    // The real one wraps a <button>, so it takes focus. Without this the card
+    // can hand focus back to it and nothing happens, which is a difference
+    // worth not having in a test.
+    if (!this.hasAttribute('tabindex')) this.setAttribute('tabindex', '0');
   }
 }
 
