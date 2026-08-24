@@ -122,7 +122,7 @@ differ.
 | `zhimi.humidifier.ca4` | `xiaomi_miio_airpurifier:deerma.humidifier.mjjsq` |
 | `zhimi.airpurifier.ma2` | `xiaomi_miio_airpurifier:zhimi.airpurifier.mb3` |
 | `zhimi.airfresh.va2` | `xiaomi_miio_airpurifier:zhimi.airfresh.va2` |
-| `deerma.humidifier.jsq` | |
+| `deerma.humidifier.jsq` | `xiaomi_miio_airpurifier:deerma.humidifier.jsq5` |
 | `deerma.humidifier.jsq1` | |
 | `deerma.humidifier.mjjsq` | |
 

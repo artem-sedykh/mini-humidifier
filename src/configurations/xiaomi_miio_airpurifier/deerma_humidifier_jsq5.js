@@ -1,6 +1,6 @@
 import { ICON } from '../../const';
 
-const XIAOMI_MIIO_AIRPURIFIER_DEERMA_HUMIDIFIER_MJJSQ = () => ({
+const XIAOMI_MIIO_AIRPURIFIER_DEERMA_HUMIDIFIER_JSQ5 = () => ({
   power: {
     icon: ICON.POWER,
     type: 'button',
@@ -14,8 +14,8 @@ const XIAOMI_MIIO_AIRPURIFIER_DEERMA_HUMIDIFIER_MJJSQ = () => ({
   target_humidity: {
     icon: ICON.HUMIDITY,
     unit: '%',
-    min: 30,
-    max: 80,
+    min: 40,
+    max: 70,
     step: 1,
     hide: false,
     hide_indicator: false,
@@ -99,4 +99,4 @@ const XIAOMI_MIIO_AIRPURIFIER_DEERMA_HUMIDIFIER_MJJSQ = () => ({
   },
 });
 
-export default XIAOMI_MIIO_AIRPURIFIER_DEERMA_HUMIDIFIER_MJJSQ;
+export default XIAOMI_MIIO_AIRPURIFIER_DEERMA_HUMIDIFIER_JSQ5;

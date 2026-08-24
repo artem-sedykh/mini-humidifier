@@ -37,6 +37,7 @@ integration, which reports different attributes and calls different services:
 | `xiaomi_miio_airpurifier:zhimi.airpurifier.mb3` | by @regevbr |
 | `xiaomi_miio_airpurifier:zhimi.airfresh.va2` | |
 | `xiaomi_miio_airpurifier:deerma.humidifier.mjjsq` | |
+| `xiaomi_miio_airpurifier:deerma.humidifier.jsq5` | by @akovovh |
 
 An unrecognised `model:` is not an error. The card falls back to
 `zhimi.humidifier.cb1`, so a typo produces a card that renders but brings the
