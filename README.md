@@ -3,7 +3,7 @@
 [![Last Version](https://img.shields.io/github/package-json/v/artem-sedykh/mini-humidifier?label=release)](https://github.com/artem-sedykh/mini-humidifier/releases/latest)
 [![HACS Default](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/default)
 [![CI](https://github.com/artem-sedykh/mini-humidifier/actions/workflows/ci.yml/badge.svg)](https://github.com/artem-sedykh/mini-humidifier/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/artem-sedykh/mini-humidifier/blob/master/LICENSE)
 
 A minimalistic yet customizable humidifier card for the
 [Home Assistant](https://github.com/home-assistant/home-assistant) Lovelace UI.
@@ -80,7 +80,7 @@ entity: fan.xiaomi_miio_device
 ```
 
 That is the whole minimum configuration. Everything else has a default, taken
-from the [model](docs/models.md) the card is configured for.
+from the [model](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/models.md) the card is configured for.
 
 A slightly fuller example:
 
@@ -96,16 +96,16 @@ secondary_info: last-changed
 
 | | |
 |---|---|
-| [Configuration](docs/configuration.md) | Every card option, the action object, theme variables |
-| [Models](docs/models.md) | Supported devices, and how to add one |
-| [Controls](docs/controls.md) | Target humidity, power button, toggle button, secondary info, group |
-| [Indicators](docs/indicators.md) | The read-only values under the entity name |
-| [Buttons](docs/buttons.md) | The bottom panel: buttons and dropdowns |
-| [Examples](docs/examples.md) | `tap_action` snippets |
-| [Development](docs/development.md) | Building the card locally |
+| [Configuration](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/configuration.md) | Every card option, the action object, theme variables |
+| [Models](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/models.md) | Supported devices, and how to add one |
+| [Controls](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/controls.md) | Target humidity, power button, toggle button, secondary info, group |
+| [Indicators](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/indicators.md) | The read-only values under the entity name |
+| [Buttons](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/buttons.md) | The bottom panel: buttons and dropdowns |
+| [Examples](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/examples.md) | `tap_action` snippets |
+| [Development](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/development.md) | Building the card locally |
 
-Contributing: [CONTRIBUTING.md](CONTRIBUTING.md). Agents working on this
-repository should read [AGENTS.md](AGENTS.md).
+Contributing: [CONTRIBUTING.md](https://github.com/artem-sedykh/mini-humidifier/blob/master/CONTRIBUTING.md). Agents working on this
+repository should read [AGENTS.md](https://github.com/artem-sedykh/mini-humidifier/blob/master/AGENTS.md).
 
 ## Supported models
 
@@ -128,7 +128,7 @@ differ.
 
 A device that is not listed still works: the card falls back to the
 `zhimi.humidifier.cb1` defaults, and everything can be overridden in YAML. See
-[Models](docs/models.md) for how to contribute a new one.
+[Models](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/models.md) for how to contribute a new one.
 
 ## Troubleshooting
 
@@ -163,4 +163,4 @@ States**.
 
 ## License
 
-MIT. See [LICENSE](./LICENSE).
+MIT. See [LICENSE](https://github.com/artem-sedykh/mini-humidifier/blob/master/LICENSE).
