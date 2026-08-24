@@ -4,7 +4,6 @@
 [![HACS Default](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/default)
 [![CI](https://github.com/artem-sedykh/mini-humidifier/actions/workflows/ci.yml/badge.svg)](https://github.com/artem-sedykh/mini-humidifier/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
-[![Donate](https://img.shields.io/badge/Donate-buymeacoffee-ff813f?style=flat)](https://www.buymeacoffee.com/anavrin72)
 
 A minimalistic yet customizable humidifier card for the
 [Home Assistant](https://github.com/home-assistant/home-assistant) Lovelace UI.
