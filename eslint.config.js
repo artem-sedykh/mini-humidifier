@@ -8,6 +8,7 @@
 const js = require('@eslint/js');
 const globals = require('globals');
 const prettier = require('eslint-config-prettier');
+const tseslint = require('typescript-eslint');
 
 // Shared by the card and the tests. `no-console` is relaxed for the build
 // scripts below, which exist to print.
@@ -41,6 +42,33 @@ module.exports = [
       },
     },
     rules,
+  },
+  // The TypeScript half of src (#152). The type checker owns what types can
+  // say; these are the rules that survive it - unused code, and the `any` that
+  // creeps in when a migration is in a hurry.
+  ...tseslint.configs.recommended.map(config => ({
+    ...config,
+    files: ['src/**/*.ts'],
+  })),
+  {
+    files: ['src/**/*.ts'],
+    languageOptions: {
+      globals: globals.browser,
+    },
+    rules: {
+      ...rules,
+      // The base rule counts the parameter names inside a type declaration as
+      // unused variables. Its TypeScript-aware twin is what applies here.
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { args: 'after-used', ignoreRestSiblings: true },
+      ],
+      // The card reads YAML the user wrote and entity attributes an integration
+      // invented. `any` at those two edges is the honest type, and each one is
+      // commented where it appears.
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
   },
   {
     files: ['test/**/*.js'],

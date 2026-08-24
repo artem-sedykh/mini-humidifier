@@ -74,6 +74,18 @@ const countVersionRegistrations = name => {
 
 const litPackages = ['reactiveElementVersions', 'litHtmlVersions', 'litElementVersions'];
 
+// The model configurations call services through `this`, which rollup arranges
+// with `moduleContext` and `compileTemplate` re-parses at runtime. A tool that
+// treats those files as ordinary ES modules is right about the language and
+// wrong about this card: module-level `this` is undefined in ESM, so esbuild
+// rewrites it to `void 0` and every action in the bundle becomes
+// `void 0.call_service(...)`. Nothing else here would notice - the size barely
+// moves, the models are all present, lit is intact - and the card would load,
+// render, and do nothing when touched.
+const count = pattern => (bundle.match(pattern) || []).length;
+const boundServiceCalls = () => count(/this[.]call_service[(]/g);
+const unboundServiceCalls = () => count(/void 0[)]?[.]call_service[(]/g);
+
 const bytes = Buffer.byteLength(bundle);
 const tolerated = Math.round(baseline.bytes * baseline.tolerance);
 
@@ -117,6 +129,12 @@ const checks = [
     name: 'every model id is bundled',
     ok: () => modelIds.every(id => bundle.includes(id)),
     detail: () => `missing: ${modelIds.filter(id => !bundle.includes(id)).join(', ')}`,
+  },
+  {
+    name: 'the model configurations kept their `this`',
+    ok: () => unboundServiceCalls() === 0 && boundServiceCalls() > 0,
+    detail: () =>
+      `${boundServiceCalls()} calls through \`this\`, ${unboundServiceCalls()} through \`void 0\``,
   },
   {
     name: 'size is within the baseline tolerance',

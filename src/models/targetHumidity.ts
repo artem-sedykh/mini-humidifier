@@ -1,30 +1,40 @@
 import { getEntityValue } from '../utils/utils';
 import { ACTION_TIMEOUT } from '../const';
+import type { CardConfig, HassEntity } from '../types';
+import type HumidifierObject from './humidifier';
 
 export default class TargetHumidityObject {
-  constructor(entity, config, humidifier) {
-    this.entity = entity || {};
+  entity: HassEntity;
+
+  config: CardConfig;
+
+  humidifier: HumidifierObject;
+
+  constructor(entity: HassEntity, config: CardConfig, humidifier: HumidifierObject) {
+    this.entity = entity || ({} as HassEntity);
     this.config = config;
     this.humidifier = humidifier;
   }
 
-  get min() {
+  get min(): number | undefined {
     return this.config.target_humidity.min;
   }
 
-  get max() {
+  get max(): number | undefined {
     return this.config.target_humidity.max;
   }
 
-  get step() {
+  get step(): number | undefined {
     return this.config.target_humidity.step;
   }
 
-  get originalValue() {
+  // The reading the slider shows: what the entity holds, then what the model
+  // configuration makes of it. The user owns both ends of that.
+  get originalValue(): any {
     return getEntityValue(this.entity, this.config.target_humidity.state);
   }
 
-  get value() {
+  get value(): any {
     const value = this.originalValue;
 
     if (
@@ -41,7 +51,7 @@ export default class TargetHumidityObject {
     return value;
   }
 
-  get icon() {
+  get icon(): string {
     const config = this.config.target_humidity;
 
     if (config.functions.icon.template) {
@@ -53,7 +63,7 @@ export default class TargetHumidityObject {
     return '';
   }
 
-  get iconStyle() {
+  get iconStyle(): Record<string, string> {
     const config = this.config.target_humidity;
 
     if (config.functions.icon && config.functions.icon.style)
@@ -62,15 +72,15 @@ export default class TargetHumidityObject {
     return {};
   }
 
-  get hide() {
+  get hide(): boolean | undefined {
     return this.config.target_humidity.hide;
   }
 
-  get hideIndicator() {
+  get hideIndicator(): boolean | undefined {
     return this.config.target_humidity.hide_indicator;
   }
 
-  get unit() {
+  get unit(): string {
     const config = this.config.target_humidity;
     if (config.functions.unit && config.functions.unit.template) {
       return config.functions.unit.template(this.value, this.entity, this.humidifier.entity);
@@ -81,14 +91,14 @@ export default class TargetHumidityObject {
     return '';
   }
 
-  get actionTimeout() {
+  get actionTimeout(): number {
     if ('action_timeout' in this.config.target_humidity)
-      return this.config.target_humidity.action_timeout;
+      return this.config.target_humidity.action_timeout as number;
 
     return ACTION_TIMEOUT;
   }
 
-  get disabled() {
+  get disabled(): boolean {
     if (this.config.target_humidity.functions.disabled) {
       // `value`, not `state`: this class has no `state`, so the callback used
       // to be handed undefined where its documented signature promises the
@@ -103,7 +113,7 @@ export default class TargetHumidityObject {
     return false;
   }
 
-  handleChange(value) {
+  handleChange(value: unknown): unknown {
     if (this.config.target_humidity.functions.change_action) {
       return this.config.target_humidity.functions.change_action(
         value,
