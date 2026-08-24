@@ -16,7 +16,10 @@ const sharedStyle = css`
   ha-icon-button {
     width: calc(var(--mh-unit));
     height: calc(var(--mh-unit));
+    /* --mdc-icon-button-size is the pre-2026 knob, --ha-icon-button-size the
+       current one; both are set so the card sizes correctly on either. */
     --mdc-icon-button-size: calc(var(--mh-unit));
+    --ha-icon-button-size: calc(var(--mh-unit));
     color: var(--mh-button-color);
     transition: color .25s;
   }
