@@ -14,9 +14,8 @@ const DEERMA_HUMIDIFIER_JSQ = () => ({
   target_humidity: {
     icon: ICON.HUMIDITY,
     unit: {
-      template: (val) => {
-        if (val === '')
-          return '';
+      template: val => {
+        if (val === '') return '';
         return '%';
       },
     },
@@ -31,7 +30,7 @@ const DEERMA_HUMIDIFIER_JSQ = () => ({
     },
     state: {
       attribute: 'humidity',
-      mapper: (val) => {
+      mapper: val => {
         // eslint-disable-next-line use-isnan
         if (val === NaN || val === undefined || val === 'unknown') {
           return '';
@@ -71,15 +70,13 @@ const DEERMA_HUMIDIFIER_JSQ = () => ({
       },
       source: {
         entity: 'binary_sensor.{entity_id}_water_tank_empty',
-        mapper: (val) => {
+        mapper: val => {
           if (val === 'on') {
-            if (this.empty !== undefined)
-              return this.empty;
+            if (this.empty !== undefined) return this.empty;
             return this.localize('deerma_humidifier_jsq.water_tank_empty.empty', 'empty');
           }
           if (val === 'off') {
-            if (this.filled !== undefined)
-              return this.filled;
+            if (this.filled !== undefined) return this.filled;
             return this.localize('deerma_humidifier_jsq.water_tank_empty.filled', 'filled');
           }
           return '';
@@ -112,12 +109,15 @@ const DEERMA_HUMIDIFIER_JSQ = () => ({
       hide: false,
       order: 1,
       source: {
-        __init: (entity) => {
+        __init: entity => {
           const modes = entity.attributes.available_modes || [];
-          return modes.map(mode => ({ id: mode, name: this.localize(`deerma_humidifier_jsq.mode.${mode}`, mode) }));
+          return modes.map(mode => ({
+            id: mode,
+            name: this.localize(`deerma_humidifier_jsq.mode.${mode}`, mode),
+          }));
         },
       },
-      active: (state, entity) => (entity.state !== 'off'),
+      active: (state, entity) => entity.state !== 'off',
       state: { attribute: 'mode' },
       change_action: (selected, state, entity) => {
         const options = { entity_id: entity.entity_id, mode: selected };

@@ -27,10 +27,15 @@ export default class TargetHumidityObject {
   get value() {
     const value = this.originalValue;
 
-    if (this.config.target_humidity.functions.state
-      && this.config.target_humidity.functions.state.mapper) {
-      return this.config.target_humidity.functions.state.mapper(value, this.entity,
-        this.humidifier.entity);
+    if (
+      this.config.target_humidity.functions.state &&
+      this.config.target_humidity.functions.state.mapper
+    ) {
+      return this.config.target_humidity.functions.state.mapper(
+        value,
+        this.entity,
+        this.humidifier.entity,
+      );
     }
 
     return value;
@@ -40,8 +45,7 @@ export default class TargetHumidityObject {
     const config = this.config.target_humidity;
 
     if (config.functions.icon.template) {
-      return config.functions.icon.template(this.value, this.entity,
-        this.humidifier.entity);
+      return config.functions.icon.template(this.value, this.entity, this.humidifier.entity);
     } else if (config.icon && typeof config.icon === 'string') {
       return config.icon;
     }
@@ -53,8 +57,7 @@ export default class TargetHumidityObject {
     const config = this.config.target_humidity;
 
     if (config.functions.icon && config.functions.icon.style)
-      return config.functions.icon.style(this.value, this.entity,
-        this.humidifier.entity) || {};
+      return config.functions.icon.style(this.value, this.entity, this.humidifier.entity) || {};
 
     return {};
   }
@@ -87,8 +90,11 @@ export default class TargetHumidityObject {
 
   get disabled() {
     if (this.config.target_humidity.functions.disabled) {
-      return this.config.target_humidity.functions.disabled(this.state, this.entity,
-        this.humidifier.entity);
+      return this.config.target_humidity.functions.disabled(
+        this.state,
+        this.entity,
+        this.humidifier.entity,
+      );
     }
 
     return false;
@@ -96,8 +102,12 @@ export default class TargetHumidityObject {
 
   handleChange(value) {
     if (this.config.target_humidity.functions.change_action) {
-      return this.config.target_humidity.functions.change_action(value, this.value,
-        this.entity, this.humidifier.entity);
+      return this.config.target_humidity.functions.change_action(
+        value,
+        this.value,
+        this.entity,
+        this.humidifier.entity,
+      );
     }
 
     return undefined;

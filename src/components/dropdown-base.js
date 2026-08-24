@@ -6,15 +6,15 @@ import HumidifierListItem from './mwc/list-item';
 import buildElementDefinitions from '../utils/buildElementDefinitions';
 
 export default class HumidifierDropdownBase extends ScopedRegistryHost(LitElement) {
-  static get defineId() { return 'mh-dropdown-base'; }
+  static get defineId() {
+    return 'mh-dropdown-base';
+  }
 
   static get elementDefinitions() {
-    return buildElementDefinitions([
-      'ha-icon',
-      'ha-icon-button',
-      HumidifierMenu,
-      HumidifierListItem,
-    ], HumidifierDropdownBase);
+    return buildElementDefinitions(
+      ['ha-icon', 'ha-icon-button', HumidifierMenu, HumidifierListItem],
+      HumidifierDropdownBase,
+    );
   }
 
   static get properties() {
@@ -29,16 +29,19 @@ export default class HumidifierDropdownBase extends ScopedRegistryHost(LitElemen
   }
 
   get selectedId() {
-    return this.items.map(item => item.id.toString().toUpperCase())
+    return this.items
+      .map(item => item.id.toString().toUpperCase())
       .indexOf(this.selected.toString().toUpperCase());
   }
 
   onChange(e) {
     const { index } = e.detail;
     if (index !== this.selectedId && this.items[index]) {
-      this.dispatchEvent(new CustomEvent('change', {
-        detail: this.items[index],
-      }));
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: this.items[index],
+        }),
+      );
       e.detail.index = -1;
     }
   }
@@ -69,10 +72,12 @@ export default class HumidifierDropdownBase extends ScopedRegistryHost(LitElemen
                   .menuCorner=${'END'}
                   .corner=${'TOP_RIGHT'}
                   @selected=${this.onChange}>
-          ${this.items.map(item => html`
+          ${this.items.map(
+            item => html`
             <mwc-list-item value=${item.id || item.name} ?selected=${this.selected === item.id} .activated=${this.selected === item.id}>
               <span class='mh-dropdown__item__label'>${item.name}</span>
-            </mwc-list-item>`)}
+            </mwc-list-item>`,
+          )}
         </mwc-menu>
       </div>
     `;

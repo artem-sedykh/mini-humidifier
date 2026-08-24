@@ -36,7 +36,7 @@ const ZHIMI_AIRPURIFIER_MA2 = () => ({
       },
       icon: {
         template: () => 'mdi:checkbox-blank-circle',
-        style: (state) => {
+        style: state => {
           const style = { '--mdc-icon-size': '17px', 'margin-top': '1px' };
           const value = Number(state);
           const entries = Object.entries(this.levels || {});
@@ -95,12 +95,15 @@ const ZHIMI_AIRPURIFIER_MA2 = () => ({
       hide: false,
       order: 0,
       source: {
-        __init: (entity) => {
+        __init: entity => {
           const modes = entity.attributes.preset_modes || [];
-          return modes.map(mode => ({ id: mode, name: this.localize(`zhimi_airpurifier_ma2.mode.${mode}`) }));
+          return modes.map(mode => ({
+            id: mode,
+            name: this.localize(`zhimi_airpurifier_ma2.mode.${mode}`),
+          }));
         },
       },
-      active: (state, entity) => (entity.state !== 'off'),
+      active: (state, entity) => entity.state !== 'off',
       state: { attribute: 'preset_mode' },
       change_action: (selected, state, entity) => {
         const options = { entity_id: entity.entity_id, preset_mode: selected };

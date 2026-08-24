@@ -6,7 +6,9 @@ import HumidifierDropDown from './dropdown';
 import buildElementDefinitions from '../utils/buildElementDefinitions';
 
 export default class HumidifierButtons extends ScopedRegistryHost(LitElement) {
-  static get defineId() { return 'mh-buttons'; }
+  static get defineId() {
+    return 'mh-buttons';
+  }
 
   static get elementDefinitions() {
     return buildElementDefinitions([HumidifierDropDown, HumidifierButton], HumidifierButtons);
@@ -19,8 +21,7 @@ export default class HumidifierButtons extends ScopedRegistryHost(LitElement) {
   }
 
   renderButton(button) {
-    if (button.isUnavailable)
-      return '';
+    if (button.isUnavailable) return '';
     return html`
        <mh-button
          class="custom-button"
@@ -38,8 +39,7 @@ export default class HumidifierButtons extends ScopedRegistryHost(LitElement) {
   }
 
   renderInternal(button) {
-    if (button.type === 'dropdown')
-      return this.renderDropdown(button);
+    if (button.type === 'dropdown') return this.renderDropdown(button);
 
     return this.renderButton(button);
   }
@@ -53,7 +53,7 @@ export default class HumidifierButtons extends ScopedRegistryHost(LitElement) {
     return html`${Object.entries(this.buttons)
       .map(b => b[1])
       .filter(b => !b.hide)
-      .sort((a, b) => ((a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0)))
+      .sort((a, b) => (a.order > b.order ? 1 : b.order > a.order ? -1 : 0))
       .map(button => context.renderInternal(button))}`;
   }
 
@@ -78,6 +78,7 @@ export default class HumidifierButtons extends ScopedRegistryHost(LitElement) {
         opacity: .25;
         pointer-events: none;
       }
-    `];
+    `,
+    ];
   }
 }

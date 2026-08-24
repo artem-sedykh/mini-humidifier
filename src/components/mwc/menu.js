@@ -6,7 +6,9 @@ import HumidifierList from './list';
 import buildElementDefinitions from '../../utils/buildElementDefinitions';
 
 export default class HumidifierMenu extends ScopedRegistryHost(MenuBase) {
-  static get defineId() { return 'mwc-menu'; }
+  static get defineId() {
+    return 'mwc-menu';
+  }
 
   static get elementDefinitions() {
     return buildElementDefinitions([HumidifierMenuSurface, HumidifierList], HumidifierMenu);

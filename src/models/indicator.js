@@ -58,8 +58,7 @@ export default class IndicatorObject {
 
   get unit() {
     if (this.config.functions.unit && this.config.functions.unit.template) {
-      return this.config.functions.unit.template(this.value, this.entity,
-        this.humidifier.entity);
+      return this.config.functions.unit.template(this.value, this.entity, this.humidifier.entity);
     } else if (this.config.unit && typeof this.config.unit === 'string') {
       return this.config.unit;
     }
@@ -73,8 +72,7 @@ export default class IndicatorObject {
 
   get icon() {
     if (this.config.functions.icon && this.config.functions.icon.template) {
-      return this.config.functions.icon.template(this.value, this.entity,
-        this.humidifier.entity);
+      return this.config.functions.icon.template(this.value, this.entity, this.humidifier.entity);
     } else if (this.config.icon && typeof this.config.icon === 'string') {
       return this.config.icon;
     }
@@ -84,8 +82,9 @@ export default class IndicatorObject {
 
   get iconStyle() {
     if (this.config.functions.icon && this.config.functions.icon.style)
-      return this.config.functions.icon.style(this.value, this.entity,
-        this.humidifier.entity) || {};
+      return (
+        this.config.functions.icon.style(this.value, this.entity, this.humidifier.entity) || {}
+      );
 
     return {};
   }

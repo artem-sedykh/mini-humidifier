@@ -1,1 +1,20 @@
-*.js text eol=lf
+# Baseline: git decides text vs binary, and every text file is stored and
+# checked out with LF. Without this line .gitattributes was a per-name
+# allowlist, so anything that was not *.js (workflows, README, hacs.json)
+# silently fell out of the eol-charset-check gate.
+* text=auto eol=lf
+
+# Explicit text declarations, so the gate does not depend on git's heuristics.
+*.js       text eol=lf
+*.json     text eol=lf
+*.md       text eol=lf
+*.yml      text eol=lf
+*.yaml     text eol=lf
+*.sh       text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+
+# Binary: never touch EOL here.
+*.png binary
+*.jpg binary
+*.gif binary

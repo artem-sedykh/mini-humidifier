@@ -6,7 +6,9 @@ import { TAP_ACTIONS } from '../const';
 import buildElementDefinitions from '../utils/buildElementDefinitions';
 
 export default class HumidifierIndicators extends ScopedRegistryHost(LitElement) {
-  static get defineId() { return 'mh-indicators'; }
+  static get defineId() {
+    return 'mh-indicators';
+  }
 
   static get elementDefinitions() {
     return buildElementDefinitions(['ha-icon'], HumidifierIndicators);
@@ -26,24 +28,21 @@ export default class HumidifierIndicators extends ScopedRegistryHost(LitElement)
   renderIcon(indicator) {
     const { icon } = indicator;
 
-    if (!icon)
-      return '';
+    if (!icon) return '';
 
     return html`<ha-icon style=${styleMap(indicator.iconStyle)} class='state__value_icon' .icon=${icon}></ha-icon>`;
   }
 
   renderUnit(unit) {
-    if (!unit)
-      return '';
+    if (!unit) return '';
 
     return html`<span class='state__uom'>${unit}</span>`;
   }
 
   renderIndicator(indicator) {
-    if (!indicator)
-      return '';
-    const action = indicator.config && indicator.config.tap_action
-      && indicator.config.tap_action.action;
+    if (!indicator) return '';
+    const action =
+      indicator.config && indicator.config.tap_action && indicator.config.tap_action.action;
     const cls = action && TAP_ACTIONS.includes(action) ? 'pointer' : '';
     // console.log(`render ${indicator.id} value: ${indicator.value}`);
 
@@ -67,10 +66,10 @@ export default class HumidifierIndicators extends ScopedRegistryHost(LitElement)
     return html`
      <div class='mh-indicators__container'>
        ${Object.entries(this.indicators)
-    .map(i => i[1])
-    .filter(i => !i.hide)
-    .sort((a, b) => ((a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0)))
-    .map(i => context.renderIndicator(i))}
+         .map(i => i[1])
+         .filter(i => !i.hide)
+         .sort((a, b) => (a.order > b.order ? 1 : b.order > a.order ? -1 : 0))
+         .map(i => context.renderIndicator(i))}
      </div>
     `;
   }

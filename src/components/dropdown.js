@@ -6,7 +6,9 @@ import HumidifierDropdownBase from './dropdown-base';
 import buildElementDefinitions from '../utils/buildElementDefinitions';
 
 export default class HumidifierDropDown extends ScopedRegistryHost(LitElement) {
-  static get defineId() { return 'mh-dropdown'; }
+  static get defineId() {
+    return 'mh-dropdown';
+  }
 
   static get elementDefinitions() {
     return buildElementDefinitions([HumidifierDropdownBase], HumidifierDropDown);
@@ -38,8 +40,10 @@ export default class HumidifierDropDown extends ScopedRegistryHost(LitElement) {
 
     this.timer = setTimeout(async () => {
       if (this.dropdown.entity === entity) {
-        this._state = (this.dropdown.state !== undefined && this.dropdown.state !== null)
-          ? this.dropdown.state.toString() : '';
+        this._state =
+          this.dropdown.state !== undefined && this.dropdown.state !== null
+            ? this.dropdown.state.toString()
+            : '';
 
         this.requestUpdate('_state');
       }
@@ -70,8 +74,10 @@ export default class HumidifierDropDown extends ScopedRegistryHost(LitElement) {
 
   updated(changedProps) {
     if (changedProps.has('dropdown')) {
-      this._state = (this.dropdown.state !== undefined && this.dropdown.state !== null)
-        ? this.dropdown.state.toString() : '';
+      this._state =
+        this.dropdown.state !== undefined && this.dropdown.state !== null
+          ? this.dropdown.state.toString()
+          : '';
 
       clearTimeout(this.timer);
 
@@ -100,6 +106,7 @@ export default class HumidifierDropDown extends ScopedRegistryHost(LitElement) {
         opacity: .25;
         pointer-events: none;
       }
-    `];
+    `,
+    ];
   }
 }

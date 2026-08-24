@@ -5,13 +5,12 @@ import buildElementDefinitions from '../utils/buildElementDefinitions';
 import HumidifierButton from './button';
 
 export default class HumidifierPower extends ScopedRegistryHost(LitElement) {
-  static get defineId() { return 'mh-power'; }
+  static get defineId() {
+    return 'mh-power';
+  }
 
   static get elementDefinitions() {
-    return buildElementDefinitions([
-      HumidifierButton,
-      'ha-entity-toggle',
-    ], HumidifierPower);
+    return buildElementDefinitions([HumidifierButton, 'ha-entity-toggle'], HumidifierPower);
   }
 
   constructor() {
@@ -30,8 +29,7 @@ export default class HumidifierPower extends ScopedRegistryHost(LitElement) {
       return html``;
     }
 
-    if (this.power.hide)
-      return html``;
+    if (this.power.hide) return html``;
 
     if (this.power.type === 'toggle') {
       return html`
@@ -66,6 +64,7 @@ export default class HumidifierPower extends ScopedRegistryHost(LitElement) {
         min-width: 0;
         font-weight: var(--mh-info-font-weight);
       }
-    `];
+    `,
+    ];
   }
 }

@@ -6,29 +6,47 @@ on:
   pull_request:
     branches: ['*']
 
+permissions:
+  contents: read
+
 jobs:
   build:
+    name: Lint and build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
+
       - name: Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 16.x
-      - name: Cahce dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.OS }}-node-16.x-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-node-16.x
-            ${{ runner.OS }}-
+          node-version-file: .nvmrc
+          cache: npm
+
       - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format
+        run: npm run format:check
+
+      - name: Build
         run: |
-          npm install
-      - name: Lint and build
-        run: |
-          npm run lint
           npm run rollup
           npm run babel
+
+      - name: Bundle must not be empty
+        run: |
+          # A broken rollup config can still exit 0 and emit a stub, and the
+          # result only shows up as a blank card in the browser.
+          test -s dist/mini-humidifier-bundle.js
+          grep -q 'mini-humidifier' dist/mini-humidifier-bundle.js
+
+      - name: Upload bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: mini-humidifier-bundle
+          path: dist/mini-humidifier-bundle.js
+          if-no-files-found: error

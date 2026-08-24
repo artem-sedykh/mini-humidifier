@@ -1,0 +1,63 @@
+name: Device support
+description: Ask for defaults for a humidifier or air purifier the card does not know
+labels: ['model']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The card works with any `fan` or `humidifier` entity. An unknown device
+        falls back to the `zhimi.humidifier.cb1` defaults, so it will render -
+        it just may show the wrong controls.
+
+        Everything needed to write a model configuration is in the entity's
+        attributes and the integration's services, so please fill both in. If
+        you can write the file yourself, a pull request is very welcome: see
+        [Adding a model](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/models.md#adding-a-model).
+
+  - type: input
+    id: model
+    attributes:
+      label: Device model
+      description: As Home Assistant reports it.
+      placeholder: deerma.humidifier.jsq5
+    validations:
+      required: true
+
+  - type: input
+    id: integration
+    attributes:
+      label: Integration
+      description: |
+        Which integration provides the entity. This changes everything: the
+        same device exposes different attributes and services through
+        Home Assistant's own xiaomi_miio and through syssi's
+        xiaomi_miio_airpurifier.
+      placeholder: xiaomi_miio
+    validations:
+      required: true
+
+  - type: textarea
+    id: entity-state
+    attributes:
+      label: Entity state and attributes
+      description: Developer tools -> States, pick the entity, copy the whole panel.
+      render: yaml
+    validations:
+      required: true
+
+  - type: textarea
+    id: services
+    attributes:
+      label: Services the integration offers
+      description: |
+        Developer tools -> Actions, filter by the integration, and list the
+        ones that control this device. Names are enough.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: wanted
+    attributes:
+      label: What the card should show
+      description: Which indicators and buttons make sense for this device.
