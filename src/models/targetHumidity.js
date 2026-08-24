@@ -90,8 +90,11 @@ export default class TargetHumidityObject {
 
   get disabled() {
     if (this.config.target_humidity.functions.disabled) {
+      // `value`, not `state`: this class has no `state`, so the callback used
+      // to be handed undefined where its documented signature promises the
+      // current reading. See #163.
       return this.config.target_humidity.functions.disabled(
-        this.state,
+        this.value,
         this.entity,
         this.humidifier.entity,
       );
