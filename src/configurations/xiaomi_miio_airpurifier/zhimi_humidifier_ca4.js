@@ -82,8 +82,8 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CA4 = () => ({
         Mid: 'medium',
         High: 'high',
       },
-      active: (state, entity) => (entity.state !== 'off'),
-      disabled: (state, entity) => (entity.attributes.water_level === 0),
+      active: (state, entity) => entity.state !== 'off',
+      disabled: (state, entity) => entity.attributes.water_level === 0,
       state: { attribute: 'preset_mode' },
       change_action: (selected, state, entity) => {
         const options = { entity_id: entity.entity_id, preset_mode: selected };
@@ -95,7 +95,7 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CA4 = () => ({
       type: 'dropdown',
       hide: false,
       order: 2,
-      active: state => (state !== 0 && state !== '0'),
+      active: state => state !== 0 && state !== '0',
       source: { 0: 'Off', 1: 'Dim', 2: 'Bright' },
       state: { attribute: 'led_brightness' },
       change_action: (selected, state, entity) => {

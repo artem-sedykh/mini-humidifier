@@ -18,7 +18,7 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRFRESH_VA2 = () => ({
     step: 25,
     state: {
       attribute: 'preset_mode',
-      mapper: (val) => {
+      mapper: val => {
         if (val === 'Auto') {
           return 0;
         } else if (val === 'Silent') {
@@ -70,7 +70,7 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRFRESH_VA2 = () => ({
       },
       icon: {
         template: () => 'mdi:checkbox-blank-circle',
-        style: (state) => {
+        style: state => {
           const style = { '--mdc-icon-size': '17px', 'margin-top': '1px' };
           const value = Number(state);
           const entries = Object.entries(this.levels || {});
@@ -137,8 +137,8 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRFRESH_VA2 = () => ({
       source: {
         __init: entity => entity.attributes.preset_modes.map(mode => ({ id: mode, name: mode })),
       },
-      active: (state, entity) => (entity.state !== 'off'),
-      disabled: (state, entity) => (entity.attributes.depth === 0),
+      active: (state, entity) => entity.state !== 'off',
+      disabled: (state, entity) => entity.attributes.depth === 0,
       state: { attribute: 'preset_mode' },
       change_action: (selected, state, entity) => {
         const options = { entity_id: entity.entity_id, preset_mode: selected };
@@ -150,7 +150,7 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRFRESH_VA2 = () => ({
       type: 'dropdown',
       hide: false,
       order: 2,
-      active: state => (state !== 2 && state !== '2'),
+      active: state => state !== 2 && state !== '2',
       source: { 0: 'Bright', 1: 'Dim', 2: 'Off' },
       state: { attribute: 'led_brightness' },
       change_action: (selected, state, entity) => {

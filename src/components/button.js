@@ -5,13 +5,12 @@ import sharedStyle from '../sharedStyle';
 import buildElementDefinitions from '../utils/buildElementDefinitions';
 
 export default class HumidifierButton extends ScopedRegistryHost(LitElement) {
-  static get defineId() { return 'mh-button'; }
+  static get defineId() {
+    return 'mh-button';
+  }
 
   static get elementDefinitions() {
-    return buildElementDefinitions([
-      'ha-icon',
-      'ha-icon-button',
-    ], HumidifierButton);
+    return buildElementDefinitions(['ha-icon', 'ha-icon-button'], HumidifierButton);
   }
 
   constructor() {
@@ -100,6 +99,7 @@ export default class HumidifierButton extends ScopedRegistryHost(LitElement) {
         opacity: .25;
         pointer-events: none;
       }
-    `];
+    `,
+    ];
   }
 }

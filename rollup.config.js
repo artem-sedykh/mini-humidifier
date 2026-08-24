@@ -7,7 +7,8 @@ const path = require('path');
 const configurationPaths = [
   path.resolve('./src/configurations/'),
   path.resolve('./src/configurations/xiaomi_miio/'),
-  path.resolve('./src/configurations/xiaomi_miio_airpurifier')];
+  path.resolve('./src/configurations/xiaomi_miio_airpurifier'),
+];
 
 export default {
   input: 'src/main.js',

@@ -14,9 +14,8 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
   target_humidity: {
     icon: ICON.HUMIDITY,
     unit: {
-      template: (val) => {
-        if (val === '')
-          return '';
+      template: val => {
+        if (val === '') return '';
         return '%';
       },
     },
@@ -31,7 +30,7 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
     },
     state: {
       attribute: 'humidity',
-      mapper: (val) => {
+      mapper: val => {
         // eslint-disable-next-line use-isnan
         if (val === NaN || val === undefined || val === 'unknown') {
           return '';
@@ -50,12 +49,11 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
       default_icon: ICON.WATERLEVEL,
       detached_icon: ICON.WATERTANKDETACHED,
       icon: {
-        template: val => ((val === '') ? this.detached_icon : this.default_icon),
+        template: val => (val === '' ? this.detached_icon : this.default_icon),
       },
       unit: {
-        template: (val) => {
-          if (val === '')
-            return '';
+        template: val => {
+          if (val === '') return '';
           const { type } = this;
           return this.localize(`zhimi_humidifier_cb1.water_level.${type}`, '%');
         },
@@ -67,7 +65,7 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
       hide: false,
       source: {
         entity: 'sensor.{entity_id}_water_level',
-        mapper: (val) => {
+        mapper: val => {
           // eslint-disable-next-line use-isnan
           if (val === NaN || val === undefined || val === 'unknown') {
             return '';
@@ -122,12 +120,15 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
       hide: false,
       order: 1,
       source: {
-        __init: (entity) => {
+        __init: entity => {
           const modes = entity.attributes.available_modes || [];
-          return modes.map(mode => ({ id: mode, name: this.localize(`zhimi_humidifier_cb1.mode.${mode}`, mode) }));
+          return modes.map(mode => ({
+            id: mode,
+            name: this.localize(`zhimi_humidifier_cb1.mode.${mode}`, mode),
+          }));
         },
       },
-      active: (state, entity) => (entity.state !== 'off'),
+      active: (state, entity) => entity.state !== 'off',
       state: { attribute: 'mode' },
       change_action: (selected, state, entity) => {
         const options = { entity_id: entity.entity_id, mode: selected };
@@ -144,10 +145,11 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
         bright: 'Bright',
         dim: 'Dim',
         off: 'Off',
-        __filter: source => source.map((item) => {
-          const name = this.localize(`zhimi_humidifier_cb1.led_brightness.${item.id}`, item.name);
-          return { id: item.id, name };
-        }),
+        __filter: source =>
+          source.map(item => {
+            const name = this.localize(`zhimi_humidifier_cb1.led_brightness.${item.id}`, item.name);
+            return { id: item.id, name };
+          }),
       },
       state: { entity: 'select.{entity_id}_led_brightness' },
       change_action: (selected, state, entity) => {

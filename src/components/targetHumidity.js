@@ -4,13 +4,12 @@ import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
 import buildElementDefinitions from '../utils/buildElementDefinitions';
 
 export default class HumidifierTargetHumidity extends ScopedRegistryHost(LitElement) {
-  static get defineId() { return 'mh-target-humidity'; }
+  static get defineId() {
+    return 'mh-target-humidity';
+  }
 
   static get elementDefinitions() {
-    return buildElementDefinitions([
-      'ha-slider',
-      'ha-icon',
-    ], HumidifierTargetHumidity);
+    return buildElementDefinitions(['ha-slider', 'ha-icon'], HumidifierTargetHumidity);
   }
 
   static get properties() {
@@ -32,8 +31,7 @@ export default class HumidifierTargetHumidity extends ScopedRegistryHost(LitElem
     const { entity } = this.targetHumidity;
     this.targetHumidity.handleChange(this.sliderValue);
 
-    if (this.timer)
-      clearTimeout(this.timer);
+    if (this.timer) clearTimeout(this.timer);
 
     this.timer = setTimeout(async () => {
       if (this.targetHumidity.entity === entity) {

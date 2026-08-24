@@ -15,7 +15,7 @@ export default class HumidifierObject {
       buzzer: false,
       child_lock: false,
       led_brightness: 0,
-      ...entity.attributes || {},
+      ...(entity.attributes || {}),
     };
 
     if (entity) {
@@ -52,9 +52,11 @@ export default class HumidifierObject {
   }
 
   get isOff() {
-    return this.entity !== undefined
-      && STATES_OFF.includes(this.state)
-      && !UNAVAILABLE_STATES.includes(this.state);
+    return (
+      this.entity !== undefined &&
+      STATES_OFF.includes(this.state) &&
+      !UNAVAILABLE_STATES.includes(this.state)
+    );
   }
 
   get isActive() {
@@ -66,9 +68,11 @@ export default class HumidifierObject {
   }
 
   get isOn() {
-    return this.entity !== undefined
-      && !STATES_OFF.includes(this.state)
-      && !UNAVAILABLE_STATES.includes(this.state);
+    return (
+      this.entity !== undefined &&
+      !STATES_OFF.includes(this.state) &&
+      !UNAVAILABLE_STATES.includes(this.state)
+    );
   }
 
   callService(domain, service, options) {

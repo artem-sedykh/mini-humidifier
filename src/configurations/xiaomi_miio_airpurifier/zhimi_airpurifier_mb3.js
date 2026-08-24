@@ -16,7 +16,8 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRPURIFIER_MB3 = () => ({
     min: 0,
     max: 16,
     step: 1,
-    disabled: (state, entity) => (entity.state !== 'on' || entity.attributes.preset_mode !== 'Favorite'),
+    disabled: (state, entity) =>
+      entity.state !== 'on' || entity.attributes.preset_mode !== 'Favorite',
     state: { attribute: 'favorite_level' },
     change_action: (selected, state, entity) => {
       const options = { entity_id: entity.entity_id, level: selected };
@@ -38,7 +39,7 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRPURIFIER_MB3 = () => ({
       },
       icon: {
         template: () => 'mdi:checkbox-blank-circle',
-        style: (state) => {
+        style: state => {
           const style = { '--mdc-icon-size': '17px', 'margin-top': '1px' };
           const value = Number(state);
           const entries = Object.entries(this.levels || {});
@@ -86,13 +87,13 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRPURIFIER_MB3 = () => ({
       hide: false,
       order: 1,
       source: {
-        __init: (entity) => {
+        __init: entity => {
           const modes = entity.attributes.preset_modes || [];
           return modes.map(mode => ({ id: mode, name: mode }));
         },
       },
-      active: (state, entity) => (entity.state === 'on'),
-      disabled: (state, entity) => (entity.state !== 'on'),
+      active: (state, entity) => entity.state === 'on',
+      disabled: (state, entity) => entity.state !== 'on',
       state: { attribute: 'preset_mode' },
       change_action: (selected, state, entity) => {
         const options = { entity_id: entity.entity_id, preset_mode: selected };
@@ -109,8 +110,8 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRPURIFIER_MB3 = () => ({
         2: 'Medium',
         3: 'High',
       },
-      active: (state, entity) => (entity.state === 'on' && entity.attributes.preset_mode === 'Fan'),
-      disabled: (state, entity) => (entity.state !== 'on' || entity.attributes.preset_mode !== 'Fan'),
+      active: (state, entity) => entity.state === 'on' && entity.attributes.preset_mode === 'Fan',
+      disabled: (state, entity) => entity.state !== 'on' || entity.attributes.preset_mode !== 'Fan',
       state: { attribute: 'fan_level' },
       change_action: (selected, state, entity) => {
         const options = { entity_id: entity.entity_id, level: selected };
@@ -122,7 +123,7 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRPURIFIER_MB3 = () => ({
       type: 'dropdown',
       hide: false,
       order: 3,
-      active: state => (state !== 2 && state !== '2'),
+      active: state => state !== 2 && state !== '2',
       source: {
         0: 'Bright',
         1: 'Dim',

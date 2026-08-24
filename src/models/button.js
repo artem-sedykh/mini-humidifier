@@ -64,8 +64,7 @@ export default class ButtonObject {
     let state = this.originalState;
 
     if (this.config.functions.state && this.config.functions.state.mapper) {
-      state = this.config.functions.state.mapper(state, this.entity,
-        this.humidifier.entity);
+      state = this.config.functions.state.mapper(state, this.entity, this.humidifier.entity);
     }
 
     return state;
@@ -73,8 +72,7 @@ export default class ButtonObject {
 
   isActive(state) {
     if (this.config.functions.active) {
-      return this.config.functions.active(state, this.entity,
-        this.humidifier.entity);
+      return this.config.functions.active(state, this.entity, this.humidifier.entity);
     }
 
     return false;
@@ -85,21 +83,24 @@ export default class ButtonObject {
   }
 
   get isOff() {
-    return this.entity !== undefined
-      && STATES_OFF.includes(this.state)
-      && !UNAVAILABLE_STATES.includes(this.state);
+    return (
+      this.entity !== undefined &&
+      STATES_OFF.includes(this.state) &&
+      !UNAVAILABLE_STATES.includes(this.state)
+    );
   }
 
   get isOn() {
-    return this.entity !== undefined
-      && !STATES_OFF.includes(this.state)
-      && !UNAVAILABLE_STATES.includes(this.state);
+    return (
+      this.entity !== undefined &&
+      !STATES_OFF.includes(this.state) &&
+      !UNAVAILABLE_STATES.includes(this.state)
+    );
   }
 
   get disabled() {
     if (this.config.functions.disabled) {
-      return this.config.functions.disabled(this.state, this.entity,
-        this.humidifier.entity);
+      return this.config.functions.disabled(this.state, this.entity, this.humidifier.entity);
     }
 
     return false;
@@ -107,8 +108,7 @@ export default class ButtonObject {
 
   get style() {
     if (this.config.functions.style) {
-      return this.config.functions.style(this.state, this.entity,
-        this.humidifier.entity) || {};
+      return this.config.functions.style(this.state, this.entity, this.humidifier.entity) || {};
     }
 
     return {};
@@ -126,8 +126,12 @@ export default class ButtonObject {
     }
 
     if (this.config.functions.source && this.config.functions.source.filter) {
-      return this.config.functions.source.filter(source, this.state, this.entity,
-        this.humidifier.entity);
+      return this.config.functions.source.filter(
+        source,
+        this.state,
+        this.entity,
+        this.humidifier.entity,
+      );
     }
 
     return source;
@@ -135,24 +139,21 @@ export default class ButtonObject {
 
   get selected() {
     const { state } = this;
-    if (state === undefined || state === null)
-      return undefined;
+    if (state === undefined || state === null) return undefined;
     const find = state.toString().toUpperCase();
     const selected = this.source.find(s => s.id.toString().toUpperCase() === find);
     return selected;
   }
 
   get actionTimeout() {
-    if ('action_timeout' in this.config)
-      return this.config.action_timeout;
+    if ('action_timeout' in this.config) return this.config.action_timeout;
 
     return ACTION_TIMEOUT;
   }
 
   handleToggle() {
     if (this.config.functions.toggle_action) {
-      return this.config.functions.toggle_action(this.state, this.entity,
-        this.humidifier.entity);
+      return this.config.functions.toggle_action(this.state, this.entity, this.humidifier.entity);
     }
 
     return this.humidifier.callService('switch', 'toggle', { entity_id: this.entity.entity_id });
@@ -160,8 +161,12 @@ export default class ButtonObject {
 
   handleChange(selected) {
     if (this.config.functions.change_action) {
-      return this.config.functions.change_action(selected, this.state, this.entity,
-        this.humidifier.entity);
+      return this.config.functions.change_action(
+        selected,
+        this.state,
+        this.entity,
+        this.humidifier.entity,
+      );
     }
 
     return undefined;

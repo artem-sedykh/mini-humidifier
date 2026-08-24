@@ -25,16 +25,19 @@ import buildElementDefinitions from './utils/buildElementDefinitions';
 
 class MiniHumidifier extends ScopedRegistryHost(LitElement) {
   static get elementDefinitions() {
-    return buildElementDefinitions([
-      'ha-card',
-      'ha-icon',
-      'ha-relative-time',
-      HumidifierTargetHumidity,
-      HumidifierPower,
-      HumidifierIndicators,
-      'ha-icon-button',
-      HumidifierButtons,
-    ], MiniHumidifier);
+    return buildElementDefinitions(
+      [
+        'ha-card',
+        'ha-icon',
+        'ha-relative-time',
+        HumidifierTargetHumidity,
+        HumidifierPower,
+        HumidifierIndicators,
+        'ha-icon-button',
+        HumidifierButtons,
+      ],
+      MiniHumidifier,
+    );
   }
 
   static getStubConfig(hass, unusedEntities, allEntities) {
@@ -69,10 +72,7 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
   }
 
   static get styles() {
-    return [
-      sharedStyle,
-      style,
-    ];
+    return [sharedStyle, style];
   }
 
   set hass(hass) {
@@ -112,7 +112,7 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
   }
 
   updateIndicators(force) {
-    const indicators = { };
+    const indicators = {};
     let changed = false;
 
     for (let i = 0; i < this.config.indicators.length; i += 1) {
@@ -139,15 +139,16 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
   }
 
   updateButtons(force) {
-    const buttons = { };
+    const buttons = {};
     let changed = false;
 
     for (let i = 0; i < this.config.buttons.length; i += 1) {
       const config = this.config.buttons[i];
       const { id } = config;
 
-      const entityId = this.evalEntityId((config.state && config.state.entity)
-          || this.humidifier.id);
+      const entityId = this.evalEntityId(
+        (config.state && config.state.entity) || this.humidifier.id,
+      );
 
       const entity = this.hass.states[entityId];
 
@@ -155,8 +156,7 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
         buttons[id] = new ButtonObject(entity, config, this.humidifier, this.hass);
       }
 
-      if (this.buttons[id] && this.buttons[id].changed(entity))
-        changed = true;
+      if (this.buttons[id] && this.buttons[id].changed(entity)) changed = true;
     }
 
     if (changed || force) {
@@ -172,13 +172,14 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
     const entity = this.hass.states[entityId];
     const power = entity ? new ButtonObject(entity, config, this.humidifier, this.hass) : {};
 
-    if ((entity !== (this.power && this.power.entity)) || force)
-      this.power = power;
+    if (entity !== (this.power && this.power.entity) || force) this.power = power;
   }
 
   updateTargetHumidity(force) {
-    const entityId = this.evalEntityId((this.config.target_humidity.state
-      && this.config.target_humidity.state.entity) || this.config.entity);
+    const entityId = this.evalEntityId(
+      (this.config.target_humidity.state && this.config.target_humidity.state.entity) ||
+        this.config.entity,
+    );
 
     const entity = this.hass.states[entityId];
     const targetHumidity = new TargetHumidityObject(entity, this.config, this.humidifier);
@@ -196,10 +197,8 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
       ...value,
     };
 
-    if (typeof value.tap_action === 'string')
-      item.tap_action = { action: value.tap_action };
-    else
-      item.tap_action = { action: 'none', ...item.tap_action || {} };
+    if (typeof value.tap_action === 'string') item.tap_action = { action: value.tap_action };
+    else item.tap_action = { action: 'none', ...(item.tap_action || {}) };
 
     item.functions = item.functions || {};
     const context = { ...value };
@@ -221,8 +220,7 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
       if (item.icon.template)
         item.functions.icon.template = compileTemplate(item.icon.template, context);
 
-      if (item.icon.style)
-        item.functions.icon.style = compileTemplate(item.icon.style, context);
+      if (item.icon.style) item.functions.icon.style = compileTemplate(item.icon.style, context);
     }
 
     if (typeof item.unit === 'object') {
@@ -244,7 +242,7 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
       const key = data[i][0];
       const value = data[i][1] || {};
 
-      defaultIndicators[key] = { ...defaultIndicators[key] || {}, ...value };
+      defaultIndicators[key] = { ...(defaultIndicators[key] || {}), ...value };
     }
 
     return Object.entries(defaultIndicators)
@@ -263,9 +261,8 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
     item.functions = {};
 
     const context = { ...value };
-    context.call_service = (domain, service, options) => this.hass.callService(
-      domain, service, options,
-    );
+    context.call_service = (domain, service, options) =>
+      this.hass.callService(domain, service, options);
     context.entity_config = config;
     context.toggle_state = toggleState;
 
@@ -303,14 +300,13 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
       item.functions.change_action = compileTemplate(item.change_action, context);
     }
 
-    if (item.style)
-      item.functions.style = compileTemplate(item.style, context);
+    if (item.style) item.functions.style = compileTemplate(item.style, context);
 
     return item;
   }
 
   getButtonsConfig(config, buttonsConfig) {
-    const defaultButtonsConfig = { ...buttonsConfig || {} };
+    const defaultButtonsConfig = { ...(buttonsConfig || {}) };
 
     const entries = Object.entries(config.buttons || {});
 
@@ -318,7 +314,7 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
       const key = entries[i][0];
       const value = entries[i][1] || {};
 
-      defaultButtonsConfig[key] = { ...defaultButtonsConfig[key] || {}, ...value };
+      defaultButtonsConfig[key] = { ...(defaultButtonsConfig[key] || {}), ...value };
     }
 
     const data = Object.entries(defaultButtonsConfig);
@@ -331,8 +327,7 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
       const button = this.getButtonConfig(value, config);
       button.id = key;
 
-      if (!('order' in button))
-        button.order = i + 1;
+      if (!('order' in button)) button.order = i + 1;
 
       buttons.push(button);
     }
@@ -342,15 +337,14 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
 
   getTargetHumidityConfig(config, targetHumidityConfig) {
     const item = {
-      ...targetHumidityConfig || {},
-      ...config.target_humidity || {},
+      ...(targetHumidityConfig || {}),
+      ...(config.target_humidity || {}),
     };
 
     item.functions = { icon: {} };
-    const context = { ...config.target_humidity || {} };
-    context.call_service = (domain, service, options) => this.hass.callService(
-      domain, service, options,
-    );
+    const context = { ...(config.target_humidity || {}) };
+    context.call_service = (domain, service, options) =>
+      this.hass.callService(domain, service, options);
     context.entity_config = config;
     context.toggle_state = toggleState;
 
@@ -367,8 +361,7 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
       if (item.icon.template)
         item.functions.icon.template = compileTemplate(item.icon.template, context);
 
-      if (item.icon.style)
-        item.functions.icon.style = compileTemplate(item.icon.style, context);
+      if (item.icon.style) item.functions.icon.style = compileTemplate(item.icon.style, context);
     }
 
     if (item.change_action) {
@@ -390,7 +383,7 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
   }
 
   getPowerConfig(config, powerConfig) {
-    return this.getButtonConfig({ ...powerConfig || {}, ...config.power || {} }, config);
+    return this.getButtonConfig({ ...(powerConfig || {}), ...(config.power || {}) }, config);
   }
 
   setConfig(config) {
@@ -403,10 +396,8 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
     let modelConfiguration;
     const { model } = config;
 
-    if (model in HUMIDIFIERS)
-      modelConfiguration = HUMIDIFIERS[model]();
-    else
-      modelConfiguration = HUMIDIFIERS.default();
+    if (model in HUMIDIFIERS) modelConfiguration = HUMIDIFIERS[model]();
+    else modelConfiguration = HUMIDIFIERS.default();
 
     this.config = {
       model: 'zhimi.humidifier.cb1',
@@ -424,12 +415,14 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
       icon: ICON.TOGGLE,
       hide: false,
       default: false,
-      ...config.toggle || {},
+      ...(config.toggle || {}),
     };
 
     this.config.power = this.getPowerConfig(config, modelConfiguration.power);
-    this.config.target_humidity = this.getTargetHumidityConfig(config,
-      modelConfiguration.target_humidity);
+    this.config.target_humidity = this.getTargetHumidityConfig(
+      config,
+      modelConfiguration.target_humidity,
+    );
     this.config.indicators = this.getIndicatorsConfig(config, modelConfiguration.indicators);
     this.config.buttons = this.getButtonsConfig(config, modelConfiguration.buttons);
 
@@ -438,7 +431,7 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
     } else {
       this.config.secondary_info = {
         type: 'mode',
-        ...config.secondary_info || {},
+        ...(config.secondary_info || {}),
       };
     }
 
@@ -482,8 +475,7 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
   }
 
   renderTargetHumidifier() {
-    if (this.humidifier.isUnavailable || this.targetHumidity.hide)
-      return '';
+    if (this.humidifier.isUnavailable || this.targetHumidity.hide) return '';
 
     return html`
       <mh-target-humidity
@@ -493,8 +485,7 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
   }
 
   renderPower() {
-    if (this.humidifier.isUnavailable || this.power.hide)
-      return '';
+    if (this.humidifier.isUnavailable || this.power.hide) return '';
 
     return html`
         <mh-power
@@ -504,8 +495,7 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
   }
 
   renderUnavailable() {
-    if (!this.humidifier.isUnavailable)
-      return '';
+    if (!this.humidifier.isUnavailable) return '';
 
     return html`
         <span class="label unavailable ellipsis">        
@@ -533,8 +523,7 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
   }
 
   renderTogglePanel() {
-    if (!this.toggle)
-      return '';
+    if (!this.toggle) return '';
 
     return html`
         <div class="mh-toggle_content">
@@ -546,8 +535,7 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
   }
 
   renderBottomPanel() {
-    if (this.humidifier.isUnavailable)
-      return '';
+    if (this.humidifier.isUnavailable) return '';
 
     return html`
         <div class='bottom flex'>
@@ -560,11 +548,9 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
   }
 
   renderToggleButton() {
-    if (this.config.buttons.filter(b => !b.hide).length === 0)
-      return '';
+    if (this.config.buttons.filter(b => !b.hide).length === 0) return '';
 
-    if (this.config.toggle.hide)
-      return '';
+    if (this.config.toggle.hide) return '';
 
     const cls = this.toggle ? 'open' : '';
     return html`
@@ -585,8 +571,7 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
   }
 
   renderSecondaryInfo() {
-    if (this.humidifier.isUnavailable)
-      return '';
+    if (this.humidifier.isUnavailable) return '';
 
     if (this.config.secondary_info.hide) {
       return '';

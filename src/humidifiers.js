@@ -25,7 +25,8 @@ const HUMIDIFIERS = {
   'xiaomi_miio_airpurifier:zhimi.airpurifier.mb3': XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRPURIFIER_MB3,
   'xiaomi_miio_airpurifier:zhimi.humidifier.cb1': XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CB1,
   'xiaomi_miio_airpurifier:zhimi.humidifier.ca4': XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CA4,
-  'xiaomi_miio_airpurifier:deerma.humidifier.mjjsq': XIAOMI_MIIO_AIRPURIFIER_DEERMA_HUMIDIFIER_MJJSQ,
+  'xiaomi_miio_airpurifier:deerma.humidifier.mjjsq':
+    XIAOMI_MIIO_AIRPURIFIER_DEERMA_HUMIDIFIER_MJJSQ,
   'xiaomi_miio_airpurifier:zhimi.airfresh.va2': XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRFRESH_VA2,
 };
 

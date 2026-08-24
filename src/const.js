@@ -1,4 +1,3 @@
-
 export const ICON = {
   DEFAULT: 'mdi:air-filter',
   FAN: 'mdi:fan',
