@@ -53,7 +53,43 @@ implying a change is tested.
 3. Reference it from a dashboard resource with a cache-busting query string
    (`/local/mini-humidifier-bundle.js?v=<anything-new>`).
 4. Hard-reload the browser. The frontend caches resources aggressively, and a
-   stale bundle looks exactly like a change that did nothing.
+   stale bundle looks exactly like a change that did nothing. The console
+   banner prints the version from `package.json`, which is the only reliable
+   way to tell which build is actually running.
+
+### Counting service calls
+
+Before blaming the card for sending a command more than once, count the
+commands. Paste this into the browser console, then use the control:
+
+```js
+(() => {
+  const c = document.querySelector('home-assistant').hass.connection;
+  if (c.__patched) return 'already patched';
+  c.__patched = 1;
+  const original = c.sendMessagePromise.bind(c);
+  let n = 0;
+  c.sendMessagePromise = m => {
+    if (m && m.type === 'call_service')
+      console.log('CALL #' + ++n, m.domain + '.' + m.service, JSON.stringify(m.service_data || {}));
+    return original(m);
+  };
+  return 'patched';
+})();
+```
+
+Every service call goes through this one websocket connection, whichever
+`hass` object a component happens to hold, so nothing escapes it.
+
+This has already settled one false alarm. A humidifier beeped three times
+whenever a mode was picked, which looked exactly like the card dispatching
+the change three times. It sends one - the device was beeping because its
+water tank was empty, and would have done so whatever was clicked.
+
+Worth noting how that went wrong, because the pattern repeats: two
+plausible explanations were argued from the code before anyone counted the
+calls, and both were false. The card was displaying the answer the whole
+time, in its own first indicator - water level, 0%.
 
 ## Layout
 
