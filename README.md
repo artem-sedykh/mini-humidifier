@@ -140,6 +140,15 @@ browser, and that its type is `module`.
 bundle. Hard-reload, clear the cache, and bump the `?v=` query string if you
 installed manually.
 
+**A HACS update changed nothing, every time** - check where your dashboard
+resources live. When HACS manages them, which is the default, it rewrites the
+resource URL on every update with a version-derived `?hacstag=`, and the new
+file is picked up by itself. If you keep `resources:` in YAML
+(`lovelace: resource_mode: yaml`), HACS leaves them alone entirely - it logs
+`YAML mode detected, can not update resources` and stops - so the URL never
+changes and the browser keeps serving what it cached a month ago. In that
+setup, bumping `?v=` yourself after every HACS update is not optional.
+
 **An option does nothing** - check the `model:` value. An unrecognised model is
 not an error; the card silently falls back to the default one, and the defaults
 it brings may not match your device.
