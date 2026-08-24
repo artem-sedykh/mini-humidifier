@@ -1,7 +1,6 @@
 import { html, LitElement } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
-import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
 
 import style from './style';
 import sharedStyle from './sharedStyle';
@@ -17,29 +16,12 @@ import getLabel from './utils/getLabel';
 import './initialize';
 import HUMIDIFIERS from './humidifiers';
 import localize from './localize/localize';
-import HumidifierTargetHumidity from './components/targetHumidity';
-import HumidifierPower from './components/power';
-import HumidifierIndicators from './components/indicators';
-import HumidifierButtons from './components/buttons';
-import buildElementDefinitions from './utils/buildElementDefinitions';
+import './components/targetHumidity';
+import './components/power';
+import './components/indicators';
+import './components/buttons';
 
-class MiniHumidifier extends ScopedRegistryHost(LitElement) {
-  static get elementDefinitions() {
-    return buildElementDefinitions(
-      [
-        'ha-card',
-        'ha-icon',
-        'ha-relative-time',
-        HumidifierTargetHumidity,
-        HumidifierPower,
-        HumidifierIndicators,
-        'ha-icon-button',
-        HumidifierButtons,
-      ],
-      MiniHumidifier,
-    );
-  }
-
+class MiniHumidifier extends LitElement {
   static getStubConfig(hass, unusedEntities, allEntities) {
     let entity = unusedEntities.find(eid => eid.split('.')[0] === 'fan');
     if (!entity) {
@@ -439,10 +421,6 @@ class MiniHumidifier extends ScopedRegistryHost(LitElement) {
   }
 
   render() {
-    if (!MiniHumidifier.elementDefinitionsLoaded) {
-      return html``;
-    }
-
     const cls = this.config.target_humidity.hide ? 'full' : '';
     return html`
       <ha-card

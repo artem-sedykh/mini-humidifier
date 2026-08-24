@@ -1,19 +1,10 @@
 import { LitElement, html, css } from 'lit';
-import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
 import { styleMap } from 'lit/directives/style-map.js';
 import handleClick from '../utils/handleClick';
 import { TAP_ACTIONS } from '../const';
-import buildElementDefinitions from '../utils/buildElementDefinitions';
+import define from '../utils/define';
 
-export default class HumidifierIndicators extends ScopedRegistryHost(LitElement) {
-  static get defineId() {
-    return 'mh-indicators';
-  }
-
-  static get elementDefinitions() {
-    return buildElementDefinitions(['ha-icon'], HumidifierIndicators);
-  }
-
+export default class HumidifierIndicators extends LitElement {
   static get properties() {
     return {
       indicators: {},
@@ -56,10 +47,6 @@ export default class HumidifierIndicators extends ScopedRegistryHost(LitElement)
   }
 
   render() {
-    if (!HumidifierIndicators.elementDefinitionsLoaded) {
-      return html``;
-    }
-
     const context = this;
     // console.log('render Indicators');
 
@@ -117,3 +104,5 @@ export default class HumidifierIndicators extends ScopedRegistryHost(LitElement)
     `;
   }
 }
+
+define('mh-indicators', HumidifierIndicators);

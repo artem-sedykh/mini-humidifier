@@ -20,19 +20,10 @@ export default {
   // considers JavaScript, so the JSON has to be declared as such first.
   mimeTypes: { '**/*.json': 'js' },
   plugins: [json({ include: ['**/*.json'] })],
+  // No polyfill and no page of its own: the card registers its elements in the
+  // global registry, so the tests run against the same registry a browser gives
+  // it in Home Assistant. Until #166 this file had to load
+  // @webcomponents/scoped-custom-element-registry, without which the card
+  // mounted as an empty shell.
   browsers: [playwrightLauncher({ product: 'chromium' })],
-  // The card mounts its components through @lit-labs/scoped-registry-mixin,
-  // which calls `attachShadow({ customElements })`. Chromium constructs a
-  // `CustomElementRegistry` happily enough but does not honour that option, so
-  // without this polyfill the shadow root falls back to the global registry,
-  // every `mh-*` element stays an unknown tag, and the card renders as an empty
-  // shell that still passes anything but an assertion on its contents.
-  testRunnerHtml: testFramework => `
-    <html>
-      <body>
-        <script src="/node_modules/@webcomponents/scoped-custom-element-registry/scoped-custom-element-registry.min.js"></script>
-        <script type="module" src="${testFramework}"></script>
-      </body>
-    </html>
-  `,
 };

@@ -1,19 +1,10 @@
 import { LitElement, html, css } from 'lit';
-import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
 import sharedStyle from '../sharedStyle';
-import HumidifierButton from './button';
-import HumidifierDropDown from './dropdown';
-import buildElementDefinitions from '../utils/buildElementDefinitions';
+import './button';
+import './dropdown';
+import define from '../utils/define';
 
-export default class HumidifierButtons extends ScopedRegistryHost(LitElement) {
-  static get defineId() {
-    return 'mh-buttons';
-  }
-
-  static get elementDefinitions() {
-    return buildElementDefinitions([HumidifierDropDown, HumidifierButton], HumidifierButtons);
-  }
-
+export default class HumidifierButtons extends LitElement {
   static get properties() {
     return {
       buttons: {},
@@ -45,10 +36,6 @@ export default class HumidifierButtons extends ScopedRegistryHost(LitElement) {
   }
 
   render() {
-    if (!HumidifierButtons.elementDefinitionsLoaded) {
-      return html``;
-    }
-
     const context = this;
     return html`${Object.entries(this.buttons)
       .map(b => b[1])
@@ -82,3 +69,5 @@ export default class HumidifierButtons extends ScopedRegistryHost(LitElement) {
     ];
   }
 }
+
+define('mh-buttons', HumidifierButtons);

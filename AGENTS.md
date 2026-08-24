@@ -111,13 +111,15 @@ The cost of this layer is in `test/browser/helpers/`, not in the assertions.
 `ha-card`, `ha-icon`, `ha-icon-button`, `ha-relative-time`, `ha-entity-toggle`
 and `ha-slider` exist only inside a running Home Assistant, so the helpers
 define stand-ins - the card only passes properties into them and reads nothing
-back. Two more things are needed to get that far, both in
-`web-test-runner.config.mjs`: `@webcomponents/scoped-custom-element-registry`,
-because the card registers its components through
-`@lit-labs/scoped-registry-mixin` and Chromium does not honour the
-`attachShadow({ customElements })` the mixin calls; and the JSON translations
-declared as JavaScript through `mimeTypes`, so the rollup plugin that turns
-them into modules is allowed to run.
+back. One more thing is needed to get that far, in
+`web-test-runner.config.mjs`: the JSON translations have to be declared as
+JavaScript through `mimeTypes`, so the rollup plugin that turns them into
+modules is allowed to run.
+
+There is deliberately nothing else in that page. Until #166 it also loaded
+`@webcomponents/scoped-custom-element-registry`, without which the card mounted
+as an empty shell - the registry is now the browser's own, so what the tests
+run against is what a browser gives the card.
 
 Because the elements are stand-ins, this layer says the card renders and
 behaves - not that it renders correctly against the real ones. That distinction
@@ -182,7 +184,7 @@ src/
   components/        the sub-elements the card renders, the dropdown among them
   models/            wrappers that turn raw hass state into what a component
                      renders (humidifier, button, indicator, targetHumidity)
-  utils/             template compilation, click handling, element definitions
+  utils/             template compilation, click handling, element registration
   localize/          en, ru, uk
   style.js           card styles
   sharedStyle.js     styles shared with the sub-elements
@@ -191,6 +193,28 @@ test/                vitest unit tests, one file per unit under test
     helpers/         the fake hass and the Home Assistant element stand-ins
 scripts/             build-time checks that are not part of the bundle
 ```
+
+## Registering the elements
+
+Every component registers itself at the bottom of its own module -
+`define('mh-button', HumidifierButton)` - and `main.js` imports those modules
+for that alone. `src/utils/define.js` is `customElements.define` without the
+throw when the name is already taken, which is what a page that loads the
+bundle twice does.
+
+Two consequences worth knowing:
+
+- **The names are global.** They were not until #166, when the card mounted its
+  components through `@lit-labs/scoped-registry-mixin`. That mixin calls
+  `attachShadow({ customElements })`, which no browser implements - it is the
+  API of a polyfill the card never shipped and Home Assistant happened to load.
+  Where that polyfill was missing the card rendered an empty shell and said
+  nothing, which is what [#72](https://github.com/artem-sedykh/mini-humidifier/issues/72)
+  reads like.
+- **Home Assistant's elements are simply used.** `ha-card`, `ha-icon` and the
+  rest are defined globally by the frontend, so a template can name them. There
+  is no longer any machinery waiting for them to appear, and no `render` that
+  returns an empty template until it has.
 
 ## How a card configuration is resolved
 
