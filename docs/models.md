@@ -62,14 +62,14 @@ wrong defaults.
 type: custom:mini-humidifier
 entity: fan.xiaomi_miio_device
 # zhimi.humidifier.cb1 default value may be omitted, added for example.
-model: 'zhimi.humidifier.cb1' 
+model: 'zhimi.humidifier.cb1'
 ```
 
 [deerma.humidifier.mjjsq](https://github.com/artem-sedykh/mini-humidifier/blob/master/src/configurations/xiaomi_miio_airpurifier/deerma_humidifier_mjjsq.js)
 ```yaml
 type: custom:mini-humidifier
 entity: fan.xiaomi_miio_device
-model: 'xiaomi_miio_airpurifier:deerma.humidifier.mjjsq' 
+model: 'xiaomi_miio_airpurifier:deerma.humidifier.mjjsq'
 ```
 > localize status indicator
 ```yaml

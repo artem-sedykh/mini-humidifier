@@ -5,7 +5,27 @@
 Buttons live in the bottom panel of the card. Two types are supported:
 `button` and `dropdown`.
 
-> You can add various buttons, supported types: button and dropdown
+Options under `buttons: <name>:`, where `<name>` is yours to choose.
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `icon` | string | | Specify a custom icon from any of the available mdi icons. |
+| `type` | string | `button` | `button` or `dropdown`. |
+| `order` | number | | Sort order among the buttons. |
+| `hide` | boolean | `false` | Hide the button. |
+| `action_timeout` | number | `3500` | Milliseconds to wait before the card re-reads the entity state after a change. |
+| `state` | object | | Where to read the button state from. |
+| `state: entity` | string | current entity | Entity to read the state from. |
+| `state: attribute` | string | | Attribute to read the state from. |
+| `state: mapper` | function | | State processing function. |
+| `disabled` | function | | Button disabled calculation function. |
+| `style` | function | | Function returning custom styles. |
+| `active` | function | | For type `dropdown`: whether the dropdown counts as active. |
+| `source` | object | | For type `dropdown`: the items to offer. |
+| `source: item` | string | | A dropdown item, in the form `value: label`. |
+| `source: __filter` | function | | Filter function for the items. |
+| `change_action` | function | | For type `dropdown`: called when an item is selected. |
+| `toggle_action` | function | | For type `button`: called when the button is clicked. |
 
 ## Buttons functions
 
@@ -30,7 +50,7 @@ Buttons live in the bottom panel of the card. Two types are supported:
 | Name | arguments | description | return type |
 |------|-----------|-------------|-------------|
 |`toggle_state` | sate | toggle state, example: `this.toggle_state('on') => off`  | string
-|`call_service` | domain, service, options, | call Home Assistant service | promise 
+|`call_service` | domain, service, options, | call Home Assistant service | promise
 
 ## Default buttons
 
@@ -47,7 +67,7 @@ buttons:
     order: 0
     state:
       attribute: dry
-      # the dry attribute is of type boolean, for the button the state should be on/off/closed/locked/unavailable/unknown 
+      # the dry attribute is of type boolean, for the button the state should be on/off/closed/locked/unavailable/unknown
       mapper: "(state) => (state ? 'on' : 'off')"
       # service is used xiaomi_miio.fan_set_dry_on or xiaomi_miio.fan_set_dry_off
     toggle_action: >

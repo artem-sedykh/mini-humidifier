@@ -5,11 +5,27 @@
 Indicators are the read-only values shown under the entity name: temperature,
 humidity, water tank level, and anything else you point them at.
 
-> The indicators display additional information on the card, for example, you can display humidity, depth, temperature, etc.  
-> The default configuration for `zhimi.humidifier.cb1`  uses three indicators depth, temperature, humidity.
-> [zhimi.humidifier.cb1 indicators](#default-indicators)
+Options under `indicators: <name>:`, where `<name>` is yours to choose.
 
-> Adding a simple indicator:
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `icon` | string or object | | A custom mdi icon, or an icon config object. |
+| `icon: template` | function | | Icon template function. |
+| `icon: style` | function | | Function returning icon styles. |
+| `unit` | string | | Display unit. |
+| `round` | number | | Number of decimals to round the value to. |
+| `hide` | boolean | `false` | Hide the indicator. |
+| `order` | number | | Sort order among the indicators. |
+| `tap_action` | [action object](configuration.md#action-object-options) | optional | Action on click/tap. |
+| `source` | object | | Where to read the value from. |
+| `source: entity` | string | current entity | Entity to read the value from. |
+| `source: attribute` | string | | Attribute to read the value from. |
+| `source: mapper` | function | | Value processing function. |
+
+The defaults for `zhimi.humidifier.cb1` set up three of them - depth,
+temperature and humidity - see [Default indicators](#default-indicators).
+
+Adding a simple indicator:
 ```yaml
 type: custom:mini-humidifier
 entity: fan.xiaomi_miio_device
@@ -57,7 +73,7 @@ indicators:
     type: 'percent'
     source:
       attribute: depth
-      mapper: > 
+      mapper: >
         (val) => {
           const value = (100 * (val || 0)) / this.max_value;
           return this.type === 'liters' ? (value * this.volume) / 100 : value;
@@ -104,14 +120,14 @@ indicators:
     type: 'liters'
     source:
       attribute: depth
-      mapper: > 
+      mapper: >
         (val) => {
           const value = (100 * (val || 0)) / this.max_value;
           return this.type === 'liters' ? (value * this.volume) / 100 : value;
         }
 ```
 
-## default-indicators
+## Default indicators
 
 > The plugin is configured by default for zhimi.humidifier.cb1 and 3 default indicators are available in it temperature, humidity, depth
 > Their configuration looks like this:

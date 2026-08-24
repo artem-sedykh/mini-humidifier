@@ -7,6 +7,26 @@ entity name.
 
 ## Target humidity
 
+Options under `target_humidity:`.
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `icon` | string or object | `mdi:water` | A custom mdi icon, or an icon config object. |
+| `icon: template` | function | | Icon retrieval function. |
+| `icon: style` | function | | Function returning icon styles. |
+| `hide` | boolean | `false` | Hide the target humidity control. |
+| `hide_indicator` | boolean | `false` | Hide the value shown next to the slider. |
+| `disabled` | boolean or function | from the model | Disable the slider. Falls back to the value in the configured [model](models.md), and then to the [default model](https://github.com/artem-sedykh/mini-humidifier/blob/master/src/configurations/xiaomi_miio/zhimi_humidifier_cb1.js#L28). |
+| `unit` | string | `%` | Display unit. |
+| `min` | number | `30` | Minimum target humidity. |
+| `max` | number | `80` | Maximum target humidity. |
+| `step` | number | `10` | Slider step. |
+| `action_timeout` | number | `3500` | Milliseconds to wait before the card re-reads the entity state after a change. |
+| `state` | object | | Where to read the current value from. |
+| `state: entity` | string | current entity | Entity to read the value from. |
+| `state: attribute` | string | `target_humidity` | Attribute to read the value from. |
+| `change_action` | function | | Called when the user moves the slider. |
+
 > Functions available for the target_humidity:  
 
 | Name | Type | execution context | arguments | return type |
@@ -49,7 +69,7 @@ target_humidity:
       const options = { entity_id: entity.entity_id, humidity: value };
       return this.call_service('xiaomi_miio', 'fan_set_target_humidity', options);
     }
-``` 
+```
 
 > The default configuration is configured for `zhimi.humidifier.cb1`,  
 > to set target humidity, use the service `xiaomi_miio.fan_set_target_humidity`
@@ -71,8 +91,24 @@ target_humidity:
       const options = { entity_id: entity.entity_id, humidity: selected };
       return this.call_service('xiaomi_miio', 'fan_set_target_humidity', options);
     }
-``` 
+```
 ## Power button
+
+Options under `power:`.
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `type` | string | `button` | `toggle` or `button`. |
+| `icon` | string | `mdi:power` | Specify a custom icon from any of the available mdi icons. |
+| `hide` | boolean | `false` | Hide the power button. |
+| `action_timeout` | number | `3500` | Milliseconds to wait before the card re-reads the entity state after a change. |
+| `disabled` | function | | Button disabled calculation function. |
+| `style` | function | | Function returning custom styles. |
+| `state` | object | | Where to read the button state from. |
+| `state: entity` | string | current entity | Entity to read the state from. |
+| `state: attribute` | string | | Attribute to read the state from. |
+| `state: mapper` | function | | State value processing function. |
+| `toggle_action` | function | | Called when the button is clicked. |
 
 > Functions available for the power:  
 
@@ -98,7 +134,7 @@ target_humidity:
 > Attention, the following configuration attributes (icon, disabled, state:attribute, style, toggle_action) are not available for the toggle type,
 > since a standard ha-entity-toggle is used, the state of which I do not control
 
-> Configuration example for the power button type `toggle`: 
+> Configuration example for the power button type `toggle`:
   
 ```yaml
 type: custom:mini-humidifier
@@ -107,9 +143,9 @@ power:
   hide: off
 state:
   mapper: (state, entity, humidifier_entity) => state
-``` 
+```
 
-> Configuration example for the power button type `button`: 
+> Configuration example for the power button type `button`:
   
 ```yaml
 type: custom:mini-humidifier
@@ -127,7 +163,7 @@ power:
       const service = state === 'on' ? 'turn_off' : 'turn_on';
       return this.call_service('fan', service, { entity_id: entity.entity_id });
     }
-``` 
+```
 > The default configuration is configured for `zhimi.humidifier.cb1`,  
 > to on / off, use the service `fan.turn_on`, `fan.turn_off`
 > Example:
@@ -144,9 +180,17 @@ power:
        const service = current_state === 'on' ? 'turn_off' : 'turn_on';
        return this.call_service('fan', service, { entity_id: entity.entity_id });
      }
- ``` 
+ ```
 
 ## Toggle button
+
+Options under `toggle:`.
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `icon` | string | `mdi:dots-horizontal` | Custom icon. |
+| `hide` | boolean | `false` | Hide the button. |
+| `default` | boolean | `off` | Whether the bottom panel starts open. |
 
 > toggle button configuration
 
@@ -161,6 +205,15 @@ toggle:
 ```
 
 ## Secondary info
+
+Options under `secondary_info:`. A bare string is accepted as a shorthand for
+`type:`.
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `type` | string | `mode` | `last-changed` or `mode`. |
+| `icon` | string | | Icon, for type `mode`. |
+| `hide` | boolean | `false` | Hide the secondary info line. |
 
 ```yaml
 type: custom:mini-humidifier
