@@ -2,3 +2,9 @@ dist
 node_modules
 package-lock.json
 release_notes
+
+# Markdown is left alone on purpose. The option tables in docs/ have long
+# description cells, and prettier pads every row to the width of the widest
+# one - 370 columns for docs/configuration.md - which makes the source
+# unreadable and every documentation diff enormous.
+*.md

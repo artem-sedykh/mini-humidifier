@@ -12,8 +12,5 @@
     ["minify"]
   ],
   "comments": false,
-  "plugins": [
-    ["@babel/plugin-transform-template-literals"],
-    ["iife-wrap"]
-  ]
+  "plugins": [["@babel/plugin-transform-template-literals"], ["iife-wrap"]]
 }
