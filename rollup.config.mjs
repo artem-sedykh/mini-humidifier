@@ -34,7 +34,13 @@ export default {
     name: 'MiniHumidifier',
   },
   plugins: [
-    nodeResolve(),
+    // The export condition is pinned deliberately. Left to itself,
+    // @rollup/plugin-node-resolve picks `development` or `production` from
+    // whatever NODE_ENV happens to hold, so the same commit could produce a
+    // different bundle here than in CI. lit ships a separate development
+    // build behind that condition: it carries assertions and warnings that
+    // are useful while developing and must not reach users.
+    nodeResolve({ exportConditions: [development ? 'development' : 'production'] }),
     json(),
     ignore({
       // These are pulled in transitively but the card registers its own
