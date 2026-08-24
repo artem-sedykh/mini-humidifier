@@ -39,9 +39,10 @@ On a dashboard in storage mode, add the same URL through
 npm run dev        # bundle unminified - readable output, what you want while working
 npm run watch      # the same, rebuilding on save
 npm run rollup     # bundle minified, what a release ships
-npm run build      # lint + test + rollup + check:bundle
+npm run build      # lint + typecheck + test + rollup + check:bundle
 npm run lint       # eslint
 npm run format     # prettier
+npm run typecheck  # tsc --noEmit over src
 npm test           # vitest, the unit tests under test/
 npm run test:browser  # @web/test-runner, the component tests in Chromium
 npm run check:bundle  # assertions on the built bundle

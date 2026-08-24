@@ -1,10 +1,29 @@
 import { getEntityValue, round } from '../utils/utils';
+import type { HassEntity, HomeAssistant, IndicatorConfig } from '../types';
+import type HumidifierObject from './humidifier';
 
 export default class IndicatorObject {
-  constructor(entity, config, humidifier, hass) {
-    this.config = config || {};
-    this.entity = entity || {};
-    this.humidifier = humidifier || {};
+  config: IndicatorConfig;
+
+  entity: HassEntity;
+
+  humidifier: HumidifierObject;
+
+  private _hass: HomeAssistant;
+
+  private _last_changed: string | undefined;
+
+  private _last_updated: string | undefined;
+
+  constructor(
+    entity: HassEntity,
+    config: IndicatorConfig,
+    humidifier: HumidifierObject,
+    hass: HomeAssistant,
+  ) {
+    this.config = config || ({} as IndicatorConfig);
+    this.entity = entity || ({} as HassEntity);
+    this.humidifier = humidifier || ({} as HumidifierObject);
     this._hass = hass;
 
     if (entity) {
@@ -13,11 +32,11 @@ export default class IndicatorObject {
     }
   }
 
-  get lastChanged() {
+  get lastChanged(): string | undefined {
     return this._last_changed;
   }
 
-  get lastUpdated() {
+  get lastUpdated(): string | undefined {
     return this._last_updated;
   }
 
@@ -28,25 +47,28 @@ export default class IndicatorObject {
   // every state change in the installation, so the card was rebuilding its
   // indicators and asking for a render half a second later, over and over,
   // whether or not anything it shows had moved.
-  changed(entity) {
-    const e = entity || {};
+  changed(entity: HassEntity): boolean {
+    const e = entity || ({} as HassEntity);
 
     return this.lastChanged !== e.last_changed || this.lastUpdated !== e.last_updated;
   }
 
-  get id() {
+  get id(): string {
     return this.config.id;
   }
 
-  get hass() {
+  get hass(): HomeAssistant {
     return this._hass;
   }
 
-  get originalValue() {
+  // The reading itself: whatever the entity or attribute holds, then whatever
+  // the model configuration makes of it. Both ends are the user's, so this is
+  // as narrow as it honestly gets.
+  get originalValue(): any {
     return getEntityValue(this.entity, this.config.source);
   }
 
-  get value() {
+  get value(): any {
     let value = this.originalValue;
 
     if (this.config.functions.mapper) {
@@ -59,7 +81,7 @@ export default class IndicatorObject {
     return value;
   }
 
-  get unit() {
+  get unit(): string {
     if (this.config.functions.unit && this.config.functions.unit.template) {
       return this.config.functions.unit.template(this.value, this.entity, this.humidifier.entity);
     } else if (this.config.unit && typeof this.config.unit === 'string') {
@@ -69,11 +91,11 @@ export default class IndicatorObject {
     return '';
   }
 
-  get hide() {
+  get hide(): boolean | undefined {
     return this.config.hide;
   }
 
-  get icon() {
+  get icon(): string {
     if (this.config.functions.icon && this.config.functions.icon.template) {
       return this.config.functions.icon.template(this.value, this.entity, this.humidifier.entity);
     } else if (this.config.icon && typeof this.config.icon === 'string') {
@@ -83,7 +105,7 @@ export default class IndicatorObject {
     return '';
   }
 
-  get iconStyle() {
+  get iconStyle(): Record<string, string> {
     if (this.config.functions.icon && this.config.functions.icon.style)
       return (
         this.config.functions.icon.style(this.value, this.entity, this.humidifier.entity) || {}

@@ -28,12 +28,13 @@ external contributors who do not read Russian.
 npm ci             # install exactly what the lockfile says
 npm run lint       # eslint
 npm run format     # prettier --write
+npm run typecheck  # tsc --noEmit over src, both languages
 npm test           # vitest, the unit tests under test/
 npm run test:browser  # @web/test-runner, the component tests in Chromium
 npm run rollup     # bundle src/main.js -> dist/mini-humidifier-bundle.js
 npm run check:bundle  # assertions on the built bundle (needs a build first)
 npm run dev        # the same as rollup, unminified
-npm run build      # lint + test + rollup + check:bundle
+npm run build      # lint + typecheck + test + rollup + check:bundle
 npm run watch      # unminified, rebuilding on save
 ```
 
@@ -65,8 +66,9 @@ in one bundle, a lit directive left unresolved and emitted as an external
 `require`. None of them is visible in the source, all of them are visible in the
 output file. The script checks that the bundle registers the element, resolves
 every import, is not lit's development build, holds exactly one copy of each lit
-package, carries every model id from `src/humidifiers.js`, and stays within a
-tolerance of a recorded size.
+package, carries every model id from `src/humidifiers.js`, still calls services
+through the `this` the model configurations are written against, and stays
+within a tolerance of a recorded size.
 
 That last one has a baseline in `scripts/bundle-baseline.json`. When a change
 legitimately moves the size past the tolerance, update the file in the same
@@ -183,7 +185,10 @@ src/
     xiaomi_miio_airpurifier/
   components/        the sub-elements the card renders, the dropdown among them
   models/            wrappers that turn raw hass state into what a component
-                     renders (humidifier, button, indicator, targetHumidity)
+                     renders (humidifier, button, indicator, targetHumidity),
+                     TypeScript
+  types.ts           the shapes the card works with: hass, the configuration
+                     sections, the compiled template callbacks
   utils/             template compilation, click handling, element registration
   localize/          en, ru, uk
   style.js           card styles
@@ -194,7 +199,33 @@ test/                vitest unit tests, one file per unit under test
 scripts/             build-time checks that are not part of the bundle
 ```
 
-## Registering the elements
+## TypeScript, halfway
+
+`src/models/` and `src/types.ts` are TypeScript; everything else is still
+JavaScript, and both build side by side. That is deliberate - #152 asks for a
+migration file by file, because the one attempt at doing it in a single pass
+was abandoned with 39k lines changed. `allowJs` is on and `checkJs` is off: the
+JavaScript that is left is covered by eslint and by the tests, and turning the
+checker loose on all of it would report the whole card at once.
+
+`npm run typecheck` is `tsc --noEmit`. Nothing else type checks: rollup and the
+browser tests both strip types with esbuild, which does not look at them.
+
+Two things to know before migrating the next file:
+
+- **`useDefineForClassFields` must stay false.** A declaration-only field
+  (`hass: HomeAssistant;`) has to erase. With class fields defined it would
+  assign `undefined` at construction instead, and once the components follow,
+  that assignment lands on top of lit's own accessors.
+- **esbuild must not touch the JavaScript.** `rollup.config.mjs` restricts it to
+  `/\.ts$/` and the browser tests pass no `target`, both for the same reason:
+  esbuild is right that a module's top-level `this` is undefined in ESM, and
+  wrong about this card. The model configurations are written against that
+  `this`, rollup arranges it with `moduleContext`, and `compileTemplate`
+  re-parses their source at runtime - so an esbuild pass over them ships
+  `void 0.call_service(...)`, and every button on the card goes quiet. The
+  bundle assertions now count that, because nothing else notices: the size
+  barely moves and every other check passes.
 
 Every component registers itself at the bottom of its own module -
 `define('mh-button', HumidifierButton)` - and `main.js` imports those modules
