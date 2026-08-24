@@ -25,7 +25,7 @@ const indicator = (element, id) => element.config.indicators.find(item => item.i
 const button = (element, id) => element.config.buttons.find(item => item.id === id);
 
 beforeAll(async () => {
-  await import('../src/main.js');
+  await import('../src/main.ts');
   MiniHumidifier = customElements.get('mini-humidifier');
   expect(MiniHumidifier).toBeTypeOf('function');
 });
