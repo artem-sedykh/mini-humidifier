@@ -13,7 +13,9 @@ on:
       - 'mkdocs.yml'
       - 'overrides/**'
       - 'scripts/mkdocs_hooks.py'
+      - 'scripts/translate_docs.py'
       - 'requirements-docs.txt'
+      - 'requirements-translate.txt'
       - '.github/workflows/docs.yml'
   pull_request:
     branches: ['**']
@@ -23,7 +25,9 @@ on:
       - 'mkdocs.yml'
       - 'overrides/**'
       - 'scripts/mkdocs_hooks.py'
+      - 'scripts/translate_docs.py'
       - 'requirements-docs.txt'
+      - 'requirements-translate.txt'
       - '.github/workflows/docs.yml'
   # For rebuilding the site when nothing in this list changed - a badge, a
   # release, or a theme update.
