@@ -56,10 +56,10 @@ export default defineConfig({
       // which only the browser layer reaches - and coverage cannot tell them
       // apart.
       thresholds: {
-        statements: 73,
-        branches: 66,
-        functions: 66,
-        lines: 74,
+        statements: 75,
+        branches: 68,
+        functions: 67,
+        lines: 76,
       },
     },
   },
