@@ -14,6 +14,12 @@ on:
   push:
   pull_request:
 
+# Both jobs only check out the repository and read files back. The other four
+# workflows already say so; this one was the exception, which is what CodeQL
+# reported.
+permissions:
+  contents: read
+
 jobs:
   eol-charset:
     name: EOL and charset
