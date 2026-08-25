@@ -13,7 +13,9 @@ on:
       - 'mkdocs.yml'
       - 'overrides/**'
       - 'scripts/mkdocs_hooks.py'
+      - 'scripts/translate_docs.py'
       - 'requirements-docs.txt'
+      - 'requirements-translate.txt'
       - '.github/workflows/docs.yml'
   pull_request:
     branches: ['**']
@@ -23,7 +25,9 @@ on:
       - 'mkdocs.yml'
       - 'overrides/**'
       - 'scripts/mkdocs_hooks.py'
+      - 'scripts/translate_docs.py'
       - 'requirements-docs.txt'
+      - 'requirements-translate.txt'
       - '.github/workflows/docs.yml'
   # For rebuilding the site when nothing in this list changed - a badge, a
   # release, or a theme update.
@@ -78,7 +82,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: .cache/translations
-          key: translations-ru-${{ hashFiles('docs/*.md', 'README.md') }}
+          key: translations-ru-${{ hashFiles('docs/*.md', 'README.md', 'scripts/translate_docs.py') }}
           restore-keys: translations-ru-
 
       # Deliberately allowed to fail. A page with no translation falls back to
@@ -102,7 +106,7 @@ jobs:
             echo
             if [ -f "$page" ]; then
               echo '```markdown'
-              sed -n '1,24p' "$page"
+              sed -n '1,40p' "$page"
               echo '```'
             else
               echo 'No translation was produced - the site falls back to English.'
