@@ -17,7 +17,7 @@ integration:
 
 | `model:` | |
 |---|---|
-| `zhimi.humidifier.cb1` | the default, used for any unrecognised model |
+| `zhimi.humidifier.cb1` | the default, used when `model:` is left out |
 | `zhimi.humidifier.ca1` | |
 | `zhimi.humidifier.ca4` | |
 | `zhimi.airpurifier.ma2` | |
@@ -39,9 +39,16 @@ integration, which reports different attributes and calls different services:
 | `xiaomi_miio_airpurifier:deerma.humidifier.mjjsq` | |
 | `xiaomi_miio_airpurifier:deerma.humidifier.jsq5` | by @akovovh |
 
-An unrecognised `model:` is not an error. The card falls back to
-`zhimi.humidifier.cb1`, so a typo produces a card that renders but brings the
-wrong defaults.
+An unrecognised `model:` is an error: the card refuses to render and lists the
+ids it knows. Up to 3.3.0 it fell back to `zhimi.humidifier.cb1` in silence, so
+a typo produced a card that came up looking right and brought another device's
+defaults with it.
+
+Leaving `model:` out is not an error and never was - it is how you ask for the
+default set. Writing `model: default` says the same thing explicitly, which is
+what a card that describes every control in its own options wants: it has to
+start from some set of defaults, and naming a device it is not would be a
+fiction.
 
 ## Adding a model
 

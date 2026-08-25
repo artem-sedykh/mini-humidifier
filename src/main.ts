@@ -448,14 +448,33 @@ class MiniHumidifier extends LitElement {
       throw new Error(`Specify an entity from within ${SUPPORTED_DOMAINS.join(' ,')} domains.`);
     }
 
-    // `humidifiers.js` is still JavaScript, so its registry arrives as an object
-    // literal rather than a lookup table.
-    const models = HUMIDIFIERS as Record<string, () => ModelConfiguration>;
-    let modelConfiguration: ModelConfiguration;
     const { model } = config;
 
-    if (model !== undefined && model in models) modelConfiguration = models[model]();
-    else modelConfiguration = models.default();
+    if (model !== undefined && !(model in HUMIDIFIERS)) {
+      // An unknown id used to fall back to the default, which is the hardest
+      // kind of misconfiguration to see: the card renders, looks right, and
+      // only the controls act on another device. `deerma.humidifier.mjjsq` and
+      // `xiaomi_miio_airpurifier:deerma.humidifier.mjjsq` are the same hardware
+      // through two integrations that call different services - a card built
+      // from the wrong one of those is indistinguishable until it is pressed.
+      //
+      // Home Assistant renders what is thrown here in place of the card, so
+      // this message is the whole report the user gets. It carries both ways
+      // out: the list of ids, and the way to start from the default set and
+      // describe the device in the card's own options instead. The card is
+      // meant to be configurable end to end, and someone who does configure it
+      // end to end was previously free to write anything at all in `model:`.
+      const known = Object.keys(HUMIDIFIERS).filter(id => id !== 'default');
+
+      throw new Error(
+        `Unknown model '${model}'. Leave model out, or set it to 'default', to start from ` +
+          `the default configuration and describe the device with the card's own options. ` +
+          `Known models: ${known.join(', ')}.`,
+      );
+    }
+
+    const modelConfiguration: ModelConfiguration =
+      model === undefined ? HUMIDIFIERS.default() : HUMIDIFIERS[model]();
 
     // The sections below are filled in immediately after, which is what makes
     // this a `CardConfig` rather than the YAML it starts as.

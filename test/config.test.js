@@ -13,12 +13,26 @@ import HUMIDIFIERS from '../src/humidifiers';
 
 const DEFAULT_MODEL = 'zhimi.humidifier.cb1';
 
+// `default` is the key the registry falls back to rather than a device id, so
+// it is not one of the models a configuration is offered.
+const KNOWN_MODELS = Object.keys(HUMIDIFIERS).filter(id => id !== 'default');
+
 let MiniHumidifier;
 
 const card = config => {
   const element = new MiniHumidifier();
   element.setConfig({ entity: 'humidifier.bedroom', ...config });
   return element;
+};
+
+// What the user is left looking at when `setConfig` refuses the configuration.
+const messageFor = config => {
+  try {
+    card(config);
+  } catch (error) {
+    return error.message;
+  }
+  return '';
 };
 
 const indicator = (element, id) => element.config.indicators.find(item => item.id === id);
@@ -82,22 +96,29 @@ describe('setConfig', () => {
     }
   });
 
-  it('falls back to the default model without complaining', () => {
-    // Deliberate, and the reason a typo in `model:` is so hard to spot: the
-    // card renders, and only the controls behave like another device.
-    const typo = card({ model: 'zhimi.humidifier.cb11' });
-    const fallback = card({ model: DEFAULT_MODEL });
-
-    expect(typo.config.buttons.map(item => item.id)).toEqual(
-      fallback.config.buttons.map(item => item.id),
+  it('rejects a model it does not know', () => {
+    // Up to 3.3.0 this rendered the default configuration instead, which is why
+    // a typo in `model:` was so hard to spot: the card came up looking right,
+    // and only the controls behaved like another device.
+    expect(() => card({ model: 'zhimi.humidifier.cb11' })).toThrow(
+      /Unknown model 'zhimi\.humidifier\.cb11'/,
     );
-    expect(typo.config.indicators.map(item => item.id)).toEqual(
-      fallback.config.indicators.map(item => item.id),
-    );
+  });
 
-    // The unknown id is kept as the user wrote it, so it can still be read back
-    // out of the configuration.
-    expect(typo.config.model).toBe('zhimi.humidifier.cb11');
+  it('names every model it does know when it rejects one', () => {
+    // The thrown message is all the user sees - Home Assistant renders it in
+    // place of the card - so the way out of the mistake has to be in it.
+    expect(() => card({ model: 'levoit.classic.300s' })).toThrow(KNOWN_MODELS.join(', '));
+  });
+
+  it('tells a card configured end to end how to opt out of models', () => {
+    // The card is meant to be universal: every control can be described in
+    // YAML. Such a configuration still starts from some set of defaults, and
+    // its author used to be free to write anything at all in `model:` and be
+    // handed the default one in silence. Refusing that is only fair if the
+    // refusal says what to write instead.
+    expect(messageFor({ model: 'my.own.device' })).toContain('default');
+    expect(() => card({ model: 'default' })).not.toThrow();
   });
 
   it('defaults the model when the YAML names none', () => {
