@@ -61,4 +61,15 @@ export default {
     playwrightLauncher({ product: 'chromium' }),
     playwrightLauncher({ product: 'webkit' }),
   ],
+  testFramework: {
+    config: {
+      // mocha's default is 2000ms, which is a fast-machine default. Two engines
+      // now share a CI runner, and WebKit on Linux is the slow one: the first
+      // runs failed on a different dropdown test each time, always a timeout,
+      // never an assertion - the signature of a budget rather than a bug. This
+      // is deliberately generous. A test that hangs still fails; a test that is
+      // merely slow on a loaded runner no longer reports as a broken card.
+      timeout: '10000',
+    },
+  },
 };
