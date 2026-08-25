@@ -174,6 +174,25 @@ describe('setConfig', () => {
     expect(card({}).config.model).toBe(DEFAULT_MODEL);
   });
 
+  it('normalises a tap_action written as a string', () => {
+    // The documented `tap_action: none`, and every other action written the
+    // same way. Before #206 the string replaced the default object wholesale
+    // and reached `handleClick`, which returns on a string - so `none` worked
+    // by accident and `more-info` was a dead click.
+    expect(card({ tap_action: 'none' }).config.tap_action).toEqual({ action: 'none' });
+    expect(card({ tap_action: 'more-info' }).config.tap_action).toEqual({ action: 'more-info' });
+  });
+
+  it('leaves a tap_action written as an object alone', () => {
+    const written = { action: 'navigate', navigation_path: '/lovelace/4' };
+
+    expect(card({ tap_action: written }).config.tap_action).toEqual(written);
+  });
+
+  it('defaults tap_action to more-info', () => {
+    expect(card({}).config.tap_action.action).toBe('more-info');
+  });
+
   it('keeps two cards on the same page independent', () => {
     // getIndicatorsConfig writes into the object the model factory returns.
     // Sharing it would carry one card's options over to the next.

@@ -30,7 +30,7 @@ tap_action:
   action: url
   url: 'https://www.google.com/'
 
-# none example
+# none example - the shorthand for {action: none}
 type: custom:mini-humidifier
 entity: fan.xiaomi_miio_device
 tap_action: none
