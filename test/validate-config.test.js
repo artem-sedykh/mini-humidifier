@@ -127,20 +127,22 @@ describe('tap_action', () => {
     expect(warning).toContain('more-info, navigate, call-service, url, none');
   });
 
-  it('reports a flat string on the card, which is a dead click with a pointer cursor', () => {
-    // The card's own tap_action is never normalised: setConfig spreads the
-    // YAML over its defaults, so the string reaches handleClick, which returns
-    // early on every string. That is what makes the documented
-    // `tap_action: none` work, and it swallows every other string with it - so
-    // this one renders as clickable and does nothing.
-    const [warning] = validateConfig({ ...CARD, tap_action: 'more-info' });
-
-    expect(warning).toContain('does nothing');
-    expect(warning).toContain('none');
+  it('accepts the string form on the card, which setConfig normalises', () => {
+    // Both spellings mean the same thing since #206. Before that, only
+    // `tap_action: none` did anything in this form and every other string was
+    // a dead click, so this case warned - and the warning is gone because the
+    // card was fixed, not because the check was dropped: the next test still
+    // reads the action out of the string.
+    for (const action of ['more-info', 'navigate', 'call-service', 'url', 'none']) {
+      expect(validateConfig({ ...CARD, tap_action: action })).toEqual([]);
+    }
   });
 
-  it('accepts the one string that means what it says on the card', () => {
-    expect(validateConfig({ ...CARD, tap_action: 'none' })).toEqual([]);
+  it('still checks which action a string on the card names', () => {
+    const [warning] = validateConfig({ ...CARD, tap_action: 'toggle' });
+
+    expect(warning).toContain('tap_action');
+    expect(warning).toContain("'toggle'");
   });
 
   it('accepts the string form on an indicator, where it is normalised', () => {

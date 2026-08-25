@@ -81,4 +81,39 @@ describe('the controls', () => {
     expect(entityId).to.equal(ENTITY_ID);
     expect(hass.calls).to.be.empty;
   });
+
+  it('opens more-info for a tap_action written as a string', async () => {
+    // `tap_action: more-info` is how the option reads in the documentation for
+    // every other card, and until #206 writing it that way here produced a
+    // card that looked clickable and did nothing.
+    const { card } = await mountCard({ config: { tap_action: 'more-info' } });
+
+    let events = 0;
+    card.addEventListener('hass-more-info', () => {
+      events += 1;
+    });
+
+    shadow(card, '.entity__info__name_wrap').click();
+    await settle(card);
+
+    expect(events).to.equal(1);
+  });
+
+  it('says the card is clickable only when the click does something', async () => {
+    // The class is the pointer cursor and the hover. `{ action: 'none' }` is
+    // what Home Assistant's own editors write for "do nothing", and it used to
+    // keep the class, because the comparison was against the whole option
+    // rather than the action in it.
+    const withAction = await mountCard();
+    const asString = await mountCard({ config: { tap_action: 'none' } });
+    const asObject = await mountCard({ config: { tap_action: { action: 'none' } } });
+
+    expect(withAction.card.shadowRoot.querySelector('ha-card').className).to.contain('--more-info');
+    expect(asString.card.shadowRoot.querySelector('ha-card').className).to.not.contain(
+      '--more-info',
+    );
+    expect(asObject.card.shadowRoot.querySelector('ha-card').className).to.not.contain(
+      '--more-info',
+    );
+  });
 });

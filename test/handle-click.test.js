@@ -204,10 +204,13 @@ describe('what it refuses to act on', () => {
   });
 
   it('ignores any tap_action written as a string', () => {
-    // This is how `tap_action: none` arrives - the documented way to turn the
-    // click off - and the string branch is what makes it work. It swallows
-    // every other string with it, so `tap_action: more-info` written without
-    // the `action:` key is a dead click rather than a more-info dialog.
+    // Nothing hands it one any more: `getIndicatorConfig` has always turned a
+    // string into `{ action: <string> }`, and since #206 `setConfig` does the
+    // same for the card's own option, so both callers normalise before this is
+    // reached. The guard stays because this is what the function does with a
+    // shape it cannot act on - and the behaviour it used to produce, a
+    // `tap_action: more-info` that did nothing, is now impossible to configure
+    // rather than merely unlikely.
     nothingHappens('none');
     nothingHappens('more-info');
   });

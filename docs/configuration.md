@@ -48,6 +48,11 @@ card requires Home Assistant 2022.11 or newer; see
 | `navigation_path` | string | | Any path | Path to navigate to (e.g. `/lovelace/0/`) when `action` is defined as `navigate`. |
 | `url` | string | | Any URL | URL to open when `action` is defined as `url`. |
 
+An action that needs nothing but its name can be written as a bare string:
+`tap_action: none` and `tap_action: more-info` mean the same as
+`tap_action: {action: none}` and `tap_action: {action: more-info}`. The same
+shorthand works for an indicator's `tap_action`.
+
 ## Theme variables
 
 Set these in your Home Assistant theme to change the appearance of the card.

@@ -521,6 +521,20 @@ class MiniHumidifier extends LitElement {
       // Not a `CardConfig` yet: every section below is replaced with its
       // resolved form in the statements that follow, and only then is it one.
     } as unknown as CardConfig;
+
+    // `tap_action: none` is documented, and a bare string is how people write
+    // it - but written that way it replaced the default object wholesale and
+    // nothing downstream understood it. `handleClick` returns early on a
+    // string, so `tap_action: more-info` was a dead click; `computeClasses`
+    // compared against the string `'none'`, so the object form of "do nothing"
+    // - which is what Home Assistant's own editors write - still drew the card
+    // as clickable. Indicators have never had either problem, because
+    // `getIndicatorConfig` normalises there. This is the same line, in the one
+    // place it was missing (#206).
+    if (typeof config.tap_action === 'string') {
+      this.config.tap_action = { action: config.tap_action };
+    }
+
     this.config.toggle = {
       icon: ICON.TOGGLE,
       hide: false,
@@ -722,7 +736,7 @@ class MiniHumidifier extends LitElement {
     return classMap({
       '--initial': this.initial,
       '--group': !!config.group,
-      '--more-info': config.tap_action !== 'none',
+      '--more-info': config.tap_action.action !== 'none',
       '--inactive': !this.humidifier.isActive,
       '--unavailable': this.humidifier.isUnavailable,
     });

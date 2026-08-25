@@ -62,37 +62,20 @@ const checkActionName = (where: string, action: unknown, warnings: string[]): vo
 };
 
 /**
- * The string form means two different things depending on where it is written,
- * which is why this takes `normalisesStrings` rather than guessing.
+ * The string form is shorthand for `{ action: <string> }` wherever it is
+ * written: `getIndicatorConfig` has always normalised it for indicators, and
+ * since #206 `setConfig` does the same for the card's own option. So the only
+ * thing that can be wrong about a string here is the action it names.
  *
- * An indicator's `tap_action: more-info` is turned into `{ action: 'more-info' }`
- * by `getIndicatorConfig` before anything reads it, and the bundled model
- * configurations are written that way - so the string is correct there, and
- * only the action named in it can be wrong.
- *
- * The card's own `tap_action` is never normalised: `setConfig` spreads the
- * user's YAML over its defaults, so the string arrives at `handleClick`, which
- * returns early on every string. That makes the documented `tap_action: none`
- * work and turns every other string into a dead click - with a pointer cursor,
- * because `computeClasses` only compares against `'none'`.
+ * This used to take a `normalisesStrings` flag, because the card did not
+ * normalise and a string other than `none` was a dead click with a pointer
+ * cursor. Both halves of that are fixed rather than described.
  */
-const checkTapAction = (
-  where: string,
-  tapAction: unknown,
-  warnings: string[],
-  { normalisesStrings }: { normalisesStrings: boolean },
-): void => {
+const checkTapAction = (where: string, tapAction: unknown, warnings: string[]): void => {
   if (tapAction === undefined) return;
 
   if (typeof tapAction === 'string') {
-    if (normalisesStrings) checkActionName(where, tapAction, warnings);
-    else if (tapAction !== 'none') {
-      warnings.push(
-        `${where} is the string '${tapAction}', which does nothing - only 'none' works in that ` +
-          `form here. Write it as an action object to get the action, or leave ` +
-          `'${where}: none' to turn the click off.`,
-      );
-    }
+    checkActionName(where, tapAction, warnings);
     return;
   }
 
@@ -128,12 +111,9 @@ const checkSection = (
     if (!isPlainObject(item)) continue;
 
     checkOrder(`${section}.${id}`, item.order, warnings);
-    // Buttons have no tap_action; indicators do, and theirs accepts the string
-    // form because getIndicatorConfig normalises it.
+    // Buttons have no tap_action; indicators do.
     if (section === 'indicators')
-      checkTapAction(`${section}.${id}.tap_action`, item.tap_action, warnings, {
-        normalisesStrings: true,
-      });
+      checkTapAction(`${section}.${id}.tap_action`, item.tap_action, warnings);
   }
 };
 
@@ -175,7 +155,7 @@ export default (config: RawCardConfig): string[] => {
     );
   }
 
-  checkTapAction('tap_action', config.tap_action, warnings, { normalisesStrings: false });
+  checkTapAction('tap_action', config.tap_action, warnings);
   checkSection('indicators', config, warnings);
   checkSection('buttons', config, warnings);
 

@@ -216,12 +216,13 @@ export interface CardConfig {
   scale?: number;
   group?: boolean;
   /**
-   * Whatever the YAML had, unchanged: `setConfig` spreads the user's options
-   * over its defaults, so `tap_action: none` written as a string arrives here
-   * as one. `computeClasses` compares against that string, and `handleClick`
-   * reads `.action` off the object form.
+   * An object by the time the card reads it, whichever way it was written:
+   * `setConfig` turns the documented string form (`tap_action: none`) into
+   * `{ action: 'none' }`, the same way `getIndicatorConfig` has always done for
+   * indicators. Before that (#206) the two forms behaved differently, and
+   * neither behaved as it read.
    */
-  tap_action: TapAction | string;
+  tap_action: TapAction;
   toggle: ToggleConfig;
   secondary_info: SecondaryInfoConfig;
   power: ButtonConfig;
