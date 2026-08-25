@@ -63,6 +63,70 @@ describe('the controls', () => {
     ]);
   });
 
+  // The two shapes documented under "A button for another entity" in
+  // docs/buttons.md, run rather than described. Five people across #53 and #124
+  // tried to write these and could not.
+  it('toggles the entity a button names, with nothing else configured', async () => {
+    const { card, hass } = await mountCard({
+      config: {
+        model: 'none',
+        buttons: { heater: { icon: 'mdi:radiator', state: { entity: 'switch.bedroom_buzzer' } } },
+      },
+    });
+
+    card.toggle = true;
+    await settle(card);
+
+    shadow(button(card, 'heater'), 'ha-icon-button').click();
+    await aTimeout(50);
+
+    // `switch.toggle` on the button's own entity is what a button without a
+    // `toggle_action` does, which is the whole point of the short form.
+    expect(hass.calls).to.deep.equal([
+      { domain: 'switch', service: 'toggle', options: { entity_id: 'switch.bedroom_buzzer' } },
+    ]);
+  });
+
+  it('sends a dropdown change to the entity the button names', async () => {
+    const { card, hass } = await mountCard({
+      config: {
+        model: 'none',
+        buttons: {
+          night_light: {
+            type: 'dropdown',
+            state: { entity: 'select.bedroom_led_brightness' },
+            source: { bright: 'Bright', dim: 'Dim', off: 'Off' },
+            change_action: `(selected, state, entity) =>
+              this.call_service('select', 'select_option', {
+                entity_id: entity.entity_id,
+                option: selected,
+              })`,
+          },
+        },
+      },
+    });
+
+    card.toggle = true;
+    await settle(card);
+
+    const base = components(card)
+      .find(component => component.localName === 'mh-dropdown')
+      .shadowRoot.querySelector('mh-dropdown-base');
+
+    base.shadowRoot.querySelector('ha-icon-button').click();
+    await base.updateComplete;
+    base.shadowRoot.querySelector('.mh-dropdown__item[data-value="off"]').click();
+    await aTimeout(50);
+
+    expect(hass.calls).to.deep.equal([
+      {
+        domain: 'select',
+        service: 'select_option',
+        options: { entity_id: 'select.bedroom_led_brightness', option: 'off' },
+      },
+    ]);
+  });
+
   it('opens more-info when the name is clicked', async () => {
     const { card, hass } = await mountCard();
 
