@@ -416,7 +416,8 @@ describe('what the card leaves out', () => {
     },
   });
 
-  const missing = warn => warn.mock.calls.map(([line]) => line).filter(l => l.includes('not exist'));
+  const missing = warn =>
+    warn.mock.calls.map(([line]) => line).filter(l => l.includes('not exist'));
 
   it('names an indicator whose entity is not there', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
