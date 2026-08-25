@@ -119,6 +119,10 @@ secondary_info: last-changed
 
 ## Documentation
 
+Everything below is also published as a searchable site, in English and in
+machine-translated Russian: **[artem-sedykh.github.io/mini-humidifier](https://artem-sedykh.github.io/mini-humidifier/)**.
+It renders these same files, so there is nothing on it that is not here.
+
 | | |
 |---|---|
 | [Configuration](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/configuration.md) | Every card option, the action object, theme variables |

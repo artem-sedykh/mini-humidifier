@@ -1,0 +1,5 @@
+# The machine translation step (#222). Separate from requirements-docs.txt on
+# purpose: this pulls a translation engine and a model of a few hundred
+# megabytes, and building the site locally should not need either. CI installs
+# it only in the job that translates.
+argostranslate==1.9.6
