@@ -137,11 +137,13 @@ size of change it is there to catch.
 
 **`npm test`** - vitest over `test/`, node environment. `localize`, `getLabel`,
 the helpers in `src/utils/utils.js`, the model registry, the four wrappers in
-`src/models/` that turn raw entity state into what a component renders, and the
-configuration merging in `main.ts`. The merging tests need a DOM to construct the element, so
-`test/config.test.js` asks for jsdom with a `@vitest-environment` docblock;
-`setConfig` only reads and merges, and the element is never connected, so
-nothing renders.
+`src/models/` that turn raw entity state into what a component renders, every
+branch of `handleClick` - which is the whole of what `tap_action` does - and the
+configuration merging in `main.ts`. Two files need a DOM and ask for jsdom with
+a `@vitest-environment` docblock: `test/config.test.js`, because `setConfig`
+only reads and merges and the element is never connected, so nothing renders;
+and `test/handle-click.test.js`, because dispatching an event and pushing
+history is all that file does.
 
 `npm run test:coverage` is the same run with `@vitest/coverage-v8` on, and CI
 uses it in place of `npm test`. It measures **the unit layer only**, and what it

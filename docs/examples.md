@@ -7,12 +7,6 @@ Ready-made snippets for the `tap_action` object.
 ## Action object options examples
 
 ```yaml
-# toggle example
-type: custom:mini-humidifier
-entity: fan.xiaomi_miio_device
-tap_action:
-  action: toggle
-
 # call-service example
 type: custom:mini-humidifier
 entity: fan.xiaomi_miio_device
