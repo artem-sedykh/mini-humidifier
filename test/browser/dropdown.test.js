@@ -1,4 +1,4 @@
-import { aTimeout, expect, nextFrame } from '@open-wc/testing';
+import { aTimeout, expect } from '@open-wc/testing';
 import { components, mountCard, settle } from './helpers/card.js';
 import { ENTITY_ID } from './helpers/hass.js';
 
@@ -169,28 +169,36 @@ describe('the dropdown menu', () => {
   it('moves the focus with the arrow keys', async () => {
     const { card } = await mountCard();
     const { base: element } = await openDropdown(card, 'mode');
-    const press = async key => {
+
+    // Asserted rather than assumed, because everything below reads through
+    // `shadowRoot.activeElement`: a browser that never landed the focus would
+    // otherwise fail somewhere further down, as whatever that read happens to
+    // produce, instead of here as the thing that actually went wrong.
+    expect(focused(element), 'no option had the focus when the menu opened').to.equal('auto');
+
+    // `handleKeydown` moves the focus synchronously, so there is nothing to
+    // wait for between presses. Waiting a frame each time made this the slowest
+    // test in the file for no reason.
+    const press = key =>
       element.shadowRoot.activeElement.dispatchEvent(
         new KeyboardEvent('keydown', { key, bubbles: true, composed: true }),
       );
-      await nextFrame();
-    };
 
-    await press('ArrowDown');
+    press('ArrowDown');
     expect(focused(element)).to.equal('silent');
 
-    await press('ArrowUp');
+    press('ArrowUp');
     expect(focused(element)).to.equal('auto');
 
     // Off the top and round to the bottom. Four modes make that cheap; a list
     // of forty makes it necessary.
-    await press('ArrowUp');
+    press('ArrowUp');
     expect(focused(element)).to.equal('high');
 
-    await press('Home');
+    press('Home');
     expect(focused(element)).to.equal('auto');
 
-    await press('End');
+    press('End');
     expect(focused(element)).to.equal('high');
   });
 
