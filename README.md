@@ -64,6 +64,22 @@ The card is in the HACS default repositories.
 
 3. Reload the browser.
 
+### Checking what you downloaded
+
+`mini-humidifier-bundle.js` is built and signed by
+[the release workflow](https://github.com/artem-sedykh/mini-humidifier/blob/master/.github/workflows/cd.yml),
+and every release body carries the file's sha256. With the
+[GitHub CLI](https://cli.github.com/) you can check the copy on your disk
+against the build that published it - through HACS or by hand, it is the same
+file:
+
+```console
+gh attestation verify mini-humidifier-bundle.js -R artem-sedykh/mini-humidifier
+```
+
+It prints the workflow and the tag the file was built from. Without the CLI,
+compare its sha256 with the one on the release page.
+
 ## Updating
 
 Through HACS, updates arrive like any other HACS update.

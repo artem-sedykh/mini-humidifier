@@ -7,6 +7,10 @@ on:
 
 permissions:
   contents: write
+  # For the attestation: `id-token` mints the OIDC token that Sigstore issues a
+  # short-lived signing certificate against, `attestations` persists the result.
+  id-token: write
+  attestations: write
 
 jobs:
   cd:
@@ -41,6 +45,24 @@ jobs:
       - name: Lint and build
         run: npm run build
 
+      - name: Attest the bundle
+        # The release asset is the product: what HACS downloads is this file,
+        # and until now nothing tied the file on the releases page to the run
+        # that produced it. This publishes a signed statement binding its
+        # digest to this repository, this workflow and this tag, which
+        #
+        #   gh attestation verify mini-humidifier-bundle.js -R artem-sedykh/mini-humidifier
+        #
+        # checks against GitHub. A file that is not what this workflow built
+        # has no symptom until someone hits the bug it carries.
+        #
+        # actions/attest rather than actions/attest-build-provenance: since v4
+        # the latter is a wrapper over this one, and with only `subject-path`
+        # given this action generates the same SLSA build provenance.
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/mini-humidifier-bundle.js
+
       - name: Set the release body
         id: release
         run: |
@@ -51,9 +73,34 @@ jobs:
           fi
           # Heredoc into $GITHUB_OUTPUT. The old ::set-output command with %0A
           # escaping is deprecated and mangles multiline markdown.
+          #
+          # The digest goes on the page after the notes. The attestation is
+          # the real check, but it needs the gh CLI; a number on the page makes
+          # it one command for someone who has neither the tooling nor any
+          # interest in installing it. Kept to four lines, and to inline code
+          # rather than a fenced block, because this body is also what HACS
+          # shows in its update dialog - which is narrow, and which most people
+          # are reading to decide whether to press update.
+          sha=$(sha256sum dist/mini-humidifier-bundle.js | cut -d' ' -f1)
+          run="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
           {
             echo 'RELEASE_BODY<<RELEASE_NOTES_EOF'
             cat "$notes"
+            # Two newlines, not one: a release note that happens to end without
+            # a trailing newline would otherwise put `---` on the line straight
+            # after its last line of text, which markdown reads as a setext
+            # heading rather than a rule.
+            echo ''
+            echo ''
+            cat <<PROVENANCE_EOF
+          ---
+
+          \`mini-humidifier-bundle.js\`, built by [this run]($run):
+
+          sha256 \`$sha\`
+
+          The build is signed: \`gh attestation verify mini-humidifier-bundle.js -R ${GITHUB_REPOSITORY}\` checks the file you downloaded against this repository and this tag.
+          PROVENANCE_EOF
             echo 'RELEASE_NOTES_EOF'
           } >> "$GITHUB_OUTPUT"
 
