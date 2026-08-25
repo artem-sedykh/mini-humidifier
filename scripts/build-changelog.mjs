@@ -90,7 +90,11 @@ const body = versions
       // The older notes open with a heading of their own version, which the
       // heading below would repeat. The newer ones start straight at the
       // content, which is what AGENTS.md asks for.
-      .replace(new RegExp(`^#{1,3} +${version.replace(/\./g, '\\.')} *\n+`), '')
+      // Escaping the dots alone was enough for what VERSION can produce - three
+      // runs of digits - but it reads as a complete escape without being one.
+      // Every metacharacter is escaped instead, so the line stays correct if
+      // that pattern ever admits more than digits.
+      .replace(new RegExp(`^#{1,3} +${version.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} *\n+`), '')
       .trim();
 
     return `## [${version}](${releases}/${version})\n\n${notes}\n`;
