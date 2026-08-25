@@ -29,10 +29,14 @@ export default class HumidifierIndicators extends LitElement {
     return html`<ha-icon style=${styleMap(indicator.iconStyle)} class='state__value_icon' .icon=${icon}></ha-icon>`;
   }
 
-  renderUnit(unit: string) {
+  renderUnit(indicator: IndicatorObject) {
+    const { unit } = indicator;
+
     if (!unit) return '';
 
-    return html`<span class='state__uom'>${unit}</span>`;
+    // The unit carries the value's style, not one of its own: "45 %" is one
+    // reading rather than a number with a tail.
+    return html`<span class='state__uom' style=${styleMap(indicator.valueStyle)}>${unit}</span>`;
   }
 
   renderIndicator(indicator: IndicatorObject) {
@@ -45,8 +49,8 @@ export default class HumidifierIndicators extends LitElement {
     return html`
        <div class='state ${cls}' @click=${(e: Event) => this.handlePopup(e, indicator)}>
          ${this.renderIcon(indicator)}
-         <span class='state__value'>${indicator.value}</span>
-         ${this.renderUnit(indicator.unit)}
+         <span class='state__value' style=${styleMap(indicator.valueStyle)}>${indicator.value}</span>
+         ${this.renderUnit(indicator)}
        </div>
     `;
   }

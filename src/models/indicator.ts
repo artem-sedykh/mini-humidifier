@@ -109,6 +109,22 @@ export default class IndicatorObject {
     return '';
   }
 
+  /**
+   * The styles for the reading itself and its unit, from `value: { style }`.
+   *
+   * Separate from `iconStyle`, and handed the same three arguments. Until #213
+   * a reading could only be coloured by colouring a fake icon next to it, which
+   * is what four of the bundled presets do with their AQI dot.
+   */
+  get valueStyle(): Record<string, string> {
+    if (this.config.functions.value && this.config.functions.value.style)
+      return (
+        this.config.functions.value.style(this.value, this.entity, this.humidifier.entity) || {}
+      );
+
+    return {};
+  }
+
   get iconStyle(): Record<string, string> {
     if (this.config.functions.icon && this.config.functions.icon.style)
       return (

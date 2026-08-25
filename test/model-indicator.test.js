@@ -113,6 +113,59 @@ describe('IndicatorObject', () => {
     });
   });
 
+  describe('valueStyle', () => {
+    it('is what the style function returns', () => {
+      const config = { functions: { value: { style: () => ({ color: 'red' }) } } };
+
+      expect(indicator(config).valueStyle).toEqual({ color: 'red' });
+    });
+
+    it('is handed the reading, the entity and the humidifier', () => {
+      // The same three arguments as every other indicator template, so that a
+      // level table written for the icon can be reused for the value. #213.
+      const seen = [];
+      const config = {
+        source: { attribute: 'depth' },
+        functions: {
+          value: {
+            style: (...args) => {
+              seen.push(args);
+              return {};
+            },
+          },
+        },
+      };
+
+      indicator(config, '45', { depth: 60 }).valueStyle;
+
+      expect(seen).toHaveLength(1);
+      expect(seen[0][0]).toBe(60);
+      expect(seen[0][1].entity_id).toBe('sensor.bedroom_humidity');
+    });
+
+    it('is an empty object when there is no style function, or it returns none', () => {
+      expect(indicator({}).valueStyle).toEqual({});
+      expect(indicator({ functions: { value: { style: () => undefined } } }).valueStyle).toEqual(
+        {},
+      );
+    });
+
+    it('is separate from the icon style', () => {
+      // Not one option widened to cover both: an icon style carries geometry -
+      // the AQI indicator of zhimi.airpurifier.ma2 sets --mdc-icon-size and a
+      // margin in it - and that has no business on the reading.
+      const config = {
+        functions: {
+          icon: { style: () => ({ '--mdc-icon-size': '17px' }) },
+          value: { style: () => ({ color: 'red' }) },
+        },
+      };
+
+      expect(indicator(config).iconStyle).toEqual({ '--mdc-icon-size': '17px' });
+      expect(indicator(config).valueStyle).toEqual({ color: 'red' });
+    });
+  });
+
   it('reports the order the configuration gave it', () => {
     // What `mh-indicators` sorts by. There was no such getter until #171, so
     // the sort compared `undefined` against `undefined` and did nothing.

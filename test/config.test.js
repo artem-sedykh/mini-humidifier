@@ -334,6 +334,16 @@ describe('getIndicatorsConfig', () => {
     expect(indicator(element, 'power').tap_action).toEqual({ action: 'none' });
   });
 
+  it('compiles the style of the reading itself', () => {
+    // Beside the icon's style rather than instead of it. #213.
+    const element = card({
+      indicators: { humidity: { value: { style: '() => ({ color: "red" })' } } },
+    });
+
+    expect(indicator(element, 'humidity').functions.value.style).toBeTypeOf('function');
+    expect(indicator(element, 'humidity').functions.value.style()).toEqual({ color: 'red' });
+  });
+
   it('compiles the templates an indicator carries', () => {
     const { functions } = indicator(card({}), 'water_level');
 

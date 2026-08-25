@@ -54,3 +54,60 @@ describe('the indicators', () => {
     expect(rendered(card)).to.deep.equal(['80 %', '45 %', '300 rpm']);
   });
 });
+
+describe('styling a reading', () => {
+  // `value: { style }` colours the number and its unit; `icon: { style }` keeps
+  // the icon. Two options rather than one widened to cover both, because an
+  // icon style carries geometry - the AQI indicator of zhimi.airpurifier.ma2
+  // sets --mdc-icon-size and a margin in it - which on the row would resize and
+  // shift what it landed on. #213.
+  const styled = async () => {
+    const { card } = await mountCard({
+      config: {
+        model: 'none',
+        indicators: {
+          humidity: {
+            unit: '%',
+            source: { entity: 'sensor.bedroom_humidity' },
+            icon: {
+              template: "() => 'mdi:water'",
+              style: "() => ({ '--mdc-icon-size': '17px', color: 'blue' })",
+            },
+            value: { style: '(value) => ({ color: Number(value) > 40 ? "red" : "green" })' },
+          },
+        },
+      },
+    });
+
+    const indicators = card.shadowRoot.querySelector('mh-indicators').shadowRoot;
+
+    return {
+      row: indicators.querySelector('.state'),
+      icon: indicators.querySelector('ha-icon'),
+      value: indicators.querySelector('.state__value'),
+      unit: indicators.querySelector('.state__uom'),
+    };
+  };
+
+  it('colours the number and its unit', async () => {
+    const { value, unit } = await styled();
+
+    // 45 in the fixture, so the template's red branch.
+    expect(value.style.color).to.equal('red');
+    expect(unit.style.color).to.equal('red');
+  });
+
+  it('leaves the icon its own style', async () => {
+    const { icon } = await styled();
+
+    expect(icon.style.color).to.equal('blue');
+    expect(icon.style.getPropertyValue('--mdc-icon-size')).to.equal('17px');
+  });
+
+  it('puts neither style on the row', async () => {
+    // Where the discarded design would have put both.
+    const { row } = await styled();
+
+    expect(row.getAttribute('style')).to.not.exist;
+  });
+});

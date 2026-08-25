@@ -12,6 +12,7 @@ Options under `indicators: <name>:`, where `<name>` is yours to choose.
 | `icon` | string or object | | A custom mdi icon, or an icon config object. |
 | `icon: template` | function | | Icon template function. |
 | `icon: style` | function | | Function returning icon styles. |
+| `value: style` | function | | Function returning styles for the reading and its unit. |
 | `unit` | string | | Display unit. |
 | `round` | number | | Number of decimals to round the value to. |
 | `hide` | boolean | `false` | Hide the indicator. |
@@ -182,3 +183,40 @@ indicators:
   temperature:
     hide: on
 ```
+
+## Colouring the reading
+
+`icon: style` colours the icon; `value: style` colours the number and the unit
+after it. They are separate on purpose - an icon style is often geometry as well
+as colour - and both are handed the same three arguments: the reading, the
+entity it came from, and the humidifier.
+
+The bundled `zhimi.airpurifier.ma2` colours an AQI dot from a table of levels.
+Any key you write beside a template is readable from it as `this.`, so the same
+table can colour the number as well:
+
+```yaml
+type: custom:mini-humidifier
+entity: fan.xiaomi_miio_device
+indicators:
+  aqi:
+    levels:
+      - { max: 50, color: '#1CC09B' }
+      - { max: 100, color: '#FFDE33' }
+      - { max: 150, color: '#F88B48' }
+      - { max: 100000, color: '#E64650' }
+    unit: 'µg/m³'
+    round: 0
+    source:
+      entity: sensor.{entity_id}_pm2_5
+    value:
+      style: |
+        (value) => {
+          const level = this.levels.find(l => Number(value) <= l.max);
+          return level ? { color: level.color } : {};
+        }
+```
+
+A style function that returns nothing leaves the reading as it was, and one
+that throws is reported in the browser console by name, with the card rendering
+as if it had not been written.
