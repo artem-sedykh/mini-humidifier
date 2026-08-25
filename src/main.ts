@@ -57,6 +57,13 @@ class MiniHumidifier extends LitElement {
 
   private _hass: HomeAssistant | undefined;
 
+  /**
+   * What has already been warned about, so that it is said once rather than on
+   * every `hass`. Cleared by `setConfig`: a corrected configuration deserves
+   * to be told about again.
+   */
+  private warned: Set<string>;
+
   private updateIndicatorsTimer: ReturnType<typeof setTimeout> | undefined;
 
   private updateButtonsTimer: ReturnType<typeof setTimeout> | undefined;
@@ -105,6 +112,7 @@ class MiniHumidifier extends LitElement {
     this.targetHumidity = {} as TargetHumidityObject;
     this.power = {} as ButtonObject;
     this.config = {} as CardConfig;
+    this.warned = new Set();
     this.updateIndicatorsTimer = undefined;
     this.updateButtonsTimer = undefined;
   }
@@ -156,6 +164,29 @@ class MiniHumidifier extends LitElement {
     return this.config.name || this.humidifier.name;
   }
 
+  /**
+   * A control the card is about to leave out, said once.
+   *
+   * An indicator or a button whose entity is not in `hass.states` is skipped
+   * rather than rendered - the right thing to draw, and until now the whole of
+   * what happened. The entity id is usually computed rather than written: the
+   * bundled presets build it out of `{entity_id}`, so what is missing is a name
+   * nobody typed. Home Assistant appends `_2` at the end for a second device of
+   * the same kind, which is enough to stop the two lining up - see #78 and #98,
+   * where finding that out took fourteen comments.
+   */
+  warnMissing(kind: string, id: string, entityId: string) {
+    const key = `${kind}.${id}:${entityId}`;
+    if (this.warned.has(key)) return;
+
+    this.warned.add(key);
+    console.warn(
+      `mini-humidifier: ${kind} '${id}' reads ${entityId}, which does not exist in Home ` +
+        `Assistant, so it is not shown. Check the entity id - the bundled models build it from ` +
+        `the humidifier's own.`,
+    );
+  }
+
   evalEntityId(entityId: string): string {
     if (entityId) {
       const name = this.config.entity && this.config.entity.split('.')[1].toLowerCase();
@@ -177,6 +208,8 @@ class MiniHumidifier extends LitElement {
 
       if (entity) {
         indicators[id] = new IndicatorObject(entity, config, this.humidifier, this.hass);
+      } else {
+        this.warnMissing('indicator', id, entityId);
       }
 
       if (this.indicators[id] && this.indicators[id].changed(entity)) {
@@ -207,6 +240,8 @@ class MiniHumidifier extends LitElement {
 
       if (entity) {
         buttons[id] = new ButtonObject(entity, config, this.humidifier, this.hass);
+      } else {
+        this.warnMissing('button', id, entityId);
       }
 
       if (this.buttons[id] && this.buttons[id].changed(entity)) changed = true;
@@ -272,24 +307,43 @@ class MiniHumidifier extends LitElement {
       return localize(str, lang, fallback);
     };
 
+    const where = `indicators.${key}`;
+
     if (item.source.mapper) {
-      item.functions.mapper = compileTemplate(item.source.mapper, context);
+      item.functions.mapper = compileTemplate(
+        item.source.mapper,
+        context,
+        `${where}.source.mapper`,
+      );
     }
 
     if (typeof item.icon === 'object') {
       item.functions.icon = {};
 
       if (item.icon.template)
-        item.functions.icon.template = compileTemplate(item.icon.template, context);
+        item.functions.icon.template = compileTemplate(
+          item.icon.template,
+          context,
+          `${where}.icon.template`,
+        );
 
-      if (item.icon.style) item.functions.icon.style = compileTemplate(item.icon.style, context);
+      if (item.icon.style)
+        item.functions.icon.style = compileTemplate(
+          item.icon.style,
+          context,
+          `${where}.icon.style`,
+        );
     }
 
     if (typeof item.unit === 'object') {
       item.functions.unit = {};
 
       if (item.unit.template)
-        item.functions.unit.template = compileTemplate(item.unit.template, context);
+        item.functions.unit.template = compileTemplate(
+          item.unit.template,
+          context,
+          `${where}.unit.template`,
+        );
     }
 
     return item;
@@ -321,7 +375,7 @@ class MiniHumidifier extends LitElement {
       .filter(i => !i.hide);
   }
 
-  getButtonConfig(value: any, config: RawCardConfig): ButtonConfig {
+  getButtonConfig(value: any, config: RawCardConfig, where: string): ButtonConfig {
     const item = {
       icon: 'mdi:radiobox-marked',
       type: 'button',
@@ -343,35 +397,51 @@ class MiniHumidifier extends LitElement {
     };
 
     if (item.disabled) {
-      item.functions.disabled = compileTemplate(item.disabled, context);
+      item.functions.disabled = compileTemplate(item.disabled, context, `${where}.disabled`);
     }
 
     if (item.state && item.state.mapper) {
-      item.functions.state = { mapper: compileTemplate(item.state.mapper, context) };
+      item.functions.state = {
+        mapper: compileTemplate(item.state.mapper, context, `${where}.state.mapper`),
+      };
     }
 
     if (item.active) {
-      item.functions.active = compileTemplate(item.active, context);
+      item.functions.active = compileTemplate(item.active, context, `${where}.active`);
     }
 
     if (item.source && item.source.__init) {
-      item.functions.source = { __init: compileTemplate(item.source.__init, context) };
+      item.functions.source = {
+        __init: compileTemplate(item.source.__init, context, `${where}.source.__init`),
+      };
     }
 
     if (item.source && item.source.__filter) {
       item.functions.source = item.functions.source || {};
-      item.functions.source.filter = compileTemplate(item.source.__filter, context);
+      item.functions.source.filter = compileTemplate(
+        item.source.__filter,
+        context,
+        `${where}.source.__filter`,
+      );
     }
 
     if (item.toggle_action) {
-      item.functions.toggle_action = compileTemplate(item.toggle_action, context);
+      item.functions.toggle_action = compileTemplate(
+        item.toggle_action,
+        context,
+        `${where}.toggle_action`,
+      );
     }
 
     if (item.change_action) {
-      item.functions.change_action = compileTemplate(item.change_action, context);
+      item.functions.change_action = compileTemplate(
+        item.change_action,
+        context,
+        `${where}.change_action`,
+      );
     }
 
-    if (item.style) item.functions.style = compileTemplate(item.style, context);
+    if (item.style) item.functions.style = compileTemplate(item.style, context, `${where}.style`);
 
     return item;
   }
@@ -395,7 +465,7 @@ class MiniHumidifier extends LitElement {
     for (let i = 0; i < data.length; i += 1) {
       const key = data[i][0];
       const value = data[i][1];
-      const button = this.getButtonConfig(value, config);
+      const button = this.getButtonConfig(value, config, `buttons.${key}`);
       button.id = key;
 
       if (!('order' in button)) button.order = i + 1;
@@ -425,39 +495,65 @@ class MiniHumidifier extends LitElement {
     };
 
     if (item.disabled) {
-      item.functions.disabled = compileTemplate(item.disabled, context);
+      item.functions.disabled = compileTemplate(item.disabled, context, 'target_humidity.disabled');
     }
 
     if (typeof item.icon === 'object') {
       if (item.icon.template)
-        item.functions.icon.template = compileTemplate(item.icon.template, context);
+        item.functions.icon.template = compileTemplate(
+          item.icon.template,
+          context,
+          'target_humidity.icon.template',
+        );
 
-      if (item.icon.style) item.functions.icon.style = compileTemplate(item.icon.style, context);
+      if (item.icon.style)
+        item.functions.icon.style = compileTemplate(
+          item.icon.style,
+          context,
+          'target_humidity.icon.style',
+        );
     }
 
     if (item.change_action) {
-      item.functions.change_action = compileTemplate(item.change_action, context);
+      item.functions.change_action = compileTemplate(
+        item.change_action,
+        context,
+        'target_humidity.change_action',
+      );
     }
 
     if (item.state && item.state.mapper) {
-      item.functions.state = { mapper: compileTemplate(item.state.mapper, context) };
+      item.functions.state = {
+        mapper: compileTemplate(item.state.mapper, context, 'target_humidity.state.mapper'),
+      };
     }
 
     if (typeof item.unit === 'object') {
       item.functions.unit = {};
 
       if (item.unit.template)
-        item.functions.unit.template = compileTemplate(item.unit.template, context);
+        item.functions.unit.template = compileTemplate(
+          item.unit.template,
+          context,
+          'target_humidity.unit.template',
+        );
     }
 
     return item;
   }
 
   getPowerConfig(config: RawCardConfig, powerConfig: any): ButtonConfig {
-    return this.getButtonConfig({ ...(powerConfig || {}), ...(config.power || {}) }, config);
+    return this.getButtonConfig(
+      { ...(powerConfig || {}), ...(config.power || {}) },
+      config,
+      'power',
+    );
   }
 
   setConfig(config: RawCardConfig) {
+    // A new configuration is a new chance to be told what it leaves out.
+    this.warned = new Set();
+
     const domain = config.entity && config.entity.split('.')[0].toLowerCase();
 
     if (SUPPORTED_DOMAINS.includes(domain) === false) {

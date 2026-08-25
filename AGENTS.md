@@ -405,13 +405,32 @@ both are easy to "improve" into a bug:
   button, a key the card does not read is an extension point - the template
   scope is `{ ...value }`, so anything written beside a template is readable
   from it as `this.` - and a closed vocabulary would reject the bundled presets.
-- **The string form of `tap_action` means different things in different
-  places.** An indicator's is normalised to `{ action: <string> }` by
-  `getIndicatorConfig`, so a string there is correct; the card's own is not
-  normalised, so every string but `none` reaches `handleClick` and returns
-  early, which is a dead click with a pointer cursor.
+- **The string form of `tap_action` is shorthand, everywhere.** An indicator's
+  is normalised to `{ action: <string> }` by `getIndicatorConfig`, and since
+  #206 the card's own is normalised the same way in `setConfig`. Before that
+  the card did not, so every string but `none` reached `handleClick` and
+  returned early - a dead click with a pointer cursor - and `computeClasses`
+  compared the whole option against `'none'`, so the object form of "do
+  nothing" still drew as clickable. Both are fixed rather than described; do
+  not re-introduce a second meaning for the string.
 
 It warns and never throws, for the reason under point 2.
+
+Two more things warn, both added by #211 and both about what the card leaves
+out rather than about what it was given:
+
+- **A control whose entity is not in `hass.states` is skipped**, which is the
+  right thing to render and used to be the whole of what happened.
+  `warnMissing` names the control and the entity id, once per card
+  configuration rather than once per `hass`. The id is usually computed from
+  `{entity_id}`, so what is missing is a name nobody typed - #78 and #98 are
+  both that, and the second took fourteen comments to find.
+- **A template that throws is caught by the wrapper in `compileTemplate`**,
+  which warns with the option's path and answers `undefined`, so the card
+  renders as if that option had not been written. Unwrapped, the throw happened
+  inside a component's render and left that component in the tree with an empty
+  shadow root - a control that vanished, with nothing on screen to say why
+  (#70).
 
 Keys in `HUMIDIFIERS` come in two shapes:
 
@@ -654,6 +673,3 @@ versions over gating the release.
 - The component tests render the card against stand-ins, so anything that only
   shows up against Home Assistant's own elements - which is where this card has
   broken before - is still caught by hand or not at all.
-- Several bundled model configurations call `fan.set_speed`, a service Home
-  Assistant removed in 2023.7, so those mode dropdowns are dead on any
-  currently supported version.
