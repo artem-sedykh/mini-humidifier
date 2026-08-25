@@ -52,5 +52,10 @@
       "empty": "empty",
       "filled": "filled"
     }
+  },
+  "editor": {
+    "group": "Group",
+    "model": "Model",
+    "scale": "Scale"
   }
 }

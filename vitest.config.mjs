@@ -57,9 +57,9 @@ export default defineConfig({
       // apart.
       thresholds: {
         statements: 75,
-        branches: 68,
-        functions: 67,
-        lines: 76,
+        branches: 69,
+        functions: 68,
+        lines: 77,
       },
     },
   },
