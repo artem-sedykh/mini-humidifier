@@ -38,6 +38,21 @@ body:
     validations:
       required: true
 
+  - type: input
+    id: integration
+    attributes:
+      label: Integration
+      description: |
+        Which integration provides the entity: Home Assistant's own
+        `xiaomi_miio`, syssi's `xiaomi_miio_airpurifier`, `generic_hygrostat`,
+        MQTT, Xiaomi MIoT Auto, something else. The same hardware through two
+        integrations reports different attributes and answers different
+        services, so this decides which `model:` is the right one - and getting
+        it wrong looks exactly like a broken card.
+      placeholder: xiaomi_miio
+    validations:
+      required: true
+
   - type: textarea
     id: card-config
     attributes:
@@ -58,6 +73,20 @@ body:
       render: yaml
     validations:
       required: true
+
+  - type: textarea
+    id: related-entities
+    attributes:
+      label: Entity ids of the device's other entities
+      description: |
+        Only if a control is missing or empty. Developer tools -> States, filter
+        by the device name, and copy the **ids** rather than the friendly names.
+        The bundled presets build these ids out of the humidifier's own
+        (`sensor.<entity>_temperature` and the like), and Home Assistant appends
+        `_2` at the end for a second device of the same kind - so the two stop
+        lining up and the control is quietly not shown. Nothing else this form
+        asks for makes that visible.
+      render: text
 
   - type: textarea
     id: console
