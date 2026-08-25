@@ -106,7 +106,7 @@ jobs:
             echo
             if [ -f "$page" ]; then
               echo '```markdown'
-              sed -n '1,24p' "$page"
+              sed -n '1,40p' "$page"
               echo '```'
             else
               echo 'No translation was produced - the site falls back to English.'
