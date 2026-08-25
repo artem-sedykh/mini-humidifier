@@ -35,7 +35,7 @@ card requires Home Assistant 2022.11 or newer; see
 
 | Name | Type | Default | Options | Description |
 |------|:----:|:-------:|:-----------:|-------------|
-| `action` | string | `more-info` | `more-info` / `navigate` / `call-service` / `url` / `none` / `toggle` | Action to perform. |
+| `action` | string | `more-info` | `more-info` / `navigate` / `call-service` / `url` / `none` | Action to perform. |
 | `entity` | string | | Any entity id | Override default entity of `more-info`, when `action` is defined as `more-info`. |
 | `service` | string | | Any service | Service to call (e.g. `fan.turn_on`) when `action` is defined as `call-service`. |
 | `service_data` | object | | Any service data | Service data to include with the service call (e.g. `entity_id: fan.xiaomi_miio_device`). |
