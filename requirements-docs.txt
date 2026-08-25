@@ -1,0 +1,5 @@
+# The documentation site (#222). Pinned, and deliberately not in package.json:
+# this is a Python toolchain that CI installs for one job, and the card's own
+# build has nothing to do with it.
+mkdocs-material==9.7.7
+mkdocs-static-i18n==1.3.1
