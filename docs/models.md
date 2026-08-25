@@ -17,6 +17,7 @@ integration:
 
 | `model:` | |
 |---|---|
+| `none` | no controls at all, for a card that describes its own - see below |
 | `zhimi.humidifier.cb1` | the default, used when `model:` is left out |
 | `zhimi.humidifier.ca1` | |
 | `zhimi.humidifier.ca4` | |
@@ -42,10 +43,51 @@ integration, which reports different attributes and calls different services:
 ## A device that is not in the list
 
 There are more humidifiers than this card ships configurations for, and that is
-the normal case rather than a gap to apologise for. Writing a `model:` the card
-does not know is **supported**: it starts from the default configuration and
-your YAML is merged over it, so a card that describes its own controls behaves
-exactly as written. [Issue #112](https://github.com/artem-sedykh/mini-humidifier/issues/112)
+the normal case rather than a gap to apologise for. Two ways to configure one.
+
+### `model: none` - start from nothing
+
+The preset that brings no controls at all. Nothing is merged in, so the card
+shows exactly what your YAML asks for and nothing else:
+
+```yaml
+type: custom:mini-humidifier
+entity: humidifier.my_device
+model: none
+name: Humidifier
+power:
+  hide: false          # single controls start hidden - see below
+  type: button
+  state:
+    entity: switch.my_device
+  toggle_action: |
+    (state, entity) => {
+      const service = state === 'on' ? 'turn_off' : 'turn_on';
+      return this.call_service('switch', service, { entity_id: entity.entity_id });
+    }
+indicators:
+  humidity:
+    icon: mdi:water-percent
+    unit: '%'
+    source:
+      entity: sensor.my_humidity
+```
+
+**`power` and `target_humidity` start hidden, and want `hide: false`.** Every
+other section is a collection, so an empty one is simply empty; those two are
+single controls, and an empty one would be a button that does nothing when
+pressed. Writing the block is not enough on its own - say `hide: false` in it.
+That is the one sharp edge of starting from nothing.
+
+`secondary_info` shows the current mode by default, read off a `mode` button. A
+card with none shows nothing there rather than failing.
+
+### Naming a device the card does not ship for
+
+Writing a `model:` the card does not know is also **supported**, and does
+something different: it starts from the *default* configuration and your YAML is
+merged over it. Useful when your device is close to a bundled one and you want
+to adjust rather than start over. [Issue #112](https://github.com/artem-sedykh/mini-humidifier/issues/112)
 is a complete example for a `deerma.humidifier.jsq2w`, which is not in the table
 above.
 
@@ -71,7 +113,12 @@ consequences. The card still renders either way; the console is where you find
 out which set it started from.
 
 Leaving `model:` out asks for the default set, as it always has. `model: default`
-says the same thing explicitly and warns about nothing.
+says the same thing explicitly and warns about nothing, and so does
+`model: none` - it is a preset of the card's own, not an unrecognised id.
+
+Which of the two to reach for: `none` when you are describing the device
+yourself and the bundled controls are in the way, an unrecognised name when the
+default set is most of what you want.
 
 ## Adding a model
 

@@ -679,7 +679,14 @@ class MiniHumidifier extends LitElement {
     `;
     }
 
+    // The default `secondary_info` is the mode the device is in, read off the
+    // button that offers the modes - so a configuration with no `mode` button
+    // has nothing to show here. Every bundled model has one, which is why this
+    // read went unguarded; `model: none` is the first configuration that can
+    // legitimately arrive without it.
     const { mode } = this.buttons;
+    if (!mode) return '';
+
     const { selected } = mode;
     const label = selected ? selected.name : mode.state;
     const icon = this.config.secondary_info.icon ? this.config.secondary_info.icon : mode.icon;

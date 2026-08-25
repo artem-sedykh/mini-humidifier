@@ -77,7 +77,10 @@ describe('setConfig', () => {
   });
 
   it('configures every model in the registry', () => {
-    for (const model of Object.keys(HUMIDIFIERS)) {
+    // `none` is in the registry and is not a device - it is the empty preset,
+    // and the assertions below are about describing a humidifier. It has its
+    // own tests, in `humidifiers.test.js` and further down this file.
+    for (const model of KNOWN_MODELS.filter(id => id !== 'none')) {
       const element = card({ model });
 
       expect(element.config.buttons.length, model).toBeGreaterThan(0);
@@ -136,6 +139,35 @@ describe('setConfig', () => {
     } finally {
       warn.mockRestore();
     }
+  });
+
+  it('gives the blank preset nothing to start from', () => {
+    // The point of `model: none`: a card that describes its own controls no
+    // longer has to hide nine it never asked for. Without it, this same YAML
+    // comes out carrying the whole `zhimi.humidifier.cb1` set.
+    const own = card({
+      model: 'none',
+      indicators: { humid: { icon: 'mdi:water-percent', source: { attribute: 'humidity' } } },
+      buttons: { led: { icon: 'mdi:lightbulb', type: 'button' } },
+    });
+
+    expect(own.config.indicators.map(item => item.id)).toEqual(['humid']);
+    expect(own.config.buttons.map(item => item.id)).toEqual(['led']);
+  });
+
+  it('hides the power and humidity controls the blank preset cannot fill in', () => {
+    // Both are single controls rather than collections: an empty one would be
+    // a button that does nothing when pressed. Hidden until asked for.
+    const blank = card({ model: 'none' });
+
+    expect(blank.config.power.hide).toBe(true);
+    expect(blank.config.target_humidity.hide).toBe(true);
+
+    // And asking is `hide: false` - writing a `power` block is not enough on
+    // its own, which is the one sharp edge of starting from nothing.
+    const asked = card({ model: 'none', power: { hide: false, type: 'button' } });
+
+    expect(asked.config.power.hide).toBe(false);
   });
 
   it('defaults the model when the YAML names none', () => {

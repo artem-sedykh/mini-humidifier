@@ -34,6 +34,21 @@ describe('the card in a browser', () => {
     ).to.equal('Auto');
   });
 
+  it('says nothing there when the configuration has no mode button', async () => {
+    // `secondary_info` defaults to the mode, and the mode is read off the
+    // button that offers the modes. Every bundled model has one, so this read
+    // went unguarded for years; `model: none` is the first configuration that
+    // can legitimately arrive without it, and an unguarded read threw before
+    // the card had rendered anything at all.
+    const { card } = await mountCard({ config: { model: 'none' } });
+
+    expect(card.shadowRoot.querySelector('ha-card')).to.exist;
+    expect(card.shadowRoot.querySelector('.entity__info__name').textContent.trim()).to.equal(
+      'Bedroom humidifier',
+    );
+    expect(card.shadowRoot.querySelector('.entity__secondary_info__name')).to.not.exist;
+  });
+
   it('hands the timestamp to ha-relative-time for last-changed', async () => {
     const { card, hass } = await mountCard({ config: { secondary_info: 'last-changed' } });
     const relative = card.shadowRoot.querySelector('ha-relative-time');

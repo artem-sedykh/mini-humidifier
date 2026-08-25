@@ -352,7 +352,10 @@ This is the part worth understanding before changing anything about options.
    **The fallback is a feature, not a bug to fix.** There are more humidifiers
    than this card ships configurations for, which is why it can be described in
    YAML end to end; naming a device the card does not know and writing out its
-   controls is the card being used as intended.
+   controls is the card being used as intended. `model: none` is the registry's
+   own answer to the same need - a preset that brings nothing, so a card
+   describing its own controls does not have to hide the default set's first
+   (#186).
    [#112](https://github.com/artem-sedykh/mini-humidifier/issues/112) is a
    working configuration for a `deerma.humidifier.jsq2w`. Refusing an unknown id
    would break dashboards like that one, so do not.
