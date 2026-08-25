@@ -74,7 +74,7 @@ class MiniHumidifier extends LitElement {
     _hass: HomeAssistant,
     unusedEntities: string[],
     allEntities: string[],
-  ): { entity: string | undefined } {
+  ): { entity: string | undefined; model?: string } {
     // Both supported domains, not just `fan`. The Xiaomi integrations this card
     // was written against expose a `fan` entity, but a generic hygrostat or an
     // MQTT humidifier is a `humidifier` one, and on such an installation the
@@ -91,7 +91,27 @@ class MiniHumidifier extends LitElement {
       return undefined;
     };
 
-    return { entity: pick(unusedEntities) ?? pick(allEntities) };
+    const entity = pick(unusedEntities) ?? pick(allEntities);
+
+    // A card added from the picker names its preset, when there is a right one
+    // to name (#214).
+    //
+    // With no `model:` the card starts from `zhimi.humidifier.cb1`, and for
+    // anyone whose humidifier is not a Xiaomi that first impression is a
+    // half-empty card wired to a device they do not own - indicators reading
+    // `sensor.<entity>_temperature`, buttons calling Xiaomi services. "Which
+    // preset am I on" is the most common confusion in the tracker, and nobody
+    // arrives knowing that no model already means a particular one.
+    //
+    // `humidifier` entities get the domain preset, which is built on what Home
+    // Assistant guarantees for that domain and works anywhere it does. `fan`
+    // entities do not: every device-specific preset here is written against
+    // one, and the domain preset's `humidifier.*` service calls would be wrong.
+    // Existing cards are untouched either way - an absent `model:` still means
+    // what it always meant.
+    if (entity && entity.split('.')[0] === 'humidifier') return { entity, model: 'humidifier' };
+
+    return { entity };
   }
 
   // The visual editor, as a schema Home Assistant renders itself (#179). See
