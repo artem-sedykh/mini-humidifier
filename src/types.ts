@@ -188,7 +188,6 @@ export interface RawCardConfig {
   icon?: string;
   scale?: number;
   group?: boolean;
-  collapse?: boolean;
   tap_action?: string | TapAction;
   toggle?: Partial<ToggleConfig>;
   secondary_info?: string | SecondaryInfoConfig;
@@ -216,7 +215,6 @@ export interface CardConfig {
   icon?: string;
   scale?: number;
   group?: boolean;
-  collapse?: boolean;
   /**
    * Whatever the YAML had, unchanged: `setConfig` spreads the user's options
    * over its defaults, so `tap_action: none` written as a string arrives here

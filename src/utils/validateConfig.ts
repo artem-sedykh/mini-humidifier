@@ -4,10 +4,6 @@ import type { RawCardConfig } from '../types';
 // The card's own top-level options. This list is the one place that says what
 // the card reads at the top level, so it has to stay level with `RawCardConfig`
 // in types.ts and the table in docs/configuration.md.
-//
-// `collapse` is in the card and in the type but in neither documentation table
-// (#178). It is read - `computeClasses` puts `--collapse` on the card - so it
-// belongs here whatever happens to the documentation.
 const CARD_OPTIONS = [
   'type',
   'entity',
@@ -16,7 +12,6 @@ const CARD_OPTIONS = [
   'icon',
   'scale',
   'group',
-  'collapse',
   'tap_action',
   'toggle',
   'secondary_info',
