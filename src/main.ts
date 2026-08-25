@@ -449,40 +449,39 @@ class MiniHumidifier extends LitElement {
     }
 
     const { model } = config;
+    const bundled = model === undefined ? undefined : HUMIDIFIERS[model];
 
-    if (model !== undefined && !(model in HUMIDIFIERS)) {
-      // An unknown id used to fall back to the default, which is the hardest
-      // kind of misconfiguration to see: the card renders, looks right, and
-      // only the controls act on another device. `deerma.humidifier.mjjsq` and
-      // `xiaomi_miio_airpurifier:deerma.humidifier.mjjsq` are the same hardware
-      // through two integrations that call different services - a card built
-      // from the wrong one of those is indistinguishable until it is pressed.
+    if (model !== undefined && bundled === undefined) {
+      // A model the card does not ship for is **not** an error, and this is
+      // deliberately not thrown. The card is written to be described in YAML
+      // end to end precisely because nobody knows every humidifier on the
+      // market: a configuration that names its own device and writes out its
+      // own controls - see issue #112, which is a working one for a
+      // `deerma.humidifier.jsq2w` - is the card being used as intended, and
+      // refusing it would break configurations that work today.
       //
-      // Where this message actually goes, checked on Home Assistant 2026.8.3
-      // rather than assumed: the browser console, in full, prefixed with
-      // `card custom:mini-humidifier`. **Not** onto the card.
-      // `hui-error-card` on that version draws a red icon and nothing else -
-      // the message reaches it as `_config.message` and is never rendered, and
-      // a built-in card with a broken config looks exactly the same. So this
-      // text is written for the console, which is where someone whose card
-      // turned into a red square ends up, and it is worth its length there.
+      // What was wrong was doing this in silence: `deerma.humidifier.mjjsq`
+      // and `xiaomi_miio_airpurifier:deerma.humidifier.mjjsq` are the same
+      // hardware through two integrations that call different services, so a
+      // typo hands someone another device's defaults and nothing says so.
       //
-      // It carries both ways out: the list of ids, and the way to start from
-      // the default set and describe the device in the card's own options
-      // instead. The card is meant to be configurable end to end, and someone
-      // who does configure it end to end was free until now to write anything
-      // at all in `model:` and be handed the default set in silence.
+      // A warning covers both, and it costs the first case nothing. It is also
+      // all a throw would have achieved: checked on Home Assistant 2026.8.3, a
+      // thrown `setConfig` message reaches the console and never the card -
+      // `hui-error-card` there draws a red icon and drops the text, as it does
+      // for a built-in card with a broken config. Both roads end in the
+      // console, and only one of them breaks working dashboards.
       const known = Object.keys(HUMIDIFIERS).filter(id => id !== 'default');
 
-      throw new Error(
-        `Unknown model '${model}'. Leave model out, or set it to 'default', to start from ` +
-          `the default configuration and describe the device with the card's own options. ` +
-          `Known models: ${known.join(', ')}.`,
+      console.warn(
+        `mini-humidifier: '${model}' is not one of the bundled model configurations, so the ` +
+          `card started from the default one. That is supported - it is how a device the card ` +
+          `does not ship for is described, with the controls written out in the card's own ` +
+          `options. If you meant a bundled model, they are: ${known.join(', ')}.`,
       );
     }
 
-    const modelConfiguration: ModelConfiguration =
-      model === undefined ? HUMIDIFIERS.default() : HUMIDIFIERS[model]();
+    const modelConfiguration: ModelConfiguration = (bundled ?? HUMIDIFIERS.default)();
 
     // The sections below are filled in immediately after, which is what makes
     // this a `CardConfig` rather than the YAML it starts as.

@@ -2,12 +2,12 @@
 //
 // The configuration a card ends up with is the user's YAML merged over the
 // defaults of the model they named. Nothing about that merge is visible until
-// the card runs - up to 3.3.0 an unrecognised `model:` produced a working but
-// wrong card rather than an error - so it is worth pinning down.
+// the card runs, and a model the card does not ship for is a supported way to
+// use it rather than an error, so it is worth pinning down.
 //
 // jsdom is enough here: setConfig only reads and merges. Rendering is never
 // triggered, because the element is not connected to the document.
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 import HUMIDIFIERS from '../src/humidifiers';
 
@@ -23,17 +23,6 @@ const card = config => {
   const element = new MiniHumidifier();
   element.setConfig({ entity: 'humidifier.bedroom', ...config });
   return element;
-};
-
-// The message `setConfig` refuses a configuration with. It reaches the user
-// through the browser console, not the card - see the test that names it.
-const messageFor = config => {
-  try {
-    card(config);
-  } catch (error) {
-    return error.message;
-  }
-  return '';
 };
 
 const indicator = (element, id) => element.config.indicators.find(item => item.id === id);
@@ -97,31 +86,56 @@ describe('setConfig', () => {
     }
   });
 
-  it('rejects a model it does not know', () => {
-    // Up to 3.3.0 this rendered the default configuration instead, which is why
-    // a typo in `model:` was so hard to spot: the card came up looking right,
-    // and only the controls behaved like another device.
-    expect(() => card({ model: 'zhimi.humidifier.cb11' })).toThrow(
-      /Unknown model 'zhimi\.humidifier\.cb11'/,
+  it('builds a card for a model it does not ship for', () => {
+    // Not an error, and not a typo either: the card is described in YAML end to
+    // end precisely because nobody knows every humidifier on the market, so a
+    // configuration that names its own device and writes out its own controls
+    // is the card being used as intended. Issue #112 is a working one for a
+    // `deerma.humidifier.jsq2w`. Refusing these would break dashboards.
+    const own = card({ model: 'deerma.humidifier.jsq2w' });
+    const fallback = card({ model: DEFAULT_MODEL });
+
+    expect(own.config.buttons.map(item => item.id)).toEqual(
+      fallback.config.buttons.map(item => item.id),
     );
+    // The id is kept as it was written, so it can be read back out again.
+    expect(own.config.model).toBe('deerma.humidifier.jsq2w');
   });
 
-  it('names every model it does know when it rejects one', () => {
-    // The message lands in the browser console, not on the card: `hui-error-card`
-    // on 2026.8.3 draws an icon and drops the text (checked on a live instance).
-    // The console is where someone whose card went red ends up, so the way out
-    // of the mistake has to be in the message rather than implied by it.
-    expect(() => card({ model: 'levoit.classic.300s' })).toThrow(KNOWN_MODELS.join(', '));
+  it('says in the console that it fell back, rather than falling back in silence', () => {
+    // The half of #177 that was a real complaint. `deerma.humidifier.mjjsq` and
+    // `xiaomi_miio_airpurifier:deerma.humidifier.mjjsq` are one device through
+    // two integrations calling different services, so a typo between them hands
+    // someone another device's defaults with nothing to show for it.
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    try {
+      card({ model: 'zhimi.humidifier.cb11' });
+
+      expect(warn).toHaveBeenCalledTimes(1);
+      expect(warn.mock.calls[0][0]).toContain("'zhimi.humidifier.cb11'");
+      // And the way back: every id the build actually carries.
+      expect(warn.mock.calls[0][0]).toContain(KNOWN_MODELS.join(', '));
+    } finally {
+      warn.mockRestore();
+    }
   });
 
-  it('tells a card configured end to end how to opt out of models', () => {
-    // The card is meant to be universal: every control can be described in
-    // YAML. Such a configuration still starts from some set of defaults, and
-    // its author used to be free to write anything at all in `model:` and be
-    // handed the default one in silence. Refusing that is only fair if the
-    // refusal says what to write instead.
-    expect(messageFor({ model: 'my.own.device' })).toContain('default');
-    expect(() => card({ model: 'default' })).not.toThrow();
+  it('stays quiet for a model it does ship for, and for none at all', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    try {
+      card({ model: DEFAULT_MODEL });
+      card({ model: 'xiaomi_miio_airpurifier:deerma.humidifier.jsq5' });
+      card({});
+      // `default` is the key the registry falls back to. Writing it is asking
+      // for the default set out loud, which is not something to warn about.
+      card({ model: 'default' });
+
+      expect(warn).not.toHaveBeenCalled();
+    } finally {
+      warn.mockRestore();
+    }
   });
 
   it('defaults the model when the YAML names none', () => {

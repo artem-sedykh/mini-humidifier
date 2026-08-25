@@ -286,17 +286,29 @@ This is the part worth understanding before changing anything about options.
 
 1. The user's YAML names a `model` (default `zhimi.humidifier.cb1`).
 2. `HUMIDIFIERS[model]()` in `src/humidifiers.ts` returns that model's defaults.
-   An unknown model is refused - `setConfig` throws and names the ids it knows.
-   Up to 3.3.0 it fell back to `HUMIDIFIERS.default` in silence, so a typo in
-   `model:` produced a working but wrong card rather than an error. Omitting
-   `model:` still asks for the default set, and `model: default` says so
-   explicitly, which is what a card that describes every control itself wants.
+   A model the registry does not have falls back to `HUMIDIFIERS.default`, and
+   the card warns about it in the console.
 
-   Where that message is read matters and was measured on 2026.8.3, not
-   assumed: **the browser console, not the card**. `hui-error-card` draws a red
-   icon and drops the text - a built-in card with a broken config looks exactly
-   the same - so a `setConfig` message is written for someone reading the
-   console, and a card that has gone red tells the user nothing by itself.
+   **The fallback is a feature, not a bug to fix.** There are more humidifiers
+   than this card ships configurations for, which is why it can be described in
+   YAML end to end; naming a device the card does not know and writing out its
+   controls is the card being used as intended.
+   [#112](https://github.com/artem-sedykh/mini-humidifier/issues/112) is a
+   working configuration for a `deerma.humidifier.jsq2w`. Refusing an unknown id
+   would break dashboards like that one, so do not.
+
+   The warning is for the other half of the same behaviour: a typo between
+   `deerma.humidifier.mjjsq` and
+   `xiaomi_miio_airpurifier:deerma.humidifier.mjjsq` - one device through two
+   integrations that call different services - used to be invisible.
+
+   Why a warning and not a thrown error, measured on 2026.8.3 rather than
+   assumed: **a thrown `setConfig` message reaches the console and never the
+   card**. `hui-error-card` draws a red icon and drops the text, exactly as it
+   does for a built-in card with a broken config - no text, no title, no
+   tooltip. Both roads end in the console, and only one of them breaks working
+   dashboards. Keep that in mind before making anything else in `setConfig`
+   throw: it is not a way to tell a user anything.
 3. `main.ts` merges the user's YAML over those defaults, per section
    (`getPowerConfig`, `getTargetHumidityConfig`, `getIndicatorsConfig`,
    `getButtonsConfig`).
