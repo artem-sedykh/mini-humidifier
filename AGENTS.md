@@ -45,10 +45,33 @@ That is a constraint on what may be changed, not just a description of what is:
   several of the build constraints below - see "Why the model configurations
   stay JavaScript".
 
-The cost of the design is that it is invisible. Someone whose device is not in
-`docs/models.md` reads that table as a compatibility list and opens a model
-request; several of the open issues are exactly that. Making this easier to
-discover is worth more than bundling another model.
+### How a preset is supposed to get into the bundle
+
+The registry is meant to fill up from the outside, and it has: three of the
+fourteen entries in `docs/models.md` are credited to the users who wrote them
+(`by @ravikwow`, `by @regevbr`, `by @akovovh`). The intended path is one loop:
+
+1. someone with a device the card does not ship for writes the configuration in
+   their own YAML, because that always works;
+2. if the device is common enough to be worth carrying, that configuration
+   comes back as a pull request against `src/configurations/`;
+3. it becomes a preset, and the next owner of that device gets it for free.
+
+Which makes the second step worth watching for. `docs/models.md` documents it
+under "Adding a model", but at the bottom of a page reached mostly by people who
+already know unknown models work.
+[#112](https://github.com/artem-sedykh/mini-humidifier/issues/112) is exactly
+that step stalling: a complete configuration for a `deerma.humidifier.jsq2w`,
+posted as an issue titled as a thank-you note in 2023, never turned into a
+model. When one of those turns up, it is a contribution waiting for an invitation.
+
+### The cost
+
+The design is invisible. Someone whose device is not in `docs/models.md` reads
+that table as a compatibility list and opens a model request; several of the
+open issues are exactly that, from people who could have written the
+configuration themselves in an evening and might have contributed it back.
+Making this easier to find is worth more than bundling another model by hand.
 
 ## Language
 
