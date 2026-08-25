@@ -9,6 +9,112 @@
 Every release of this card, newest first. Each heading links to the release it
 came from, where the asset and the date are.
 
+## [v3.4.0](https://github.com/artem-sedykh/mini-humidifier/releases/tag/v3.4.0)
+
+A card for a humidifier this card ships nothing for is now a first-class way to
+use it, rather than something you work out for yourself: `model: none` starts
+from an empty configuration, and a model the card does not recognise says so
+instead of quietly handing you another device's defaults.
+
+The same release makes the card less silent about the rest of what you write. A
+key it does not read, an action it cannot perform, a section spelled in the
+singular - each of those used to do nothing at all, and now says so in the
+browser console.
+
+### Added
+
+- **`model: none`** - a preset that brings nothing. Until now a card that
+  described its own controls did not start from nothing: it started from the
+  `zhimi.humidifier.cb1` set and added to it, so a card declaring one indicator
+  of its own also carried four indicators and five buttons it never asked for -
+  reading sensors that do not exist on another device, and calling
+  `xiaomi_miio` services it may not have. Getting a clean card meant writing
+  `hide: true` nine times first.
+
+  `power` and `target_humidity` start hidden and want `hide: false`, because
+  they are single controls rather than lists and an empty one is a button that
+  does nothing when pressed. See
+  [Models](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/models.md).
+  [#186](https://github.com/artem-sedykh/mini-humidifier/issues/186)
+- **A changelog.** Every release in one file, newest first, instead of one page
+  per version - which is what you want when you have skipped a few, and most
+  people do, because they update when they notice.
+  [CHANGELOG.md](https://github.com/artem-sedykh/mini-humidifier/blob/master/CHANGELOG.md)
+  [#184](https://github.com/artem-sedykh/mini-humidifier/issues/184)
+- **The release asset is signed, and its sha256 is on this page.** Until now
+  there was no way to tell that the `mini-humidifier-bundle.js` you downloaded
+  is the file the build produced. With the
+  [GitHub CLI](https://cli.github.com/) it is one command against the copy on
+  your disk, whether HACS put it there or you did:
+
+  `gh attestation verify mini-humidifier-bundle.js -R artem-sedykh/mini-humidifier`
+  [#181](https://github.com/artem-sedykh/mini-humidifier/issues/181)
+
+### Fixed
+
+- Adding the card from the dashboard picker offered no entity at all on an
+  installation whose humidifiers are `humidifier` entities - a generic
+  hygrostat, an MQTT humidifier, anything outside the Xiaomi integrations. The
+  picker looked for a `fan` and nothing else, so the first thing such a user saw
+  was a card that had already failed. It searches both supported domains now,
+  `fan` first. Nothing changes where a fan exists.
+  [#176](https://github.com/artem-sedykh/mini-humidifier/issues/176)
+- The mode menu could open invisible. It asks the browser for the top layer, and
+  an element that has asked stays hidden until the browser agrees - so a refusal
+  did not leave the menu merely un-layered, it left it with nothing on screen and
+  no way to close it. The card copes with a refusal now and falls back to
+  positioning the menu itself.
+  [#189](https://github.com/artem-sedykh/mini-humidifier/issues/189)
+- **`tap_action: action: toggle` never worked**, and it was the first example on
+  the actions page. The card stopped handling `toggle` in 2.1.1, in June 2020,
+  and the example outlived it by six years - so anyone who copied it got a card
+  that did nothing when clicked, with no error anywhere. The example is gone.
+  If that is what you wanted, `toggle: { default: on, hide: on }` starts the
+  card with the button panel open, see
+  [Controls](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/controls.md#toggle-button).
+  [#197](https://github.com/artem-sedykh/mini-humidifier/issues/197)
+
+### Changed
+
+- **A `model:` the card does not recognise now says so in the browser console.**
+  It still builds the card from the default configuration, exactly as before -
+  nothing breaks, and naming a device the card does not ship for is a supported
+  way to use it. What changes is that it is no longer silent, because the same
+  behaviour covers a typo: `deerma.humidifier.mjjsq` and
+  `xiaomi_miio_airpurifier:deerma.humidifier.mjjsq` are one device through two
+  integrations that call different services, and picking the wrong one gave you
+  a card that looked right until you pressed something.
+
+  If your card works and you see this warning, it is telling you which set of
+  defaults it started from, not that anything is wrong. Consider `model: none`
+  above if you are writing all the controls yourself.
+  [#177](https://github.com/artem-sedykh/mini-humidifier/issues/177)
+- **The card reports configuration it is going to ignore**, in the console, and
+  goes on rendering. An option it does not read, a `tap_action` naming an action
+  it cannot perform, an `order` written as text, and `indicator:` where it wants
+  `indicators:` - that last one silently switched off a whole section of the
+  card. It only warns: nothing that worked before stops working, and options
+  the card does not recognise inside an indicator or a button are left alone,
+  because that is where your own templates read them from.
+  [#178](https://github.com/artem-sedykh/mini-humidifier/issues/178)
+- **`collapse` has been removed.** It set a CSS class that no stylesheet in this
+  card has ever had a rule for - not since the first commit in 2020 - so it has
+  never done anything. If you have it in your configuration you will now see it
+  named in the console warning above; deleting the line changes nothing on
+  screen. For a card that starts with its buttons showing, use
+  `toggle: { default: on, hide: on }`.
+- The component tests run in WebKit as well as Chromium. Home Assistant's
+  companion app on iOS renders in WKWebView, and until now nothing had ever run
+  this card in a second engine. Nothing was found; the point is that it is
+  covered from here on.
+  [#180](https://github.com/artem-sedykh/mini-humidifier/issues/180)
+- Test coverage is measured and cannot slide without the build failing, which
+  is what turned up the `toggle` example above: the file that handles every
+  `tap_action` had no tests at all.
+  [#182](https://github.com/artem-sedykh/mini-humidifier/issues/182)
+
+Tested on Home Assistant 2026.8.3.
+
 ## [v3.3.0](https://github.com/artem-sedykh/mini-humidifier/releases/tag/v3.3.0)
 
 The card stops redrawing itself twice a second, the `order` option on
