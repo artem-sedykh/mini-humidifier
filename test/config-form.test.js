@@ -1,8 +1,14 @@
+// @vitest-environment jsdom
+//
 // The visual editor is a schema (#179), so it is a value, and everything worth
 // asserting about it can be asserted here. What cannot: that Home Assistant
 // renders it. That stays a check by hand, like everything else in this card
 // that meets an `ha-*` element.
-import { describe, expect, it } from 'vitest';
+//
+// jsdom because the labels are localised against the language on the
+// `home-assistant` element, which is the only place the form can read it from -
+// see `editorLanguage` in src/configForm.ts.
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import configForm from '../src/configForm';
 import HUMIDIFIERS from '../src/humidifiers';
@@ -101,5 +107,91 @@ describe('what the editor must not do to a hand-written card', () => {
 
     expect(typeof after.indicators.water_level.icon.template).toBe('string');
     expect(after.buttons.dry.change_action).toBe(handWritten.buttons.dry.change_action);
+  });
+});
+
+describe('the labels', () => {
+  const speaking = language => {
+    const root = document.createElement('home-assistant');
+    root.hass = { language };
+    document.body.appendChild(root);
+    return root;
+  };
+
+  afterEach(() => {
+    document.querySelectorAll('home-assistant').forEach(el => el.remove());
+  });
+
+  const labelOf = name => configForm().computeLabel({ name });
+
+  it('leaves the fields Home Assistant has a word for to Home Assistant', () => {
+    // Not an oversight. hui-form-editor falls through to
+    // `ui.panel.lovelace.editor.card.generic.<name>` when computeLabel returns
+    // nothing, and that key is translated into every language the frontend
+    // ships - so these read the same as in every built-in card's editor,
+    // in the user's language, at no cost to us.
+    speaking('ru');
+
+    for (const name of ['entity', 'name', 'icon']) {
+      expect(labelOf(name)).toBeUndefined();
+    }
+  });
+
+  it('names the three fields Home Assistant has no word for', () => {
+    speaking('en');
+
+    expect(labelOf('model')).toBe('Model');
+    expect(labelOf('scale')).toBe('Scale');
+    expect(labelOf('group')).toBe('Group');
+  });
+
+  it('follows the language of the frontend it is running in', () => {
+    speaking('ru');
+    expect(labelOf('model')).toBe('Модель');
+    expect(labelOf('group')).toBe('Группа');
+
+    document.querySelector('home-assistant').remove();
+    speaking('uk');
+    expect(labelOf('model')).toBe('Модель');
+    expect(labelOf('group')).toBe('Група');
+  });
+
+  it('prefers the language the user picked over the one the server is set to', () => {
+    const root = speaking('en');
+    root.hass.selectedLanguage = 'ru';
+
+    expect(labelOf('scale')).toBe('Масштаб');
+  });
+
+  it('gives a language it has no dictionary for back to Home Assistant', () => {
+    // Falsy rather than the word "unknown": hui-form-editor reads
+    // `computeLabel(...) || <its own key> || <the capitalised field name>`, so
+    // an empty string means a Portuguese user sees "Model" rather than
+    // "unknown", which is what the default fallback of `localize` would have
+    // produced.
+    speaking('pt-BR');
+
+    expect(labelOf('model')).toBe('');
+  });
+
+  it('answers without a frontend around it at all', () => {
+    // No `home-assistant` element: the bundle loaded on a page of its own, or
+    // these tests.
+    expect(labelOf('model')).toBe('Model');
+  });
+
+  it('answers where there is no document either', () => {
+    // The card only ever runs in a browser, so this guard is for the other
+    // ways the module gets loaded - a test file in the node environment, or
+    // anything that imports the card without a DOM. Without it the label
+    // lookup throws a ReferenceError rather than returning a label.
+    vi.stubGlobal('document', undefined);
+
+    try {
+      expect(typeof document).toBe('undefined');
+      expect(labelOf('model')).toBe('Model');
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });

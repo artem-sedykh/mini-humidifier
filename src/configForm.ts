@@ -1,5 +1,6 @@
 import { SUPPORTED_DOMAINS } from './const';
 import HUMIDIFIERS from './humidifiers';
+import localize from './localize/localize';
 
 /**
  * The visual editor, first half (#179).
@@ -37,7 +38,46 @@ import HUMIDIFIERS from './humidifiers';
  * can: the options this schema does not name are carried through by Home
  * Assistant, and the ones it does name are scalars.
  */
+// The fields Home Assistant has no word of its own for.
+//
+// Everything else is left to it deliberately. `hui-form-editor` falls through
+// to `ui.panel.lovelace.editor.card.generic.<name>` when `computeLabel` returns
+// nothing, and that key is translated into every language the frontend ships -
+// so `entity`, `name` and `icon` come out in the user's language for free, and
+// read exactly as they do in the editor of every built-in card.
+const OWN_LABELS = ['model', 'scale', 'group'];
+
+/**
+ * The language to label the form in.
+ *
+ * `computeLabel` is handed the schema and Home Assistant's own `localize`, and
+ * nothing else - no `hass`, so no language - and `getConfigForm` is static, so
+ * there is no card instance to ask either. What there always is, inside a
+ * running frontend, is the `home-assistant` element at the root of the
+ * document, and it carries `hass`.
+ *
+ * Outside one - the unit tests, or a page that loads the bundle on its own -
+ * there is no such element and this answers `en`.
+ */
+const editorLanguage = (): string => {
+  if (typeof document === 'undefined') return 'en';
+
+  const root = document.querySelector('home-assistant') as
+    { hass?: { language?: string; selectedLanguage?: string } } | undefined | null;
+
+  return root?.hass?.selectedLanguage || root?.hass?.language || 'en';
+};
+
 const configForm = () => ({
+  // An empty fallback rather than `unknown`, because the value is falsy on
+  // purpose: `hui-form-editor` reads `computeLabel(...) || <its own key> ||
+  // <the capitalised field name>`, so a language this card has no dictionary
+  // for - or a label nobody has translated yet - lands on the field name
+  // instead of the word "unknown".
+  computeLabel: (schema: { name: string }): string | undefined =>
+    OWN_LABELS.includes(schema.name)
+      ? localize(`editor.${schema.name}`, editorLanguage(), '')
+      : undefined,
   schema: [
     {
       name: 'entity',

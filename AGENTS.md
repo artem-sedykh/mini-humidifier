@@ -456,6 +456,23 @@ safe for a hand-written configuration:
   loaded and absent until some editor has been opened - which is what the
   `loadCardHelpers()` preload trick in other cards is for.
 
+**Labels.** `computeLabel` answers only for `model`, `scale` and `group`, from
+this card's own `localize` (`editor.*` in `src/localize/languages/*.json`).
+Everything else returns nothing on purpose: `hui-form-editor` then falls through
+to `ui.panel.lovelace.editor.card.generic.<name>`, which Home Assistant ships
+translated into every language it supports, so `entity`, `name` and `icon` read
+the same as in a built-in card's editor at no cost here.
+
+The fallback given to `localize` is an **empty string**, not the default
+`unknown`: the frontend reads `computeLabel(...) || <its own key> || <the
+capitalised field name>`, so a language this card has no dictionary for lands on
+the field name rather than on the word "unknown".
+
+The language comes from the `home-assistant` element at the root of the
+document, because `computeLabel` is handed the schema and Home Assistant's
+`localize` and nothing else - no `hass` - and `getConfigForm` is static, so
+there is no card instance to ask either.
+
 Two consequences to keep in mind before extending it:
 
 - **The schema cannot depend on the configuration.** `getConfigForm` is static
