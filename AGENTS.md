@@ -73,6 +73,55 @@ open issues are exactly that, from people who could have written the
 configuration themselves in an evening and might have contributed it back.
 Making this easier to find is worth more than bundling another model by hand.
 
+## Helping someone with a device the card has no preset for
+
+A different job from fixing a bug in `src/`, with a different output: the
+answer is a YAML block, not a diff. Most requests that arrive as "add support
+for X" are this one.
+
+**The page to work from is [docs/custom-device.md](docs/custom-device.md).** It
+carries the worked example (a Levoit Classic 300S through VeSync, from #124) and
+the contract underneath the options - what a `source` is, what a template runs
+as, which options are not templates, and what the card warns about rather than
+refusing. Do not re-derive any of that from `src/`; if something there is wrong
+or missing, the fix belongs in that page, where the next person also gets it.
+
+What to establish before writing YAML, in this order:
+
+1. **The entity's domain and attributes**, from Developer tools -> States. The
+   bug report template already asks for these. Which attribute holds the target
+   and which holds the reading is the fork everything else hangs off.
+2. **The other entities the integration created** beside the humidifier - a
+   night light, a switch, a sensor. Most "the card cannot do X" turns out to be
+   X living on a second entity, which `state: entity` and `source: entity`
+   reach.
+3. **Which base**: `model: humidifier` for a `humidifier` entity, a bundled id
+   when the device is close to one, `none` when they are writing everything
+   themselves. Leaving `model:` out is not neutral - it is the Xiaomi default,
+   including its 30-80 slider range, which overrides what the device reports.
+
+Four mistakes worth recognising on sight, all of them seen in the tracker:
+
+- **`entity_id:` at the top of a button or an indicator** (#124). Not an option
+  the card reads, and not reported either, because unknown keys inside a control
+  are the template scope. The control looks configured and acts on the
+  humidifier.
+- **Expecting `hide`, `min`, `max` or `step` to be templates.** They are values.
+  A control that should come and go with the device is `disabled`.
+- **A slider that is greyed out on a device with no modes** (#70, #125). The
+  presets guard for it now; on an old bundle the answer was `disabled: false`,
+  and the difference between "your card is old" and "write this option" is worth
+  checking before answering.
+- **A template with a syntax error takes the whole card down**, red rectangle
+  and all, while a template that throws when it runs only takes its own option
+  out. Both report in the console and nowhere else, so ask for the console
+  before theorising.
+
+When a configuration works, say so and then ask for it back: a preset is one
+file in `src/configurations/` plus a line in the registry, and three of the
+bundled fourteen arrived exactly that way. That loop is the point of the design,
+and it only closes if someone mentions it.
+
 ## Language
 
 **English only**, everywhere: code, comments, commit messages, issues, pull
@@ -139,11 +188,21 @@ size of change it is there to catch.
 the helpers in `src/utils/utils.js`, the model registry, the four wrappers in
 `src/models/` that turn raw entity state into what a component renders, every
 branch of `handleClick` - which is the whole of what `tap_action` does - and the
-configuration merging in `main.ts`. Two files need a DOM and ask for jsdom with
-a `@vitest-environment` docblock: `test/config.test.js`, because `setConfig`
-only reads and merges and the element is never connected, so nothing renders;
-and `test/handle-click.test.js`, because dispatching an event and pushing
-history is all that file does.
+configuration merging in `main.ts`. Three files need a DOM and ask for jsdom
+with a `@vitest-environment` docblock: `test/config.test.js`, because
+`setConfig` only reads and merges and the element is never connected, so
+nothing renders; `test/handle-click.test.js`, because dispatching an event and
+pushing history is all that file does; and
+`test/documented-contract.test.js`, for the same reason as the first.
+
+That last one is not about the card so much as about the page that describes
+it. `docs/custom-device.md` is written as the contract an assistant configures
+against, which makes each of its claims a thing that can quietly stop being
+true - `source: __init` still building a dropdown from the entity, `unit` still
+taking a template, an indicator still having no `call_service`, a template that
+fails to parse still being the one fatal mistake. Every test in it is one
+sentence from that page, written as YAML text rather than as a function, since
+that is the only form the documentation can show.
 
 `npm run test:coverage` is the same run with `@vitest/coverage-v8` on, and CI
 uses it in place of `npm test`. It measures **the unit layer only**, and what it

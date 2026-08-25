@@ -1,6 +1,6 @@
 # Buttons
 
-[Home](../README.md) | [Configuration](configuration.md) | [Models](models.md) | [Controls](controls.md) | [Indicators](indicators.md) | [Buttons](buttons.md) | [Examples](examples.md) | [Development](development.md)
+[Home](../README.md) | [Configuration](configuration.md) | [Models](models.md) | [Custom device](custom-device.md) | [Controls](controls.md) | [Indicators](indicators.md) | [Buttons](buttons.md) | [Examples](examples.md) | [Development](development.md)
 
 Buttons live in the bottom panel of the card. Two types are supported:
 `button` and `dropdown`.
@@ -23,7 +23,8 @@ Options under `buttons: <name>:`, where `<name>` is yours to choose.
 | `active` | function | | For type `dropdown`: whether the dropdown counts as active. |
 | `source` | object | | For type `dropdown`: the items to offer. |
 | `source: item` | string | | A dropdown item, in the form `value: label`. |
-| `source: __filter` | function | | Filter function for the items. |
+| `source: __init` | function | | Builds the items from the entity, instead of listing them. |
+| `source: __filter` | function | | Post-processes the listed items: rename, reorder, drop. |
 | `change_action` | function | | For type `dropdown`: called when an item is selected. |
 | `toggle_action` | function | | For type `button`: called when the button is clicked. |
 
@@ -32,7 +33,8 @@ Options under `buttons: <name>:`, where `<name>` is yours to choose.
 | Name | Type | execution context | arguments | return type |
 |------|------|-------------------|-----------|-------------|
 |`state:mapper` | function | button config | state, entity, humidifier_entity | any
-|`source:__filter` | function | button config | state, entity, humidifier_entity | object({ id..., name... }) array
+|`source:__init` | function | button config | entity, button config | object({ id..., name... }) array
+|`source:__filter` | function | button config | source, state, entity, humidifier_entity | object({ id..., name... }) array
 |`active` | function | button config | state, entity, humidifier_entity | boolean
 |`disabled` | function | button config | state, entity, humidifier_entity | boolean
 |`style` | function | button config | state, entity, humidifier_entity | object

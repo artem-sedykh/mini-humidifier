@@ -1,6 +1,6 @@
 # Controls
 
-[Home](../README.md) | [Configuration](configuration.md) | [Models](models.md) | [Controls](controls.md) | [Indicators](indicators.md) | [Buttons](buttons.md) | [Examples](examples.md) | [Development](development.md)
+[Home](../README.md) | [Configuration](configuration.md) | [Models](models.md) | [Custom device](custom-device.md) | [Controls](controls.md) | [Indicators](indicators.md) | [Buttons](buttons.md) | [Examples](examples.md) | [Development](development.md)
 
 The parts of the card a user interacts with, plus the line of text under the
 entity name.
@@ -17,14 +17,15 @@ Options under `target_humidity:`.
 | `hide` | boolean | `false` | Hide the target humidity control. |
 | `hide_indicator` | boolean | `false` | Hide the value shown next to the slider. |
 | `disabled` | boolean or function | from the model | Disable the slider. Falls back to the value in the configured [model](models.md), and then to the [default model](https://github.com/artem-sedykh/mini-humidifier/blob/master/src/configurations/xiaomi_miio/zhimi_humidifier_cb1.js#L28). |
-| `unit` | string | `%` | Display unit. |
-| `min` | number | `30` | Minimum target humidity. |
-| `max` | number | `80` | Maximum target humidity. |
-| `step` | number | `10` | Slider step. |
+| `unit` | string or object | `%` | Display unit, or a unit config object. |
+| `unit: template` | function | | Function returning the unit, for a value whose unit depends on it. |
+| `min` | number | from the model, then the entity | Minimum target humidity. When neither the configuration nor the model gives a number, the entity's `min_humidity` is used, and 0 when it reports none. |
+| `max` | number | from the model, then the entity | Maximum target humidity. Falls back to the entity's `max_humidity` the same way, and to 100. |
+| `step` | number | from the model | Slider step, 1 when nothing gives one. Not read from the entity. |
 | `action_timeout` | number | `3500` | Milliseconds to wait before the card re-reads the entity state after a change. |
 | `state` | object | | Where to read the current value from. |
 | `state: entity` | string | current entity | Entity to read the value from. |
-| `state: attribute` | string | `target_humidity` | Attribute to read the value from. |
+| `state: attribute` | string | from the model | Attribute to read the value from - `humidity` in most presets, `target_humidity` in some. |
 | `change_action` | function | | Called when the user moves the slider. |
 
 > Functions available for the target_humidity:  
@@ -35,6 +36,7 @@ Options under `target_humidity:`.
 |`change_action` | function | target_humidity config | value, current_value, entity, humidifier_entity  | promise
 |`icon:template` | function | target_humidity config | current_value, entity, humidifier_entity | string
 |`icon:style` | function | target_humidity config | current_value, entity, humidifier_entity | object
+|`unit:template` | function | target_humidity config | current_value, entity, humidifier_entity | string
 
 `current_value` - selected value  
 `value` - target_humidity value  
