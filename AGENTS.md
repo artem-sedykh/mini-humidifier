@@ -515,6 +515,25 @@ By hand, if the workflow is not available:
    that the tag and `package.json` agree, and publishes the bundle with those
    notes as the release body.
 
+### Provenance
+
+`cd.yml` attests the bundle with `actions/attest` and appends its sha256 to the
+release body, so the asset on the releases page can be tied back to the run
+that built it (#181):
+
+```console
+gh attestation verify mini-humidifier-bundle.js -R artem-sedykh/mini-humidifier
+```
+
+The attestation is over `dist/mini-humidifier-bundle.js` as built in that run.
+If the upload step ever starts publishing something the build did not produce,
+this is what says so - a served file that is not the built file has no symptom
+until someone hits the bug it carries.
+
+`actions/attest` rather than `actions/attest-build-provenance`: since v4 the
+latter is a wrapper over the former, and with only `subject-path` given they
+generate the same SLSA build provenance.
+
 ### What HACS shows
 
 HACS renders **`README.md`**, and only that. The `info.md` convention is dead:
