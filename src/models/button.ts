@@ -136,7 +136,10 @@ export default class ButtonObject {
     let source: SourceItem[];
 
     if (functions && functions.source && functions.source.__init) {
-      source = functions.source.__init(this.entity, this.config);
+      // `|| []` because a wrapped template answers `undefined` when it throws,
+      // and the component below maps over what this returns - a second throw
+      // there would empty the dropdown it is trying to keep.
+      source = functions.source.__init(this.entity, this.config) || [];
     } else {
       source = Object.entries(this.config.source || {})
         .filter(s => s[0] !== '__filter')

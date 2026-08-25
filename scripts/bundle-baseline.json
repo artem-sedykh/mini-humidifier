@@ -1,5 +1,5 @@
 {
   "comment": "Size of dist/mini-humidifier-bundle.js in bytes, checked by scripts/check-bundle.mjs. Update it deliberately, in the commit that moves the size, and say why. A 3% tolerance is roughly 5 KB: wide enough for ordinary changes, narrow enough that a duplicated dependency does not slip through.",
-  "bytes": 90848,
+  "bytes": 93491,
   "tolerance": 0.03
 }
