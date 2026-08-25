@@ -1,6 +1,6 @@
 # Indicators
 
-[Home](../README.md) | [Configuration](configuration.md) | [Models](models.md) | [Controls](controls.md) | [Indicators](indicators.md) | [Buttons](buttons.md) | [Examples](examples.md) | [Development](development.md)
+[Home](../README.md) | [Configuration](configuration.md) | [Models](models.md) | [Custom device](custom-device.md) | [Controls](controls.md) | [Indicators](indicators.md) | [Buttons](buttons.md) | [Examples](examples.md) | [Development](development.md)
 
 Indicators are the read-only values shown under the entity name: temperature,
 humidity, water tank level, and anything else you point them at.
@@ -13,7 +13,8 @@ Options under `indicators: <name>:`, where `<name>` is yours to choose.
 | `icon: template` | function | | Icon template function. |
 | `icon: style` | function | | Function returning icon styles. |
 | `value: style` | function | | Function returning styles for the reading and its unit. |
-| `unit` | string | | Display unit. |
+| `unit` | string or object | | Display unit, or a unit config object. |
+| `unit: template` | function | | Function returning the unit, for a reading whose unit depends on its value. |
 | `round` | number | | Number of decimals to round the value to. |
 | `hide` | boolean | `false` | Hide the indicator. |
 | `order` | number | its position | Sort order among the indicators, lowest first. |
@@ -48,6 +49,7 @@ indicators:
 |`source:mapper` | function | indicator config | value, entity, humidifier_entity | any
 |`icon:template` | function | indicator config | value, entity, humidifier_entity | string
 |`icon:style` | function | indicator config | value, entity, humidifier_entity | object
+|`unit:template` | function | indicator config | value, entity, humidifier_entity | string
 
 `value` - current indicator value  
 `entity` - indicator entity  

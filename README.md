@@ -121,6 +121,7 @@ secondary_info: last-changed
 |---|---|
 | [Configuration](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/configuration.md) | Every card option, the action object, theme variables |
 | [Models](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/models.md) | Supported devices, and how to add one |
+| [Custom device](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/custom-device.md) | A device with no preset, end to end, and the contract the templates run under |
 | [Controls](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/controls.md) | Target humidity, power button, toggle button, secondary info, group |
 | [Indicators](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/indicators.md) | The read-only values under the entity name |
 | [Buttons](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/buttons.md) | The bottom panel: buttons and dropdowns |
