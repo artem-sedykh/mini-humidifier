@@ -201,6 +201,27 @@ Still stuck? Open an [issue](https://github.com/artem-sedykh/mini-humidifier/iss
 with your card YAML and the entity's attributes from **Developer tools ->
 States**.
 
+## Contributors
+
+| | |
+|---|---|
+| [@regevbr](https://github.com/regevbr) | Moved CI to GitHub Actions, made the card addable from the picker, carried it through Home Assistant 2022.3 dropping the paper elements, fixed the popup menus in the mobile apps, added `xiaomi_miio_airpurifier:zhimi.airpurifier.mb3` |
+| [@ravikwow](https://github.com/ravikwow) | Support for syssi's `xiaomi_miio_airpurifier` integration: `zhimi.humidifier.ca4`, `zhimi.airfresh.va2`, `zhimi.airpurifier.ma2` |
+| [@denysdovhan](https://github.com/denysdovhan) | Ukrainian translation, and `secondary_info` |
+| [@akovovh](https://github.com/akovovh) | `xiaomi_miio_airpurifier:deerma.humidifier.jsq5` |
+| [@dedors](https://github.com/dedors) | `deerma.humidifier.mjjsq` defaults |
+| [@fustom](https://github.com/fustom) | Fixed the icons after `ha-icon-button` dropped its `icon` property |
+| [@lutz108](https://github.com/lutz108) | Documented `target_humidity: disabled` |
+| [@SanchosPancho](https://github.com/SanchosPancho) | Fixed the card border against a new Home Assistant release |
+| [@tolkonepiu](https://github.com/tolkonepiu) | Fixed the service name behind the LED button |
+
+Adding a device is the contribution this card is built to take: a preset that
+lands in `src/configurations/` is credited by name in
+[Models](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/models.md)
+and in the release notes.
+[CONTRIBUTING.md](https://github.com/artem-sedykh/mini-humidifier/blob/master/CONTRIBUTING.md)
+says how.
+
 ## Inspiration
 
 - [@kalkih](https://github.com/kalkih) - [mini-media-player](https://github.com/kalkih/mini-media-player)
