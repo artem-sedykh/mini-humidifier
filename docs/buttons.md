@@ -15,7 +15,7 @@ Options under `buttons: <name>:`, where `<name>` is yours to choose.
 | `hide` | boolean | `false` | Hide the button. |
 | `action_timeout` | number | `3500` | Milliseconds to wait before the card re-reads the entity state after a change. |
 | `state` | object | | Where to read the button state from. |
-| `state: entity` | string | current entity | Entity to read the state from. |
+| `state: entity` | string | current entity | Entity to read the state from, and the one the button acts on - see [A button for another entity](#a-button-for-another-entity). |
 | `state: attribute` | string | | Attribute to read the state from. |
 | `state: mapper` | function | | State processing function. |
 | `disabled` | function | | Button disabled calculation function. |
@@ -218,3 +218,95 @@ buttons:
         return this.call_service('xiaomi_miio', 'fan_set_led_brightness', options);
       }
 ```
+
+## A button for another entity
+
+Everything above acts on the humidifier itself. A button does not have to:
+`state: entity` points it at any entity in the installation, and that is the
+entity it reads and the entity its templates are handed. A humidifier whose
+water heater, night light or fan is a separate entity - which is most
+humidifiers, once the integration is finished with them - is configured here
+rather than worked around.
+
+### A switch
+
+The whole of it:
+
+```yaml
+type: custom:mini-humidifier
+entity: humidifier.bedroom
+buttons:
+  heater:
+    icon: mdi:radiator
+    order: 5
+    state:
+      entity: switch.bedroom_humidifier_heater
+```
+
+No `toggle_action`, because a button without one calls `switch.toggle` on its
+own entity, which is exactly right for a switch. No `state: mapper`, because
+the icon lights up on any state that is not `off`, and a switch reports `on`.
+
+### Another domain, or another service
+
+When the entity is not a switch, say what pressing it should do. The second
+argument is **the button's own entity** - the one named in `state: entity` -
+and the third is the humidifier, for a button that has to look at both:
+
+```yaml
+type: custom:mini-humidifier
+entity: humidifier.bedroom
+buttons:
+  night_light:
+    icon: mdi:lightbulb-night
+    order: 6
+    state:
+      entity: light.bedroom_humidifier_night_light
+    toggle_action: |
+      (state, entity) => {
+        const service = state === 'on' ? 'turn_off' : 'turn_on';
+        return this.call_service('light', service, { entity_id: entity.entity_id });
+      }
+```
+
+### A dropdown over another entity's attribute
+
+The same idea for a `dropdown`: read an attribute of the other entity, and send
+the selected value back to it. `change_action` receives the selected value
+first, then the state, then that entity:
+
+```yaml
+type: custom:mini-humidifier
+entity: humidifier.bedroom
+buttons:
+  night_light:
+    icon: mdi:lightbulb-night
+    type: dropdown
+    order: 6
+    state:
+      entity: light.bedroom_humidifier_night_light
+      attribute: brightness
+    source:
+      '0': 'Off'
+      '128': 'Dim'
+      '255': 'Bright'
+    active: (state) => state !== '0' && state !== 0
+    change_action: |
+      (selected, state, entity) => {
+        const options = { entity_id: entity.entity_id, brightness: Number(selected) };
+        return this.call_service('light', 'turn_on', options);
+      }
+```
+
+### Two things that catch people out
+
+- **`entity_id:` at the top of a button is not an option.** The card reads
+  `state: entity`, and a key it does not read is left alone on purpose - it
+  becomes part of the template scope, readable as `this.entity_id`. So a button
+  written that way looks configured and acts on the humidifier instead.
+- **`{entity_id}` substitution applies here too.** `state: entity:
+  switch.{entity_id}_heater` becomes `switch.bedroom_heater` for a card whose
+  entity is `humidifier.bedroom`, which is how the bundled models reach the
+  entities their integrations create. Since the card names any entity it cannot
+  find in the browser console, a name that comes out wrong says so rather than
+  leaving a button quietly missing.
