@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import localize from '../src/localize/localize';
+import en from '../src/localize/languages/en.json';
+import ru from '../src/localize/languages/ru.json';
+import uk from '../src/localize/languages/uk.json';
+
+const LANGUAGES = { en, ru, uk };
 
 describe('localize', () => {
   it('resolves a dotted path in the requested language', () => {
@@ -41,5 +46,40 @@ describe('localize', () => {
 
   it('falls back for a path that walks through a string', () => {
     expect(localize('zhimi_humidifier_cb1.mode.auto.deeper', 'en')).toBe('unknown');
+  });
+});
+
+describe('the bundled language files', () => {
+  // They are written by hand, one per language, and nothing in lint, typecheck
+  // or format:check notices a key that only one of them has: a missing
+  // property is still valid JSON. They had already drifted by the time this
+  // was written - `zhimi_airfresh_va2.mode.silent` existed in Russian alone,
+  // so that mode read as "Ночной" in one language and fell back in the other
+  // two. #227.
+  const paths = (value, prefix = '', found = []) => {
+    for (const [key, nested] of Object.entries(value)) {
+      const path = prefix ? `${prefix}.${key}` : key;
+
+      if (nested && typeof nested === 'object' && !Array.isArray(nested))
+        paths(nested, path, found);
+      else found.push(path);
+    }
+
+    return found;
+  };
+
+  const keys = language => new Set(paths(LANGUAGES[language]));
+
+  it('describe the same set of keys', () => {
+    const [first, ...rest] = Object.keys(LANGUAGES);
+
+    for (const language of rest) {
+      // Named both ways round, because "en is missing a key ru has" and "ru
+      // carries a key en does not" send whoever reads the failure to different
+      // files.
+      expect({ [language]: [...keys(language)].sort() }).toEqual({
+        [language]: [...keys(first)].sort(),
+      });
+    }
   });
 });
