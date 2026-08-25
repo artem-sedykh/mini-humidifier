@@ -135,7 +135,12 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRFRESH_VA2 = () => ({
       hide: false,
       order: 1,
       source: {
-        __init: entity => entity.attributes.preset_modes.map(mode => ({ id: mode, name: mode })),
+        // `|| []` for the same reason the default preset guards its `mode`
+        // read: a device that reports no preset modes would throw here, and a
+        // throw inside a component's render empties that component instead of
+        // saying anything. An empty dropdown is the honest answer.
+        __init: entity =>
+          (entity.attributes.preset_modes || []).map(mode => ({ id: mode, name: mode })),
       },
       active: (state, entity) => entity.state !== 'off',
       disabled: (state, entity) => entity.attributes.depth === 0,

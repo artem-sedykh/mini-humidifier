@@ -25,8 +25,13 @@ const DEERMA_HUMIDIFIER_JSQ = () => ({
     hide: false,
     hide_indicator: false,
     disabled: (state, entity, humidifier) => {
-      const mode = humidifier.attributes.mode.toUpperCase();
-      return mode !== 'HUMIDITY';
+      // No modes, nothing to gate on - and an unguarded read here empties the
+      // target humidity control rather than reporting anything. Same as the
+      // default preset, see #70.
+      const { mode } = humidifier.attributes;
+      if (!mode) return false;
+
+      return mode.toUpperCase() !== 'HUMIDITY';
     },
     state: {
       attribute: 'humidity',
