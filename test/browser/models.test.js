@@ -40,6 +40,14 @@ describe('every model in the registry', () => {
 
       expect(card.shadowRoot.querySelector('ha-card')).to.exist;
 
+      // `none` brings no controls at all - that is the whole of it (#186), so
+      // its `mh-indicators` and `mh-buttons` are empty by design. They are also
+      // zero pixels high, measured, so nothing is left holding space on the
+      // card. What still matters for it is the assertion above, that it renders
+      // at all: that is what caught `renderSecondaryInfo` reaching for a `mode`
+      // button which a configuration without one does not have.
+      if (model === 'none') return;
+
       for (const component of components(card)) {
         expect(component.shadowRoot.childElementCount, component.localName).to.be.greaterThan(0);
       }

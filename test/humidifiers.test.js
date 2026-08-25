@@ -6,6 +6,13 @@ const INTEGRATIONS = ['xiaomi_miio_airpurifier'];
 
 const entries = Object.entries(HUMIDIFIERS);
 
+// `none` is in the registry but is not a device: it is the empty preset, for a
+// card that writes out its own controls (#186). Every assertion below about
+// what a configuration must contain is an assertion about describing a
+// humidifier, and none of them applies to it - so it is held apart rather than
+// letting the checks be weakened for everybody.
+const devices = entries.filter(([id]) => id !== 'none');
+
 describe('the model registry', () => {
   it('is not empty', () => {
     expect(entries.length).toBeGreaterThan(1);
@@ -15,7 +22,7 @@ describe('the model registry', () => {
     expect(HUMIDIFIERS.default).toBe(HUMIDIFIERS['zhimi.humidifier.cb1']);
   });
 
-  it.each(entries)('%s returns the four configuration sections', (id, factory) => {
+  it.each(devices)('%s returns the four configuration sections', (id, factory) => {
     expect(factory).toBeTypeOf('function');
 
     const configuration = factory();
@@ -37,11 +44,35 @@ describe('the model registry', () => {
     expect(factory().indicators).not.toBe(factory().indicators);
   });
 
-  it.each(entries)('%s can act on the device', (id, factory) => {
+  it.each(devices)('%s can act on the device', (id, factory) => {
     const { power, target_humidity: targetHumidity } = factory();
 
     expect(power.toggle_action).toBeTypeOf('function');
     expect(targetHumidity.change_action).toBeTypeOf('function');
+  });
+
+  describe('the blank preset', () => {
+    it('brings no controls at all', () => {
+      const configuration = HUMIDIFIERS.none();
+
+      expect(Object.keys(configuration.indicators)).toEqual([]);
+      expect(Object.keys(configuration.buttons)).toEqual([]);
+    });
+
+    it('hides the two controls that are not lists', () => {
+      // `power` and `target_humidity` are single controls rather than
+      // collections, so there is no empty version of them - they are hidden.
+      // A card that wants either says `hide: false`, which is the price of
+      // starting from nothing and is what docs/models.md shows.
+      const configuration = HUMIDIFIERS.none();
+
+      expect(configuration.power.hide).toBe(true);
+      expect(configuration.target_humidity.hide).toBe(true);
+    });
+
+    it('is still a fresh object every time', () => {
+      expect(HUMIDIFIERS.none()).not.toBe(HUMIDIFIERS.none());
+    });
   });
 
   it('files third-party models under a known integration prefix', () => {
