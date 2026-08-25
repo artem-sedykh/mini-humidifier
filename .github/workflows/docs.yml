@@ -36,9 +36,14 @@ permissions:
 # same Pages deployment. The newer commit is the one worth publishing, but not
 # at the cost of cancelling a deploy half way through - hence no
 # `cancel-in-progress`.
+# Deploys queue behind each other - the newer commit is worth publishing, but
+# not at the cost of cancelling a deploy half way through. Pull requests get a
+# group of their own per branch and do cancel, because a superseded preview
+# build is worth nothing: with one shared group, a second push to a pull
+# request evicted the first run while it was still queued.
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: pages-${{ github.event_name == 'push' && 'master' || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
@@ -61,7 +66,7 @@ jobs:
       # The model is ~100 MB and never changes between runs; downloading it on
       # every build would dominate the job.
       - name: Cache the translation model
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.local/share/argos-translate
           key: argos-en-ru-v1
@@ -70,7 +75,7 @@ jobs:
       # a build that changes one page re-translates that page and reuses the
       # rest. `restore-keys` is what makes a partial hit possible at all.
       - name: Cache the translations
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .cache/translations
           key: translations-ru-${{ hashFiles('docs/*.md', 'README.md') }}
@@ -102,7 +107,7 @@ jobs:
             else
               echo 'No translation was produced - the site falls back to English.'
             fi
-          } >> "$GITHUB_STEP_SUMMARY"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Build
         run: mkdocs build --strict
