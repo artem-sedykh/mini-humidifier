@@ -6,7 +6,7 @@ import { styleMap } from 'lit/directives/style-map.js';
 import style from './style';
 import sharedStyle from './sharedStyle';
 import handleClick from './utils/handleClick';
-import { compileTemplate, toggleState } from './utils/utils';
+import buildCardConfig from './config/buildConfig';
 import validateConfig from './utils/validateConfig';
 import configForm from './configForm';
 import { ICON, SUPPORTED_DOMAINS } from './const';
@@ -19,15 +19,13 @@ import getLabel from './utils/getLabel';
 import './initialize';
 import HUMIDIFIERS from './humidifiers';
 import localize from './localize/localize';
+import type { TemplateRuntime } from './config/buildConfig';
 import type {
-  ButtonConfig,
   CardConfig,
   HassEntity,
   HomeAssistant,
-  IndicatorConfig,
   ModelConfiguration,
   RawCardConfig,
-  TargetHumidityConfig,
 } from './types';
 import './components/targetHumidity';
 import './components/power';
@@ -299,293 +297,6 @@ class MiniHumidifier extends LitElement {
     }
   }
 
-  getIndicatorConfig(key: string, value: any, config: RawCardConfig): IndicatorConfig {
-    const item = {
-      id: key,
-      // This used to seed three keys, all `undefined`, and one of them was
-      // spelled `enitity`. Nothing read any of them: an indicator that names no
-      // source of its own falls back to the card's entity where the entity id
-      // is resolved, and an absent `attribute` reads the entity's state. The
-      // object only has to exist at all, so that `item.source.mapper` below is
-      // safe to reach through. Empty says exactly that and cannot be
-      // misspelled - `Source` in `types.ts` is where the shape is described.
-      source: {},
-      icon: '',
-      ...value,
-    };
-
-    if (typeof value.tap_action === 'string') item.tap_action = { action: value.tap_action };
-    else item.tap_action = { action: 'none', ...(item.tap_action || {}) };
-
-    item.functions = item.functions || {};
-    const context = { ...value };
-    context.entity_config = config;
-    context.toggle_state = toggleState;
-
-    context.localize = (str: string, fallback?: string) => {
-      const lang = this.hass.selectedLanguage || this.hass.language || 'en';
-      return localize(str, lang, fallback);
-    };
-
-    const where = `indicators.${key}`;
-
-    if (item.source.mapper) {
-      item.functions.mapper = compileTemplate(
-        item.source.mapper,
-        context,
-        `${where}.source.mapper`,
-      );
-    }
-
-    if (typeof item.icon === 'object') {
-      item.functions.icon = {};
-
-      if (item.icon.template)
-        item.functions.icon.template = compileTemplate(
-          item.icon.template,
-          context,
-          `${where}.icon.template`,
-        );
-
-      if (item.icon.style)
-        item.functions.icon.style = compileTemplate(
-          item.icon.style,
-          context,
-          `${where}.icon.style`,
-        );
-    }
-
-    if (typeof item.unit === 'object') {
-      item.functions.unit = {};
-
-      if (item.unit.template)
-        item.functions.unit.template = compileTemplate(
-          item.unit.template,
-          context,
-          `${where}.unit.template`,
-        );
-    }
-
-    // The reading's own styling, beside the icon's (#213). Two options rather
-    // than one on purpose: an icon style here is geometry as much as colour -
-    // the AQI indicator of `zhimi.airpurifier.ma2` sets `--mdc-icon-size` and a
-    // margin in it - so widening the existing one to cover the value would
-    // resize and shift what it lands on.
-    if (typeof item.value === 'object') {
-      item.functions.value = {};
-
-      if (item.value.style)
-        item.functions.value.style = compileTemplate(
-          item.value.style,
-          context,
-          `${where}.value.style`,
-        );
-    }
-
-    return item;
-  }
-
-  getIndicatorsConfig(config: RawCardConfig, indicatorsConfig: any): IndicatorConfig[] {
-    const defaultIndicators = indicatorsConfig || {};
-
-    const data = Object.entries(config.indicators || {});
-
-    for (let i = 0; i < data.length; i += 1) {
-      const key = data[i][0];
-      const value = data[i][1] || {};
-
-      defaultIndicators[key] = { ...(defaultIndicators[key] || {}), ...value };
-    }
-
-    return Object.entries(defaultIndicators)
-      .map((entry, i) => {
-        const indicator = this.getIndicatorConfig(entry[0], entry[1], config);
-
-        // Same rule as the buttons: an indicator the configuration does not
-        // number takes its position. Without it the sort in `mh-indicators`
-        // would compare against `undefined` and leave the order to chance.
-        if (!('order' in indicator)) indicator.order = i;
-
-        return indicator;
-      })
-      .filter(i => !i.hide);
-  }
-
-  getButtonConfig(value: any, config: RawCardConfig, where: string): ButtonConfig {
-    const item = {
-      icon: 'mdi:radiobox-marked',
-      type: 'button',
-      toggle_action: undefined,
-      ...value,
-    };
-
-    item.functions = {};
-
-    const context = { ...value };
-    context.call_service = (domain: string, service: string, options: Record<string, unknown>) =>
-      this.hass.callService(domain, service, options);
-    context.entity_config = config;
-    context.toggle_state = toggleState;
-
-    context.localize = (str: string, fallback?: string) => {
-      const lang = this.hass.selectedLanguage || this.hass.language || 'en';
-      return localize(str, lang, fallback);
-    };
-
-    if (item.disabled) {
-      item.functions.disabled = compileTemplate(item.disabled, context, `${where}.disabled`);
-    }
-
-    if (item.state && item.state.mapper) {
-      item.functions.state = {
-        mapper: compileTemplate(item.state.mapper, context, `${where}.state.mapper`),
-      };
-    }
-
-    if (item.active) {
-      item.functions.active = compileTemplate(item.active, context, `${where}.active`);
-    }
-
-    if (item.source && item.source.__init) {
-      item.functions.source = {
-        __init: compileTemplate(item.source.__init, context, `${where}.source.__init`),
-      };
-    }
-
-    if (item.source && item.source.__filter) {
-      item.functions.source = item.functions.source || {};
-      item.functions.source.filter = compileTemplate(
-        item.source.__filter,
-        context,
-        `${where}.source.__filter`,
-      );
-    }
-
-    if (item.toggle_action) {
-      item.functions.toggle_action = compileTemplate(
-        item.toggle_action,
-        context,
-        `${where}.toggle_action`,
-      );
-    }
-
-    if (item.change_action) {
-      item.functions.change_action = compileTemplate(
-        item.change_action,
-        context,
-        `${where}.change_action`,
-      );
-    }
-
-    if (item.style) item.functions.style = compileTemplate(item.style, context, `${where}.style`);
-
-    return item;
-  }
-
-  getButtonsConfig(config: RawCardConfig, buttonsConfig: any): ButtonConfig[] {
-    const defaultButtonsConfig = { ...(buttonsConfig || {}) };
-
-    const entries = Object.entries(config.buttons || {});
-
-    for (let i = 0; i < entries.length; i += 1) {
-      const key = entries[i][0];
-      const value = entries[i][1] || {};
-
-      defaultButtonsConfig[key] = { ...(defaultButtonsConfig[key] || {}), ...value };
-    }
-
-    const data = Object.entries(defaultButtonsConfig);
-
-    const buttons = [];
-
-    for (let i = 0; i < data.length; i += 1) {
-      const key = data[i][0];
-      const value = data[i][1];
-      const button = this.getButtonConfig(value, config, `buttons.${key}`);
-      button.id = key;
-
-      if (!('order' in button)) button.order = i + 1;
-
-      buttons.push(button);
-    }
-
-    return buttons;
-  }
-
-  getTargetHumidityConfig(config: RawCardConfig, targetHumidityConfig: any): TargetHumidityConfig {
-    const item = {
-      ...(targetHumidityConfig || {}),
-      ...(config.target_humidity || {}),
-    };
-
-    item.functions = { icon: {} };
-    const context = { ...(config.target_humidity || {}) };
-    context.call_service = (domain: string, service: string, options: Record<string, unknown>) =>
-      this.hass.callService(domain, service, options);
-    context.entity_config = config;
-    context.toggle_state = toggleState;
-
-    context.localize = (str: string, fallback?: string) => {
-      const lang = this.hass.selectedLanguage || this.hass.language || 'en';
-      return localize(str, lang, fallback);
-    };
-
-    if (item.disabled) {
-      item.functions.disabled = compileTemplate(item.disabled, context, 'target_humidity.disabled');
-    }
-
-    if (typeof item.icon === 'object') {
-      if (item.icon.template)
-        item.functions.icon.template = compileTemplate(
-          item.icon.template,
-          context,
-          'target_humidity.icon.template',
-        );
-
-      if (item.icon.style)
-        item.functions.icon.style = compileTemplate(
-          item.icon.style,
-          context,
-          'target_humidity.icon.style',
-        );
-    }
-
-    if (item.change_action) {
-      item.functions.change_action = compileTemplate(
-        item.change_action,
-        context,
-        'target_humidity.change_action',
-      );
-    }
-
-    if (item.state && item.state.mapper) {
-      item.functions.state = {
-        mapper: compileTemplate(item.state.mapper, context, 'target_humidity.state.mapper'),
-      };
-    }
-
-    if (typeof item.unit === 'object') {
-      item.functions.unit = {};
-
-      if (item.unit.template)
-        item.functions.unit.template = compileTemplate(
-          item.unit.template,
-          context,
-          'target_humidity.unit.template',
-        );
-    }
-
-    return item;
-  }
-
-  getPowerConfig(config: RawCardConfig, powerConfig: any): ButtonConfig {
-    return this.getButtonConfig(
-      { ...(powerConfig || {}), ...(config.power || {}) },
-      config,
-      'power',
-    );
-  }
-
   setConfig(config: RawCardConfig) {
     // A new configuration is a new chance to be told what it leaves out.
     this.warned = new Set();
@@ -637,61 +348,28 @@ class MiniHumidifier extends LitElement {
 
     const modelConfiguration: ModelConfiguration = (bundled ?? HUMIDIFIERS.default)();
 
-    // The sections below are filled in immediately after, which is what makes
-    // this a `CardConfig` rather than the YAML it starts as.
-    this.config = {
-      model: 'zhimi.humidifier.cb1',
-      tap_action: {
-        action: 'more-info',
-        navigation_path: '',
-        url: '',
-        entity: '',
-        service: '',
-        service_data: {},
-      },
-      ...config,
-      // Not a `CardConfig` yet: every section below is replaced with its
-      // resolved form in the statements that follow, and only then is it one.
-    } as unknown as CardConfig;
-
-    // `tap_action: none` is documented, and a bare string is how people write
-    // it - but written that way it replaced the default object wholesale and
-    // nothing downstream understood it. `handleClick` returns early on a
-    // string, so `tap_action: more-info` was a dead click; `computeClasses`
-    // compared against the string `'none'`, so the object form of "do nothing"
-    // - which is what Home Assistant's own editors write - still drew the card
-    // as clickable. Indicators have never had either problem, because
-    // `getIndicatorConfig` normalises there. This is the same line, in the one
-    // place it was missing (#206).
-    if (typeof config.tap_action === 'string') {
-      this.config.tap_action = { action: config.tap_action };
-    }
-
-    this.config.toggle = {
-      icon: ICON.TOGGLE,
-      hide: false,
-      default: false,
-      ...(config.toggle || {}),
-    };
-
-    this.config.power = this.getPowerConfig(config, modelConfiguration.power);
-    this.config.target_humidity = this.getTargetHumidityConfig(
-      config,
-      modelConfiguration.target_humidity,
-    );
-    this.config.indicators = this.getIndicatorsConfig(config, modelConfiguration.indicators);
-    this.config.buttons = this.getButtonsConfig(config, modelConfiguration.buttons);
-
-    if (typeof config.secondary_info === 'string') {
-      this.config.secondary_info = { type: config.secondary_info };
-    } else {
-      this.config.secondary_info = {
-        type: 'mode',
-        ...(config.secondary_info || {}),
-      };
-    }
+    this.config = buildCardConfig(config, modelConfiguration, this.templateRuntime());
 
     this.toggle = this.config.toggle.default;
+  }
+
+  /**
+   * The two things a template can reach for at call time, handed to the merge
+   * layer so that it needs nothing else from the element (#233).
+   *
+   * Both read `this.hass` when the template runs rather than when it compiles,
+   * which is the whole reason they are functions: `setConfig` is called before
+   * the card has a `hass` at all, and `hass` is replaced on every state change
+   * in the installation afterwards. Built once per configuration - the three
+   * identical copies this replaces were built once per section.
+   */
+  templateRuntime(): TemplateRuntime {
+    return {
+      callService: (domain: string, service: string, options: Record<string, unknown>) =>
+        this.hass.callService(domain, service, options),
+      localize: (str: string, fallback?: string) =>
+        localize(str, this.hass.selectedLanguage || this.hass.language || 'en', fallback),
+    };
   }
 
   override render() {

@@ -51,15 +51,16 @@ export default defineConfig({
       // rises; the only reason to lower one is code being deleted, and that
       // belongs in the commit message.
       //
-      // `main.ts` is what holds the total here. It is two things in one file -
-      // configuration merging, which the unit tests cover, and the render,
-      // which only the browser layer reaches - and coverage cannot tell them
-      // apart.
+      // `main.ts` is what holds the total down, and since #233 that number
+      // finally means something: what is left in it is the element and the
+      // render, which only the browser layer reaches. The merge it used to
+      // carry is `src/config/buildConfig.ts`, and being a pure function of its
+      // arguments it sits at 100% of lines without a DOM anywhere.
       thresholds: {
-        statements: 85,
-        branches: 77,
-        functions: 73,
-        lines: 87,
+        statements: 87,
+        branches: 79,
+        functions: 75,
+        lines: 89,
       },
     },
   },
