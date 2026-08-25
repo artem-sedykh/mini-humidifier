@@ -17,6 +17,7 @@ integration:
 
 | `model:` | |
 |---|---|
+| `humidifier` | any `humidifier` entity, built on the domain rather than on a device - see below |
 | `none` | no controls at all, for a card that describes its own - see below |
 | `zhimi.humidifier.cb1` | the default, used when `model:` is left out |
 | `zhimi.humidifier.ca1` | |
@@ -43,7 +44,43 @@ integration, which reports different attributes and calls different services:
 ## A device that is not in the list
 
 There are more humidifiers than this card ships configurations for, and that is
-the normal case rather than a gap to apologise for. Two ways to configure one.
+the normal case rather than a gap to apologise for. Three ways to configure one.
+
+### `model: humidifier` - start from the domain
+
+The preset for a plain Home Assistant humidifier: a
+[generic_hygrostat](https://www.home-assistant.io/integrations/generic_hygrostat/),
+an [MQTT humidifier](https://www.home-assistant.io/integrations/humidifier.mqtt/),
+a dehumidifier on a smart switch, anything else that is a `humidifier` entity
+and nothing more.
+
+```yaml
+type: custom:mini-humidifier
+entity: humidifier.basement_dehumidifier
+model: humidifier
+```
+
+That is the whole configuration. It is built on what Home Assistant guarantees
+for the domain and on nothing else:
+
+| What | Where it comes from |
+|---|---|
+| power | `humidifier.turn_on` / `humidifier.turn_off` |
+| target humidity | the `humidity` attribute, set with `humidifier.set_humidity` |
+| the slider's range | the `min_humidity` and `max_humidity` attributes |
+| the reading under the name | the `current_humidity` attribute |
+| modes | `available_modes`, set with `humidifier.set_mode`, disabled when the device reports none |
+
+Anything the device has beyond the domain - a night light, a buzzer, an
+external humidity sensor, a filter reading - is added in YAML on top, the same
+way it would be on any other model. What this preset deliberately does not do is
+guess: no LED, buzzer, child lock or water level, because those belong to
+particular integrations rather than to the domain, and a preset that assumes
+them calls services the device does not have.
+
+Reach for it whenever the device is not in the table above and is a `humidifier`
+entity. For a device exposed as `fan`, or one close to a bundled model, the two
+options below still apply.
 
 ### `model: none` - start from nothing
 

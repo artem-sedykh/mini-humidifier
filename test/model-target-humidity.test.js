@@ -29,6 +29,33 @@ describe('TargetHumidityObject', () => {
     expect([model.min, model.max, model.step]).toEqual([30, 80, 10]);
   });
 
+  it('falls back to the range the entity reports', () => {
+    // A preset written for the `humidifier` domain rather than for a device
+    // cannot name a range - every entity carries its own, and a
+    // generic_hygrostat set to 20-60 has nothing to do with the 30-80 of a
+    // Xiaomi. #207.
+    const model = targetHumidity({}, { humidity: 50, min_humidity: 20, max_humidity: 60 });
+
+    expect([model.min, model.max]).toEqual([20, 60]);
+  });
+
+  it('lets a configured range win over the one the entity reports', () => {
+    const model = targetHumidity(
+      { min: 30, max: 80 },
+      { humidity: 50, min_humidity: 20, max_humidity: 60 },
+    );
+
+    expect([model.min, model.max]).toEqual([30, 80]);
+  });
+
+  it('leaves the bounds to the component when neither says', () => {
+    // Undefined rather than a number of its own: `mh-target-humidity` falls
+    // back to 0-100, and that decision stays in one place.
+    const model = targetHumidity({});
+
+    expect([model.min, model.max]).toEqual([undefined, undefined]);
+  });
+
   describe('value', () => {
     it('is the named attribute', () => {
       expect(targetHumidity({ state: { attribute: 'humidity' } }).value).toBe(50);

@@ -16,12 +16,30 @@ export default class TargetHumidityObject {
     this.humidifier = humidifier;
   }
 
+  // The bounds, and where they come from when the configuration is silent.
+  //
+  // A preset written for one device names them, because it knows them. A
+  // preset written for a domain cannot: `humidifier` entities carry their own
+  // range, and a generic_hygrostat set to 20-60 has nothing to do with the
+  // 30-80 of a Xiaomi. Home Assistant's own humidifier card reads these two
+  // attributes for exactly this reason.
+  //
+  // Only as a fallback: a number in the configuration is the user's or the
+  // preset's word on the matter and wins. When neither says anything and the
+  // device does not report a range either, the slider falls back to 0-100 in
+  // the component, as it always has.
   get min(): number | undefined {
-    return this.config.target_humidity.min;
+    const { min } = this.config.target_humidity;
+    if (typeof min === 'number') return min;
+
+    return this.humidifier.entity?.attributes?.min_humidity;
   }
 
   get max(): number | undefined {
-    return this.config.target_humidity.max;
+    const { max } = this.config.target_humidity;
+    if (typeof max === 'number') return max;
+
+    return this.humidifier.entity?.attributes?.max_humidity;
   }
 
   get step(): number | undefined {
