@@ -87,7 +87,7 @@ npm run lint       # eslint
 npm run format     # prettier --write
 npm run typecheck  # tsc --noEmit over src, both languages
 npm test           # vitest, the unit tests under test/
-npm run test:browser  # @web/test-runner, the component tests in Chromium
+npm run test:browser  # @web/test-runner, the component tests in Chromium and WebKit
 npm run rollup     # bundle src/main.ts -> dist/mini-humidifier-bundle.js
 npm run check:bundle  # assertions on the built bundle (needs a build first)
 npm run dev        # the same as rollup, unminified
@@ -101,8 +101,8 @@ Node version comes from `.nvmrc`. Use it; CI reads the same file.
 which is what you want while debugging in the browser. The difference is large -
 89 KB against 264 KB - so never publish a dev build.
 
-`npm run test:browser` needs a browser to run: `npx playwright install
-chromium` once, which is what CI does on every run.
+`npm run test:browser` needs browsers to run: `npx playwright install chromium
+webkit` once, which is what CI does on every run.
 
 The tests cover the build output, the pure logic, and the card as a browser
 renders it against stand-ins for the Home Assistant elements. What they cannot
@@ -142,7 +142,10 @@ configuration merging in `main.ts`. The merging tests need a DOM to construct th
 nothing renders.
 
 **`npm run test:browser`** - `@web/test-runner` over `test/browser/`, in
-Chromium, driven by playwright. This is the layer that renders the card: it
+Chromium **and WebKit**, driven by playwright. Every test runs in both: Home
+Assistant's companion app on iOS renders in WKWebView, and until #180 nothing
+had ever run this card in a second engine. This is the layer that renders the
+card: it
 mounts `<mini-humidifier>` with a `hass` of its own and asserts on what comes
 out of the shadow roots. What it covers, and why each one is there:
 
@@ -252,7 +255,7 @@ src/
   style.js           card styles
   sharedStyle.js     styles shared with the sub-elements
 test/                vitest unit tests, one file per unit under test
-  browser/           component tests, run in Chromium by @web/test-runner
+  browser/           component tests, run in Chromium and WebKit by @web/test-runner
     helpers/         the fake hass and the Home Assistant element stand-ins
 scripts/             build-time checks that are not part of the bundle
 ```

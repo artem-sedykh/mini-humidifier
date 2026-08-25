@@ -41,5 +41,24 @@ export default {
   // it in Home Assistant. Until #166 this file had to load
   // @webcomponents/scoped-custom-element-registry, without which the card
   // mounted as an empty shell.
-  browsers: [playwrightLauncher({ product: 'chromium' })],
+  //
+  // Two engines, not one. Home Assistant's companion app on iOS renders in
+  // WKWebView and desktop Safari is a real share of the audience, so WebKit is
+  // a place this card actually runs - and nothing had ever run it there. It is
+  // also the only second engine a CI runner can install, which makes it the
+  // cheapest evidence available that the card is not written against Blink's
+  // particular behaviour. See #180.
+  //
+  // Two things this does not buy, so that nobody assumes otherwise later:
+  //
+  // - it says nothing about #72. The Android WebView is Chromium.
+  // - it does not cover the dropdown's no-popover path. Both engines have the
+  //   popover API, and taking `showPopover` away does not simulate one that
+  //   does not: the menu still carries `popover="manual"`, which the same
+  //   engine still honours, so it comes out `display: none` and 0 by 0.
+  //   Measured, in both. That branch is unreachable from here.
+  browsers: [
+    playwrightLauncher({ product: 'chromium' }),
+    playwrightLauncher({ product: 'webkit' }),
+  ],
 };
