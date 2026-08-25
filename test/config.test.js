@@ -237,6 +237,20 @@ describe('getIndicatorsConfig', () => {
     expect(indicator(element, 'power').source.entity).toBe('sensor.power');
   });
 
+  it('gives an indicator with no source of its own an empty one', () => {
+    // Not decoration. `updateIndicators` reads `config.source.entity` to decide
+    // which entity the indicator watches, and falls back to the card's own when
+    // there is none - so the object has to exist even when the configuration
+    // never mentioned it, or that read throws. Until #187 it was seeded with
+    // three keys that were all `undefined` and one of which was spelled
+    // `enitity`; what mattered was only that something was there.
+    const own = indicator(card({ indicators: { plain: { icon: 'mdi:flash' } } }), 'plain');
+
+    expect(own.source).toBeTypeOf('object');
+    expect(own.source.entity).toBeUndefined();
+    expect(own.source.attribute).toBeUndefined();
+  });
+
   it('normalises a tap_action written as a string', () => {
     const element = card({ indicators: { humidity: { tap_action: 'more-info' } } });
 

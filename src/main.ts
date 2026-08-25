@@ -238,7 +238,14 @@ class MiniHumidifier extends LitElement {
   getIndicatorConfig(key: string, value: any, config: RawCardConfig): IndicatorConfig {
     const item = {
       id: key,
-      source: { enitity: undefined, attribute: undefined, mapper: undefined },
+      // This used to seed three keys, all `undefined`, and one of them was
+      // spelled `enitity`. Nothing read any of them: an indicator that names no
+      // source of its own falls back to the card's entity where the entity id
+      // is resolved, and an absent `attribute` reads the entity's state. The
+      // object only has to exist at all, so that `item.source.mapper` below is
+      // safe to reach through. Empty says exactly that and cannot be
+      // misspelled - `Source` in `types.ts` is where the shape is described.
+      source: {},
       icon: '',
       ...value,
     };
