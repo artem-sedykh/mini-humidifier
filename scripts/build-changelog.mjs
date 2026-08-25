@@ -31,13 +31,40 @@ const releases = 'https://github.com/artem-sedykh/mini-humidifier/releases/tag';
 
 const VERSION = /^v(\d+)\.(\d+)\.(\d+)\.md$/;
 
+// The version this repository is at. Notes for anything beyond it are a draft
+// for a release that has not happened - written early so the work is not
+// forgotten, which is what `release_notes/` is for - and a changelog is a list
+// of releases. Including them would link to a tag that does not exist yet.
+//
+// `release-prepare.yml` bumps this and rebuilds the changelog in one commit, so
+// a version joins the list exactly when it becomes one.
+const released = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'))
+  .version.replace(/^v/, '')
+  .split('.')
+  .map(Number);
+
+const isReleased = parts => {
+  for (let i = 0; i < 3; i += 1) {
+    if (parts[i] !== released[i]) return parts[i] < released[i];
+  }
+  return true;
+};
+
 const versions = readdirSync(notesDir)
   .map(file => ({ file, match: VERSION.exec(file) }))
   .filter(entry => {
-    if (entry.match) return true;
-    // Anything else is either a pre-release (`v2.5.3.beta.1` has a tag but no
-    // notes) or a mistake. Say so rather than dropping it in silence.
-    if (entry.file.endsWith('.md')) console.warn(`Skipping ${entry.file}: not vMAJOR.MINOR.PATCH`);
+    if (!entry.match) {
+      // Anything else is either a pre-release (`v2.5.3.beta.1` has a tag but no
+      // notes) or a mistake. Say so rather than dropping it in silence.
+      if (entry.file.endsWith('.md'))
+        console.warn(`Skipping ${entry.file}: not vMAJOR.MINOR.PATCH`);
+      return false;
+    }
+
+    const parts = [1, 2, 3].map(i => Number(entry.match[i]));
+    if (isReleased(parts)) return true;
+
+    console.warn(`Skipping ${entry.file}: ahead of package.json, not released yet`);
     return false;
   })
   // Newest first, and by number rather than by name: sorted as strings,
