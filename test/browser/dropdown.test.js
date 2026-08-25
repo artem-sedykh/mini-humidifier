@@ -202,6 +202,45 @@ describe('the dropdown menu', () => {
     expect(focused(element)).to.equal('high');
   });
 
+  it('stays usable when the browser refuses to show it as a popover', async () => {
+    // `popover="manual"` is on the menu from the moment it renders, and an
+    // engine that honours the attribute keeps such an element `display: none`
+    // until `showPopover` puts it in the top layer. So a refused call does not
+    // leave the menu un-layered, it leaves it invisible - and an uncaught throw
+    // took the positioning and the dismissal handlers with it.
+    //
+    // Both halves are asserted here: that the menu can still be seen, and that
+    // escape still closes it.
+    const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'showPopover');
+    Object.defineProperty(HTMLElement.prototype, 'showPopover', {
+      configurable: true,
+      writable: true,
+      value() {
+        throw new DOMException('refused', 'InvalidStateError');
+      },
+    });
+
+    try {
+      const { card } = await mountCard();
+      const { base: element } = await openDropdown(card, 'mode');
+      const menu = element.shadowRoot.getElementById('menu');
+      const anchor = element.shadowRoot.querySelector('ha-icon-button').getBoundingClientRect();
+      const box = menu.getBoundingClientRect();
+
+      expect(menu.hasAttribute('popover'), 'kept claiming to be a popover').to.be.false;
+      expect(box.width, 'the menu was not visible').to.be.greaterThan(0);
+      expect(Math.round(box.right)).to.equal(Math.round(anchor.right));
+
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+      await element.updateComplete;
+
+      expect(values(element), 'escape did not close it').to.be.empty;
+    } finally {
+      if (original) Object.defineProperty(HTMLElement.prototype, 'showPopover', original);
+      else delete HTMLElement.prototype.showPopover;
+    }
+  });
+
   it('opens with its right edge on the button', async () => {
     // The card clips its own overflow, so the menu is positioned by hand
     // against the button rather than laid out under it.

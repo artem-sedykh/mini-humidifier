@@ -196,12 +196,40 @@ export default class HumidifierDropdownBase extends LitElement {
     const { menu } = this;
     if (!menu) return;
 
-    if (menu.showPopover) menu.showPopover();
+    this.showAsPopover(menu);
     this.position();
     this.startListening();
 
     const option = this.options[this.selectedId] || this.options[0];
     if (option) option.focus();
+  }
+
+  // The top layer, where the browser offers it. It is worth having because a
+  // dashboard being edited puts a transformed ancestor above this menu, and a
+  // transformed ancestor is what `position: fixed` cannot escape.
+  //
+  // The care here is about the failure, not the feature. `popover="manual"` is
+  // on the menu from the moment it renders, and in an engine that honours the
+  // attribute an element carrying it is `display: none` until `showPopover`
+  // puts it in the top layer. So a call that does not land does not leave the
+  // menu merely un-layered - it leaves it invisible, with the hand positioning
+  // underneath unable to help. `showPopover` can refuse: it throws on an
+  // element that is already showing, and engines have refused it in other
+  // states.
+  //
+  // An engine that has never heard of the attribute needs none of this - an
+  // unknown attribute is inert, and the menu is an ordinary fixed box. It is
+  // the half-way case this guards.
+  showAsPopover(menu: HTMLElement) {
+    if (!menu.showPopover) return;
+
+    try {
+      menu.showPopover();
+    } catch {
+      // Stop claiming to be something the browser just refused to show, and go
+      // back to being the fixed box the stylesheet already describes.
+      menu.removeAttribute('popover');
+    }
   }
 
   position() {

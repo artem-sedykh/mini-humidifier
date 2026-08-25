@@ -443,9 +443,17 @@ obvious:
 - **The menu is positioned by hand.** The card clips its own overflow, so a
   menu that stayed in flow would be cut off. Where the browser has the popover
   API the menu is also put in the top layer, which survives a transformed
-  ancestor - Home Assistant creates one while a dashboard is being edited. The
-  popover call is an enhancement, not a requirement: without it the same fixed
-  coordinates still apply.
+  ancestor - Home Assistant creates one while a dashboard is being edited.
+
+  **It is an enhancement only where the browser has never heard of it**, and
+  that distinction is load-bearing. `popover="manual"` renders with the menu,
+  and an engine that honours the attribute keeps such an element `display: none`
+  until `showPopover` puts it in the top layer - so where the attribute applies
+  and the call does not land, the menu is invisible rather than un-layered, and
+  the hand positioning cannot help. `showPopover` refuses on an element that is
+  already showing, and engines have refused it in other states, so the call is
+  guarded and the attribute is dropped when it fails (#189). An engine with
+  neither needs none of that: an unknown attribute is inert.
 - **Dismissal is the card's own.** `popover="manual"` means no light dismiss
   from the browser, so the component listens for a press outside itself, for
   Escape, and for the page scrolling, and closes on all three. Doing it by hand
