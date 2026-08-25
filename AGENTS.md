@@ -87,6 +87,7 @@ npm run lint       # eslint
 npm run format     # prettier --write
 npm run typecheck  # tsc --noEmit over src, both languages
 npm test           # vitest, the unit tests under test/
+npm run test:coverage # the same, with coverage and its thresholds
 npm run test:browser  # @web/test-runner, the component tests in Chromium and WebKit
 npm run rollup     # bundle src/main.ts -> dist/mini-humidifier-bundle.js
 npm run check:bundle  # assertions on the built bundle (needs a build first)
@@ -141,6 +142,23 @@ configuration merging in `main.ts`. The merging tests need a DOM to construct th
 `test/config.test.js` asks for jsdom with a `@vitest-environment` docblock;
 `setConfig` only reads and merges, and the element is never connected, so
 nothing renders.
+
+`npm run test:coverage` is the same run with `@vitest/coverage-v8` on, and CI
+uses it in place of `npm test`. It measures **the unit layer only**, and what it
+leaves out is the point (`coverage.exclude` in `vitest.config.mjs` carries the
+reasons):
+
+- `src/configurations/**` never executes as written - `compileTemplate` re-parses
+  the source text of every callback with `new Function`, so v8 attributes
+  nothing to those files however well they are covered. The browser layer runs
+  the compiled copies.
+- `src/components/**` render in the browser layer, and under vitest only their
+  import-time code runs.
+
+The thresholds are set to what the suite covers today rather than to a round
+number, so they say "this must not slide" and not "aim here". Raise them when
+coverage rises. `coverage/index.html` after a run is where "which lines" has an
+answer, and the CI job summary carries the four numbers.
 
 **`npm run test:browser`** - `@web/test-runner` over `test/browser/`, in
 Chromium **and WebKit**, driven by playwright. Every test runs in both: Home
