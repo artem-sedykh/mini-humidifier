@@ -11,10 +11,12 @@ instead of breaking it.
 
 Two rules hold it together:
 
-- **Code is never translated.** Fenced blocks, inline code and link targets are
+- **Code is never translated.** Fenced blocks, inline code and whole links are
   lifted out before the text goes anywhere near the translator and put back
   afterwards. A humidifier configuration is copied from these pages verbatim,
   and a translated `source:` key is a configuration that silently does nothing.
+- **Paragraphs, not lines.** These files are hard-wrapped at 80 columns, and a
+  translator handed half a sentence answers with half a thought.
 - **A hand-written translation wins.** If `docs/<page>.<lang>.md` already exists
   in the repository, this leaves it alone. That is the door out of machine
   translation for the pages worth doing properly, and it needs no change here.
@@ -30,6 +32,13 @@ import hashlib
 import re
 import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+# Shared with the site build rather than copied: the breadcrumb pattern and the
+# front-page helper have to agree with what mkdocs does, and two copies of
+# either is exactly the drift this repository keeps finding in its own history.
+from mkdocs_hooks import NAV_LINE, sync_index  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 DOCS = ROOT / 'docs'
@@ -50,7 +59,12 @@ NOTICE = {
 # backticks inside them are already gone by the time the inline pattern runs.
 FENCED = re.compile(r'^```.*?^```', re.MULTILINE | re.DOTALL)
 INLINE_CODE = re.compile(r'`[^`\n]+`')
-LINK_TARGET = re.compile(r'\]\([^)\s]+(?:\s+"[^"]*")?\)')
+# The whole link, not just its target. Hiding `](target)` alone left the
+# brackets going through the translator, and it reordered them:
+# `[Home](../README.md) | [Configuration](configuration.md)` came back as
+# `[Home_0__ | [Configuration](configuration.md) |]`. The link text is
+# translated on its own and put back, so no bracket reaches the engine.
+MD_LINK = re.compile(r'\[([^\]\n]*)\]\(([^)\s]+(?:\s+"[^"]*")?)\)')
 HTML_COMMENT = re.compile(r'<!--.*?-->', re.DOTALL)
 
 # `__0__` rather than anything prettier: it survives the translator intact,
@@ -88,18 +102,34 @@ def slugify(text):
 class Protector:
     """Lifts out what must not be translated, and puts it back."""
 
-    def __init__(self):
+    def __init__(self, translate=None):
         self.kept = []
+        self.translate = translate
+
+    def _keep(self, value):
+        self.kept.append(value)
+        return PLACEHOLDER.format(len(self.kept) - 1)
+
+    def _keep_link(self, match):
+        """A whole link, with its text translated on its own.
+
+        A link that carries code in its text - `[`model: none`](models.md)` -
+        is left alone: the interesting part of it is the code.
+        """
+        text, target = match.groups()
+
+        if self.translate and text.strip() and '`' not in text:
+            text = self.translate(text)
+
+        return self._keep(f'[{text}]({target})')
 
     def hide(self, text):
-        def keep(match):
-            self.kept.append(match.group(0))
-            return PLACEHOLDER.format(len(self.kept) - 1)
+        for pattern in (HTML_COMMENT, FENCED):
+            text = pattern.sub(lambda m: self._keep(m.group(0)), text)
 
-        for pattern in (HTML_COMMENT, FENCED, LINK_TARGET, INLINE_CODE):
-            text = pattern.sub(keep, text)
+        text = MD_LINK.sub(self._keep_link, text)
 
-        return text
+        return INLINE_CODE.sub(lambda m: self._keep(m.group(0)), text)
 
     def restore(self, text):
         def put(match):
@@ -150,53 +180,87 @@ def translate_text(text, translate, protector):
     return protector.restore(translate(hidden))
 
 
-def translate_line(line, translate, protector):
-    """One markdown line, translated with its structure left alone."""
-    heading = HEADING.match(line)
-    if heading:
-        hashes, text = heading.groups()
-        anchor = slugify(text)
-        return f'{hashes} {translate_text(text, translate, protector)} {{ #{anchor} }}'
+def translate_heading(line, translate, protector):
+    """A heading, translated but keeping the anchor its English text had."""
+    hashes, text = HEADING.match(line).groups()
 
-    if line.lstrip().startswith('|'):
-        if TABLE_DIVIDER.match(line.strip()):
-            return line
+    return f'{hashes} {translate_text(text, translate, protector)} {{ #{slugify(text)} }}'
 
-        cells = line.split('|')
-        return '|'.join(
-            cell
-            if not cell.strip()
-            else f' {translate_text(cell.strip(), translate, protector)} '
-            for cell in cells
-        )
 
-    for pattern in (LIST_ITEM, BLOCKQUOTE):
-        match = pattern.match(line)
-        if match:
-            prefix, text = match.groups()
-            if not text.strip():
-                return line
-            return prefix + translate_text(text, translate, protector)
-
-    if not line.strip():
+def translate_row(line, translate, protector):
+    """One table row, cell by cell - a row is not a sentence."""
+    if TABLE_DIVIDER.match(line.strip()):
         return line
 
-    return translate_text(line, translate, protector)
+    return '|'.join(
+        cell if not cell.strip() else f' {translate_text(cell.strip(), translate, protector)} '
+        for cell in line.split('|')
+    )
 
 
 def translate_markdown(text, translate):
-    """Translate a page, leaving fenced blocks exactly as they are."""
-    protector = Protector()
-    hidden = FENCED.sub(
-        lambda m: (protector.kept.append(m.group(0)), PLACEHOLDER.format(len(protector.kept) - 1))[
-            1
-        ],
-        text,
-    )
+    """Translate a page, a paragraph at a time.
 
-    lines = [translate_line(line, translate, protector) for line in hidden.split('\n')]
+    Sentence by sentence would be better still, but paragraph is where the
+    important boundary is: these files are hard-wrapped at 80 columns, and
+    translating line by line handed the engine half a sentence at a time. It
+    answered in kind - "Options marked **object** open a block of their own,
+    documented on the page / the last column points at" came back as two
+    fragments, the second of them ending mid-thought. Joining the lines back
+    into a paragraph first is the whole fix.
+    """
+    protector = Protector(translate)
+    hidden = FENCED.sub(lambda m: protector._keep(m.group(0)), text)
 
-    return protector.restore('\n'.join(lines))
+    out = []
+    pending = None
+
+    def flush():
+        nonlocal pending
+        if pending is None:
+            return
+        prefix, lines = pending
+        pending = None
+        out.append(prefix + translate_text(' '.join(lines), translate, protector))
+
+    for line in hidden.splitlines():
+        stripped = line.strip()
+
+        # A blank line, a heading, a table row or a line that is nothing but a
+        # hidden code block all end whatever was being collected.
+        if not stripped or PLACEHOLDER_RE.fullmatch(stripped):
+            flush()
+            out.append(line)
+            continue
+
+        if HEADING.match(line):
+            flush()
+            out.append(translate_heading(line, translate, protector))
+            continue
+
+        if stripped.startswith('|'):
+            flush()
+            out.append(translate_row(line, translate, protector))
+            continue
+
+        item = LIST_ITEM.match(line) or BLOCKQUOTE.match(line)
+        if item:
+            flush()
+            prefix, rest = item.groups()
+            pending = (prefix, [rest.strip()] if rest.strip() else [])
+            continue
+
+        # Anything else continues what came before - the second line of a
+        # wrapped paragraph, or of a wrapped list item.
+        if pending is not None:
+            pending[1].append(stripped)
+            continue
+
+        pending = ('', [stripped])
+
+    flush()
+
+    return protector.restore('\n'.join(out))
 
 
 def pages():
@@ -204,18 +268,16 @@ def pages():
     return sorted(p for p in DOCS.glob('*.md') if '.' not in p.stem)
 
 
-def sync_index():
-    """Put the front page in place, the same way the site build does.
+def strip_nav_line(text):
+    """Remove the GitHub breadcrumb before translating, not after.
 
-    `docs/index.md` is README.md, written out rather than committed. Calling
-    the build's own helper keeps the two from drifting - a second copy of that
-    logic here is exactly the kind of thing this project keeps finding in its
-    own history.
+    The site build strips it too, by matching `[Home](../README.md) | ...` -
+    but by then the link texts have been translated, `[Home]` reads
+    `[Главная]`, and the pattern no longer matches. The line would survive on
+    the translated pages only. Removing it here means neither language shows
+    it, which is what was intended in both places.
     """
-    sys.path.insert(0, str(Path(__file__).resolve().parent))
-    from mkdocs_hooks import sync_index as write
-
-    return write()
+    return NAV_LINE.sub('', text, count=1)
 
 
 def main():
@@ -271,7 +333,7 @@ def main():
             print(f'cached {page.name}')
             continue
 
-        body = translate_markdown(source, translate)
+        body = translate_markdown(strip_nav_line(source), translate)
         if notice:
             body = notice.format(original=page.name) + '\n' + body
 
