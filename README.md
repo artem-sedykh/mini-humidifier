@@ -72,6 +72,12 @@ Manually: replace `config/www/mini-humidifier-bundle.js` with the file from the
 bump the `?v=` query string if you use one, and reload the browser. Clearing the
 browser cache is often necessary, because the frontend caches resources hard.
 
+Skipping several versions at once is the usual case, since people update when
+they notice rather than when a release is tagged. Everything that changed in
+between is in
+[CHANGELOG.md](https://github.com/artem-sedykh/mini-humidifier/blob/master/CHANGELOG.md),
+newest first, rather than spread across one release page per version.
+
 ## Quick start
 
 ```yaml

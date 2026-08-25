@@ -45,6 +45,7 @@
     "build": "npm run lint && npm run typecheck && npm run test && npm run rollup && npm run check:bundle",
     "rollup": "rollup -c",
     "check:bundle": "node scripts/check-bundle.mjs",
+    "changelog": "node scripts/build-changelog.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:browser": "web-test-runner",

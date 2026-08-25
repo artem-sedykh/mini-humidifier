@@ -44,6 +44,12 @@ jobs:
       - name: Format
         run: npm run format:check
 
+      - name: Changelog
+        # CHANGELOG.md is generated from release_notes/. Without this it drifts
+        # the first time a release note is edited after the fact, and nobody
+        # notices until someone reads the wrong one.
+        run: npm run changelog -- --check
+
       - name: Types
         run: npm run typecheck
 
