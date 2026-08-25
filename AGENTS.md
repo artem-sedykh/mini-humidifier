@@ -90,6 +90,7 @@ npm test           # vitest, the unit tests under test/
 npm run test:browser  # @web/test-runner, the component tests in Chromium and WebKit
 npm run rollup     # bundle src/main.ts -> dist/mini-humidifier-bundle.js
 npm run check:bundle  # assertions on the built bundle (needs a build first)
+npm run changelog  # rebuild CHANGELOG.md from release_notes/ (--check in CI)
 npm run dev        # the same as rollup, unminified
 npm run build      # lint + typecheck + test + rollup + check:bundle
 npm run watch      # unminified, rebuilding on save
@@ -480,10 +481,29 @@ what the menu shows, and the keyboard.
 
 ## Releasing
 
+Run the **Prepare a release** workflow (`workflow_dispatch`,
+`.github/workflows/release-prepare.yml`) with the version, without the leading
+`v`. It checks the release notes exist and are not empty, that the tag is new
+and the version ahead of the current one, bumps `package.json`, rebuilds
+`CHANGELOG.md` and pushes `release/<version>`. The run summary links to the
+pull request form.
+
+**Open that pull request by hand.** A pull request opened with `GITHUB_TOKEN`
+does not trigger other workflows - GitHub blocks that to stop workflows
+recursing - so the required "Lint, test and build" check would never report on
+it and it could not be merged at all. One click, and the checks then run as they
+do for any branch.
+
+Then merge it, tag `v<version>` and push the tag.
+
+By hand, if the workflow is not available:
+
 1. Bump `version` in `package.json`. It carries a `v` prefix here
    (`"v3.1.5"`), which is unusual but load-bearing: the README badge reads it.
 2. Write `release_notes/v<version>.md`. The release job reads that exact path
    and fails if it is missing.
+3. `npm run changelog`, and commit `CHANGELOG.md` with it. CI fails if the
+   generated file and `release_notes/` disagree.
 
    Start straight at the content - no `## v<version>` heading and no badges.
    That file is the release body, and HACS shows it in the update dialog under
@@ -491,7 +511,7 @@ what the menu shows, and the keyboard.
    a shields.io badge is clutter in a narrow dialog. Lead with one sentence on
    why the release matters, then `### Fixed` / `### Changed` lists. Keep links
    absolute.
-3. Tag `v<version>` and push the tag. `.github/workflows/cd.yml` builds, checks
+4. Tag `v<version>` and push the tag. `.github/workflows/cd.yml` builds, checks
    that the tag and `package.json` agree, and publishes the bundle with those
    notes as the release body.
 
