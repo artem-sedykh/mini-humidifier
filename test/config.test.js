@@ -531,3 +531,44 @@ describe('secondary_info', () => {
     });
   });
 });
+
+describe('a mode the language files do not know', () => {
+  // The dropdown is built from the mode list the device itself reports, so a
+  // firmware carrying a preset no translation has is ordinary rather than
+  // exceptional. `localize` answers with the literal string "unknown" unless
+  // the caller offers something better, and three configurations used to let
+  // it: the user got a dropdown row reading "unknown", with nothing anywhere
+  // naming the mode it would select. #225.
+  const TURBO = 'turbo_plus';
+
+  const names = model => {
+    const element = card(model === 'default' ? {} : { model });
+
+    // `context.localize` reads the language off `hass` when the template runs,
+    // so a card without one throws before it can reach a fallback.
+    element._hass = { selectedLanguage: 'en', language: 'en' };
+    const entity = {
+      entity_id: 'humidifier.bedroom',
+      attributes: {
+        // Whichever attribute the configuration reads, both carry the mode.
+        preset_modes: [TURBO],
+        available_modes: [TURBO],
+      },
+    };
+
+    return button(element, 'mode')
+      .functions.source.__init(entity)
+      .map(item => item.name);
+  };
+
+  it.each([
+    'default',
+    'zhimi.airfresh.va2',
+    'zhimi.airpurifier.ma2',
+    'deerma.humidifier.jsq',
+    'xiaomi_miio_airpurifier:zhimi.humidifier.cb1',
+    'xiaomi_miio_airpurifier:zhimi.airfresh.va2',
+  ])('names the mode itself rather than "unknown" on %s', model => {
+    expect(names(model)).toEqual([TURBO]);
+  });
+});

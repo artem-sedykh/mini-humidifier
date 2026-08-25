@@ -102,7 +102,7 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CB1 = () => ({
           const modes = entity.attributes.preset_modes || [];
           return modes.map(mode => ({
             id: mode,
-            name: this.localize(`zhimi_humidifier_cb1.mode.${mode}`),
+            name: this.localize(`zhimi_humidifier_cb1.mode.${mode}`, mode),
           }));
         },
       },
