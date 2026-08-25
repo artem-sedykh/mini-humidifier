@@ -82,7 +82,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: .cache/translations
-          key: translations-ru-${{ hashFiles('docs/*.md', 'README.md') }}
+          key: translations-ru-${{ hashFiles('docs/*.md', 'README.md', 'scripts/translate_docs.py') }}
           restore-keys: translations-ru-
 
       # Deliberately allowed to fail. A page with no translation falls back to

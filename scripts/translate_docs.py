@@ -323,9 +323,15 @@ def main():
     translate = ArgosTranslator(args.source, args.lang)
     notice = NOTICE.get(args.lang)
 
+    # The cache key covers this script as well as the page. Without that, a
+    # change to how translation works reuses output produced by the old way,
+    # and the fix looks like it did nothing - which is exactly what happened
+    # the first time these paragraphs were fixed.
+    recipe = Path(__file__).read_bytes()
+
     for page, written in targets:
         source = page.read_text(encoding='utf-8')
-        digest = hashlib.sha256(source.encode('utf-8')).hexdigest()[:16]
+        digest = hashlib.sha256(source.encode('utf-8') + recipe).hexdigest()[:16]
         cached = cache / f'{page.stem}.{digest}.md'
 
         if cached.exists():
