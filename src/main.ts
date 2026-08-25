@@ -366,6 +366,22 @@ class MiniHumidifier extends LitElement {
         );
     }
 
+    // The reading's own styling, beside the icon's (#213). Two options rather
+    // than one on purpose: an icon style here is geometry as much as colour -
+    // the AQI indicator of `zhimi.airpurifier.ma2` sets `--mdc-icon-size` and a
+    // margin in it - so widening the existing one to cover the value would
+    // resize and shift what it lands on.
+    if (typeof item.value === 'object') {
+      item.functions.value = {};
+
+      if (item.value.style)
+        item.functions.value.style = compileTemplate(
+          item.value.style,
+          context,
+          `${where}.value.style`,
+        );
+    }
+
     return item;
   }
 

@@ -71,6 +71,8 @@ export interface IndicatorConfig {
   tap_action?: TapAction;
   icon?: string | { template?: string; style?: string };
   unit?: string | { template?: string };
+  /** The reading's own styling, as opposed to the icon's. See #213. */
+  value?: { style?: string };
   round?: number;
   hide?: boolean;
   order?: number;
@@ -78,6 +80,7 @@ export interface IndicatorConfig {
     mapper?: Template;
     icon?: { template?: Template<string>; style?: Template<Record<string, string>> };
     unit?: { template?: Template<string> };
+    value?: { style?: Template<Record<string, string>> };
   };
 }
 
