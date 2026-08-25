@@ -397,6 +397,22 @@ This is the part worth understanding before changing anything about options.
    (`getPowerConfig`, `getTargetHumidityConfig`, `getIndicatorsConfig`,
    `getButtonsConfig`).
 
+`setConfig` also runs `src/utils/validateConfig.ts` over the raw YAML and warns
+about what the card is going to ignore (#178). Two rules hold it in place, and
+both are easy to "improve" into a bug:
+
+- **Unknown keys are only reported at the top level.** Inside an indicator or a
+  button, a key the card does not read is an extension point - the template
+  scope is `{ ...value }`, so anything written beside a template is readable
+  from it as `this.` - and a closed vocabulary would reject the bundled presets.
+- **The string form of `tap_action` means different things in different
+  places.** An indicator's is normalised to `{ action: <string> }` by
+  `getIndicatorConfig`, so a string there is correct; the card's own is not
+  normalised, so every string but `none` reaches `handleClick` and returns
+  early, which is a dead click with a pointer cursor.
+
+It warns and never throws, for the reason under point 2.
+
 Keys in `HUMIDIFIERS` come in two shapes:
 
 - `zhimi.humidifier.cb1` - the model as reported by Home Assistant's own

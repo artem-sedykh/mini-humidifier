@@ -7,6 +7,7 @@ import style from './style';
 import sharedStyle from './sharedStyle';
 import handleClick from './utils/handleClick';
 import { compileTemplate, toggleState } from './utils/utils';
+import validateConfig from './utils/validateConfig';
 import { ICON, SUPPORTED_DOMAINS } from './const';
 
 import IndicatorObject from './models/indicator';
@@ -454,6 +455,12 @@ class MiniHumidifier extends LitElement {
     if (SUPPORTED_DOMAINS.includes(domain) === false) {
       throw new Error(`Specify an entity from within ${SUPPORTED_DOMAINS.join(' ,')} domains.`);
     }
+
+    // What the card is about to ignore, said out loud (#178). Warnings only:
+    // the card goes on to render exactly as it would have, and an option the
+    // card does not read is not necessarily a mistake - see validateConfig for
+    // why the check stops at the top level.
+    validateConfig(config).forEach(warning => console.warn(`mini-humidifier: ${warning}`));
 
     const { model } = config;
     const bundled = model === undefined ? undefined : HUMIDIFIERS[model];

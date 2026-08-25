@@ -155,6 +155,11 @@ A device that is not listed still works: the card falls back to the
 
 ## Troubleshooting
 
+**An option seems to do nothing** - open the browser console. The card reports
+what it is about to ignore: a key it does not read, an action it does not
+handle, a singular `indicator:` where it wants `indicators:`. It only warns and
+carries on rendering, so nothing on the card itself will tell you.
+
 **"Custom element doesn't exist: mini-humidifier"** - the resource is not
 loaded. Check that the URL in the dashboard resources actually resolves in the
 browser, and that its type is `module`.
