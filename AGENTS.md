@@ -188,11 +188,16 @@ size of change it is there to catch.
 the helpers in `src/utils/utils.js`, the model registry, the four wrappers in
 `src/models/` that turn raw entity state into what a component renders, every
 branch of `handleClick` - which is the whole of what `tap_action` does - and the
-configuration merging in `main.ts`. Three files need a DOM and ask for jsdom
-with a `@vitest-environment` docblock: `test/config.test.js`, because
-`setConfig` only reads and merges and the element is never connected, so
-nothing renders; `test/handle-click.test.js`, because dispatching an event and
-pushing history is all that file does; and
+configuration merge, from both ends. `test/build-config.test.js` calls
+`buildCardConfig` directly, with no element and no DOM, which is what #233 made
+possible; `test/config.test.js` goes on doing it through a constructed card,
+because what it pins down is what the merge has always done and a rewrite of it
+would have meant the move took something with it.
+
+Three files need a DOM and ask for jsdom with a `@vitest-environment` docblock:
+`test/config.test.js`, because it constructs the element, though `setConfig`
+only reads and merges so nothing renders; `test/handle-click.test.js`, because
+dispatching an event and pushing history is all that file does; and
 `test/documented-contract.test.js`, for the same reason as the first.
 
 That last one is not about the card so much as about the page that describes
@@ -317,8 +322,10 @@ time, in its own first indicator - water level, 0%.
 
 ```
 src/
-  main.ts            <mini-humidifier>, the card element: config parsing,
-                     state plumbing, and the top-level render
+  main.ts            <mini-humidifier>, the card element: lifecycle, state
+                     plumbing, and the top-level render
+  config/            buildConfig.ts - the user's YAML merged over a model's
+                     defaults, every template compiled. No DOM, no lit
   humidifiers.js     model id -> configuration factory registry
   configurations/    per-model defaults, grouped by the integration that
     xiaomi_miio/               provides the entity
@@ -452,9 +459,13 @@ This is the part worth understanding before changing anything about options.
    tooltip. Both roads end in the console, and only one of them breaks working
    dashboards. Keep that in mind before making anything else in `setConfig`
    throw: it is not a way to tell a user anything.
-3. `main.ts` merges the user's YAML over those defaults, per section
-   (`getPowerConfig`, `getTargetHumidityConfig`, `getIndicatorsConfig`,
-   `getButtonsConfig`).
+3. `src/config/buildConfig.ts` merges the user's YAML over those defaults, per
+   section, and compiles every template. It is a plain function rather than
+   part of the element (#233): it needs no `hass` and no DOM, only a
+   `TemplateRuntime` - `callService` and `localize`, both of which read
+   `this.hass` when a template runs rather than when it compiles, because
+   `setConfig` happens before the card has one. `setConfig` is left reading as
+   validate, build, assign.
 
 `setConfig` also runs `src/utils/validateConfig.ts` over the raw YAML and warns
 about what the card is going to ignore (#178). Two rules hold it in place, and
