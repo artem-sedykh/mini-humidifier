@@ -2,8 +2,8 @@
 //
 // The configuration a card ends up with is the user's YAML merged over the
 // defaults of the model they named. Nothing about that merge is visible until
-// the card runs, and an unrecognised `model:` produces a working but wrong card
-// rather than an error, so it is worth pinning down.
+// the card runs - up to 3.3.0 an unrecognised `model:` produced a working but
+// wrong card rather than an error - so it is worth pinning down.
 //
 // jsdom is enough here: setConfig only reads and merges. Rendering is never
 // triggered, because the element is not connected to the document.
@@ -25,7 +25,8 @@ const card = config => {
   return element;
 };
 
-// What the user is left looking at when `setConfig` refuses the configuration.
+// The message `setConfig` refuses a configuration with. It reaches the user
+// through the browser console, not the card - see the test that names it.
 const messageFor = config => {
   try {
     card(config);
@@ -106,8 +107,10 @@ describe('setConfig', () => {
   });
 
   it('names every model it does know when it rejects one', () => {
-    // The thrown message is all the user sees - Home Assistant renders it in
-    // place of the card - so the way out of the mistake has to be in it.
+    // The message lands in the browser console, not on the card: `hui-error-card`
+    // on 2026.8.3 draws an icon and drops the text (checked on a live instance).
+    // The console is where someone whose card went red ends up, so the way out
+    // of the mistake has to be in the message rather than implied by it.
     expect(() => card({ model: 'levoit.classic.300s' })).toThrow(KNOWN_MODELS.join(', '));
   });
 

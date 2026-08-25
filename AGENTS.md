@@ -285,9 +285,18 @@ Two consequences worth knowing:
 This is the part worth understanding before changing anything about options.
 
 1. The user's YAML names a `model` (default `zhimi.humidifier.cb1`).
-2. `HUMIDIFIERS[model]()` in `src/humidifiers.js` returns that model's defaults.
-   An unknown model silently falls back to `HUMIDIFIERS.default`, so a typo in
-   `model:` produces a working but wrong card rather than an error.
+2. `HUMIDIFIERS[model]()` in `src/humidifiers.ts` returns that model's defaults.
+   An unknown model is refused - `setConfig` throws and names the ids it knows.
+   Up to 3.3.0 it fell back to `HUMIDIFIERS.default` in silence, so a typo in
+   `model:` produced a working but wrong card rather than an error. Omitting
+   `model:` still asks for the default set, and `model: default` says so
+   explicitly, which is what a card that describes every control itself wants.
+
+   Where that message is read matters and was measured on 2026.8.3, not
+   assumed: **the browser console, not the card**. `hui-error-card` draws a red
+   icon and drops the text - a built-in card with a broken config looks exactly
+   the same - so a `setConfig` message is written for someone reading the
+   console, and a card that has gone red tells the user nothing by itself.
 3. `main.ts` merges the user's YAML over those defaults, per section
    (`getPowerConfig`, `getTargetHumidityConfig`, `getIndicatorsConfig`,
    `getButtonsConfig`).

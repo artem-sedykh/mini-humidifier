@@ -458,12 +458,20 @@ class MiniHumidifier extends LitElement {
       // through two integrations that call different services - a card built
       // from the wrong one of those is indistinguishable until it is pressed.
       //
-      // Home Assistant renders what is thrown here in place of the card, so
-      // this message is the whole report the user gets. It carries both ways
-      // out: the list of ids, and the way to start from the default set and
-      // describe the device in the card's own options instead. The card is
-      // meant to be configurable end to end, and someone who does configure it
-      // end to end was previously free to write anything at all in `model:`.
+      // Where this message actually goes, checked on Home Assistant 2026.8.3
+      // rather than assumed: the browser console, in full, prefixed with
+      // `card custom:mini-humidifier`. **Not** onto the card.
+      // `hui-error-card` on that version draws a red icon and nothing else -
+      // the message reaches it as `_config.message` and is never rendered, and
+      // a built-in card with a broken config looks exactly the same. So this
+      // text is written for the console, which is where someone whose card
+      // turned into a red square ends up, and it is worth its length there.
+      //
+      // It carries both ways out: the list of ids, and the way to start from
+      // the default set and describe the device in the card's own options
+      // instead. The card is meant to be configurable end to end, and someone
+      // who does configure it end to end was free until now to write anything
+      // at all in `model:` and be handed the default set in silence.
       const known = Object.keys(HUMIDIFIERS).filter(id => id !== 'default');
 
       throw new Error(
