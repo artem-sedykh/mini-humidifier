@@ -99,7 +99,7 @@ const ZHIMI_AIRPURIFIER_MA2 = () => ({
           const modes = entity.attributes.preset_modes || [];
           return modes.map(mode => ({
             id: mode,
-            name: this.localize(`zhimi_airpurifier_ma2.mode.${mode}`),
+            name: this.localize(`zhimi_airpurifier_ma2.mode.${mode}`, mode),
           }));
         },
       },

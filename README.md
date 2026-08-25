@@ -132,11 +132,24 @@ repository should read [AGENTS.md](https://github.com/artem-sedykh/mini-humidifi
 
 ## Supported models
 
-`model:` selects a set of defaults. Devices exposed by Home Assistant's own
-`xiaomi_miio` integration are named by their model id; the same devices through
-syssi's [xiaomi_miio_airpurifier](https://github.com/syssi/xiaomi_airpurifier)
-carry an `xiaomi_miio_airpurifier:` prefix, because the attributes and services
-differ.
+`model:` selects a set of defaults. Two of them are not devices at all, and they
+are the answer for hardware this card has no preset for:
+
+| `model:` | |
+|---|---|
+| `humidifier` | any `humidifier` entity - an MQTT humidifier, a dehumidifier on a smart switch, anything Home Assistant exposes in that domain |
+| `none` | no controls at all, for a card that writes out its own |
+
+```yaml
+type: custom:mini-humidifier
+entity: humidifier.basement_dehumidifier
+model: humidifier
+```
+
+The rest are devices. Those exposed by Home Assistant's own `xiaomi_miio`
+integration are named by their model id; the same devices through syssi's
+[xiaomi_miio_airpurifier](https://github.com/syssi/xiaomi_airpurifier) carry an
+`xiaomi_miio_airpurifier:` prefix, because the attributes and services differ.
 
 | `xiaomi_miio` | `xiaomi_miio_airpurifier` |
 |---|---|
@@ -149,9 +162,12 @@ differ.
 | `deerma.humidifier.jsq1` | |
 | `deerma.humidifier.mjjsq` | |
 
-A device that is not listed still works: the card falls back to the
-`zhimi.humidifier.cb1` defaults, and everything can be overridden in YAML. See
-[Models](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/models.md) for how to contribute a new one.
+A device that is not listed still works. Start from `model: humidifier` if it is
+a `humidifier` entity; leaving `model:` out falls back to the
+`zhimi.humidifier.cb1` defaults instead, which call Xiaomi services. Either way
+every control can be overridden in YAML. See
+[Models](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/models.md)
+for what each preset brings, and for how to contribute a new one.
 
 ## Troubleshooting
 

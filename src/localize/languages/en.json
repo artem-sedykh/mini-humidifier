@@ -30,6 +30,7 @@
       "medium": "Medium",
       "high": "High",
       "auto": "Auto",
+      "silent": "Silent",
       "interval": "Interval"
     }
   },
