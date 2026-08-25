@@ -84,6 +84,26 @@ jobs:
         continue-on-error: true
         run: python scripts/translate_docs.py --lang ru
 
+      # What the translator actually produced, in the run summary. A machine
+      # translation that quietly degrades - a model change, a placeholder that
+      # stops surviving the round trip - looks exactly like a successful build
+      # otherwise.
+      - name: Translation sample
+        if: always()
+        run: |
+          page=docs/configuration.ru.md
+          {
+            echo '### Russian translation sample'
+            echo
+            if [ -f "$page" ]; then
+              echo '```markdown'
+              sed -n '1,24p' "$page"
+              echo '```'
+            else
+              echo 'No translation was produced - the site falls back to English.'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Build
         run: mkdocs build --strict
 
