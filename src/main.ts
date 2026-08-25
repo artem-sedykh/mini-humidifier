@@ -66,11 +66,23 @@ class MiniHumidifier extends LitElement {
     unusedEntities: string[],
     allEntities: string[],
   ): { entity: string | undefined } {
-    let entity = unusedEntities.find(eid => eid.split('.')[0] === 'fan');
-    if (!entity) {
-      entity = allEntities.find(eid => eid.split('.')[0] === 'fan');
-    }
-    return { entity };
+    // Both supported domains, not just `fan`. The Xiaomi integrations this card
+    // was written against expose a `fan` entity, but a generic hygrostat or an
+    // MQTT humidifier is a `humidifier` one, and on such an installation the
+    // picker handed back a config with no entity in it - which `setConfig` then
+    // threw on, so the first thing the user saw was a broken card.
+    //
+    // The order of SUPPORTED_DOMAINS is the preference: `fan` first, because
+    // every model in the registry is written against one.
+    const pick = (entities: string[]): string | undefined => {
+      for (const domain of SUPPORTED_DOMAINS) {
+        const entity = entities.find(eid => eid.split('.')[0] === domain);
+        if (entity) return entity;
+      }
+      return undefined;
+    };
+
+    return { entity: pick(unusedEntities) ?? pick(allEntities) };
   }
 
   constructor() {
@@ -436,14 +448,40 @@ class MiniHumidifier extends LitElement {
       throw new Error(`Specify an entity from within ${SUPPORTED_DOMAINS.join(' ,')} domains.`);
     }
 
-    // `humidifiers.js` is still JavaScript, so its registry arrives as an object
-    // literal rather than a lookup table.
-    const models = HUMIDIFIERS as Record<string, () => ModelConfiguration>;
-    let modelConfiguration: ModelConfiguration;
     const { model } = config;
+    const bundled = model === undefined ? undefined : HUMIDIFIERS[model];
 
-    if (model !== undefined && model in models) modelConfiguration = models[model]();
-    else modelConfiguration = models.default();
+    if (model !== undefined && bundled === undefined) {
+      // A model the card does not ship for is **not** an error, and this is
+      // deliberately not thrown. The card is written to be described in YAML
+      // end to end precisely because nobody knows every humidifier on the
+      // market: a configuration that names its own device and writes out its
+      // own controls - see issue #112, which is a working one for a
+      // `deerma.humidifier.jsq2w` - is the card being used as intended, and
+      // refusing it would break configurations that work today.
+      //
+      // What was wrong was doing this in silence: `deerma.humidifier.mjjsq`
+      // and `xiaomi_miio_airpurifier:deerma.humidifier.mjjsq` are the same
+      // hardware through two integrations that call different services, so a
+      // typo hands someone another device's defaults and nothing says so.
+      //
+      // A warning covers both, and it costs the first case nothing. It is also
+      // all a throw would have achieved: checked on Home Assistant 2026.8.3, a
+      // thrown `setConfig` message reaches the console and never the card -
+      // `hui-error-card` there draws a red icon and drops the text, as it does
+      // for a built-in card with a broken config. Both roads end in the
+      // console, and only one of them breaks working dashboards.
+      const known = Object.keys(HUMIDIFIERS).filter(id => id !== 'default');
+
+      console.warn(
+        `mini-humidifier: '${model}' is not one of the bundled model configurations, so the ` +
+          `card started from the default one. That is supported - it is how a device the card ` +
+          `does not ship for is described, with the controls written out in the card's own ` +
+          `options. If you meant a bundled model, they are: ${known.join(', ')}.`,
+      );
+    }
+
+    const modelConfiguration: ModelConfiguration = (bundled ?? HUMIDIFIERS.default)();
 
     // The sections below are filled in immediately after, which is what makes
     // this a `CardConfig` rather than the YAML it starts as.

@@ -2,16 +2,20 @@
 //
 // The configuration a card ends up with is the user's YAML merged over the
 // defaults of the model they named. Nothing about that merge is visible until
-// the card runs, and an unrecognised `model:` produces a working but wrong card
-// rather than an error, so it is worth pinning down.
+// the card runs, and a model the card does not ship for is a supported way to
+// use it rather than an error, so it is worth pinning down.
 //
 // jsdom is enough here: setConfig only reads and merges. Rendering is never
 // triggered, because the element is not connected to the document.
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 import HUMIDIFIERS from '../src/humidifiers';
 
 const DEFAULT_MODEL = 'zhimi.humidifier.cb1';
+
+// `default` is the key the registry falls back to rather than a device id, so
+// it is not one of the models a configuration is offered.
+const KNOWN_MODELS = Object.keys(HUMIDIFIERS).filter(id => id !== 'default');
 
 let MiniHumidifier;
 
@@ -28,6 +32,37 @@ beforeAll(async () => {
   await import('../src/main.ts');
   MiniHumidifier = customElements.get('mini-humidifier');
   expect(MiniHumidifier).toBeTypeOf('function');
+});
+
+describe('getStubConfig', () => {
+  // What Home Assistant calls to fill in a config when the card is added from
+  // the dashboard picker. Whatever it returns is what the user is dropped into
+  // the editor with, so an entity it fails to find is a card that throws before
+  // anything has been typed.
+  const stub = (unused, all = unused) => MiniHumidifier.getStubConfig({}, unused, all);
+
+  it('prefers an entity no other card is using', () => {
+    expect(stub(['fan.spare'], ['fan.taken', 'fan.spare']).entity).toBe('fan.spare');
+  });
+
+  it('takes one already in use when nothing is spare', () => {
+    expect(stub([], ['fan.taken']).entity).toBe('fan.taken');
+  });
+
+  it('offers a humidifier when there is no fan', () => {
+    // A generic hygrostat, an MQTT humidifier, anything that is not one of the
+    // Xiaomi integrations, is a `humidifier` entity. Until #176 the picker
+    // looked for `fan` alone and returned nothing at all on such a setup.
+    expect(stub(['humidifier.bedroom']).entity).toBe('humidifier.bedroom');
+  });
+
+  it('prefers a fan when both domains are present', () => {
+    expect(stub(['humidifier.bedroom', 'fan.bedroom']).entity).toBe('fan.bedroom');
+  });
+
+  it('offers nothing when no supported entity exists', () => {
+    expect(stub(['light.bedroom']).entity).toBeUndefined();
+  });
 });
 
 describe('setConfig', () => {
@@ -51,22 +86,56 @@ describe('setConfig', () => {
     }
   });
 
-  it('falls back to the default model without complaining', () => {
-    // Deliberate, and the reason a typo in `model:` is so hard to spot: the
-    // card renders, and only the controls behave like another device.
-    const typo = card({ model: 'zhimi.humidifier.cb11' });
+  it('builds a card for a model it does not ship for', () => {
+    // Not an error, and not a typo either: the card is described in YAML end to
+    // end precisely because nobody knows every humidifier on the market, so a
+    // configuration that names its own device and writes out its own controls
+    // is the card being used as intended. Issue #112 is a working one for a
+    // `deerma.humidifier.jsq2w`. Refusing these would break dashboards.
+    const own = card({ model: 'deerma.humidifier.jsq2w' });
     const fallback = card({ model: DEFAULT_MODEL });
 
-    expect(typo.config.buttons.map(item => item.id)).toEqual(
+    expect(own.config.buttons.map(item => item.id)).toEqual(
       fallback.config.buttons.map(item => item.id),
     );
-    expect(typo.config.indicators.map(item => item.id)).toEqual(
-      fallback.config.indicators.map(item => item.id),
-    );
+    // The id is kept as it was written, so it can be read back out again.
+    expect(own.config.model).toBe('deerma.humidifier.jsq2w');
+  });
 
-    // The unknown id is kept as the user wrote it, so it can still be read back
-    // out of the configuration.
-    expect(typo.config.model).toBe('zhimi.humidifier.cb11');
+  it('says in the console that it fell back, rather than falling back in silence', () => {
+    // The half of #177 that was a real complaint. `deerma.humidifier.mjjsq` and
+    // `xiaomi_miio_airpurifier:deerma.humidifier.mjjsq` are one device through
+    // two integrations calling different services, so a typo between them hands
+    // someone another device's defaults with nothing to show for it.
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    try {
+      card({ model: 'zhimi.humidifier.cb11' });
+
+      expect(warn).toHaveBeenCalledTimes(1);
+      expect(warn.mock.calls[0][0]).toContain("'zhimi.humidifier.cb11'");
+      // And the way back: every id the build actually carries.
+      expect(warn.mock.calls[0][0]).toContain(KNOWN_MODELS.join(', '));
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
+  it('stays quiet for a model it does ship for, and for none at all', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    try {
+      card({ model: DEFAULT_MODEL });
+      card({ model: 'xiaomi_miio_airpurifier:deerma.humidifier.jsq5' });
+      card({});
+      // `default` is the key the registry falls back to. Writing it is asking
+      // for the default set out loud, which is not something to warn about.
+      card({ model: 'default' });
+
+      expect(warn).not.toHaveBeenCalled();
+    } finally {
+      warn.mockRestore();
+    }
   });
 
   it('defaults the model when the YAML names none', () => {

@@ -40,10 +40,32 @@ const baseline = JSON.parse(read(path.join(root, 'scripts', 'bundle-baseline.jso
 
 // The model ids are read out of the source rather than imported: it is
 // TypeScript now, and was ESM before that, so node cannot load it either way.
+//
+// Matching the declaration takes a pattern rather than one exact string,
+// because it has already been wrong once: `const HUMIDIFIERS = {` stopped
+// matching the day the file became TypeScript and grew a type annotation. The
+// list then came out empty, and `every` over an empty list is true - so the
+// check went on reporting ok while checking nothing at all. Hence the second
+// guard below: an empty list is a broken parser, never a passing build.
 const modelIds = (() => {
   const source = read(path.join(root, 'src', 'humidifiers.ts'));
-  const registry = source.slice(source.indexOf('const HUMIDIFIERS = {'));
-  return [...registry.matchAll(/^\s*'([^']+)':/gm)].map(match => match[1]);
+  // `[^\n]*` rather than `[^=]*`, because the annotation holds an `=` of its
+  // own, in `() => ModelConfiguration`. The declaration is one line.
+  const at = source.search(/const HUMIDIFIERS\b[^\n]*=\s*{/);
+
+  if (at === -1) {
+    console.error('Could not find the model registry in src/humidifiers.ts.');
+    process.exit(1);
+  }
+
+  const ids = [...source.slice(at).matchAll(/^\s*'([^']+)':/gm)].map(match => match[1]);
+
+  if (ids.length === 0) {
+    console.error('Read no model ids out of src/humidifiers.ts - this parse is out of date.');
+    process.exit(1);
+  }
+
+  return ids;
 })();
 
 // lit registers its version once per copy: `(x.litHtmlVersions ??= []).push(...)`,

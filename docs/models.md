@@ -17,7 +17,7 @@ integration:
 
 | `model:` | |
 |---|---|
-| `zhimi.humidifier.cb1` | the default, used for any unrecognised model |
+| `zhimi.humidifier.cb1` | the default, used when `model:` is left out |
 | `zhimi.humidifier.ca1` | |
 | `zhimi.humidifier.ca4` | |
 | `zhimi.airpurifier.ma2` | |
@@ -39,9 +39,39 @@ integration, which reports different attributes and calls different services:
 | `xiaomi_miio_airpurifier:deerma.humidifier.mjjsq` | |
 | `xiaomi_miio_airpurifier:deerma.humidifier.jsq5` | by @akovovh |
 
-An unrecognised `model:` is not an error. The card falls back to
-`zhimi.humidifier.cb1`, so a typo produces a card that renders but brings the
-wrong defaults.
+## A device that is not in the list
+
+There are more humidifiers than this card ships configurations for, and that is
+the normal case rather than a gap to apologise for. Writing a `model:` the card
+does not know is **supported**: it starts from the default configuration and
+your YAML is merged over it, so a card that describes its own controls behaves
+exactly as written. [Issue #112](https://github.com/artem-sedykh/mini-humidifier/issues/112)
+is a complete example for a `deerma.humidifier.jsq2w`, which is not in the table
+above.
+
+What that gets you is a name for your device that stays in the configuration and
+reads correctly to the next person to open it. What it does not get you is any
+of that device's defaults, so plan on writing out the controls you want -
+`target_humidity`, `power`, `indicators`, `buttons` - rather than expecting them
+to arrive.
+
+Since 3.4.0 the card says so in the browser console when it does this:
+
+```
+mini-humidifier: 'deerma.humidifier.jsq2w' is not one of the bundled model
+configurations, so the card started from the default one. That is supported ...
+```
+
+The message is there for the other half of the same behaviour: a typo. Up to
+3.3.0 `zhimi.humidifier.cb11` and `zhimi.humidifier.cb1` behaved identically and
+nothing said which one the card had used, and `deerma.humidifier.mjjsq` against
+`xiaomi_miio_airpurifier:deerma.humidifier.mjjsq` - one device through two
+integrations that call different services - is the same trap with real
+consequences. The card still renders either way; the console is where you find
+out which set it started from.
+
+Leaving `model:` out asks for the default set, as it always has. `model: default`
+says the same thing explicitly and warns about nothing.
 
 ## Adding a model
 
