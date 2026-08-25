@@ -394,6 +394,101 @@ describe('getButtonsConfig', () => {
   });
 });
 
+describe('what the card leaves out', () => {
+  // A control whose entity is not in `hass.states` is skipped rather than
+  // rendered, which is right - and used to be the whole of what happened. The
+  // id is usually computed from `{entity_id}`, so what is missing is a name
+  // nobody typed. #211.
+  const ENTITY_ID = 'humidifier.bedroom';
+
+  const hass = () => ({
+    language: 'en',
+    localize: () => '',
+    callService: () => undefined,
+    states: {
+      [ENTITY_ID]: {
+        entity_id: ENTITY_ID,
+        state: 'on',
+        last_changed: '2026-01-01T00:00:00Z',
+        last_updated: '2026-01-01T00:00:00Z',
+        attributes: { mode: 'auto', available_modes: ['auto'], humidity: 50 },
+      },
+    },
+  });
+
+  const missing = warn => warn.mock.calls.map(([line]) => line).filter(l => l.includes('not exist'));
+
+  it('names an indicator whose entity is not there', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    // `model: none` so that the only control on the card is the broken one -
+    // the default preset reads half a dozen sensor entities of its own, and
+    // this fake installation has none of them.
+    const element = card({
+      model: 'none',
+      indicators: { humidity: { source: { entity: 'sensor.bedroom_2_humidity' } } },
+    });
+
+    element.hass = hass();
+
+    expect(missing(warn)).toHaveLength(1);
+    expect(missing(warn)[0]).toContain("indicator 'humidity'");
+    expect(missing(warn)[0]).toContain('sensor.bedroom_2_humidity');
+
+    warn.mockRestore();
+  });
+
+  it('names a button whose entity is not there', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const element = card({
+      model: 'none',
+      buttons: { extra: { state: { entity: 'switch.does_not_exist' } } },
+    });
+
+    element.hass = hass();
+
+    expect(missing(warn)).toHaveLength(1);
+    expect(missing(warn)[0]).toContain("button 'extra'");
+
+    warn.mockRestore();
+  });
+
+  it('says it once, however many times hass arrives', () => {
+    // `hass` is assigned on every state change in the installation.
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const element = card({
+      model: 'none',
+      indicators: { humidity: { source: { entity: 'sensor.nope' } } },
+    });
+
+    for (let i = 0; i < 5; i += 1) element.hass = hass();
+
+    expect(missing(warn)).toHaveLength(1);
+
+    // A new configuration is a new chance to be told.
+    element.setConfig({
+      entity: ENTITY_ID,
+      model: 'none',
+      indicators: { humidity: { source: { entity: 'sensor.nope' } } },
+    });
+    element.hass = hass();
+
+    expect(missing(warn)).toHaveLength(2);
+
+    warn.mockRestore();
+  });
+
+  it('says nothing when every entity is there', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const element = card({ model: 'none' });
+
+    element.hass = hass();
+
+    expect(missing(warn)).toHaveLength(0);
+
+    warn.mockRestore();
+  });
+});
+
 describe('secondary_info', () => {
   it('defaults to the mode', () => {
     expect(card({}).config.secondary_info).toEqual({ type: 'mode' });
