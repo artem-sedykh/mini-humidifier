@@ -4,6 +4,7 @@ import ZHIMI_AIRPURIFIER_MA2 from './configurations/xiaomi_miio/zhimi_airpurifie
 import ZHIMI_AIRFRESH_VA2 from './configurations/xiaomi_miio/zhimi_airfresh_va2';
 import DEERMA_HUMIDIFIER_JSQ from './configurations/xiaomi_miio/deerma_humidifier_jsq';
 import NONE from './configurations/none';
+import GENERIC_HUMIDIFIER from './configurations/humidifier';
 
 import XIAOMI_MIIO_AIRPURIFIER_DEERMA_HUMIDIFIER_JSQ5 from './configurations/xiaomi_miio_airpurifier/deerma_humidifier_jsq5';
 import XIAOMI_MIIO_AIRPURIFIER_DEERMA_HUMIDIFIER_MJJSQ from './configurations/xiaomi_miio_airpurifier/deerma_humidifier_mjjsq';
@@ -15,6 +16,9 @@ import XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRPURIFIER_MB3 from './configurations/xiao
 const HUMIDIFIERS: Record<string, () => ModelConfiguration> = {
   default: ZHIMI_HUMIDIFIER_CB1,
   none: NONE,
+  // Not a device: the `humidifier` domain itself, for hardware the card has no
+  // preset for - see docs/models.md and #207.
+  humidifier: GENERIC_HUMIDIFIER,
   // xiaomi_miio integration (default home assistant)
   'zhimi.humidifier.cb1': ZHIMI_HUMIDIFIER_CB1,
   'zhimi.humidifier.ca1': ZHIMI_HUMIDIFIER_CB1,
