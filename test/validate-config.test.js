@@ -22,7 +22,6 @@ describe('the top level', () => {
         icon: 'mdi:air-humidifier',
         scale: 1,
         group: false,
-        collapse: false,
         tap_action: { action: 'more-info' },
         toggle: { hide: true },
         secondary_info: 'last-changed',
@@ -65,6 +64,17 @@ describe('the top level', () => {
         card_mod: { style: 'ha-card { border: none; }' },
       }),
     ).toEqual([]);
+  });
+
+  it('reports collapse, which the card read and never acted on', () => {
+    // `collapse` put a `--collapse` class on the card and no stylesheet in this
+    // repository ever had a rule for it - not since the first commit in April
+    // 2020. It was removed rather than implemented, because the behaviour
+    // people expect from the name is `toggle: { default: on, hide: on }`, which
+    // exists and is documented. This pins the removal: anyone who has the key
+    // in their YAML now gets told it does nothing, instead of the silence that
+    // hid it for six years.
+    expect(validateConfig({ ...CARD, collapse: true })[0]).toContain("'collapse'");
   });
 
   it('survives being handed something that is not a configuration', () => {
