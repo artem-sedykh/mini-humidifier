@@ -8,3 +8,7 @@ release_notes
 # one - 370 columns for docs/configuration.md - which makes the source
 # unreadable and every documentation diff enormous.
 *.md
+
+# The MkDocs theme override is a Jinja template, not HTML: prettier reformats
+# `{% block %}` tags as if they were text and breaks the template.
+overrides
