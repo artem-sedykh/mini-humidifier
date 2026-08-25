@@ -63,6 +63,26 @@ describe('getStubConfig', () => {
   it('offers nothing when no supported entity exists', () => {
     expect(stub(['light.bedroom']).entity).toBeUndefined();
   });
+
+  it('starts a humidifier entity on the preset for its domain', () => {
+    // Rather than on `zhimi.humidifier.cb1`, which is what an absent `model:`
+    // means and which reads sensors and calls services a plain humidifier does
+    // not have. #214.
+    expect(stub(['humidifier.bedroom'])).toEqual({
+      entity: 'humidifier.bedroom',
+      model: 'humidifier',
+    });
+  });
+
+  it('names no model for a fan, where the default is the better answer', () => {
+    // Every device-specific preset here is written against a `fan` entity, and
+    // the domain preset calls `humidifier.*` services.
+    expect(stub(['fan.bedroom'])).toEqual({ entity: 'fan.bedroom' });
+  });
+
+  it('names no model when it found no entity', () => {
+    expect(stub(['light.bedroom'])).toEqual({ entity: undefined });
+  });
 });
 
 describe('setConfig', () => {

@@ -82,6 +82,10 @@ Reach for it whenever the device is not in the table above and is a `humidifier`
 entity. For a device exposed as `fan`, or one close to a bundled model, the two
 options below still apply.
 
+A card added from the dashboard picker for a `humidifier` entity starts here
+already - the picker writes `model: humidifier` into the configuration it hands
+you, so what it says is what the card is doing.
+
 ### `model: none` - start from nothing
 
 The preset that brings no controls at all. Nothing is merged in, so the card
