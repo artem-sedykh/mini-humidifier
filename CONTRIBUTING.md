@@ -4,7 +4,8 @@ Thanks for taking the time. This is a small repository, so the process is
 short.
 
 Everything here is in **English**: code, comments, commit messages, issues and
-pull requests.
+pull requests. How people are expected to treat each other is in
+[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 ## Reporting something
 
