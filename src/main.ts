@@ -66,11 +66,23 @@ class MiniHumidifier extends LitElement {
     unusedEntities: string[],
     allEntities: string[],
   ): { entity: string | undefined } {
-    let entity = unusedEntities.find(eid => eid.split('.')[0] === 'fan');
-    if (!entity) {
-      entity = allEntities.find(eid => eid.split('.')[0] === 'fan');
-    }
-    return { entity };
+    // Both supported domains, not just `fan`. The Xiaomi integrations this card
+    // was written against expose a `fan` entity, but a generic hygrostat or an
+    // MQTT humidifier is a `humidifier` one, and on such an installation the
+    // picker handed back a config with no entity in it - which `setConfig` then
+    // threw on, so the first thing the user saw was a broken card.
+    //
+    // The order of SUPPORTED_DOMAINS is the preference: `fan` first, because
+    // every model in the registry is written against one.
+    const pick = (entities: string[]): string | undefined => {
+      for (const domain of SUPPORTED_DOMAINS) {
+        const entity = entities.find(eid => eid.split('.')[0] === domain);
+        if (entity) return entity;
+      }
+      return undefined;
+    };
+
+    return { entity: pick(unusedEntities) ?? pick(allEntities) };
   }
 
   constructor() {

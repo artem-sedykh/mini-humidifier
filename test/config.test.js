@@ -30,6 +30,37 @@ beforeAll(async () => {
   expect(MiniHumidifier).toBeTypeOf('function');
 });
 
+describe('getStubConfig', () => {
+  // What Home Assistant calls to fill in a config when the card is added from
+  // the dashboard picker. Whatever it returns is what the user is dropped into
+  // the editor with, so an entity it fails to find is a card that throws before
+  // anything has been typed.
+  const stub = (unused, all = unused) => MiniHumidifier.getStubConfig({}, unused, all);
+
+  it('prefers an entity no other card is using', () => {
+    expect(stub(['fan.spare'], ['fan.taken', 'fan.spare']).entity).toBe('fan.spare');
+  });
+
+  it('takes one already in use when nothing is spare', () => {
+    expect(stub([], ['fan.taken']).entity).toBe('fan.taken');
+  });
+
+  it('offers a humidifier when there is no fan', () => {
+    // A generic hygrostat, an MQTT humidifier, anything that is not one of the
+    // Xiaomi integrations, is a `humidifier` entity. Until #176 the picker
+    // looked for `fan` alone and returned nothing at all on such a setup.
+    expect(stub(['humidifier.bedroom']).entity).toBe('humidifier.bedroom');
+  });
+
+  it('prefers a fan when both domains are present', () => {
+    expect(stub(['humidifier.bedroom', 'fan.bedroom']).entity).toBe('fan.bedroom');
+  });
+
+  it('offers nothing when no supported entity exists', () => {
+    expect(stub(['light.bedroom']).entity).toBeUndefined();
+  });
+});
+
 describe('setConfig', () => {
   it('accepts the supported domains', () => {
     expect(() => card({ entity: 'humidifier.bedroom' })).not.toThrow();
