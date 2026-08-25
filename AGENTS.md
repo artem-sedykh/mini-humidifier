@@ -16,6 +16,40 @@ Distribution is HACS: users get `mini-humidifier-bundle.js` as a release asset,
 so **the release asset is the product**. A change is not shipped until it is in
 a tagged release.
 
+## The bundled models are presets, not the product
+
+What this card is, is a kit: every control can be described in YAML - which
+indicators exist and what each one reads, which buttons appear, what icon each
+takes, what service each one calls, when each is disabled.
+`src/configurations/` holds a dozen devices; the market has hundreds, and the
+card is built this way so that a humidifier nobody here has heard of can go on a
+dashboard without a pull request and without waiting for one.
+
+That is a constraint on what may be changed, not just a description of what is:
+
+- **A `model:` the registry does not know is supported.** It starts from the
+  default configuration and warns in the console. Do not turn it into an error.
+  [#112](https://github.com/artem-sedykh/mini-humidifier/issues/112) is a
+  complete configuration for a `deerma.humidifier.jsq2w` - written by a user,
+  posted with a screenshot, copied since - and refusing unknown ids would break
+  it and every card copied from it.
+- **The configuration is open at the leaves.** Indicator and button ids are
+  chosen by the user, and their options are templates the user wrote. Anything
+  that validates a configuration
+  ([#178](https://github.com/artem-sedykh/mini-humidifier/issues/178)) or edits
+  one ([#179](https://github.com/artem-sedykh/mini-humidifier/issues/179)) has
+  to carry through what it does not recognise rather than dropping it. An editor
+  that round-trips a hand-written card through a form and silently loses the
+  half it does not model is worse than no editor.
+- **Those templates are source text, not functions.** That is what forces
+  several of the build constraints below - see "Why the model configurations
+  stay JavaScript".
+
+The cost of the design is that it is invisible. Someone whose device is not in
+`docs/models.md` reads that table as a compatibility list and opens a model
+request; several of the open issues are exactly that. Making this easier to
+discover is worth more than bundling another model.
+
 ## Language
 
 **English only**, everywhere: code, comments, commit messages, issues, pull
