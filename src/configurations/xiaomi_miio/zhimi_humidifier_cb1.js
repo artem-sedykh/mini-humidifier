@@ -25,8 +25,18 @@ const ZHIMI_HUMIDIFIER_CB1 = () => ({
     hide: false,
     hide_indicator: false,
     disabled: (state, entity, humidifier) => {
-      const mode = humidifier.attributes.mode.toUpperCase();
-      return mode !== 'AUTO';
+      // A device with no modes has nothing to gate the slider on, and reading
+      // through the absent attribute took the control down with it: this runs
+      // inside the component's own render, so a throw leaves
+      // `mh-target-humidity` empty while the rest of the card renders - a
+      // slider that is missing, with the reason reaching the console and
+      // nowhere else. This preset is also what a card without a `model:`
+      // starts from, which is how a plain MQTT humidifier ends up running it
+      // at all. See #70.
+      const { mode } = humidifier.attributes;
+      if (!mode) return false;
+
+      return mode.toUpperCase() !== 'AUTO';
     },
     state: {
       attribute: 'humidity',

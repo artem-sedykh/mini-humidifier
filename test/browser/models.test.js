@@ -21,6 +21,20 @@ const ATTRIBUTES = {
   child_lock: false,
 };
 
+// What a plain Home Assistant humidifier reports and no more: a target, a
+// reading, and no modes at all - an MQTT humidifier, a `generic_hygrostat`.
+// The keys are present and undefined rather than absent, because `createHass`
+// spreads over its own defaults; what a template reads through them is the
+// same either way.
+const BASICS = {
+  mode: undefined,
+  available_modes: undefined,
+  preset_mode: undefined,
+  preset_modes: undefined,
+  humidity: 50,
+  current_humidity: 45,
+};
+
 // `default` is an alias for one of the others, and `humidifiers.test.js`
 // already pins down which.
 const MODELS = Object.keys(HUMIDIFIERS).filter(model => model !== 'default');
@@ -53,4 +67,42 @@ describe('every model in the registry', () => {
       }
     });
   }
+});
+
+// The same models against a device that reports none of what they were written
+// for. A preset is free to render nothing useful there - it was written for
+// somebody else's hardware - but it may not take a control down: these
+// callbacks run inside a component's render, so a throw leaves that component
+// empty and the card around it intact, which is a control that vanished with
+// the reason in the console and nothing on screen. That is #70, which sat open
+// for four years.
+describe('every model against a device that reports only the basics', () => {
+  for (const model of MODELS) {
+    it(`${model} survives`, async () => {
+      const { card } = await mountCard({ config: { model }, attributes: BASICS });
+
+      card.toggle = true;
+      await settle(card);
+
+      expect(card.shadowRoot.querySelector('ha-card')).to.exist;
+
+      if (model === 'none') return;
+
+      for (const component of components(card)) {
+        expect(component.shadowRoot.childElementCount, component.localName).to.be.greaterThan(0);
+      }
+    });
+  }
+
+  // The configuration from #70, in the shape it was reported: an MQTT
+  // humidifier with no modes and no `model:` at all, which lands on the
+  // default preset.
+  it('the slider is there on a humidifier with no modes and no model', async () => {
+    const { card } = await mountCard({ attributes: BASICS, config: { model: undefined } });
+
+    const target = components(card).find(c => c.localName === 'mh-target-humidity');
+
+    expect(target).to.exist;
+    expect(target.shadowRoot.querySelector('ha-slider')).to.exist;
+  });
 });
