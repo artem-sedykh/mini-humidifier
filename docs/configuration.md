@@ -10,6 +10,12 @@ last column points at.
 
 ## Card options
 
+`entity`, `model`, `name`, `icon`, `scale` and `group` can be set in the visual
+editor, from the card's edit dialog. Everything else on this page is YAML, and
+the editor leaves it alone: options it does not show are carried through
+untouched, so a card written by hand can be opened in the editor and saved
+again without losing anything.
+
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
 | `type` | string | **required** | `custom:mini-humidifier` |

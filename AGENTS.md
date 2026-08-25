@@ -438,6 +438,36 @@ it, and register it in `src/humidifiers.js`. Two things to get right:
 Document the new model in the options reference, and in
 `README.md` under the list of available default configurations.
 
+## The visual editor
+
+`src/configForm.ts`, reached through the static `getConfigForm` on the card
+(#179). It is a **schema** that Home Assistant renders itself, not an editor
+element of this card's own, and that choice is the whole of why the editor is
+safe for a hand-written configuration:
+
+- `hui-form-editor` passes the **whole config** into `ha-form` as `data` and
+  re-emits what comes back, and `ha-form` merges each field change over it
+  (`this.data = { ...this.data, ...newValue }`). Every key the schema does not
+  mention survives. Measured on 2026.8.3 against the real elements: a card with
+  an unknown `model` and an `indicators` section carrying a template came back
+  from an edit intact.
+- `ha-form` is Home Assistant's import, not ours. An editor element of our own
+  would have to force the frontend to load `ha-form` first - it is lazily
+  loaded and absent until some editor has been opened - which is what the
+  `loadCardHelpers()` preload trick in other cards is for.
+
+Two consequences to keep in mind before extending it:
+
+- **The schema cannot depend on the configuration.** `getConfigForm` is static
+  and takes no arguments. That is why only the flat options are in it: which
+  indicators and buttons a card has depends on its model and on ids the user
+  chose. Doing those means an editor element, and then the merge is ours to get
+  right.
+- **There is no `assertConfig`, on purpose.** Throwing from it sends the card to
+  the YAML editor with "visual editor is not supported", which is the right
+  move when an editor would misrepresent a configuration. Nothing here can:
+  what the schema does not name, Home Assistant carries through.
+
 ## Home Assistant compatibility
 
 The card renders Home Assistant's own frontend elements (`ha-card`, `ha-icon`,

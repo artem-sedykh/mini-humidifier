@@ -8,6 +8,7 @@ import sharedStyle from './sharedStyle';
 import handleClick from './utils/handleClick';
 import { compileTemplate, toggleState } from './utils/utils';
 import validateConfig from './utils/validateConfig';
+import configForm from './configForm';
 import { ICON, SUPPORTED_DOMAINS } from './const';
 
 import IndicatorObject from './models/indicator';
@@ -84,6 +85,13 @@ class MiniHumidifier extends LitElement {
     };
 
     return { entity: pick(unusedEntities) ?? pick(allEntities) };
+  }
+
+  // The visual editor, as a schema Home Assistant renders itself (#179). See
+  // src/configForm.ts for why it is a schema rather than an editor element of
+  // this card's own.
+  static getConfigForm() {
+    return configForm();
   }
 
   constructor() {
