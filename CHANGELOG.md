@@ -9,6 +9,33 @@
 Every release of this card, newest first. Each heading links to the release it
 came from, where the asset and the date are.
 
+## [v3.5.2](https://github.com/artem-sedykh/mini-humidifier/releases/tag/v3.5.2)
+
+A small release with one fix for a card configured to not do anything.
+
+### Fixed
+
+- **A card with `tap_action: none` stops offering a pointer over its name.** The
+  name always carried `cursor: pointer`, whatever the configuration said, so a
+  card that was told to do nothing on a click still looked clickable. The
+  `--more-info` class that computed the pointer was read by no stylesheet -
+  the half of #206 that never got its rule. The pointer now follows the class,
+  so it shows only when the click does something. Both spellings of "do
+  nothing" are covered: the bare string `none` and the object Home Assistant's
+  own editors write.
+  [#250](https://github.com/artem-sedykh/mini-humidifier/issues/250)
+
+### Documentation
+
+- The documentation pages were made easier to read, and a script now checks
+  that every path named in the documentation exists.
+
+### No change
+
+No change to the card's behaviour beyond the cursor above.
+
+Tested on Home Assistant 2026.8.3.
+
 ## [v3.5.1](https://github.com/artem-sedykh/mini-humidifier/releases/tag/v3.5.1)
 
 A small release, and the fix in it is one you only ever see in a language the
