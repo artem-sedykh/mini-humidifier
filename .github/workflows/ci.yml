@@ -17,6 +17,23 @@ on:
     # there for master, and matching every branch would run everything twice
     # for every pull request.
     branches: ['**']
+  # Nothing in this repository changes on its own - but everything it is built
+  # against does: browser releases, transitive dependencies, the runner image.
+  # A weekly run on master finds a break nobody caused before an outside
+  # contributor runs into it on their own pull request and assumes it is theirs.
+  #
+  # Monday morning UTC, and deliberately not on the hour: GitHub queues
+  # scheduled runs across every repository at once, and a job asking for a
+  # popular minute waits longer for it.
+  #
+  # Worth knowing: GitHub disables scheduled workflows in a repository with no
+  # activity for 60 days, and emails the owner when it does. A quiet stretch
+  # therefore turns this off rather than failing loudly.
+  schedule:
+    - cron: '17 6 * * 1'
+  # So the same run can be triggered by hand when something outside is
+  # suspected - a browser release, a Home Assistant frontend change.
+  workflow_dispatch:
 
 permissions:
   contents: read
