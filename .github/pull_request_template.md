@@ -21,4 +21,4 @@ releases, so "it works here" is only meaningful with a version next to it.
 - [ ] `npm run build` and `npm run format:check` pass (lint, tests, bundle checks)
 - [ ] The card was loaded in a running Home Assistant, not only built
 - [ ] Documentation in `docs/` updated, if this changes or adds an option
-- [ ] A new model is registered in `src/humidifiers.js` and listed in `docs/models.md`
+- [ ] A new model is registered in `src/humidifiers.ts` and listed in `docs/models.md`

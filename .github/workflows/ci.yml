@@ -74,6 +74,13 @@ jobs:
       - name: Format
         run: npm run format:check
 
+      - name: Documentation paths
+        # Cheap, and it needs neither a build nor a browser, so it fails early:
+        # every path the documentation names has to exist. Paths in AGENTS.md
+        # ended in `.js` for the whole of the TypeScript migration and nothing
+        # noticed.
+        run: npm run check:docs
+
       - name: Changelog
         # CHANGELOG.md is generated from release_notes/. Without this it drifts
         # the first time a release note is edited after the fact, and nobody
