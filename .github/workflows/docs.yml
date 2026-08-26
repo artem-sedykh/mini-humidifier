@@ -13,9 +13,7 @@ on:
       - 'mkdocs.yml'
       - 'overrides/**'
       - 'scripts/mkdocs_hooks.py'
-      - 'scripts/translate_docs.py'
       - 'requirements-docs.txt'
-      - 'requirements-translate.txt'
       - '.github/workflows/docs.yml'
   pull_request:
     branches: ['**']
@@ -25,9 +23,7 @@ on:
       - 'mkdocs.yml'
       - 'overrides/**'
       - 'scripts/mkdocs_hooks.py'
-      - 'scripts/translate_docs.py'
       - 'requirements-docs.txt'
-      - 'requirements-translate.txt'
       - '.github/workflows/docs.yml'
   # For rebuilding the site when nothing in this list changed - a badge, a
   # release, or a theme update.
@@ -65,53 +61,7 @@ jobs:
           cache-dependency-path: requirements-docs.txt
 
       - name: Install dependencies
-        run: pip install -r requirements-docs.txt -r requirements-translate.txt
-
-      # The model is ~100 MB and never changes between runs; downloading it on
-      # every build would dominate the job.
-      - name: Cache the translation model
-        uses: actions/cache@v5
-        with:
-          path: ~/.local/share/argos-translate
-          key: argos-en-ru-v1
-
-      # Finished translations, keyed on the English pages that produced them:
-      # a build that changes one page re-translates that page and reuses the
-      # rest. `restore-keys` is what makes a partial hit possible at all.
-      - name: Cache the translations
-        uses: actions/cache@v5
-        with:
-          path: .cache/translations
-          key: translations-ru-${{ hashFiles('docs/*.md', 'README.md', 'scripts/translate_docs.py') }}
-          restore-keys: translations-ru-
-
-      # Deliberately allowed to fail. A page with no translation falls back to
-      # English, so a translator that breaks costs the site its second language
-      # and nothing else - which is a much better outcome than a documentation
-      # site that stops publishing.
-      - name: Translate
-        continue-on-error: true
-        run: python scripts/translate_docs.py --lang ru
-
-      # What the translator actually produced, in the run summary. A machine
-      # translation that quietly degrades - a model change, a placeholder that
-      # stops surviving the round trip - looks exactly like a successful build
-      # otherwise.
-      - name: Translation sample
-        if: always()
-        run: |
-          page=docs/configuration.ru.md
-          {
-            echo '### Russian translation sample'
-            echo
-            if [ -f "$page" ]; then
-              echo '```markdown'
-              sed -n '1,40p' "$page"
-              echo '```'
-            else
-              echo 'No translation was produced - the site falls back to English.'
-            fi
-          } | tee -a "$GITHUB_STEP_SUMMARY"
+        run: pip install -r requirements-docs.txt
 
       - name: Build
         run: mkdocs build --strict
