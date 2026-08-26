@@ -117,6 +117,23 @@ describe('the card in a browser', () => {
     }
   });
 
+  it('offers the pointer only when the click does something', async () => {
+    // Both spellings of "do nothing": the documented string, and the object
+    // Home Assistant's own editors write. Before #250 the name carried
+    // `cursor: pointer` whatever the configuration said, and the `--more-info`
+    // class that was meant to decide it was read by no stylesheet.
+    const cursorOf = card =>
+      getComputedStyle(card.shadowRoot.querySelector('.entity__info__name_wrap')).cursor;
+
+    expect(cursorOf((await mountCard()).card)).to.equal('pointer');
+    expect(cursorOf((await mountCard({ config: { tap_action: 'none' } })).card)).to.not.equal(
+      'pointer',
+    );
+    expect(
+      cursorOf((await mountCard({ config: { tap_action: { action: 'none' } } })).card),
+    ).to.not.equal('pointer');
+  });
+
   it('costs one render pass per component when the entity changes', async () => {
     const { card, hass } = await mountCard();
 

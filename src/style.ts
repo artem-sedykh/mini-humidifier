@@ -179,6 +179,8 @@ const style = css`
     justify-content: center;
     margin-right: 0;
     max-width: calc(var(--mh-unit) * 4.25);
+  }
+  .--more-info .entity__info__name_wrap {
     cursor: pointer;
   }
   .entity__info__name_wrap.full {
