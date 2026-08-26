@@ -12,7 +12,7 @@ A humidifier entity and nothing else:
 
 ```yaml
 type: custom:mini-humidifier
-entity: humidifier.bedroom
+entity: humidifier.xiaomi_miio_zhimi_humidifier_cb1
 ```
 
 That is the whole of it. The card reads the entity's name, its humidity, and
@@ -35,7 +35,7 @@ For a generic device, set `model: humidifier`:
 
 ```yaml
 type: custom:mini-humidifier
-entity: humidifier.bedroom
+entity: humidifier.xiaomi_miio_zhimi_humidifier_cb1
 model: humidifier
 ```
 
@@ -55,29 +55,38 @@ option has a default, but the ones below are where a card becomes a card:
 
 ```yaml
 type: custom:mini-humidifier
-entity: fan.xiaomi_miio_device
+entity: humidifier.xiaomi_miio_zhimi_humidifier_cb1
 name: Bedroom
 secondary_info:
   icon: mdi:fan
 indicators:
+  # The humidifier's own current humidity, an attribute of the entity.
   humidity:
     icon: mdi:water
     unit: '%'
     round: 0
     source:
       attribute: current_humidity
-  temperature:
+  # A room sensor beside the humidifier.
+  room_temp:
     icon: mdi:thermometer-low
     unit: '°C'
     round: 1
     source:
-      attribute: temperature
+      entity: sensor.sensor_temp_hum_pre_bedroom_temperature
+  room_humidity:
+    icon: mdi:water-outline
+    unit: '%'
+    round: 1
+    source:
+      entity: sensor.sensor_temp_hum_pre_bedroom_humidity
 ```
 
 `secondary_info` is the line under the name - here the mode, with a fan icon.
-`indicators` are the read-only values below it. `source: attribute` reads from
-the humidifier entity itself; `source: entity` reads from any entity in the
-installation. See [Indicators](indicators.md) for the full shape.
+`indicators` are the read-only values below it, **merged over the model's
+defaults** (the bundled indicators stay on the card). `source: attribute` reads
+from the humidifier entity itself; `source: entity` reads from any entity in
+the installation. See [Indicators](indicators.md) for the full shape.
 
 ![Custom name, secondary info and indicators](images/custom-indicators.png)
 

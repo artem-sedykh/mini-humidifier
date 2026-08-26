@@ -8,7 +8,7 @@ Complete cards to copy, then the `tap_action` snippets.
 
 ```yaml
 type: custom:mini-humidifier
-entity: humidifier.bedroom
+entity: humidifier.xiaomi_miio_zhimi_humidifier_cb1
 ```
 
 The default preset (`zhimi.humidifier.cb1`) fills in the rest: a name, the
@@ -21,7 +21,7 @@ and motor speed.
 
 ```yaml
 type: custom:mini-humidifier
-entity: humidifier.bedroom
+entity: humidifier.xiaomi_miio_zhimi_humidifier_cb1
 model: humidifier
 ```
 
@@ -36,36 +36,40 @@ an MQTT humidifier or a dehumidifier on a smart switch works as it is.
 
 ```yaml
 type: custom:mini-humidifier
-entity: fan.xiaomi_miio_device
+entity: humidifier.xiaomi_miio_zhimi_humidifier_cb1
 name: Bedroom
 secondary_info:
   icon: mdi:fan
 indicators:
+  # The humidifier's own current humidity, an attribute of the entity.
   humidity:
     icon: mdi:water
     unit: '%'
     round: 0
     source:
       attribute: current_humidity
-  temperature:
+  # A room sensor beside the humidifier.
+  room_temp:
     icon: mdi:thermometer-low
     unit: '°C'
     round: 1
     source:
-      attribute: temperature
-  water_level:
-    icon: mdi:tray-full
+      entity: sensor.sensor_temp_hum_pre_bedroom_temperature
+  room_humidity:
+    icon: mdi:water-outline
     unit: '%'
-    round: 0
+    round: 1
     source:
-      attribute: depth
-      mapper: (val) => Math.round(val)
+      entity: sensor.sensor_temp_hum_pre_bedroom_humidity
 ```
 
 `name` overrides the entity name, `secondary_info` puts a line under it, and
-`indicators` replaces the read-only values. The `mapper` is a function that
-runs on the value you read - here it just rounds; the ones bundled models ship
-convert between liters and percent, or colour the reading, as in
+`indicators` is **merged** over the model's defaults: the bundled indicators
+the model brings stay on the card, and the ones you write are added (or
+override an indicator of the same name). `source: attribute` reads from the
+humidifier entity itself; `source: entity` reads from any entity in the
+installation. A `mapper` runs on the value you read - to round it, to convert
+between liters and percent, or to colour the reading, as in
 [Indicators](indicators.md).
 
 ![Custom name, secondary info and indicators](images/custom-indicators.png)
