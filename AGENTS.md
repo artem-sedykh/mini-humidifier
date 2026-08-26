@@ -147,9 +147,10 @@ npm run test:coverage # the same, with coverage and its thresholds
 npm run test:browser  # @web/test-runner, the component tests in Chromium and WebKit
 npm run rollup     # bundle src/main.ts -> dist/mini-humidifier-bundle.js
 npm run check:bundle  # assertions on the built bundle (needs a build first)
+npm run check:docs  # every path the documentation names exists
 npm run changelog  # rebuild CHANGELOG.md from release_notes/ (--check in CI)
 npm run dev        # the same as rollup, unminified
-npm run build      # lint + typecheck + test + rollup + check:bundle
+npm run build      # lint + typecheck + check:docs + test + rollup + check:bundle
 npm run watch      # unminified, rebuilding on save
 ```
 
@@ -188,7 +189,7 @@ in one bundle, a lit directive left unresolved and emitted as an external
 `require`. None of them is visible in the source, all of them are visible in the
 output file. The script checks that the bundle registers the element, resolves
 every import, is not lit's development build, holds exactly one copy of each lit
-package, carries every model id from `src/humidifiers.js`, still calls services
+package, carries every model id from `src/humidifiers.ts`, still calls services
 through the `this` the model configurations are written against, and stays
 within a tolerance of a recorded size.
 
@@ -198,8 +199,17 @@ commit and say why in the message. Do not widen the tolerance to make a build
 pass - the 11 KB the duplicated `@lit/reactive-element` added is exactly the
 size of change it is there to catch.
 
+**`npm run check:docs`** - `scripts/check-docs-paths.mjs`, over every markdown
+file except `release_notes/`, which records what was true at a release rather
+than what is true now. Every path the prose names has to exist; a path named
+because it is absent goes in the script's `IGNORED` map with its reason. It
+exists because paths in this file said `.js` for the whole of the TypeScript
+migration and nothing noticed - `mkdocs build --strict` checks the links
+between pages of the site, not the paths a sentence names, and it never sees
+this file at all.
+
 **`npm test`** - vitest over `test/`, node environment. `localize`, `getLabel`,
-the helpers in `src/utils/utils.js`, the model registry, the four wrappers in
+the helpers in `src/utils/utils.ts`, the model registry, the four wrappers in
 `src/models/` that turn raw entity state into what a component renders, every
 branch of `handleClick` - which is the whole of what `tap_action` does - and the
 configuration merge, from both ends. `test/build-config.test.js` calls
@@ -340,7 +350,7 @@ src/
                      plumbing, and the top-level render
   config/            buildConfig.ts - the user's YAML merged over a model's
                      defaults, every template compiled. No DOM, no lit
-  humidifiers.js     model id -> configuration factory registry
+  humidifiers.ts     model id -> configuration factory registry
   configurations/    per-model defaults, grouped by the integration that
     xiaomi_miio/               provides the entity
     xiaomi_miio_airpurifier/
@@ -353,8 +363,8 @@ src/
                      sections, the compiled template callbacks
   utils/             template compilation, click handling, element registration
   localize/          en, ru, uk
-  style.js           card styles
-  sharedStyle.js     styles shared with the sub-elements
+  style.ts           card styles
+  sharedStyle.ts     styles shared with the sub-elements
 test/                vitest unit tests, one file per unit under test
   browser/           component tests, run in Chromium and WebKit by @web/test-runner
     helpers/         the fake hass and the Home Assistant element stand-ins
@@ -528,14 +538,14 @@ Keys in `HUMIDIFIERS` come in two shapes:
 ### Adding a model
 
 Copy the closest existing file in `src/configurations/<integration>/`, adjust
-it, and register it in `src/humidifiers.js`. Two things to get right:
+it, and register it in `src/humidifiers.ts`. Two things to get right:
 
 - `change_action` and `toggle_action` must call services that actually exist in
   the integration the model is filed under. Copying a configuration from
   another integration and leaving its service calls in place produces a card
   that renders correctly and does nothing when clicked.
 - The functions in these files are called with `this` bound to the card. That
-  is not ordinary module scope: `rollup.config.js` sets `moduleContext` to
+  is not ordinary module scope: `rollup.config.mjs` sets `moduleContext` to
   `this` for exactly these directories. Do not "fix" it by importing something.
 
 Document the new model in the options reference, and in
@@ -599,7 +609,7 @@ notice, and they have broken this card before.
 Known boundary: **Home Assistant 2025.10** replaced the mwc-based `ha-slider`
 with a WebAwesome one (frontend `20250924.0`, first shipped in core 2025.10.0).
 That changed the element's box model, its custom properties, and the meaning of
-its `value` attribute. `src/components/targetHumidity.js` carries the code that
+its `value` attribute. `src/components/targetHumidity.ts` carries the code that
 copes with both.
 
 When you touch anything that talks to a Home Assistant element:
@@ -614,7 +624,7 @@ When you touch anything that talks to a Home Assistant element:
 
 ## The dropdown
 
-`src/components/dropdown-base.js` is the card's own menu, and it is worth
+`src/components/dropdown-base.ts` is the card's own menu, and it is worth
 knowing why rather than reaching for a component library again.
 
 It used to be `@material/mwc-menu` and `@material/mwc-list`, wrapped in scoped

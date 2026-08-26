@@ -43,9 +43,10 @@
     "vitest": "^4.1.11"
   },
   "scripts": {
-    "build": "npm run lint && npm run typecheck && npm run test && npm run rollup && npm run check:bundle",
+    "build": "npm run lint && npm run typecheck && npm run check:docs && npm run test && npm run rollup && npm run check:bundle",
     "rollup": "rollup -c",
     "check:bundle": "node scripts/check-bundle.mjs",
+    "check:docs": "node scripts/check-docs-paths.mjs",
     "changelog": "node scripts/build-changelog.mjs",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",

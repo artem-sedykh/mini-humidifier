@@ -167,7 +167,7 @@ default set is most of what you want.
    adjust it. [zhimi_humidifier_cb1.js](https://github.com/artem-sedykh/mini-humidifier/blob/master/src/configurations/xiaomi_miio/zhimi_humidifier_cb1.js)
    is the reference.
 2. Register it in
-   [src/humidifiers.js](https://github.com/artem-sedykh/mini-humidifier/blob/master/src/humidifiers.js).
+   [src/humidifiers.ts](https://github.com/artem-sedykh/mini-humidifier/blob/master/src/humidifiers.ts).
 3. Make sure `change_action` and `toggle_action` call services that exist in
    the integration you filed the model under. A configuration copied from
    another integration renders correctly and does nothing when clicked.
