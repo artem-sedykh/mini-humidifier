@@ -173,6 +173,13 @@ not check, rather than letting a green test run imply the change was tried.
 
 Three layers, all run by CI, in the order of how much they cost to run.
 
+CI runs them on every push and pull request, and **once a week on master**
+whether anything changed or not. Nothing here changes on its own; everything it
+is built against does - browsers, transitive dependencies, the runner image -
+and a scheduled run finds that kind of break before an outside contributor hits
+it on their own pull request and assumes they caused it. The same run can be
+started by hand from the Actions tab when something outside is suspected.
+
 **`npm run check:bundle`** - `scripts/check-bundle.mjs`, assertions on
 `dist/mini-humidifier-bundle.js` after `npm run rollup`. Every regression this
 repository has shipped so far lived in the build rather than in the source: a
