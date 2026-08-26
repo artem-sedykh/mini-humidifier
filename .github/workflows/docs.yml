@@ -66,6 +66,29 @@ jobs:
       - name: Build
         run: mkdocs build --strict
 
+      - name: No control characters in the site
+        # `mkdocs build --strict` cannot see this: U+0001 renders into an href
+        # and the link checker accepts it as a valid relative URL, so a stray
+        # control byte in a hook sails straight through the build. The one that
+        # hit this repository was a literal SOH in README_DOCS_LINK.sub() in
+        # mkdocs_hooks.py (see #248). Tabs and newlines are the only control
+        # characters that belong in generated HTML, so anything else fails.
+        run: |
+          python - <<'PY'
+          import pathlib, re, sys
+          bad = re.compile(r'[\x00-\x08\x0b-\x1f\x7f]')
+          offenders = {}
+          for path in pathlib.Path('site').rglob('*.html'):
+              text = path.read_text(encoding='utf-8')
+              hits = list(bad.finditer(text))
+              if hits:
+                  offenders[path] = len(hits)
+          if offenders:
+              for path, count in offenders.items():
+                  print(f'{count}: {path}')
+              sys.exit(1)
+          PY
+
       - name: Upload the site
         if: github.ref == 'refs/heads/master'
         uses: actions/upload-pages-artifact@v4

@@ -65,7 +65,7 @@ def sync_index():
     `scripts/translate_docs.py` calls this too, so the front page exists in
     time to be translated.
     """
-    content = README_DOCS_LINK.sub(r'', (ROOT / 'README.md').read_text(encoding='utf-8'))
+    content = README_DOCS_LINK.sub(r'\1', (ROOT / 'README.md').read_text(encoding='utf-8'))
     index = ROOT / 'docs' / 'index.md'
 
     if not index.exists() or index.read_text(encoding='utf-8') != content:
