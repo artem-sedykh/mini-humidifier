@@ -9,6 +9,70 @@
 Every release of this card, newest first. Each heading links to the release it
 came from, where the asset and the date are.
 
+## [v3.5.1](https://github.com/artem-sedykh/mini-humidifier/releases/tag/v3.5.1)
+
+A small release, and the fix in it is one you only ever see in a language the
+card does not have a word for. A mode the device reports and no translation
+covers used to render as the literal word "unknown" - the same word for every
+such mode, so a dropdown could offer two of them and name neither.
+
+### Fixed
+
+- **An untranslated mode now reads as its own name.** The mode dropdown is built
+  from the list the device reports, so a firmware carrying a preset none of the
+  language files knows put a row saying "unknown" in front of you, with nothing
+  anywhere naming the mode it would select. It now falls back to the id the
+  device uses, which is at least what the device calls it. Three presets were
+  affected: `zhimi.airfresh.va2`, `zhimi.airpurifier.ma2` and
+  `xiaomi_miio_airpurifier:zhimi.humidifier.cb1`.
+  [#225](https://github.com/artem-sedykh/mini-humidifier/issues/225)
+- **`silent` was translated in Russian only**, so that mode read correctly in
+  Russian and fell back in English and Ukrainian. It is now in all three. The
+  language files are held to the same set of keys by a test, so a translation
+  cannot go missing from two of them again.
+  [#227](https://github.com/artem-sedykh/mini-humidifier/issues/227)
+- A capitalisation slip in the Ukrainian file.
+
+### Documentation
+
+- **The documentation is now a site**:
+  [artem-sedykh.github.io/mini-humidifier](https://artem-sedykh.github.io/mini-humidifier/).
+  Same pages as in the repository - nothing was copied or rewritten - but with
+  a search box, a sidebar and a dark theme. The README still links to every
+  page, so nothing moved out of reach.
+  [#222](https://github.com/artem-sedykh/mini-humidifier/issues/222)
+- **A page for a device the card has no preset for.**
+  [Custom device](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/custom-device.md)
+  walks one real case end to end - reading the entity in Developer tools,
+  choosing the base, adding a reading and a button for another entity, and what
+  the browser console will tell you - and then states the contract underneath
+  the options: what a `source` is, what a template actually runs as, which
+  options are not templates, and what the card warns about rather than refusing.
+  Written to be followed by a person or by the AI assistant they asked.
+  [#220](https://github.com/artem-sedykh/mini-humidifier/issues/220)
+- Writing it turned up four things the reference tables had wrong:
+  `source: __init`, which builds a dropdown from the entity itself, was not
+  documented at all; `source: __filter` was listed with the wrong arguments;
+  `unit` takes a template as well as a string; and the target humidity slider's
+  `min`/`max` follow the entity since 3.5.0, where the tables still named the
+  Xiaomi preset's numbers.
+- The README model table names `model: humidifier` and `model: none`, which are
+  the answer for hardware with no preset and were previously only findable a
+  page deeper.
+  [#226](https://github.com/artem-sedykh/mini-humidifier/issues/226)
+- The people who have contributed to this card are credited on the front page.
+  [#224](https://github.com/artem-sedykh/mini-humidifier/issues/224)
+- A [security policy](https://github.com/artem-sedykh/mini-humidifier/blob/master/SECURITY.md),
+  with private reporting enabled on the repository. It also writes down a
+  boundary worth knowing: a card configuration contains templates, and templates
+  are code - a YAML block copied from a stranger runs in your browser with your
+  Home Assistant session.
+  [#228](https://github.com/artem-sedykh/mini-humidifier/issues/228)
+
+No change to the card's behaviour beyond the mode names above.
+
+Tested on Home Assistant 2026.8.3.
+
 ## [v3.5.0](https://github.com/artem-sedykh/mini-humidifier/releases/tag/v3.5.0)
 
 This card has always been able to describe any humidifier, and has always
