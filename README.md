@@ -107,6 +107,8 @@ entity: fan.xiaomi_miio_device
 That is the whole minimum configuration. Everything else has a default, taken
 from the [model](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/models.md) the card is configured for.
 
+![The card with just an entity](https://raw.githubusercontent.com/artem-sedykh/mini-humidifier/master/docs/images/default.png)
+
 A slightly fuller example:
 
 ```yaml
@@ -125,6 +127,7 @@ It renders these same files, so there is nothing on it that is not here.
 
 | | |
 |---|---|
+| [Getting started](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/getting-started.md) | From the smallest card to one that is yours |
 | [Configuration](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/configuration.md) | Every card option, the action object, theme variables |
 | [Models](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/models.md) | Supported devices, and how to add one |
 | [Custom device](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/custom-device.md) | A device with no preset, end to end, and the contract the templates run under |
@@ -142,10 +145,9 @@ repository should read [AGENTS.md](https://github.com/artem-sedykh/mini-humidifi
 `model:` selects a set of defaults. Two of them are not devices at all, and they
 are the answer for hardware this card has no preset for:
 
-| `model:` | |
-|---|---|
-| `humidifier` | any `humidifier` entity - an MQTT humidifier, a dehumidifier on a smart switch, anything Home Assistant exposes in that domain |
-| `none` | no controls at all, for a card that writes out its own |
+- `humidifier` - any `humidifier` entity: an MQTT humidifier, a dehumidifier on
+  a smart switch, anything Home Assistant exposes in that domain.
+- `none` - no bundled defaults, for a card that writes out every control itself.
 
 ```yaml
 type: custom:mini-humidifier
@@ -153,28 +155,14 @@ entity: humidifier.basement_dehumidifier
 model: humidifier
 ```
 
-The rest are devices. Those exposed by Home Assistant's own `xiaomi_miio`
-integration are named by their model id; the same devices through syssi's
-[xiaomi_miio_airpurifier](https://github.com/syssi/xiaomi_airpurifier) carry an
-`xiaomi_miio_airpurifier:` prefix, because the attributes and services differ.
+The rest are devices: the model ids of your integration, which for the `xiaomi_miio`
+ones have an `xiaomi_miio_airpurifier:` prefix when they come through syssi's
+integration. A device that is not listed still works - start from
+`model: humidifier`, or leave `model:` out to fall back to the
+`zhimi.humidifier.cb1` defaults. Every control can still be overridden in YAML.
 
-| `xiaomi_miio` | `xiaomi_miio_airpurifier` |
-|---|---|
-| `zhimi.humidifier.cb1` (default) | `xiaomi_miio_airpurifier:zhimi.humidifier.cb1` |
-| `zhimi.humidifier.ca1` | `xiaomi_miio_airpurifier:zhimi.humidifier.ca4` |
-| `zhimi.humidifier.ca4` | `xiaomi_miio_airpurifier:deerma.humidifier.mjjsq` |
-| `zhimi.airpurifier.ma2` | `xiaomi_miio_airpurifier:zhimi.airpurifier.mb3` |
-| `zhimi.airfresh.va2` | `xiaomi_miio_airpurifier:zhimi.airfresh.va2` |
-| `deerma.humidifier.jsq` | `xiaomi_miio_airpurifier:deerma.humidifier.jsq5` |
-| `deerma.humidifier.jsq1` | |
-| `deerma.humidifier.mjjsq` | |
-
-A device that is not listed still works. Start from `model: humidifier` if it is
-a `humidifier` entity; leaving `model:` out falls back to the
-`zhimi.humidifier.cb1` defaults instead, which call Xiaomi services. Either way
-every control can be overridden in YAML. See
-[Models](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/models.md)
-for what each preset brings, and for how to contribute a new one.
+The full table of device presets, and how to add one, is in
+[Models](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/models.md).
 
 ## Troubleshooting
 
@@ -208,30 +196,10 @@ Still stuck? Open an [issue](https://github.com/artem-sedykh/mini-humidifier/iss
 with your card YAML and the entity's attributes from **Developer tools ->
 States**.
 
-## Contributors
-
-| | |
-|---|---|
-| [@regevbr](https://github.com/regevbr) | Moved CI to GitHub Actions, made the card addable from the picker, carried it through Home Assistant 2022.3 dropping the paper elements, fixed the popup menus in the mobile apps, added `xiaomi_miio_airpurifier:zhimi.airpurifier.mb3` |
-| [@ravikwow](https://github.com/ravikwow) | Support for syssi's `xiaomi_miio_airpurifier` integration: `zhimi.humidifier.ca4`, `zhimi.airfresh.va2`, `zhimi.airpurifier.ma2` |
-| [@denysdovhan](https://github.com/denysdovhan) | Ukrainian translation, and `secondary_info` |
-| [@akovovh](https://github.com/akovovh) | `xiaomi_miio_airpurifier:deerma.humidifier.jsq5` |
-| [@dedors](https://github.com/dedors) | `deerma.humidifier.mjjsq` defaults |
-| [@fustom](https://github.com/fustom) | Fixed the icons after `ha-icon-button` dropped its `icon` property |
-| [@lutz108](https://github.com/lutz108) | Documented `target_humidity: disabled` |
-| [@SanchosPancho](https://github.com/SanchosPancho) | Fixed the card border against a new Home Assistant release |
-| [@tolkonepiu](https://github.com/tolkonepiu) | Fixed the service name behind the LED button |
-
-Adding a device is the contribution this card is built to take: a preset that
-lands in `src/configurations/` is credited by name in
-[Models](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/models.md)
-and in the release notes.
-[CONTRIBUTING.md](https://github.com/artem-sedykh/mini-humidifier/blob/master/CONTRIBUTING.md)
-says how.
-
-## Inspiration
-
-- [@kalkih](https://github.com/kalkih) - [mini-media-player](https://github.com/kalkih/mini-media-player)
+Contributing: [CONTRIBUTING.md](https://github.com/artem-sedykh/mini-humidifier/blob/master/CONTRIBUTING.md)
+- it has how to add a device, and the list of the people who built this card.
+Agents working on this repository should read
+[AGENTS.md](https://github.com/artem-sedykh/mini-humidifier/blob/master/AGENTS.md).
 
 ## License
 
