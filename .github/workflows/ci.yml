@@ -64,6 +64,13 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Typecheck
+        # esbuild strips the types and checks none of them, so this is the only
+        # thing that reads them. It is a step of its own rather than part of
+        # another one: a type error and a lint error are different failures and
+        # should not have to be told apart by reading a log.
+        run: npm run typecheck
+
       - name: Format
         run: npm run format:check
 
@@ -72,9 +79,6 @@ jobs:
         # the first time a release note is edited after the fact, and nobody
         # notices until someone reads the wrong one.
         run: npm run changelog -- --check
-
-      - name: Types
-        run: npm run typecheck
 
       - name: Unit tests
         # With coverage: the thresholds in vitest.config.mjs fail the run if it
