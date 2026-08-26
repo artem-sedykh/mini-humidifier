@@ -95,6 +95,7 @@ extra:
 
 nav:
   - Home: index.md
+  - Getting started: getting-started.md
   - Configuration: configuration.md
   - Models: models.md
   - A device with no preset: custom-device.md

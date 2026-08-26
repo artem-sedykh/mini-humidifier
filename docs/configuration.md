@@ -1,6 +1,6 @@
 # Configuration
 
-[Home](../README.md) | [Configuration](configuration.md) | [Models](models.md) | [Custom device](custom-device.md) | [Controls](controls.md) | [Indicators](indicators.md) | [Buttons](buttons.md) | [Examples](examples.md) | [Development](development.md)
+[Home](../README.md) | [Getting started](getting-started.md) | [Configuration](configuration.md) | [Models](models.md) | [Custom device](custom-device.md) | [Controls](controls.md) | [Indicators](indicators.md) | [Buttons](buttons.md) | [Examples](examples.md) | [Development](development.md)
 
 Every option the card accepts. Start from the [quick start](../README.md#quick-start)
 and add only what you need - everything below has a default.
@@ -25,7 +25,7 @@ again without losing anything.
 | `model` | string | `zhimi.humidifier.cb1` | Which set of device defaults to start from, see [Models](models.md). |
 | `group` | boolean | `false` | Removes paddings, background color and box-shadow, see [Group](controls.md#group). |
 | `scale` | number | `1` | UI scale modifier. |
-| `tap_action` | [action object](#action-object-options) | `more-info` | Action on click/tap, see [Examples](examples.md#action-object-options-examples). |
+| `tap_action` | [action object](#action-object-options) | `more-info` | Action on click/tap, see [Examples](examples.md#action-object-examples). |
 | `toggle` | object | optional | The button that shows and hides the bottom panel, see [Toggle button](controls.md#toggle-button). |
 | `secondary_info` | object | optional | The line under the entity name, see [Secondary info](controls.md#secondary-info). |
 | `power` | object | optional | The power button, see [Power button](controls.md#power-button). |
