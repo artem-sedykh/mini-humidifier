@@ -128,15 +128,12 @@ and it only closes if someone mentions it.
 requests, documentation, and release notes. This is a public repository with
 external contributors who do not read Russian.
 
-The documentation site is the single exception, and it is narrower than it
-sounds: `docs/*.ru.md` is written by `scripts/translate_docs.py` during the
-site build and **never committed**, so no page in git is in Russian. What is
-committed is the handful of strings that make a second locale work at all - the
-navigation labels in `mkdocs.yml` and the notice the script puts at the top of
-each translated page. A reader who wants Russian gets a machine translation
-that says on every page that it is one, and a hand-written `docs/<page>.ru.md`,
-if one is ever committed deliberately, wins - the script leaves an existing
-file alone.
+The documentation site is English too. A machine-translated Russian locale was
+built and published for a day, and then removed: the structure survived
+translation intact, but the vocabulary did not - `string` came out as
+"струна", `entity_id` as "Существо_id", and "which set of device defaults to
+start from" acquired a meaning of its own. On a reference table that is worse
+than no translation, because a reader cannot tell which rows to trust.
 
 ## Commands
 
@@ -684,11 +681,6 @@ rejected, which would have been a second copy to keep level with the first.
   does that job.
 - **Links out of `docs/`** - `../AGENTS.md`, `../.nvmrc` - are repointed at the
   repository, because nothing above `docs/` is published.
-- **Russian is generated, not written.** See the Language section. Code and link
-  targets are lifted out before anything reaches the translator, and a
-  translated heading keeps its English anchor through `attr_list`, so `#anchor`
-  links work in both languages. The step is `continue-on-error`: an engine that
-  breaks costs the site its second language, not its existence.
 - **The site is built from master**, so it can be ahead of the release a reader
   has installed. The announcement bar in `overrides/main.html` says so.
 

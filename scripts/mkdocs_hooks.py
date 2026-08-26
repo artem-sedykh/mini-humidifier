@@ -16,8 +16,8 @@ ROOT = Path(__file__).resolve().parent.parent
 
 # The hand-written breadcrumb at the top of every page in `docs/`. It exists for
 # people reading the files on GitHub, where nothing else links the pages
-# together. On the site the navigation does that job, and the line is a row of
-# duplicate links under every title.
+# together. On the site the navigation does that job, and the line would be a
+# row of duplicate links under every title.
 NAV_LINE = re.compile(r'^\[Home\]\(\.\./README\.md\)\s*\|.*\n+', re.MULTILINE)
 
 # Links in README.md are absolute, because HACS renders that file outside of
