@@ -47,6 +47,7 @@
     "rollup": "rollup -c",
     "check:bundle": "node scripts/check-bundle.mjs",
     "check:docs": "node scripts/check-docs-paths.mjs",
+    "check:options": "node scripts/check-docs-options.mjs",
     "check:version": "node scripts/check-readme-version.mjs",
     "changelog": "node scripts/build-changelog.mjs",
     "test": "vitest run",
