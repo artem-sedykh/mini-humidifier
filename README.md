@@ -6,6 +6,7 @@
 [![Stars](https://img.shields.io/github/stars/artem-sedykh/mini-humidifier)](https://github.com/artem-sedykh/mini-humidifier/stargazers)
 [![CI](https://img.shields.io/github/actions/workflow/status/artem-sedykh/mini-humidifier/ci.yml?branch=master&label=CI)](https://github.com/artem-sedykh/mini-humidifier/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fartem-sedykh%2Fmini-humidifier%2Fbadges%2Fcoverage.json)](https://github.com/artem-sedykh/mini-humidifier/actions/workflows/ci.yml)
+[![llms.txt](https://img.shields.io/badge/llms.txt-docs%20for%20assistants-blueviolet)](https://artem-sedykh.github.io/mini-humidifier/llms.txt)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/artem-sedykh/mini-humidifier/blob/master/LICENSE)
 
 A minimalistic yet customizable humidifier card for the
