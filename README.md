@@ -135,6 +135,7 @@ It renders these same files, so there is nothing on it that is not here.
 | [Indicators](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/indicators.md) | The read-only values under the entity name |
 | [Buttons](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/buttons.md) | The bottom panel: buttons and dropdowns |
 | [Examples](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/examples.md) | `tap_action` snippets |
+| [AI assistants](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/ai-assistants.md) | Writing a card with an assistant: the docs as `llms.txt`, and what to check in what comes back |
 | [Development](https://github.com/artem-sedykh/mini-humidifier/blob/master/docs/development.md) | Building the card locally |
 
 Contributing: [CONTRIBUTING.md](https://github.com/artem-sedykh/mini-humidifier/blob/master/CONTRIBUTING.md). Agents working on this

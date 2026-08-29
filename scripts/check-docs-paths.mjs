@@ -36,6 +36,10 @@ const IGNORED = new Map([
   // The mkdocs hook section names this as an example of a link out of docs/;
   // AGENTS.md sits at the repository root, so the path does not resolve from it.
   ['../AGENTS.md', 'an example of a docs/ link, not a path from the root'],
+  [
+    'mini-humidifier-docs.md',
+    'what the reader downloads llms-full.txt as, on their machine, in docs/ai-assistants.md',
+  ],
 ]);
 
 // Release notes are a record of a released version, not a description of the

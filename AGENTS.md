@@ -710,6 +710,16 @@ rejected, which would have been a second copy to keep level with the first.
   does that job.
 - **Links out of `docs/`** - `../AGENTS.md`, `../.nvmrc` - are repointed at the
   repository, because nothing above `docs/` is published.
+- **`llms.txt` and `llms-full.txt`** are written into the built site by the same
+  hook, after the pages are on disk (#256): an index of every page with a line
+  saying what is on it, and every page concatenated for grounding an answer in
+  one fetch. People configure this card with an assistant and the assistants do
+  not know it, so what comes back names options that do not exist - and this
+  card is unusually bad at saying so, since an unknown key inside a control is
+  the template scope rather than an error. Both files are generated from the
+  pages the site is built from; a page in `nav` with no line in `PAGE_SUMMARIES`
+  fails the build, which is what keeps the two level. `docs/ai-assistants.md` is
+  the page for the reader doing the asking.
 - **The site is built from master**, so it can be ahead of the release a reader
   has installed. The announcement bar in `overrides/main.html` says so.
 
