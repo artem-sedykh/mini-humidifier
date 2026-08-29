@@ -132,7 +132,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -b "$branch"
-          git add package.json CHANGELOG.md
+          # README.md as well: the step above rewrites `?v=` in it precisely so
+          # `check:version` does not fail the release pull request, and leaving
+          # it unstaged threw that edit away.
+          git add package.json CHANGELOG.md README.md
           git commit -m "build: release ${VERSION}"
           git push origin "$branch"
           echo "BRANCH=$branch" >> "$GITHUB_ENV"
