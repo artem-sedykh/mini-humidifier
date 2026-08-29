@@ -81,6 +81,14 @@ jobs:
         # noticed.
         run: npm run check:docs
 
+      - name: Documentation options
+        # The other half of the check above: that one asks whether a file
+        # exists, this one whether an option does, and whether anybody says so.
+        # It also holds the three lists that describe the card's options -
+        # RawCardConfig, CARD_OPTIONS and the table - against each other, which
+        # until now was a comment asking for it.
+        run: npm run check:options
+
       - name: The README names the version this repository is at
         # `?v=` in the install instructions is the only cache-buster a person
         # has, and it said 3.1.5 while this was at 3.5.2.

@@ -148,10 +148,13 @@ npm run test:browser  # @web/test-runner, the component tests in Chromium and We
 npm run rollup     # bundle src/main.ts -> dist/mini-humidifier-bundle.js
 npm run check:bundle  # assertions on the built bundle (needs a build first)
 npm run check:docs  # every path the documentation names exists
+npm run check:options # every option the card reads is documented, and the reverse
 npm run check:version # the README names the version in package.json
 npm run changelog  # rebuild CHANGELOG.md from release_notes/ (--check in CI)
 npm run dev        # the same as rollup, unminified
-npm run build      # lint + typecheck + check:docs + check:version + test + rollup + check:bundle
+npm run build      # everything CI runs, in the same order: lint, typecheck,
+                   # format:check, check:docs, check:options, check:version,
+                   # changelog --check, test, rollup, check:bundle
 npm run watch      # unminified, rebuilding on save
 ```
 
@@ -208,6 +211,27 @@ exists because paths in this file said `.js` for the whole of the TypeScript
 migration and nothing noticed - `mkdocs build --strict` checks the links
 between pages of the site, not the paths a sentence names, and it never sees
 this file at all.
+
+**`npm run check:options`** - `scripts/check-docs-options.mjs` (#258). The
+other half of the check above: that one asks whether a file exists, this one
+whether an **option** does, and whether anybody says so. A path rots loudly
+when a file moves; an option rots quietly when the code and the prose stop
+agreeing, and in the sister card one had been declared, read, styled by nothing
+and documented nowhere for six years.
+
+Three lists describe this card's options and all three can drift:
+`RawCardConfig` in `src/types.ts` is what a user's YAML may be, `CARD_OPTIONS`
+in `src/utils/validateConfig.ts` is what the card does **not** warn about, and
+the table in `docs/configuration.md` is what a reader trusts. The comment above
+`CARD_OPTIONS` already said it "has to stay level" with the other two; this is
+what makes it so. A key missing from `CARD_OPTIONS` is the expensive direction:
+the card warns the user about an option it does read.
+
+The tap actions are held the same way - every action in `TAP_ACTIONS`, plus
+`none`, has to appear in the documentation. An option deliberately in one list
+and not another goes in the script's `IGNORED` map with its reason; `type` is
+there, as Lovelace's key rather than the card's. All four directions have been
+seen failing, not only passing.
 
 **`npm run check:version`** - `scripts/check-readme-version.mjs`. Every `?v=`
 in `README.md` names the version in `package.json`, and no download link is
