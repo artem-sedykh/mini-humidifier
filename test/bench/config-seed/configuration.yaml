@@ -1,0 +1,21 @@
+# The seed the bench starts from. Deliberately small - what is not here is
+# what the scenarios do not depend on.
+#
+# There is no `http:` block on purpose. Setting `server_host` here is
+# unnecessary in a container, and it makes Home Assistant show a modal
+# "Confirm new HTTP server configuration" dialog for the first five minutes
+# after a boot with changed settings. On a long-lived bench nobody ever sees
+# it; in CI, where the container is seconds old, it covers the dashboard and
+# every click times out against it.
+default_config:
+
+logger:
+  default: warning
+
+# Themes are here for one question the card cannot answer in its own config:
+# what colour its background is (#164). A theme is the native way to set the
+# variables it reads, and the only one the bench can exercise - `card_mod`,
+# which is how most reporters set them for a single card, is a third-party
+# resource this bench deliberately does not carry.
+frontend:
+  themes: !include_dir_merge_named themes

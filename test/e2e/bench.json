@@ -1,0 +1,386 @@
+{
+  "card": "mini-humidifier",
+  "resource": "/local/bench/mini-humidifier-bundle.js",
+  "entities": [
+    {
+      "domain": "humidifier",
+      "id": "bench_humidifier",
+      "discovery": {
+        "name": "Bench humidifier",
+        "unique_id": "bench_humidifier",
+        "object_id": "bench_humidifier",
+        "device_class": "humidifier",
+        "command_topic": "bench/humidifier/set",
+        "target_humidity_command_topic": "bench/humidifier/humidity/set",
+        "current_humidity_topic": "bench/humidifier/current_humidity",
+        "mode_command_topic": "bench/humidifier/mode/set",
+        "modes": ["auto", "normal", "boost", "sleep"],
+        "availability_topic": "bench/humidifier/availability",
+        "min_humidity": 30,
+        "max_humidity": 80
+      },
+      "state": {
+        "bench/humidifier/availability": "online",
+        "bench/humidifier/current_humidity": "41"
+      },
+      "start": [
+        {
+          "domain": "humidifier",
+          "service": "turn_on"
+        },
+        {
+          "domain": "humidifier",
+          "service": "set_humidity",
+          "data": {
+            "humidity": 55
+          }
+        },
+        {
+          "domain": "humidifier",
+          "service": "set_mode",
+          "data": {
+            "mode": "auto"
+          }
+        }
+      ]
+    },
+    {
+      "domain": "humidifier",
+      "id": "bench_dehumidifier",
+      "discovery": {
+        "name": "Bench dehumidifier",
+        "unique_id": "bench_dehumidifier",
+        "object_id": "bench_dehumidifier",
+        "device_class": "dehumidifier",
+        "command_topic": "bench/dehumidifier/set",
+        "target_humidity_command_topic": "bench/dehumidifier/humidity/set",
+        "current_humidity_topic": "bench/dehumidifier/current_humidity",
+        "availability_topic": "bench/dehumidifier/availability",
+        "min_humidity": 35,
+        "max_humidity": 70
+      },
+      "state": {
+        "bench/dehumidifier/availability": "online",
+        "bench/dehumidifier/current_humidity": "63"
+      },
+      "start": [
+        {
+          "domain": "humidifier",
+          "service": "turn_on"
+        },
+        {
+          "domain": "humidifier",
+          "service": "set_humidity",
+          "data": {
+            "humidity": 50
+          }
+        }
+      ]
+    },
+    {
+      "domain": "fan",
+      "id": "bench_fan",
+      "discovery": {
+        "name": "Bench fan",
+        "unique_id": "bench_fan",
+        "object_id": "bench_fan",
+        "command_topic": "bench/fan/set",
+        "percentage_command_topic": "bench/fan/percentage/set",
+        "preset_mode_command_topic": "bench/fan/preset/set",
+        "preset_modes": ["auto", "silent", "favorite"],
+        "availability_topic": "bench/fan/availability",
+        "speed_range_min": 1,
+        "speed_range_max": 100
+      },
+      "state": {
+        "bench/fan/availability": "online"
+      },
+      "start": [
+        {
+          "domain": "fan",
+          "service": "turn_on"
+        },
+        {
+          "domain": "fan",
+          "service": "set_percentage",
+          "data": {
+            "percentage": 40
+          }
+        },
+        {
+          "domain": "fan",
+          "service": "set_preset_mode",
+          "data": {
+            "preset_mode": "silent"
+          }
+        }
+      ]
+    },
+    {
+      "domain": "switch",
+      "id": "bench_plug",
+      "discovery": {
+        "name": "Bench plug",
+        "unique_id": "bench_plug",
+        "object_id": "bench_plug",
+        "command_topic": "bench/plug/set",
+        "availability_topic": "bench/plug/availability"
+      },
+      "state": {
+        "bench/plug/availability": "online"
+      }
+    },
+    {
+      "domain": "sensor",
+      "id": "bench_room_temperature",
+      "discovery": {
+        "name": "Bench room temperature",
+        "unique_id": "bench_room_temperature",
+        "object_id": "bench_room_temperature",
+        "state_topic": "bench/room/temperature",
+        "unit_of_measurement": "°C",
+        "device_class": "temperature"
+      },
+      "state": {
+        "bench/room/temperature": "21.4"
+      }
+    },
+    {
+      "domain": "sensor",
+      "id": "bench_room_humidity",
+      "discovery": {
+        "name": "Bench room humidity",
+        "unique_id": "bench_room_humidity",
+        "object_id": "bench_room_humidity",
+        "state_topic": "bench/room/humidity",
+        "unit_of_measurement": "%",
+        "device_class": "humidity"
+      },
+      "state": {
+        "bench/room/humidity": "38.6"
+      }
+    },
+    {
+      "domain": "sensor",
+      "id": "bench_water_level",
+      "discovery": {
+        "name": "Bench water level",
+        "unique_id": "bench_water_level",
+        "object_id": "bench_water_level",
+        "state_topic": "bench/humidifier/water_level",
+        "unit_of_measurement": "%"
+      },
+      "state": {
+        "bench/humidifier/water_level": "72"
+      }
+    }
+  ],
+  "views": [
+    {
+      "title": "Cards",
+      "cards": [
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bench_humidifier}}",
+          "model": "humidifier",
+          "name": "Domain preset"
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bench_humidifier}}",
+          "model": "humidifier",
+          "name": "Panel open",
+          "toggle": {
+            "default": true
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bench_dehumidifier}}",
+          "model": "humidifier",
+          "name": "No modes",
+          "toggle": {
+            "default": true
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "humidifier.bench_missing",
+          "model": "humidifier",
+          "name": "Missing entity"
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bench_humidifier}}",
+          "model": "none",
+          "name": "Nothing but what is written",
+          "indicators": {
+            "humidity": {
+              "icon": "mdi:water-percent",
+              "unit": "%",
+              "round": 0,
+              "source": {
+                "attribute": "current_humidity"
+              }
+            }
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bench_humidifier}}",
+          "model": "humidifier",
+          "name": "No secondary info",
+          "secondary_info": {
+            "hide": true
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bench_humidifier}}",
+          "model": "humidifier",
+          "name": "Last changed",
+          "secondary_info": "last-changed"
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bench_humidifier}}",
+          "model": "humidifier",
+          "name": "Power as a toggle",
+          "power": {
+            "type": "toggle"
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bench_humidifier}}",
+          "model": "humidifier",
+          "name": "Scale 2",
+          "scale": 2
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bench_fan}}",
+          "model": "none",
+          "name": "A fan entity",
+          "target_humidity": {
+            "hide": true
+          },
+          "indicators": {
+            "speed": {
+              "icon": "mdi:fan",
+              "unit": "%",
+              "round": 0,
+              "source": {
+                "attribute": "percentage"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "title": "As people write them",
+      "cards": [
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bench_humidifier}}",
+          "model": "humidifier",
+          "name": "Bedroom, as people write it",
+          "tap_action": "more-info",
+          "toggle": {
+            "default": true
+          },
+          "secondary_info": {
+            "icon": "mdi:water-percent"
+          },
+          "target_humidity": {
+            "min": 30,
+            "max": 80,
+            "step": 5,
+            "unit": "%"
+          },
+          "indicators": {
+            "humidity": {
+              "icon": "mdi:water-percent",
+              "unit": "%",
+              "round": 0,
+              "source": {
+                "attribute": "current_humidity"
+              }
+            },
+            "room_temp": {
+              "icon": "mdi:thermometer-low",
+              "unit": "°C",
+              "round": 1,
+              "source": {
+                "entity": "{{bench_room_temperature}}"
+              },
+              "tap_action": "more-info"
+            },
+            "water": {
+              "icon": {
+                "template": "(value) => (Number(value) < 20 ? 'mdi:water-alert' : 'mdi:water')",
+                "style": "(value) => (Number(value) < 20 ? { color: 'orange' } : {})"
+              },
+              "unit": "%",
+              "round": 0,
+              "source": {
+                "entity": "{{bench_water_level}}"
+              }
+            }
+          },
+          "buttons": {
+            "mode": {
+              "icon": "mdi:tune-vertical",
+              "type": "dropdown",
+              "order": 0,
+              "state": {
+                "attribute": "mode"
+              },
+              "active": "(state) => state !== 'sleep'",
+              "source": {
+                "auto": "Automatic",
+                "normal": "Normal",
+                "boost": "Boost",
+                "sleep": "Night"
+              },
+              "change_action": "(selected, state, entity) => this.call_service('humidifier', 'set_mode', { entity_id: entity.entity_id, mode: selected })"
+            },
+            "plug": {
+              "icon": "mdi:power-socket-eu",
+              "order": 1,
+              "state": {
+                "entity": "{{bench_plug}}"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "title": "A translucent card",
+      "theme": "glass",
+      "cards": [
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bench_humidifier}}",
+          "model": "humidifier",
+          "name": "Translucent card",
+          "toggle": {
+            "default": true
+          },
+          "indicators": {
+            "room_humidity": {
+              "icon": "mdi:water-outline",
+              "unit": "%",
+              "round": 0,
+              "source": {
+                "entity": "{{bench_room_humidity}}"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

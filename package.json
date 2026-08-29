@@ -40,6 +40,7 @@
     "tslib": "^2.8.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.68.0",
+    "v8-to-istanbul": "^9.3.0",
     "vitest": "^4.1.11"
   },
   "scripts": {
@@ -54,6 +55,9 @@
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "test:browser": "web-test-runner",
+    "bench": "node test/bench/cli.mjs",
+    "test:e2e": "node --test --test-concurrency=1 \"test/e2e/*.test.mjs\"",
+    "bench:coverage": "node test/bench/coverage.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src test scripts",
     "format": "prettier --write .",

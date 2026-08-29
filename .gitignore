@@ -116,3 +116,12 @@ docs/index.md
 
 # Cached machine translations for the site
 .cache/
+
+# What the bench writes while it runs: the Home Assistant instance's own config
+# (seeded from test/bench/config-seed) and the screenshots a scenario takes.
+# The bench is described in test/bench/README.md.
+test/bench/config/
+test/e2e/shots/
+
+# Raw V8 coverage from the bench, and the report made from it
+test/e2e/coverage/

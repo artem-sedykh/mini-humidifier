@@ -156,6 +156,9 @@ npm run build      # everything CI runs, in the same order: lint, typecheck,
                    # format:check, check:docs, check:options, check:version,
                    # changelog --check, test, rollup, check:bundle
 npm run watch      # unminified, rebuilding on save
+npm run bench      # up | setup | shot | down - the Home Assistant in a container
+npm run test:e2e   # the scenarios in test/e2e/, against that Home Assistant
+npm run bench:coverage # which parts of src/ those scenarios reach
 ```
 
 Node version comes from `.nvmrc`. Use it; CI reads the same file.
@@ -176,7 +179,7 @@ not check, rather than letting a green test run imply the change was tried.
 
 ## Tests
 
-Three layers, all run by CI, in the order of how much they cost to run.
+Four layers, all run by CI, in the order of how much they cost to run.
 
 CI runs them on every push and pull request, and **once a week on master**
 whether anything changed or not. Nothing here changes on its own; everything it
@@ -331,6 +334,24 @@ run against is what a browser gives the card.
 Because the elements are stand-ins, this layer says the card renders and
 behaves - not that it renders correctly against the real ones. That distinction
 is the whole of "Home Assistant compatibility" below.
+
+**`npm run test:e2e`** - the bench (#257): a real Home Assistant in a container,
+a broker to invent devices on, the card on a real dashboard. This is the layer
+that answers the distinction the paragraph above draws, and the reason it
+matters here more than in the sister card is
+`src/components/targetHumidity.ts`, which picks its layout by asking `ha-slider`
+which of three implementations it is. Everything about that decision was
+untested until this existed.
+
+It is driven by a manifest (`test/e2e/bench.json`) rather than by anything in
+`test/bench/`, which names no card - the directory arrived from the sister card
+as a copy. `.github/workflows/bench.yml` runs it against the pinned version and
+against `latest`, the second allowed to fail on purpose, and it is deliberately
+not part of `Continuous Integration`. How to run it, what the fixtures are and
+why they are optimistic: `test/bench/README.md`.
+
+On its first run it found #263 - a card whose entity is not in `hass.states`
+rendered nothing at all and threw on every update.
 
 ## Verifying a change by hand
 
@@ -839,6 +860,8 @@ versions over gating the release.
 
 ## Known debt
 
-- The component tests render the card against stand-ins, so anything that only
-  shows up against Home Assistant's own elements - which is where this card has
-  broken before - is still caught by hand or not at all.
+- The bench covers the elements the component tests stand in for, but only on
+  the versions it is pointed at. No version matrix has been run here yet, and
+  `docs/index.md` claims 2022.11 and newer on nobody's measurement - see the
+  last section of `test/bench/README.md` before trying to turn that into a
+  number.
