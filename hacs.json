@@ -1,4 +1,5 @@
 {
   "name": "mini humidifier",
-  "filename": "mini-humidifier-bundle.js"
+  "filename": "mini-humidifier-bundle.js",
+  "hide_default_branch": true
 }

@@ -148,9 +148,10 @@ npm run test:browser  # @web/test-runner, the component tests in Chromium and We
 npm run rollup     # bundle src/main.ts -> dist/mini-humidifier-bundle.js
 npm run check:bundle  # assertions on the built bundle (needs a build first)
 npm run check:docs  # every path the documentation names exists
+npm run check:version # the README names the version in package.json
 npm run changelog  # rebuild CHANGELOG.md from release_notes/ (--check in CI)
 npm run dev        # the same as rollup, unminified
-npm run build      # lint + typecheck + check:docs + test + rollup + check:bundle
+npm run build      # lint + typecheck + check:docs + check:version + test + rollup + check:bundle
 npm run watch      # unminified, rebuilding on save
 ```
 
@@ -207,6 +208,17 @@ exists because paths in this file said `.js` for the whole of the TypeScript
 migration and nothing noticed - `mkdocs build --strict` checks the links
 between pages of the site, not the paths a sentence names, and it never sees
 this file at all.
+
+**`npm run check:version`** - `scripts/check-readme-version.mjs`. Every `?v=`
+in `README.md` names the version in `package.json`, and no download link is
+pinned to a release tag. The install instructions said `?v=3.1.5` while this
+repository was at 3.5.2 - four releases behind - and that number is the only
+cache-buster a person has: `/local` is served with a month-long `max-age`, so
+a stale one copied out of the README makes the next update to the card look
+like it did nothing. This README explains that twice, which is what makes an
+old number in it worse than none. `release-prepare.yml` rewrites it along with
+`package.json`; this is what says so when the two drift anyway. Seen failing
+three ways: a stale number, no `?v=` at all, and a link pinned to a tag.
 
 **`npm test`** - vitest over `test/`, node environment. `localize`, `getLabel`,
 the helpers in `src/utils/utils.ts`, the model registry, the four wrappers in
@@ -722,6 +734,9 @@ By hand, if the workflow is not available:
 
 1. Bump `version` in `package.json`. It carries a `v` prefix here
    (`"v3.1.5"`), which is unusual but load-bearing: the README badge reads it.
+   Bump the `?v=` in the README's install instructions with it - `npm run
+   check:version` fails the build until they agree, and the **Prepare a
+   release** workflow does both in one step.
 2. Write `release_notes/v<version>.md`. The release job reads that exact path
    and fails if it is missing.
 3. `npm run changelog`, and commit `CHANGELOG.md` with it. CI fails if the

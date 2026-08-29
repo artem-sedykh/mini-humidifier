@@ -110,6 +110,20 @@ jobs:
             }
             fs.writeFileSync(file, after);
           '
+          # The install instructions carry the same version, and `check:version`
+          # fails the release pull request if they disagree. Bumped here rather
+          # than left to whoever opens it.
+          node -e '
+            const fs = require("fs");
+            const file = "README.md";
+            const before = fs.readFileSync(file, "utf8");
+            const after = before.replace(/\?v=[\w.-]+/g, `?v=${process.env.VERSION}`);
+            if (after === before) {
+              console.error("No `?v=` in README.md to bump.");
+              process.exit(1);
+            }
+            fs.writeFileSync(file, after);
+          '
           npm run changelog
 
       - name: Push the release branch
