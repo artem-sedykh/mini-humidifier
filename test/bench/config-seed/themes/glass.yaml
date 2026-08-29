@@ -1,0 +1,20 @@
+# A translucent card over a dashboard with something to show through it.
+#
+# `ha-card-background` is the one that matters, and it is the one that is not
+# obvious. The card paints its background in a layer of its own (`.mh__bg` in
+# src/style.ts), so setting `background` on `ha-card` - the obvious thing -
+# changes nothing visible: the rule applies and the layer covers it. The layer
+# reads `--ha-card-background`, which is why that is what a theme sets.
+#
+# A theme is also the only native way to set any of this. The way most people
+# actually reach these variables is `card_mod`, a third-party resource this
+# bench deliberately does not carry.
+glass:
+  lovelace-background: 'linear-gradient(135deg, #3a6186 0%, #89253e 100%)'
+  ha-card-background: 'rgba(0, 0, 0, 0.5)'
+  ha-card-border-width: 0
+  ha-card-border-radius: 10px
+  ha-card-box-shadow: none
+  mini-humidifier-base-color: '#ffffff'
+  mini-humidifier-icon-color: '#ffffff'
+  mini-humidifier-button-color: '#ffffff'

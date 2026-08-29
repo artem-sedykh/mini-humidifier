@@ -18,7 +18,10 @@ const getEntityValue = (entity: HassEntity | undefined, config?: Source): any =>
 
   if (!config) return entity.state;
 
-  if (config.attribute) return entity.attributes[config.attribute];
+  // `attributes` is absent on the empty stand-in a model keeps when the
+  // configured entity is not in `hass.states` (#263). The card is drawing its
+  // unavailable state by then, but the update passes still ask for values.
+  if (config.attribute) return entity.attributes?.[config.attribute];
 
   return entity.state;
 };
