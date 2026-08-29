@@ -81,6 +81,11 @@ jobs:
         # noticed.
         run: npm run check:docs
 
+      - name: The README names the version this repository is at
+        # `?v=` in the install instructions is the only cache-buster a person
+        # has, and it said 3.1.5 while this was at 3.5.2.
+        run: npm run check:version
+
       - name: Changelog
         # CHANGELOG.md is generated from release_notes/. Without this it drifts
         # the first time a release note is edited after the fact, and nobody

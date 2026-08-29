@@ -57,7 +57,7 @@ The card is in the HACS default repositories.
 
    ```yaml
    resources:
-     - url: /local/mini-humidifier-bundle.js?v=3.1.5
+     - url: /local/mini-humidifier-bundle.js?v=3.5.2
        type: module
    ```
 
