@@ -152,7 +152,9 @@ npm run check:options # every option the card reads is documented, and the rever
 npm run check:version # the README names the version in package.json
 npm run changelog  # rebuild CHANGELOG.md from release_notes/ (--check in CI)
 npm run dev        # the same as rollup, unminified
-npm run build      # lint + typecheck + check:docs + check:version + test + rollup + check:bundle
+npm run build      # everything CI runs, in the same order: lint, typecheck,
+                   # format:check, check:docs, check:options, check:version,
+                   # changelog --check, test, rollup, check:bundle
 npm run watch      # unminified, rebuilding on save
 ```
 
