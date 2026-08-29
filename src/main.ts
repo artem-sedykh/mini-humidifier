@@ -35,10 +35,16 @@ import './components/buttons';
 class MiniHumidifier extends LitElement {
   config!: CardConfig;
 
-  // Both are set by the `hass` setter before anything renders, and the card has
-  // always read them without checking.
-  entity!: HassEntity;
+  // Undefined when the configured entity is not in `hass.states` - renamed,
+  // removed, or a typo (#263). The model below is built either way and answers
+  // `isUnavailable`, so the card renders the unavailable state rather than
+  // nothing at all; this one stays undefined, and the two render paths that
+  // read the entity itself check first.
+  entity: HassEntity | undefined;
 
+  // Set by the `hass` setter before anything renders, and read without
+  // checking: nothing renders before Home Assistant has handed the card a
+  // `hass`, and the setter always leaves a model behind.
   humidifier!: HumidifierObject;
 
   initial: boolean;
@@ -161,6 +167,20 @@ class MiniHumidifier extends LitElement {
     if (entity && (!this.humidifier || this.humidifier.changed(entity))) {
       this.entity = entity;
       this.humidifier = new HumidifierObject(hass, this.config, entity);
+      force = true;
+    } else if (!entity && (!(this.humidifier instanceof HumidifierObject) || this.entity)) {
+      // The configured entity is not in `hass.states` - renamed, removed, or a
+      // typo `setConfig` cannot catch, since it only checks the domain. The
+      // model is built anyway, because `isUnavailable` answers true without an
+      // entity and every render path already asks it (#263). Without this the
+      // model stayed the `{}` the constructor puts there, `computeClasses()`
+      // read `isActive` off it, and `render()` threw before an `ha-card`
+      // existed: a blank space on the dashboard and a TypeError per update.
+      //
+      // The second half of the guard is the entity disappearing while the card
+      // is on screen: rebuild once, then leave it alone.
+      this.entity = undefined;
+      this.humidifier = new HumidifierObject(hass, this.config, undefined as never);
       force = true;
     }
 
@@ -507,7 +527,12 @@ class MiniHumidifier extends LitElement {
       return '';
     }
 
+    // `last-changed` has nothing to show for an entity that is not there
+    // (#263): the card is drawing its unavailable state, and a
+    // `ha-relative-time` with no datetime throws reading it.
     if (this.config.secondary_info.type === 'last-changed') {
+      if (!this.entity) return '';
+
       return html`
       <div class='entity__secondary_info ellipsis'>
             <ha-relative-time

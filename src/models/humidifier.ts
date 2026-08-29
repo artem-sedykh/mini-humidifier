@@ -32,11 +32,19 @@ export default class HumidifierObject {
   // never constructs one of these without them - the `hass` setter returns
   // before this point when there is no `hass` - so the fallbacks are for
   // callers that build a model on its own, the tests among them.
+  //
+  // `entity` is different: it is genuinely absent when the configured entity
+  // is not in `hass.states` - renamed, removed, or a typo `setConfig` cannot
+  // catch, since it only checks the domain (#263). `this.entity` keeps the
+  // undefined, because that is what `isUnavailable` below reads; only the
+  // three reads of it are given somewhere to land.
   constructor(hass: HomeAssistant, config: CardConfig, entity: HassEntity) {
+    const state = entity || ({} as HassEntity);
+
     this.hass = hass || ({} as HomeAssistant);
     this.config = config || ({} as CardConfig);
     this.entity = entity;
-    this.state = entity.state;
+    this.state = state.state;
     this.attr = {
       friendly_name: '',
       depth: 0,
@@ -46,11 +54,11 @@ export default class HumidifierObject {
       buzzer: false,
       child_lock: false,
       led_brightness: 0,
-      ...(entity.attributes || {}),
+      ...(state.attributes || {}),
     };
 
-    this._last_changed = entity.last_changed;
-    this._last_updated = entity.last_updated;
+    this._last_changed = state.last_changed;
+    this._last_updated = state.last_updated;
   }
 
   get lastChanged(): string {
@@ -67,8 +75,11 @@ export default class HumidifierObject {
     return this.lastChanged !== e.last_changed || this.lastUpdated !== e.last_updated;
   }
 
+  // The configured id when the entity is not in `hass.states` (#263): the
+  // update passes build every other entity id off this one, and a card whose
+  // own entity has gone still has to say which one it was looking for.
   get id(): string {
-    return this.entity.entity_id;
+    return this.entity ? this.entity.entity_id : this.config.entity;
   }
 
   get icon(): string | undefined {
