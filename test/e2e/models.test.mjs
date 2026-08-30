@@ -283,34 +283,36 @@ describe('the bundled model presets, against their own devices', () => {
     const card = await locate(session.page, 'zhimi.airpurifier.ma2');
     const slider = card.locator('mh-target-humidity ha-slider').first();
 
-    // The click is for focus and lands in the middle of the slider, which on
-    // this range - 0 to 14, fixture at 8 - is a move in itself. So the arrow
-    // key below is measured against where the click left it rather than
-    // against where the fixture started: the card holds a move for
-    // `action_timeout` and sends the last value, so a click to 7 and an arrow
-    // back to 8 would send one value equal to the old one and read as a card
-    // that ignored the gesture.
+    // Driven with the pointer at two positions rather than with a click and
+    // an arrow key. The keyboard is not equivalent: on the pinned Home
+    // Assistant an ArrowRight after the click moves the value by one step, and
+    // on `latest` it moves nothing at all while the same click still does -
+    // see #269. What this scenario is about is that the control writes to a
+    // `number` entity, so it uses the gesture that works on both.
     //
-    // The left edge is not an alternative. `mouse.click(box.x + 6, ...)` moves
-    // nothing here - and moves nothing on the cb1 card either, whose slider
-    // every other scenario drives successfully, so what it measures is the
-    // click and not the card.
-    await slider.click();
-    await session.page.waitForTimeout(2500);
+    // The edges are not usable either: `mouse.click(box.x + 6, ...)` moves
+    // nothing here, and moves nothing on the cb1 card whose slider other
+    // scenarios drive successfully, so it measures the click and not the card.
+    const box = await slider.boundingBox();
+    const clickAt = async fraction => {
+      await session.page.mouse.click(box.x + box.width * fraction, box.y + box.height / 2);
+      // The card holds a move for `action_timeout` before it sends, so this is
+      // part of the path under test rather than a pause for comfort.
+      await session.page.waitForTimeout(2500);
+      return entity(bench.tokens, id);
+    };
 
-    const low = await entity(bench.tokens, id);
-    assert.ok(Number.isFinite(Number(low.state)), `not a number: ${low.state}`);
+    const low = await clickAt(0.2);
+    const high = await clickAt(0.8);
 
-    await slider.press('ArrowRight');
-
-    const after_ = await until(
-      async () => {
-        const state = await entity(bench.tokens, id);
-        return state.state !== low.state ? state : null;
-      },
-      { timeout: 15000, diagnose: () => entity(bench.tokens, id) },
+    assert.ok(
+      Number.isFinite(Number(low.state)) && Number.isFinite(Number(high.state)),
+      `${low.state} -> ${high.state}`,
     );
-    assert.equal(Number(after_.state), Number(low.state) + 1, `${low.state} -> ${after_.state}`);
+    assert.ok(
+      Number(high.state) > Number(low.state),
+      `the far end of the slider is not above the near one: ${low.state} -> ${high.state}`,
+    );
 
     await callService(bench.tokens, 'number', 'set_value', { entity_id: id, value: 8 });
   });
