@@ -100,7 +100,7 @@ browser test is hard to read without one.
 
 ## What the manifest holds
 
-Three views, and the difference between the first two is the point:
+Four views, and the difference between the first two is the point:
 
 - **Cards** is the card as its defaults render it, plus the cases the scenarios
   need: a dehumidifier with no modes, an entity that is not in `hass.states`, a
@@ -113,6 +113,9 @@ Three views, and the difference between the first two is the point:
   `config-seed/themes/glass.yaml`. A theme is the only native way to set the
   variables the card reads; the way most people actually set them is
   `card_mod`, a third-party resource this bench does not carry.
+- **Models** is one card per bundled preset from
+  `src/configurations/xiaomi_miio/`, each with the whole family of entities its
+  preset reads (#266). See below.
 
 A card with nothing but an `entity` exercises almost none of what the tracker
 asks about, which is why the second view exists.
@@ -149,6 +152,43 @@ have produced.
 Removing an entity is an empty retained payload on its discovery topic. That is
 also how an entity leaves `hass.states` for real, which is the situation behind
 [#263].
+
+### The model fixtures
+
+A preset in `src/configurations/xiaomi_miio/` is an agreement with an
+integration rather than a card configuration: it reads
+`sensor.{entity_id}_water_level`, `switch.{entity_id}_dry_mode`,
+`select.{entity_id}_led_brightness` and a dozen more, building each id out of
+the humidifier's own. None of those entities existed anywhere in this
+repository, so three of the four presets had never rendered an indicator with a
+value in any test.
+
+Emulating the device is therefore not emulating Xiaomi. The card never talks to
+`xiaomi_miio`: it talks to entity ids and to services in core domains, so
+`bench_cb1` and its eight companions are ordinary MQTT entities that happen to
+be named the way the integration names its own. The fixtures do copy the
+integration where copying is free - the modes are `Silent`, `Medium`, `High`,
+`Auto` with the real capitalisation, `deerma` has `Humidity` rather than
+`auto`, the va2 fan carries the real 1-4 speed range - because a preset that
+only works against lower-case modes is a preset that does not work.
+
+Two things about fixture ids, both measured here rather than assumed, and both
+able to waste an hour:
+
+- **The `name` decides the entity id, not `object_id`.** A fixture with
+  `"object_id": "bench_cb1_water_lvl"` and `"name": "Bench cb1 water level"`
+  registers as `sensor.bench_cb1_water_level`. The two agree throughout the
+  manifest, so the `object_id` fields document intent and decide nothing;
+  renaming a fixture means renaming its `name`.
+- **An id already handed out survives `forget`.** Home Assistant keeps deleted
+  registry entries and gives the same entity id back to the same `unique_id`,
+  so changing a fixture's name alone changes nothing on a bench that has run
+  before. Change the `unique_id` with it.
+
+Which is also why `models.test.mjs` opens by asserting that every fixture came
+back as `<domain>.<its own key>`: the presets rest on that, and the `_2` Home
+Assistant appends to the second device of a kind is what breaks it in the field
+([#78], [#98]).
 
 ## What it found on the first run
 
@@ -259,4 +299,6 @@ devices and real themes still live there.
   has a section named `other_settings` whose two certificate keys are required
   even when nothing about them is being set.
 
+[#78]: https://github.com/artem-sedykh/mini-humidifier/issues/78
+[#98]: https://github.com/artem-sedykh/mini-humidifier/issues/98
 [#263]: https://github.com/artem-sedykh/mini-humidifier/issues/263

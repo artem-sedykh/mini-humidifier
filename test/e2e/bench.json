@@ -173,6 +173,628 @@
       "state": {
         "bench/humidifier/water_level": "72"
       }
+    },
+    {
+      "domain": "humidifier",
+      "id": "bench_cb1",
+      "discovery": {
+        "name": "Bench cb1",
+        "unique_id": "bench_cb1",
+        "object_id": "bench_cb1",
+        "device_class": "humidifier",
+        "command_topic": "bench/cb1/set",
+        "target_humidity_command_topic": "bench/cb1/humidity/set",
+        "current_humidity_topic": "bench/cb1/current_humidity",
+        "mode_command_topic": "bench/cb1/mode/set",
+        "modes": ["Silent", "Medium", "High", "Auto"],
+        "availability_topic": "bench/cb1/availability",
+        "min_humidity": 30,
+        "max_humidity": 80
+      },
+      "state": {
+        "bench/cb1/availability": "online",
+        "bench/cb1/current_humidity": "43"
+      },
+      "start": [
+        {
+          "domain": "humidifier",
+          "service": "turn_on"
+        },
+        {
+          "domain": "humidifier",
+          "service": "set_humidity",
+          "data": {
+            "humidity": 50
+          }
+        },
+        {
+          "domain": "humidifier",
+          "service": "set_mode",
+          "data": {
+            "mode": "Auto"
+          }
+        }
+      ]
+    },
+    {
+      "domain": "sensor",
+      "id": "bench_cb1_water_level",
+      "discovery": {
+        "name": "Bench cb1 water level",
+        "unique_id": "bench_cb1_water_level",
+        "object_id": "bench_cb1_water_level",
+        "state_topic": "bench/cb1/water_level",
+        "unit_of_measurement": "%"
+      },
+      "state": {
+        "bench/cb1/water_level": "72"
+      }
+    },
+    {
+      "domain": "sensor",
+      "id": "bench_cb1_temperature",
+      "discovery": {
+        "name": "Bench cb1 temperature",
+        "unique_id": "bench_cb1_temperature",
+        "object_id": "bench_cb1_temperature",
+        "state_topic": "bench/cb1/temperature",
+        "unit_of_measurement": "°C",
+        "device_class": "temperature"
+      },
+      "state": {
+        "bench/cb1/temperature": "21.4"
+      }
+    },
+    {
+      "domain": "sensor",
+      "id": "bench_cb1_humidity",
+      "discovery": {
+        "name": "Bench cb1 humidity",
+        "unique_id": "bench_cb1_humidity",
+        "object_id": "bench_cb1_humidity",
+        "state_topic": "bench/cb1/humidity",
+        "unit_of_measurement": "%",
+        "device_class": "humidity"
+      },
+      "state": {
+        "bench/cb1/humidity": "43.8"
+      }
+    },
+    {
+      "domain": "sensor",
+      "id": "bench_cb1_motor_speed",
+      "discovery": {
+        "name": "Bench cb1 motor speed",
+        "unique_id": "bench_cb1_motor_speed",
+        "object_id": "bench_cb1_motor_speed",
+        "state_topic": "bench/cb1/motor_speed",
+        "unit_of_measurement": "rpm"
+      },
+      "state": {
+        "bench/cb1/motor_speed": "318"
+      }
+    },
+    {
+      "domain": "switch",
+      "id": "bench_cb1_dry_mode",
+      "discovery": {
+        "name": "Bench cb1 dry mode",
+        "unique_id": "bench_cb1_dry_mode",
+        "object_id": "bench_cb1_dry_mode",
+        "command_topic": "bench/cb1/dry_mode/set"
+      },
+      "start": [
+        {
+          "domain": "switch",
+          "service": "turn_off"
+        }
+      ]
+    },
+    {
+      "domain": "switch",
+      "id": "bench_cb1_buzzer",
+      "discovery": {
+        "name": "Bench cb1 buzzer",
+        "unique_id": "bench_cb1_buzzer",
+        "object_id": "bench_cb1_buzzer",
+        "command_topic": "bench/cb1/buzzer/set"
+      },
+      "start": [
+        {
+          "domain": "switch",
+          "service": "turn_off"
+        }
+      ]
+    },
+    {
+      "domain": "switch",
+      "id": "bench_cb1_child_lock",
+      "discovery": {
+        "name": "Bench cb1 child lock",
+        "unique_id": "bench_cb1_child_lock",
+        "object_id": "bench_cb1_child_lock",
+        "command_topic": "bench/cb1/child_lock/set"
+      },
+      "start": [
+        {
+          "domain": "switch",
+          "service": "turn_on"
+        }
+      ]
+    },
+    {
+      "domain": "select",
+      "id": "bench_cb1_led_brightness",
+      "discovery": {
+        "name": "Bench cb1 LED brightness",
+        "unique_id": "bench_cb1_led_brightness",
+        "object_id": "bench_cb1_led_brightness",
+        "command_topic": "bench/cb1/led_brightness/set",
+        "options": ["bright", "dim", "off"]
+      },
+      "start": [
+        {
+          "domain": "select",
+          "service": "select_option",
+          "data": {
+            "option": "dim"
+          }
+        }
+      ]
+    },
+    {
+      "domain": "humidifier",
+      "id": "bench_jsq",
+      "discovery": {
+        "name": "Bench jsq",
+        "unique_id": "bench_jsq",
+        "object_id": "bench_jsq",
+        "device_class": "humidifier",
+        "command_topic": "bench/jsq/set",
+        "target_humidity_command_topic": "bench/jsq/humidity/set",
+        "current_humidity_topic": "bench/jsq/current_humidity",
+        "mode_command_topic": "bench/jsq/mode/set",
+        "modes": ["Low", "Medium", "High", "Humidity"],
+        "availability_topic": "bench/jsq/availability",
+        "min_humidity": 30,
+        "max_humidity": 80
+      },
+      "state": {
+        "bench/jsq/availability": "online",
+        "bench/jsq/current_humidity": "47"
+      },
+      "start": [
+        {
+          "domain": "humidifier",
+          "service": "turn_on"
+        },
+        {
+          "domain": "humidifier",
+          "service": "set_humidity",
+          "data": {
+            "humidity": 60
+          }
+        },
+        {
+          "domain": "humidifier",
+          "service": "set_mode",
+          "data": {
+            "mode": "Humidity"
+          }
+        }
+      ]
+    },
+    {
+      "domain": "binary_sensor",
+      "id": "bench_jsq_water_tank_empty",
+      "discovery": {
+        "name": "Bench jsq water tank empty",
+        "unique_id": "bench_jsq_water_tank_empty",
+        "object_id": "bench_jsq_water_tank_empty",
+        "state_topic": "bench/jsq/water_tank_empty"
+      },
+      "state": {
+        "bench/jsq/water_tank_empty": "OFF"
+      }
+    },
+    {
+      "domain": "sensor",
+      "id": "bench_jsq_temperature",
+      "discovery": {
+        "name": "Bench jsq temperature",
+        "unique_id": "bench_jsq_temperature",
+        "object_id": "bench_jsq_temperature",
+        "state_topic": "bench/jsq/temperature",
+        "unit_of_measurement": "°C",
+        "device_class": "temperature"
+      },
+      "state": {
+        "bench/jsq/temperature": "22.1"
+      }
+    },
+    {
+      "domain": "sensor",
+      "id": "bench_jsq_humidity",
+      "discovery": {
+        "name": "Bench jsq humidity",
+        "unique_id": "bench_jsq_humidity",
+        "object_id": "bench_jsq_humidity",
+        "state_topic": "bench/jsq/humidity",
+        "unit_of_measurement": "%",
+        "device_class": "humidity"
+      },
+      "state": {
+        "bench/jsq/humidity": "47.2"
+      }
+    },
+    {
+      "domain": "switch",
+      "id": "bench_jsq_buzzer",
+      "discovery": {
+        "name": "Bench jsq buzzer",
+        "unique_id": "bench_jsq_buzzer",
+        "object_id": "bench_jsq_buzzer",
+        "command_topic": "bench/jsq/buzzer/set"
+      },
+      "start": [
+        {
+          "domain": "switch",
+          "service": "turn_off"
+        }
+      ]
+    },
+    {
+      "domain": "switch",
+      "id": "bench_jsq_led",
+      "discovery": {
+        "name": "Bench jsq LED",
+        "unique_id": "bench_jsq_led",
+        "object_id": "bench_jsq_led",
+        "command_topic": "bench/jsq/led/set"
+      },
+      "start": [
+        {
+          "domain": "switch",
+          "service": "turn_on"
+        }
+      ]
+    },
+    {
+      "domain": "fan",
+      "id": "bench_ma2",
+      "discovery": {
+        "name": "Bench ma2",
+        "unique_id": "bench_ma2",
+        "object_id": "bench_ma2",
+        "command_topic": "bench/ma2/set",
+        "preset_mode_command_topic": "bench/ma2/preset/set",
+        "preset_modes": ["Auto", "Silent", "Favorite", "Idle"],
+        "availability_topic": "bench/ma2/availability"
+      },
+      "state": {
+        "bench/ma2/availability": "online"
+      },
+      "start": [
+        {
+          "domain": "fan",
+          "service": "turn_on"
+        },
+        {
+          "domain": "fan",
+          "service": "set_preset_mode",
+          "data": {
+            "preset_mode": "Favorite"
+          }
+        }
+      ]
+    },
+    {
+      "domain": "sensor",
+      "id": "bench_ma2_pm2_5",
+      "discovery": {
+        "name": "Bench ma2 PM2.5",
+        "unique_id": "bench_ma2_pm2_5",
+        "object_id": "bench_ma2_pm2_5",
+        "state_topic": "bench/ma2/pm2_5",
+        "unit_of_measurement": "µg/m³",
+        "device_class": "pm25"
+      },
+      "state": {
+        "bench/ma2/pm2_5": "12"
+      }
+    },
+    {
+      "domain": "sensor",
+      "id": "bench_ma2_temperature",
+      "discovery": {
+        "name": "Bench ma2 temperature",
+        "unique_id": "bench_ma2_temperature",
+        "object_id": "bench_ma2_temperature",
+        "state_topic": "bench/ma2/temperature",
+        "unit_of_measurement": "°C",
+        "device_class": "temperature"
+      },
+      "state": {
+        "bench/ma2/temperature": "23.0"
+      }
+    },
+    {
+      "domain": "sensor",
+      "id": "bench_ma2_humidity",
+      "discovery": {
+        "name": "Bench ma2 humidity",
+        "unique_id": "bench_ma2_humidity",
+        "object_id": "bench_ma2_humidity",
+        "state_topic": "bench/ma2/humidity",
+        "unit_of_measurement": "%",
+        "device_class": "humidity"
+      },
+      "state": {
+        "bench/ma2/humidity": "39.5"
+      }
+    },
+    {
+      "domain": "sensor",
+      "id": "bench_ma2_motor_speed",
+      "discovery": {
+        "name": "Bench ma2 motor speed",
+        "unique_id": "bench_ma2_motor_speed",
+        "object_id": "bench_ma2_motor_speed",
+        "state_topic": "bench/ma2/motor_speed",
+        "unit_of_measurement": "rpm"
+      },
+      "state": {
+        "bench/ma2/motor_speed": "900"
+      }
+    },
+    {
+      "domain": "sensor",
+      "id": "bench_ma2_filter_use",
+      "discovery": {
+        "name": "Bench ma2 filter use",
+        "unique_id": "bench_ma2_filter_use",
+        "object_id": "bench_ma2_filter_use",
+        "state_topic": "bench/ma2/filter_use",
+        "unit_of_measurement": "h"
+      },
+      "state": {
+        "bench/ma2/filter_use": "1273"
+      }
+    },
+    {
+      "domain": "number",
+      "id": "bench_ma2_favorite_level",
+      "discovery": {
+        "name": "Bench ma2 favorite level",
+        "unique_id": "bench_ma2_favorite_level",
+        "object_id": "bench_ma2_favorite_level",
+        "command_topic": "bench/ma2/favorite_level/set",
+        "min": 0,
+        "max": 14,
+        "step": 1
+      },
+      "start": [
+        {
+          "domain": "number",
+          "service": "set_value",
+          "data": {
+            "value": 8
+          }
+        }
+      ]
+    },
+    {
+      "domain": "switch",
+      "id": "bench_ma2_led",
+      "discovery": {
+        "name": "Bench ma2 LED",
+        "unique_id": "bench_ma2_led",
+        "object_id": "bench_ma2_led",
+        "command_topic": "bench/ma2/led/set"
+      },
+      "start": [
+        {
+          "domain": "switch",
+          "service": "turn_on"
+        }
+      ]
+    },
+    {
+      "domain": "switch",
+      "id": "bench_ma2_buzzer",
+      "discovery": {
+        "name": "Bench ma2 buzzer",
+        "unique_id": "bench_ma2_buzzer",
+        "object_id": "bench_ma2_buzzer",
+        "command_topic": "bench/ma2/buzzer/set"
+      },
+      "start": [
+        {
+          "domain": "switch",
+          "service": "turn_off"
+        }
+      ]
+    },
+    {
+      "domain": "switch",
+      "id": "bench_ma2_child_lock",
+      "discovery": {
+        "name": "Bench ma2 child lock",
+        "unique_id": "bench_ma2_child_lock",
+        "object_id": "bench_ma2_child_lock",
+        "command_topic": "bench/ma2/child_lock/set"
+      },
+      "start": [
+        {
+          "domain": "switch",
+          "service": "turn_off"
+        }
+      ]
+    },
+    {
+      "domain": "fan",
+      "id": "bench_va2",
+      "discovery": {
+        "name": "Bench va2",
+        "unique_id": "bench_va2",
+        "object_id": "bench_va2",
+        "command_topic": "bench/va2/set",
+        "percentage_command_topic": "bench/va2/percentage/set",
+        "preset_mode_command_topic": "bench/va2/preset/set",
+        "preset_modes": ["Auto", "Interval"],
+        "availability_topic": "bench/va2/availability",
+        "speed_range_min": 1,
+        "speed_range_max": 4
+      },
+      "state": {
+        "bench/va2/availability": "online"
+      },
+      "start": [
+        {
+          "domain": "fan",
+          "service": "turn_on"
+        },
+        {
+          "domain": "fan",
+          "service": "set_percentage",
+          "data": {
+            "percentage": 50
+          }
+        },
+        {
+          "domain": "fan",
+          "service": "set_preset_mode",
+          "data": {
+            "preset_mode": "Auto"
+          }
+        }
+      ]
+    },
+    {
+      "domain": "sensor",
+      "id": "bench_va2_pm2_5",
+      "discovery": {
+        "name": "Bench va2 PM2.5",
+        "unique_id": "bench_va2_pm2_5",
+        "object_id": "bench_va2_pm2_5",
+        "state_topic": "bench/va2/pm2_5",
+        "unit_of_measurement": "µg/m³",
+        "device_class": "pm25"
+      },
+      "state": {
+        "bench/va2/pm2_5": "31"
+      }
+    },
+    {
+      "domain": "sensor",
+      "id": "bench_va2_temperature",
+      "discovery": {
+        "name": "Bench va2 temperature",
+        "unique_id": "bench_va2_temperature",
+        "object_id": "bench_va2_temperature",
+        "state_topic": "bench/va2/temperature",
+        "unit_of_measurement": "°C",
+        "device_class": "temperature"
+      },
+      "state": {
+        "bench/va2/temperature": "20.6"
+      }
+    },
+    {
+      "domain": "sensor",
+      "id": "bench_va2_humidity",
+      "discovery": {
+        "name": "Bench va2 humidity",
+        "unique_id": "bench_va2_humidity",
+        "object_id": "bench_va2_humidity",
+        "state_topic": "bench/va2/humidity",
+        "unit_of_measurement": "%",
+        "device_class": "humidity"
+      },
+      "state": {
+        "bench/va2/humidity": "51.3"
+      }
+    },
+    {
+      "domain": "sensor",
+      "id": "bench_va2_carbon_dioxide",
+      "discovery": {
+        "name": "Bench va2 carbon dioxide",
+        "unique_id": "bench_va2_carbon_dioxide",
+        "object_id": "bench_va2_carbon_dioxide",
+        "state_topic": "bench/va2/carbon_dioxide",
+        "unit_of_measurement": "ppm",
+        "device_class": "carbon_dioxide"
+      },
+      "state": {
+        "bench/va2/carbon_dioxide": "780"
+      }
+    },
+    {
+      "domain": "sensor",
+      "id": "bench_va2_filter_use",
+      "discovery": {
+        "name": "Bench va2 filter use",
+        "unique_id": "bench_va2_filter_use",
+        "object_id": "bench_va2_filter_use",
+        "state_topic": "bench/va2/filter_use",
+        "unit_of_measurement": "h"
+      },
+      "state": {
+        "bench/va2/filter_use": "402"
+      }
+    },
+    {
+      "domain": "select",
+      "id": "bench_va2_led_brightness",
+      "discovery": {
+        "name": "Bench va2 LED brightness",
+        "unique_id": "bench_va2_led_brightness",
+        "object_id": "bench_va2_led_brightness",
+        "command_topic": "bench/va2/led_brightness/set",
+        "options": ["bright", "dim", "off"]
+      },
+      "start": [
+        {
+          "domain": "select",
+          "service": "select_option",
+          "data": {
+            "option": "bright"
+          }
+        }
+      ]
+    },
+    {
+      "domain": "switch",
+      "id": "bench_va2_buzzer",
+      "discovery": {
+        "name": "Bench va2 buzzer",
+        "unique_id": "bench_va2_buzzer",
+        "object_id": "bench_va2_buzzer",
+        "command_topic": "bench/va2/buzzer/set"
+      },
+      "start": [
+        {
+          "domain": "switch",
+          "service": "turn_on"
+        }
+      ]
+    },
+    {
+      "domain": "switch",
+      "id": "bench_va2_child_lock",
+      "discovery": {
+        "name": "Bench va2 child lock",
+        "unique_id": "bench_va2_child_lock",
+        "object_id": "bench_va2_child_lock",
+        "command_topic": "bench/va2/child_lock/set"
+      },
+      "start": [
+        {
+          "domain": "switch",
+          "service": "turn_off"
+        }
+      ]
     }
   ],
   "views": [
@@ -378,6 +1000,47 @@
                 "entity": "{{bench_room_humidity}}"
               }
             }
+          }
+        }
+      ]
+    },
+    {
+      "title": "Models",
+      "cards": [
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bench_cb1}}",
+          "model": "zhimi.humidifier.cb1",
+          "name": "zhimi.humidifier.cb1",
+          "toggle": {
+            "default": true
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bench_jsq}}",
+          "model": "deerma.humidifier.jsq",
+          "name": "deerma.humidifier.jsq",
+          "toggle": {
+            "default": true
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bench_ma2}}",
+          "model": "zhimi.airpurifier.ma2",
+          "name": "zhimi.airpurifier.ma2",
+          "toggle": {
+            "default": true
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bench_va2}}",
+          "model": "zhimi.airfresh.va2",
+          "name": "zhimi.airfresh.va2",
+          "toggle": {
+            "default": true
           }
         }
       ]
