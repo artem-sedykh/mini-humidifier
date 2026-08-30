@@ -149,17 +149,15 @@ describe('the target humidity slider', () => {
         `${where} reaches the entity name ${JSON.stringify(it_.title)}`,
       );
 
-      // And inside the card - except at a scale, where it is not, and that is
-      // #265 rather than this scenario's business. Skipped by the card's own
-      // `scale` rather than by its name, and the unscaled cards on the same
-      // view keep the assertion, which is what makes the exception narrow.
+      // And inside the card, at every scale. The `scale: 2` card was excepted
+      // here until #265 was fixed - it drew 81px past its own edge, over
+      // whatever card sat beside it.
       //
-      // Worth knowing how this was found: as a one-pixel difference between
-      // this machine and CI on the same commit, which reads exactly like a
-      // flaky test. `overflow` is what it actually was - 81px on that card and
-      // 0 on every other - so it is what is measured here.
-      if (it_.scale !== 1) continue;
-
+      // Worth knowing how that was found: as a one-pixel difference between a
+      // developer's machine and CI on the same commit, which reads exactly
+      // like a flaky test. It was not - the box comparison below was measuring
+      // the last pixel of an overflow 81px wide. That is why `overflow` is
+      // asserted first and the boxes second.
       assert.equal(it_.overflow, 0, `${it_.name}: the card draws ${it_.overflow}px past its edge`);
       assert.ok(
         it_.slider.left >= it_.card.left - 1 && it_.slider.right <= it_.card.right + 1,
