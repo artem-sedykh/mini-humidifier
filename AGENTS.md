@@ -353,6 +353,21 @@ why they are optimistic: `test/bench/README.md`.
 On its first run it found #263 - a card whose entity is not in `hass.states`
 rendered nothing at all and threw on every update.
 
+It is also the only layer where a **model preset** meets the device it was
+written for (#266). A preset reads a family of entities named after the
+humidifier's own id - `sensor.{entity_id}_water_level`,
+`select.{entity_id}_led_brightness`, `number.{entity_id}_favorite_level` - and
+the fake `hass` in `test/browser/` carries one such family, the one
+`zhimi.humidifier.cb1` reads. Three of the four `xiaomi_miio` presets had
+therefore never rendered an indicator with a value anywhere: their entities
+were simply absent, every control that needed one was skipped, and what was
+left still looked like a card. The manifest's fourth view gives each of them
+its own entities, which is a matter of naming MQTT fixtures correctly - the
+card never talks to `xiaomi_miio`, only to entity ids and core-domain
+services. `test/e2e/models.test.mjs` also photographs each card into
+`test/e2e/shots/`, which is where a picture of a preset comes from when
+`docs/models.md` wants one.
+
 ## Verifying a change by hand
 
 1. `npm run rollup`
