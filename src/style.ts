@@ -100,6 +100,8 @@ const style = css`
     color: var(--mh-icon-active-color);
   }
   .entity__icon {
+    /* The icon inside is sized by sharedStyle; this is the circle around it.
+       See #273 for why --mdc-icon-size is the knob that works. */
     animation: fade-in .25s ease-out;
     background-position: center center;
     background-repeat: no-repeat;

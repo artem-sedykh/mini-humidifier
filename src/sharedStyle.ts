@@ -12,6 +12,15 @@ const sharedStyle = css`
   ha-icon {
     width: calc(var(--mh-unit) * .6);
     height: calc(var(--mh-unit) * .6);
+    /* The width and height above do nothing on their own: ha-icon computes to
+       display: inline, and an inline box ignores both. The glyph inside is an
+       ha-svg-icon, and what it reads is --mdc-icon-size - which is why the
+       indicators, which set that, are the only icons on the card that ever
+       honoured a scale. See #273.
+
+       At scale 1 this is 24px, exactly what these icons already rendered at,
+       so nothing moves on a card that did not ask to be scaled. */
+    --mdc-icon-size: calc(var(--mh-unit) * .6);
   }
   ha-icon-button {
     width: calc(var(--mh-unit));
