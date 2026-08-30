@@ -179,6 +179,11 @@ const style = css`
     justify-content: center;
     margin-right: 0;
     max-width: calc(var(--mh-unit) * 4.25);
+    /* A flex item will not shrink below its own content unless it is told it
+       may, and the name is the part of this row that can afford to - it is
+       already drawn with an ellipsis. Without this it holds its full width
+       while the controls beside it run off the card. See #265. */
+    min-width: 0;
   }
   .--more-info .entity__info__name_wrap {
     cursor: pointer;
@@ -209,7 +214,16 @@ const style = css`
     --ha-icon-display: flex;
   }
   .ctl-wrap {
-    flex: 1;
+    /* Grow and shrink from a content basis, not the zero basis a bare
+       "flex: 1" gives. With a zero basis the controls only ever get what the
+       name leaves, so in a narrow card the slider is squeezed to nothing while
+       the name keeps its full width. A content basis makes the two negotiate:
+       the name gives first, because it can ellipsize, and the slider keeps a
+       share of what is left. */
+    flex: 1 1 auto;
+    /* And the controls may shrink below their content as well, so the row ends
+       at the card's edge instead of painting over the next one (#265). */
+    min-width: 0;
     margin-left: auto;
     display: flex;
     flex-direction: row;
