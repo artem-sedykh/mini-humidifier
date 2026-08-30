@@ -171,9 +171,10 @@ describe('the target humidity slider', () => {
   it('sends a move of the slider through to the entity', async () => {
     const id = bench.ids.bench_humidifier;
     const before_ = await entity(bench.tokens, id);
+    const humidity = async () => (await entity(bench.tokens, id)).attributes.humidity;
 
-    // Driven from the keyboard rather than by writing `value`: the point is
-    // that the element's own change event reaches the card, and on the
+    // Driven by pointer and keyboard rather than by writing `value`: the point
+    // is that the element's own change event reaches the card, and on the
     // WebAwesome slider the `value` attribute means something else again.
     const slider = session.page
       .locator('mini-humidifier')
@@ -181,24 +182,43 @@ describe('the target humidity slider', () => {
       .locator('mh-target-humidity ha-slider')
       .first();
 
-    await slider.click();
-    await slider.press('ArrowRight');
+    // Aimed near the low end rather than at the middle, so the move is one the
+    // entity can show: this range is 30 to 80 and the fixture sits at 55, which
+    // is where a click in the centre lands anyway.
+    const box = await slider.boundingBox();
+    await session.page.mouse.click(box.x + box.width * 0.15, box.y + box.height / 2);
 
     // The card holds a move for `action_timeout` before it sends, so the wait
     // is part of the path under test. Polled, not slept through.
-    const after_ = await until(
+    const clicked = await until(
       async () => {
-        const state = await entity(bench.tokens, id);
-        return state.attributes.humidity !== before_.attributes.humidity ? state : null;
+        const now = await humidity();
+        return now !== before_.attributes.humidity ? now : null;
       },
       { timeout: 15000, diagnose: () => entity(bench.tokens, id) },
     );
 
-    assert.notEqual(
-      after_.attributes.humidity,
-      before_.attributes.humidity,
-      `${before_.attributes.humidity} -> ${after_.attributes.humidity}`,
+    // And now the keyboard, from where the click left the focus.
+    //
+    // `keyboard.press` rather than `slider.press('ArrowRight')`, which is what
+    // this scenario used to do and is not the same thing: `ha-slider` has
+    // `tabIndex: -1` and its shadow root does not delegate focus, so the
+    // `focus()` Playwright calls on the host before pressing cannot land - and
+    // the click's focus, which is on a `div` inside the element, is what
+    // answers the key. Measured, and #269 is the two red bench runs it cost
+    // before it was: the assertion was satisfied by the click while naming the
+    // key, so the key going nowhere never showed.
+    await session.page.keyboard.press('ArrowRight');
+
+    const after_ = await until(
+      async () => {
+        const now = await humidity();
+        return now !== clicked ? now : null;
+      },
+      { timeout: 15000, diagnose: () => entity(bench.tokens, id) },
     );
+
+    assert.ok(after_ > clicked, `arrow key moved ${clicked} to ${after_}`);
   });
 
   it('reports nothing to the console while doing it', async () => {
