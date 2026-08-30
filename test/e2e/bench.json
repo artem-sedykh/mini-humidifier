@@ -176,24 +176,24 @@
     },
     {
       "domain": "humidifier",
-      "id": "bench_cb1",
+      "id": "bedroom_humidifier",
       "discovery": {
-        "name": "Bench cb1",
-        "unique_id": "bench_cb1",
-        "object_id": "bench_cb1",
+        "name": "Bedroom humidifier",
+        "unique_id": "bedroom_humidifier",
+        "object_id": "bedroom_humidifier",
         "device_class": "humidifier",
-        "command_topic": "bench/cb1/set",
-        "target_humidity_command_topic": "bench/cb1/humidity/set",
-        "current_humidity_topic": "bench/cb1/current_humidity",
-        "mode_command_topic": "bench/cb1/mode/set",
+        "command_topic": "bench/bedroom/set",
+        "target_humidity_command_topic": "bench/bedroom/humidity/set",
+        "current_humidity_topic": "bench/bedroom/current_humidity",
+        "mode_command_topic": "bench/bedroom/mode/set",
         "modes": ["Silent", "Medium", "High", "Auto"],
-        "availability_topic": "bench/cb1/availability",
+        "availability_topic": "bench/bedroom/availability",
         "min_humidity": 30,
         "max_humidity": 80
       },
       "state": {
-        "bench/cb1/availability": "online",
-        "bench/cb1/current_humidity": "43"
+        "bench/bedroom/availability": "online",
+        "bench/bedroom/current_humidity": "43"
       },
       "start": [
         {
@@ -218,70 +218,70 @@
     },
     {
       "domain": "sensor",
-      "id": "bench_cb1_water_level",
+      "id": "bedroom_humidifier_water_level",
       "discovery": {
-        "name": "Bench cb1 water level",
-        "unique_id": "bench_cb1_water_level",
-        "object_id": "bench_cb1_water_level",
-        "state_topic": "bench/cb1/water_level",
+        "name": "Bedroom humidifier water level",
+        "unique_id": "bedroom_humidifier_water_level",
+        "object_id": "bedroom_humidifier_water_level",
+        "state_topic": "bench/bedroom/water_level",
         "unit_of_measurement": "%"
       },
       "state": {
-        "bench/cb1/water_level": "72"
+        "bench/bedroom/water_level": "72"
       }
     },
     {
       "domain": "sensor",
-      "id": "bench_cb1_temperature",
+      "id": "bedroom_humidifier_temperature",
       "discovery": {
-        "name": "Bench cb1 temperature",
-        "unique_id": "bench_cb1_temperature",
-        "object_id": "bench_cb1_temperature",
-        "state_topic": "bench/cb1/temperature",
+        "name": "Bedroom humidifier temperature",
+        "unique_id": "bedroom_humidifier_temperature",
+        "object_id": "bedroom_humidifier_temperature",
+        "state_topic": "bench/bedroom/temperature",
         "unit_of_measurement": "°C",
         "device_class": "temperature"
       },
       "state": {
-        "bench/cb1/temperature": "21.4"
+        "bench/bedroom/temperature": "22.6"
       }
     },
     {
       "domain": "sensor",
-      "id": "bench_cb1_humidity",
+      "id": "bedroom_humidifier_humidity",
       "discovery": {
-        "name": "Bench cb1 humidity",
-        "unique_id": "bench_cb1_humidity",
-        "object_id": "bench_cb1_humidity",
-        "state_topic": "bench/cb1/humidity",
+        "name": "Bedroom humidifier humidity",
+        "unique_id": "bedroom_humidifier_humidity",
+        "object_id": "bedroom_humidifier_humidity",
+        "state_topic": "bench/bedroom/humidity",
         "unit_of_measurement": "%",
         "device_class": "humidity"
       },
       "state": {
-        "bench/cb1/humidity": "43.8"
+        "bench/bedroom/humidity": "43.8"
       }
     },
     {
       "domain": "sensor",
-      "id": "bench_cb1_motor_speed",
+      "id": "bedroom_humidifier_motor_speed",
       "discovery": {
-        "name": "Bench cb1 motor speed",
-        "unique_id": "bench_cb1_motor_speed",
-        "object_id": "bench_cb1_motor_speed",
-        "state_topic": "bench/cb1/motor_speed",
+        "name": "Bedroom humidifier motor speed",
+        "unique_id": "bedroom_humidifier_motor_speed",
+        "object_id": "bedroom_humidifier_motor_speed",
+        "state_topic": "bench/bedroom/motor_speed",
         "unit_of_measurement": "rpm"
       },
       "state": {
-        "bench/cb1/motor_speed": "318"
+        "bench/bedroom/motor_speed": "318"
       }
     },
     {
       "domain": "switch",
-      "id": "bench_cb1_dry_mode",
+      "id": "bedroom_humidifier_dry_mode",
       "discovery": {
-        "name": "Bench cb1 dry mode",
-        "unique_id": "bench_cb1_dry_mode",
-        "object_id": "bench_cb1_dry_mode",
-        "command_topic": "bench/cb1/dry_mode/set"
+        "name": "Bedroom humidifier dry mode",
+        "unique_id": "bedroom_humidifier_dry_mode",
+        "object_id": "bedroom_humidifier_dry_mode",
+        "command_topic": "bench/bedroom/dry_mode/set"
       },
       "start": [
         {
@@ -292,12 +292,12 @@
     },
     {
       "domain": "switch",
-      "id": "bench_cb1_buzzer",
+      "id": "bedroom_humidifier_buzzer",
       "discovery": {
-        "name": "Bench cb1 buzzer",
-        "unique_id": "bench_cb1_buzzer",
-        "object_id": "bench_cb1_buzzer",
-        "command_topic": "bench/cb1/buzzer/set"
+        "name": "Bedroom humidifier buzzer",
+        "unique_id": "bedroom_humidifier_buzzer",
+        "object_id": "bedroom_humidifier_buzzer",
+        "command_topic": "bench/bedroom/buzzer/set"
       },
       "start": [
         {
@@ -308,12 +308,12 @@
     },
     {
       "domain": "switch",
-      "id": "bench_cb1_child_lock",
+      "id": "bedroom_humidifier_child_lock",
       "discovery": {
-        "name": "Bench cb1 child lock",
-        "unique_id": "bench_cb1_child_lock",
-        "object_id": "bench_cb1_child_lock",
-        "command_topic": "bench/cb1/child_lock/set"
+        "name": "Bedroom humidifier child lock",
+        "unique_id": "bedroom_humidifier_child_lock",
+        "object_id": "bedroom_humidifier_child_lock",
+        "command_topic": "bench/bedroom/child_lock/set"
       },
       "start": [
         {
@@ -324,12 +324,12 @@
     },
     {
       "domain": "select",
-      "id": "bench_cb1_led_brightness",
+      "id": "bedroom_humidifier_led_brightness",
       "discovery": {
-        "name": "Bench cb1 LED brightness",
-        "unique_id": "bench_cb1_led_brightness",
-        "object_id": "bench_cb1_led_brightness",
-        "command_topic": "bench/cb1/led_brightness/set",
+        "name": "Bedroom humidifier LED brightness",
+        "unique_id": "bedroom_humidifier_led_brightness",
+        "object_id": "bedroom_humidifier_led_brightness",
+        "command_topic": "bench/bedroom/led_brightness/set",
         "options": ["bright", "dim", "off"]
       },
       "start": [
@@ -1009,7 +1009,7 @@
       "cards": [
         {
           "type": "custom:mini-humidifier",
-          "entity": "{{bench_cb1}}",
+          "entity": "{{bedroom_humidifier}}",
           "model": "zhimi.humidifier.cb1",
           "name": "zhimi.humidifier.cb1",
           "toggle": {
@@ -1041,6 +1041,54 @@
           "name": "zhimi.airfresh.va2",
           "toggle": {
             "default": true
+          }
+        }
+      ]
+    },
+    {
+      "title": "Documentation",
+      "cards": [
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bedroom_humidifier}}"
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bedroom_humidifier}}",
+          "model": "humidifier"
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bedroom_humidifier}}",
+          "name": "Bedroom",
+          "secondary_info": {
+            "icon": "mdi:fan"
+          },
+          "indicators": {
+            "humidity": {
+              "icon": "mdi:water",
+              "unit": "%",
+              "round": 0,
+              "source": {
+                "attribute": "current_humidity"
+              }
+            },
+            "room_temp": {
+              "icon": "mdi:thermometer-low",
+              "unit": "°C",
+              "round": 1,
+              "source": {
+                "entity": "{{bench_room_temperature}}"
+              }
+            },
+            "room_humidity": {
+              "icon": "mdi:water-outline",
+              "unit": "%",
+              "round": 1,
+              "source": {
+                "entity": "{{bench_room_humidity}}"
+              }
+            }
           }
         }
       ]

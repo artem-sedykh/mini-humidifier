@@ -103,6 +103,74 @@ const shot = async () => {
   if (session.errors.length) console.log(`page errors: ${JSON.stringify(session.errors)}`);
 };
 
+// The pictures the documentation points at, and which card each one is.
+//
+// They used to be screenshots of somebody's dashboard: two of the three were
+// taken on a Russian Home Assistant, so the card said `АВТО` where the reader's
+// says `Auto`, and both showed a device with an empty tank and a stopped motor
+// (#277). These are taken here instead - one view, so the cards come out the
+// same width, and a browser whose language is pinned to English in
+// `browser.mjs`.
+//
+// The view is the manifest's, and its cards are the YAML blocks the pages show.
+// Change one and the other has to follow, which is why they sit next to each
+// other here rather than being described twice.
+const DOCS_VIEW = 4;
+const DOCS_IMAGES = ['default.png', 'model-humidifier.png', 'custom-indicators.png'];
+
+const docs = async () => {
+  const { open } = await import('./browser.mjs');
+  const { mkdir } = await import('node:fs/promises');
+  const directory = process.env.BENCH_DOCS || 'docs/images';
+
+  await mkdir(directory, { recursive: true });
+  const ready = await prepare();
+  const view = ready.manifest.views[DOCS_VIEW];
+
+  if (!view || view.title !== 'Documentation') {
+    throw new Error(`view ${DOCS_VIEW} of the manifest is not the documentation view`);
+  }
+  if (view.cards.length !== DOCS_IMAGES.length) {
+    throw new Error(
+      `the documentation view has ${view.cards.length} cards and there are ` +
+        `${DOCS_IMAGES.length} names for them`,
+    );
+  }
+
+  // The same width as `shot` uses, and for the same reason: at the width the
+  // scenarios run, the masonry column narrows as cards are added.
+  const session = await open(ready.tokens, { viewport: { width: 1400, height: 1000 } });
+
+  await session.page.goto(`${BASE}/${DASHBOARD}/${DOCS_VIEW}`, { waitUntil: 'load' });
+  await session.page.waitForSelector('mini-humidifier', { timeout: 60000 });
+  await session.page.waitForTimeout(2000);
+
+  const all = session.page.locator('mini-humidifier');
+  const count = await all.count();
+
+  if (count !== DOCS_IMAGES.length) {
+    throw new Error(`${count} cards rendered, ${DOCS_IMAGES.length} expected`);
+  }
+
+  // Equal widths are the point of taking them together, so they are checked
+  // rather than hoped for: a picture that is 310px wide beside two of 492 is
+  // what an unnoticed extra card on the view looks like.
+  const widths = await all.evaluateAll(cards =>
+    cards.map(
+      card => +card.shadowRoot.querySelector('ha-card').getBoundingClientRect().width.toFixed(1),
+    ),
+  );
+  if (new Set(widths).size !== 1) throw new Error(`cards came out ${widths.join(', ')} wide`);
+
+  for (let index = 0; index < count; index += 1) {
+    await all.nth(index).screenshot({ path: `${directory}/${DOCS_IMAGES[index]}` });
+  }
+  await session.browser.close();
+
+  console.log(`${count} documentation images in ${directory}, ${widths[0]}px wide`);
+  if (session.errors.length) console.log(`page errors: ${JSON.stringify(session.errors)}`);
+};
+
 const command = process.argv[2] || 'status';
 
 if (command === 'up') {
@@ -116,6 +184,8 @@ if (command === 'up') {
   console.log(`entities: ${JSON.stringify(ready.ids)}`);
 } else if (command === 'shot') {
   await shot();
+} else if (command === 'docs') {
+  await docs();
 } else if (command === 'down') {
   compose('down', '-v');
 } else if (command === 'status') {

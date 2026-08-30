@@ -158,7 +158,7 @@ npm run build      # everything CI runs, in the same order: lint, typecheck,
                    # check:version,
                    # changelog --check, test, rollup, check:bundle
 npm run watch      # unminified, rebuilding on save
-npm run bench      # up | setup | shot | down - the Home Assistant in a container
+npm run bench      # up | setup | shot | docs | down - the Home Assistant in a container
 npm run test:e2e   # the scenarios in test/e2e/, against that Home Assistant
 npm run bench:coverage # which parts of src/ those scenarios reach
 ```

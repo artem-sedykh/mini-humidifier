@@ -41,7 +41,7 @@ const VIEW = 3;
 const MODELS = [
   {
     model: 'zhimi.humidifier.cb1',
-    fixture: 'bench_cb1',
+    fixture: 'bedroom_humidifier',
     indicators: ['water_level', 'temperature', 'humidity', 'motor_speed'],
     drawn: 4,
     buttons: ['dry', 'mode', 'led', 'buzzer', 'child_lock'],
@@ -222,7 +222,7 @@ describe('the bundled model presets, against their own devices', () => {
     // `select.select_option` from a card, which nothing else here does: the
     // LED brightness of the cb1 preset is a `select` entity, and the only
     // dropdowns the other scenarios press are backed by an attribute.
-    const id = bench.ids.bench_cb1_led_brightness;
+    const id = bench.ids.bedroom_humidifier_led_brightness;
     const before_ = await entity(bench.tokens, id);
     assert.equal(before_.state, 'dim');
 
@@ -250,7 +250,7 @@ describe('the bundled model presets, against their own devices', () => {
   });
 
   it('sends a press on a switch-backed button through to the switch', async () => {
-    const id = bench.ids.bench_cb1_dry_mode;
+    const id = bench.ids.bedroom_humidifier_dry_mode;
     const before_ = await entity(bench.tokens, id);
 
     const card = await locate(session.page, 'zhimi.humidifier.cb1');
