@@ -287,14 +287,15 @@ describe('the bundled model presets, against their own devices', () => {
     // furthest from where the value sits now - so the move is large, and no
     // rounding of a fraction to a step can land it back where it started.
     //
-    // Neither of the two obvious alternatives survives both legs of the bench,
-    // and both failures are about the gesture rather than the card (#269). An
-    // ArrowRight after a click moves the value one step on the pinned Home
-    // Assistant and nothing at all on `latest`. Two clicks in a row fare no
-    // better there: the first moves the value, the second is ignored. What
-    // this scenario is about is that the ma2 preset's target humidity control
-    // writes to a `number` entity with `number.set_value`, so it asks for that
-    // in the one gesture that works on both.
+    // One gesture rather than two, and the entity polled rather than slept at,
+    // because two bench runs went red here on gestures that were fine (#269).
+    // Neither was a Home Assistant difference - both legs run the same image -
+    // and neither was the card: one used `slider.press('ArrowRight')`, which
+    // cannot focus an `ha-slider` and so depends on the click's focus
+    // surviving, and the other read the entity after a fixed wait that a
+    // loaded runner outran. What this scenario is about is that the ma2
+    // preset's target humidity control writes to a `number` entity with
+    // `number.set_value`, so it asks for that and nothing else.
     const before_ = await entity(bench.tokens, id);
     const from = Number(before_.state);
     const middle = (Number(before_.attributes.min) + Number(before_.attributes.max)) / 2;
