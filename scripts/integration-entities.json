@@ -1,0 +1,658 @@
+{
+  "source": {
+    "repository": "home-assistant/core",
+    "ref": "dev",
+    "files": [
+      "homeassistant/components/xiaomi_miio/strings.json",
+      "homeassistant/components/sensor/strings.json",
+      "homeassistant/components/binary_sensor/strings.json"
+    ],
+    "fetched": "2026-08-30"
+  },
+  "entities": {
+    "binary_sensor": {
+      "mop_attached": {
+        "name": "Mop attached",
+        "from": "entity.binary_sensor.is_water_box_attached"
+      },
+      "water_shortage": {
+        "name": "Water shortage",
+        "from": "entity.binary_sensor.is_water_shortage"
+      },
+      "water_tank_empty": {
+        "name": "Water tank empty",
+        "from": "entity.binary_sensor.no_water"
+      },
+      "power_supply": {
+        "name": "Power supply",
+        "from": "entity.binary_sensor.powersupply_attached"
+      },
+      "auxiliary_heat_status": {
+        "name": "Auxiliary heat status",
+        "from": "entity.binary_sensor.ptc_status"
+      },
+      "water_tank": {
+        "name": "Water tank",
+        "from": "entity.binary_sensor.water_tank_detached"
+      },
+      "battery": {
+        "name": "Battery",
+        "from": "device_class.battery"
+      },
+      "charging": {
+        "name": "Charging",
+        "from": "device_class.battery_charging"
+      },
+      "carbon_monoxide": {
+        "name": "Carbon monoxide",
+        "from": "device_class.carbon_monoxide"
+      },
+      "cold": {
+        "name": "Cold",
+        "from": "device_class.cold"
+      },
+      "connectivity": {
+        "name": "Connectivity",
+        "from": "device_class.connectivity"
+      },
+      "door": {
+        "name": "Door",
+        "from": "device_class.door"
+      },
+      "garage_door": {
+        "name": "Garage door",
+        "from": "device_class.garage_door"
+      },
+      "gas": {
+        "name": "Gas",
+        "from": "device_class.gas"
+      },
+      "heat": {
+        "name": "Heat",
+        "from": "device_class.heat"
+      },
+      "light": {
+        "name": "Light",
+        "from": "device_class.light"
+      },
+      "lock": {
+        "name": "Lock",
+        "from": "device_class.lock"
+      },
+      "moisture": {
+        "name": "Moisture",
+        "from": "device_class.moisture"
+      },
+      "motion": {
+        "name": "Motion",
+        "from": "device_class.motion"
+      },
+      "moving": {
+        "name": "Moving",
+        "from": "device_class.moving"
+      },
+      "occupancy": {
+        "name": "Occupancy",
+        "from": "device_class.occupancy"
+      },
+      "opening": {
+        "name": "Opening",
+        "from": "device_class.opening"
+      },
+      "plug": {
+        "name": "Plug",
+        "from": "device_class.plug"
+      },
+      "power": {
+        "name": "Power",
+        "from": "device_class.power"
+      },
+      "presence": {
+        "name": "Presence",
+        "from": "device_class.presence"
+      },
+      "problem": {
+        "name": "Problem",
+        "from": "device_class.problem"
+      },
+      "running": {
+        "name": "Running",
+        "from": "device_class.running"
+      },
+      "safety": {
+        "name": "Safety",
+        "from": "device_class.safety"
+      },
+      "smoke": {
+        "name": "Smoke",
+        "from": "device_class.smoke"
+      },
+      "sound": {
+        "name": "Sound",
+        "from": "device_class.sound"
+      },
+      "tamper": {
+        "name": "Tamper",
+        "from": "device_class.tamper"
+      },
+      "update": {
+        "name": "Update",
+        "from": "device_class.update"
+      },
+      "vibration": {
+        "name": "Vibration",
+        "from": "device_class.vibration"
+      },
+      "window": {
+        "name": "Window",
+        "from": "device_class.window"
+      }
+    },
+    "button": {
+      "reset_dust_filter": {
+        "name": "Reset dust filter",
+        "from": "entity.button.reset_dust_filter"
+      },
+      "reset_upper_filter": {
+        "name": "Reset upper filter",
+        "from": "entity.button.reset_upper_filter"
+      },
+      "reset_filter": {
+        "name": "Reset filter",
+        "from": "entity.button.reset_vacuum_filter"
+      },
+      "reset_main_brush": {
+        "name": "Reset main brush",
+        "from": "entity.button.reset_vacuum_main_brush"
+      },
+      "reset_sensor_dirty": {
+        "name": "Reset sensor dirty",
+        "from": "entity.button.reset_vacuum_sensor_dirty"
+      },
+      "reset_side_brush": {
+        "name": "Reset side brush",
+        "from": "entity.button.reset_vacuum_side_brush"
+      }
+    },
+    "number": {
+      "oscillation_angle": {
+        "name": "Oscillation angle",
+        "from": "entity.number.angle"
+      },
+      "delay_off_countdown": {
+        "name": "Delay off countdown",
+        "from": "entity.number.delay_off_countdown"
+      },
+      "fan_level": {
+        "name": "Fan level",
+        "from": "entity.number.fan_level"
+      },
+      "favorite_level": {
+        "name": "Favorite level",
+        "from": "entity.number.favorite_level"
+      },
+      "favorite_motor_speed": {
+        "name": "Favorite motor speed",
+        "from": "entity.number.favorite_rpm"
+      },
+      "led_brightness": {
+        "name": "LED brightness",
+        "from": "entity.number.led_brightness"
+      },
+      "motor_speed": {
+        "name": "Motor speed",
+        "from": "entity.number.motor_speed"
+      },
+      "volume": {
+        "name": "Volume",
+        "from": "entity.number.volume"
+      }
+    },
+    "select": {
+      "mode": {
+        "name": "Mode",
+        "from": "entity.select.airpurifier_mode"
+      },
+      "display_orientation": {
+        "name": "Display orientation",
+        "from": "entity.select.display_orientation"
+      },
+      "led_brightness": {
+        "name": "LED brightness",
+        "from": "entity.select.led_brightness"
+      },
+      "auxiliary_heat_level": {
+        "name": "Auxiliary heat level",
+        "from": "entity.select.ptc_level"
+      }
+    },
+    "sensor": {
+      "actual_speed": {
+        "name": "Actual speed",
+        "from": "entity.sensor.actual_speed"
+      },
+      "air_quality": {
+        "name": "Air quality",
+        "from": "entity.sensor.air_quality"
+      },
+      "air_quality_index": {
+        "name": "Air quality index",
+        "from": "entity.sensor.air_quality_index"
+      },
+      "last_clean_area": {
+        "name": "Last clean area",
+        "from": "entity.sensor.area"
+      },
+      "current_clean_area": {
+        "name": "Current clean area",
+        "from": "entity.sensor.clean_area"
+      },
+      "current_clean_duration": {
+        "name": "Current clean duration",
+        "from": "entity.sensor.clean_time"
+      },
+      "control_speed": {
+        "name": "Control speed",
+        "from": "entity.sensor.control_speed"
+      },
+      "total_clean_count": {
+        "name": "Total clean count",
+        "from": "entity.sensor.count"
+      },
+      "dnd_end": {
+        "name": "DnD end",
+        "from": "entity.sensor.dnd_end"
+      },
+      "dnd_start": {
+        "name": "DnD start",
+        "from": "entity.sensor.dnd_start"
+      },
+      "last_clean_duration": {
+        "name": "Last clean duration",
+        "from": "entity.sensor.duration"
+      },
+      "total_dust_collection_count": {
+        "name": "Total dust collection count",
+        "from": "entity.sensor.dust_collection_count"
+      },
+      "dust_filter_life_remaining": {
+        "name": "Dust filter life remaining",
+        "from": "entity.sensor.dust_filter_life_remaining"
+      },
+      "dust_filter_lifetime_remaining_days": {
+        "name": "Dust filter lifetime remaining days",
+        "from": "entity.sensor.dust_filter_life_remaining_days"
+      },
+      "favorite_speed": {
+        "name": "Favorite speed",
+        "from": "entity.sensor.favorite_speed"
+      },
+      "filter_use": {
+        "name": "Filter use",
+        "from": "entity.sensor.filter_hours_used"
+      },
+      "filter_remaining": {
+        "name": "Filter remaining",
+        "from": "entity.sensor.filter_left"
+      },
+      "filter_lifetime_remaining": {
+        "name": "Filter lifetime remaining",
+        "from": "entity.sensor.filter_left_time"
+      },
+      "filter_life_remaining": {
+        "name": "Filter life remaining",
+        "from": "entity.sensor.filter_life_remaining"
+      },
+      "illuminance": {
+        "name": "Illuminance",
+        "from": "entity.sensor.illuminance"
+      },
+      "last_clean_end": {
+        "name": "Last clean end",
+        "from": "entity.sensor.last_clean_end"
+      },
+      "last_clean_start": {
+        "name": "Last clean start",
+        "from": "entity.sensor.last_clean_start"
+      },
+      "load_power": {
+        "name": "Load power",
+        "from": "entity.sensor.load_power"
+      },
+      "main_brush_remaining": {
+        "name": "Main brush remaining",
+        "from": "entity.sensor.main_brush_left"
+      },
+      "second_motor_speed": {
+        "name": "Second motor speed",
+        "from": "entity.sensor.motor2_speed"
+      },
+      "motor_speed": {
+        "name": "Motor speed",
+        "from": "entity.sensor.motor_speed"
+      },
+      "purify_volume": {
+        "name": "Purify volume",
+        "from": "entity.sensor.purify_volume"
+      },
+      "sensor_dirty_remaining": {
+        "name": "Sensor dirty remaining",
+        "from": "entity.sensor.sensor_dirty_left"
+      },
+      "side_brush_remaining": {
+        "name": "Side brush remaining",
+        "from": "entity.sensor.side_brush_left"
+      },
+      "total_clean_area": {
+        "name": "Total clean area",
+        "from": "entity.sensor.total_area"
+      },
+      "total_duration": {
+        "name": "Total duration",
+        "from": "entity.sensor.total_duration"
+      },
+      "tvoc": {
+        "name": "TVOC",
+        "from": "entity.sensor.tvoc"
+      },
+      "upper_filter_life_remaining": {
+        "name": "Upper filter life remaining",
+        "from": "entity.sensor.upper_filter_life_remaining"
+      },
+      "upper_filter_lifetime_remaining_days": {
+        "name": "Upper filter lifetime remaining days",
+        "from": "entity.sensor.upper_filter_life_remaining_days"
+      },
+      "use_time": {
+        "name": "Use time",
+        "from": "entity.sensor.use_time"
+      },
+      "water_level": {
+        "name": "Water level",
+        "from": "entity.sensor.water_level"
+      },
+      "absolute_humidity": {
+        "name": "Absolute humidity",
+        "from": "device_class.absolute_humidity"
+      },
+      "apparent_power": {
+        "name": "Apparent power",
+        "from": "device_class.apparent_power"
+      },
+      "area": {
+        "name": "Area",
+        "from": "device_class.area"
+      },
+      "atmospheric_pressure": {
+        "name": "Atmospheric pressure",
+        "from": "device_class.atmospheric_pressure"
+      },
+      "battery": {
+        "name": "Battery",
+        "from": "device_class.battery"
+      },
+      "blood_glucose_concentration": {
+        "name": "Blood glucose concentration",
+        "from": "device_class.blood_glucose_concentration"
+      },
+      "carbon_dioxide": {
+        "name": "Carbon dioxide",
+        "from": "device_class.carbon_dioxide"
+      },
+      "carbon_monoxide": {
+        "name": "Carbon monoxide",
+        "from": "device_class.carbon_monoxide"
+      },
+      "conductivity": {
+        "name": "Conductivity",
+        "from": "device_class.conductivity"
+      },
+      "current": {
+        "name": "Current",
+        "from": "device_class.current"
+      },
+      "data_rate": {
+        "name": "Data rate",
+        "from": "device_class.data_rate"
+      },
+      "data_size": {
+        "name": "Data size",
+        "from": "device_class.data_size"
+      },
+      "date": {
+        "name": "Date",
+        "from": "device_class.date"
+      },
+      "distance": {
+        "name": "Distance",
+        "from": "device_class.distance"
+      },
+      "duration": {
+        "name": "Duration",
+        "from": "device_class.duration"
+      },
+      "energy": {
+        "name": "Energy",
+        "from": "device_class.energy"
+      },
+      "energy_per_distance": {
+        "name": "Energy per distance",
+        "from": "device_class.energy_distance"
+      },
+      "stored_energy": {
+        "name": "Stored energy",
+        "from": "device_class.energy_storage"
+      },
+      "sensor": {
+        "name": "Sensor",
+        "from": "device_class.enum"
+      },
+      "frequency": {
+        "name": "Frequency",
+        "from": "device_class.frequency"
+      },
+      "gas": {
+        "name": "Gas",
+        "from": "device_class.gas"
+      },
+      "humidity": {
+        "name": "Humidity",
+        "from": "device_class.humidity"
+      },
+      "irradiance": {
+        "name": "Irradiance",
+        "from": "device_class.irradiance"
+      },
+      "moisture": {
+        "name": "Moisture",
+        "from": "device_class.moisture"
+      },
+      "monetary_balance": {
+        "name": "Monetary balance",
+        "from": "device_class.monetary"
+      },
+      "nitrogen_dioxide": {
+        "name": "Nitrogen dioxide",
+        "from": "device_class.nitrogen_dioxide"
+      },
+      "nitrogen_monoxide": {
+        "name": "Nitrogen monoxide",
+        "from": "device_class.nitrogen_monoxide"
+      },
+      "nitrous_oxide": {
+        "name": "Nitrous oxide",
+        "from": "device_class.nitrous_oxide"
+      },
+      "ozone": {
+        "name": "Ozone",
+        "from": "device_class.ozone"
+      },
+      "ph": {
+        "name": "pH",
+        "from": "device_class.ph"
+      },
+      "pm1": {
+        "name": "PM1",
+        "from": "device_class.pm1"
+      },
+      "pm10": {
+        "name": "PM10",
+        "from": "device_class.pm10"
+      },
+      "pm2_5": {
+        "name": "PM2.5",
+        "from": "device_class.pm25"
+      },
+      "pm4": {
+        "name": "PM4",
+        "from": "device_class.pm4"
+      },
+      "power": {
+        "name": "Power",
+        "from": "device_class.power"
+      },
+      "power_factor": {
+        "name": "Power factor",
+        "from": "device_class.power_factor"
+      },
+      "precipitation": {
+        "name": "Precipitation",
+        "from": "device_class.precipitation"
+      },
+      "precipitation_intensity": {
+        "name": "Precipitation intensity",
+        "from": "device_class.precipitation_intensity"
+      },
+      "pressure": {
+        "name": "Pressure",
+        "from": "device_class.pressure"
+      },
+      "radon": {
+        "name": "Radon",
+        "from": "device_class.radon"
+      },
+      "reactive_energy": {
+        "name": "Reactive energy",
+        "from": "device_class.reactive_energy"
+      },
+      "reactive_power": {
+        "name": "Reactive power",
+        "from": "device_class.reactive_power"
+      },
+      "signal_strength": {
+        "name": "Signal strength",
+        "from": "device_class.signal_strength"
+      },
+      "sound_pressure": {
+        "name": "Sound pressure",
+        "from": "device_class.sound_pressure"
+      },
+      "speed": {
+        "name": "Speed",
+        "from": "device_class.speed"
+      },
+      "sulphur_dioxide": {
+        "name": "Sulphur dioxide",
+        "from": "device_class.sulphur_dioxide"
+      },
+      "temperature": {
+        "name": "Temperature",
+        "from": "device_class.temperature"
+      },
+      "temperature_delta": {
+        "name": "Temperature delta",
+        "from": "device_class.temperature_delta"
+      },
+      "timestamp": {
+        "name": "Timestamp",
+        "from": "device_class.timestamp"
+      },
+      "uptime": {
+        "name": "Uptime",
+        "from": "device_class.uptime"
+      },
+      "volatile_organic_compounds": {
+        "name": "Volatile organic compounds",
+        "from": "device_class.volatile_organic_compounds"
+      },
+      "volatile_organic_compounds_parts": {
+        "name": "Volatile organic compounds parts",
+        "from": "device_class.volatile_organic_compounds_parts"
+      },
+      "voltage": {
+        "name": "Voltage",
+        "from": "device_class.voltage"
+      },
+      "volume": {
+        "name": "Volume",
+        "from": "device_class.volume"
+      },
+      "volume_flow_rate": {
+        "name": "Volume flow rate",
+        "from": "device_class.volume_flow_rate"
+      },
+      "stored_volume": {
+        "name": "Stored volume",
+        "from": "device_class.volume_storage"
+      },
+      "water": {
+        "name": "Water",
+        "from": "device_class.water"
+      },
+      "weight": {
+        "name": "Weight",
+        "from": "device_class.weight"
+      },
+      "wind_direction": {
+        "name": "Wind direction",
+        "from": "device_class.wind_direction"
+      },
+      "wind_speed": {
+        "name": "Wind speed",
+        "from": "device_class.wind_speed"
+      }
+    },
+    "switch": {
+      "ionizer": {
+        "name": "Ionizer",
+        "from": "entity.switch.anion"
+      },
+      "autodetect": {
+        "name": "Autodetect",
+        "from": "entity.switch.auto_detect"
+      },
+      "buzzer": {
+        "name": "Buzzer",
+        "from": "entity.switch.buzzer"
+      },
+      "child_lock": {
+        "name": "Child lock",
+        "from": "entity.switch.child_lock"
+      },
+      "clean_mode": {
+        "name": "Clean mode",
+        "from": "entity.switch.clean_mode"
+      },
+      "display": {
+        "name": "Display",
+        "from": "entity.switch.display"
+      },
+      "dry_mode": {
+        "name": "Dry mode",
+        "from": "entity.switch.dry"
+      },
+      "learn_mode": {
+        "name": "Learn mode",
+        "from": "entity.switch.learn_mode"
+      },
+      "led": {
+        "name": "LED",
+        "from": "entity.switch.led"
+      },
+      "auxiliary_heat": {
+        "name": "Auxiliary heat",
+        "from": "entity.switch.ptc"
+      }
+    }
+  }
+}
