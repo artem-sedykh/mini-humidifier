@@ -153,6 +153,28 @@ Removing an entity is an empty retained payload on its discovery topic. That is
 also how an entity leaves `hass.states` for real, which is the situation behind
 [#263].
 
+### The build under test, and the month of cache in front of it
+
+Home Assistant serves `/local` with `Cache-Control: public, max-age=2678400`.
+The bundle's path does not change between deploys, so a browser that has looked
+at the bench once goes on rendering the build it saw then - and says nothing
+about it. The scenarios never notice, because each run opens a fresh profile; a
+person looking at the dashboard does, and the card's console banner cannot tell
+them apart, since it prints the version from `package.json` and that is one
+string for every build between releases.
+
+So `prepare()` registers the resource as `<bundle>.js?v=<etag>` and updates that
+url when the file changes ([#275]). The value follows the file rather than the
+clock: `ETag` here is the file's mtime and size, so a reload with nothing
+deployed still comes out of the cache - `transferSize: 0`, measured - and a
+reload after a deploy fetches.
+
+It also deletes anything else registered out of the bench's own directory. Two
+resources pointing at one bundle both load and the card's `define` runs twice;
+a resource left behind by whatever the bench held before 404s on every page
+load. This bench had been carrying the sister card's bundle since it was
+converted.
+
 ### The model fixtures
 
 A preset in `src/configurations/xiaomi_miio/` is an agreement with an
@@ -302,3 +324,4 @@ devices and real themes still live there.
 [#78]: https://github.com/artem-sedykh/mini-humidifier/issues/78
 [#98]: https://github.com/artem-sedykh/mini-humidifier/issues/98
 [#263]: https://github.com/artem-sedykh/mini-humidifier/issues/263
+[#275]: https://github.com/artem-sedykh/mini-humidifier/issues/275
