@@ -283,35 +283,41 @@ describe('the bundled model presets, against their own devices', () => {
     const card = await locate(session.page, 'zhimi.airpurifier.ma2');
     const slider = card.locator('mh-target-humidity ha-slider').first();
 
-    // Driven with the pointer at two positions rather than with a click and
-    // an arrow key. The keyboard is not equivalent: on the pinned Home
-    // Assistant an ArrowRight after the click moves the value by one step, and
-    // on `latest` it moves nothing at all while the same click still does -
-    // see #269. What this scenario is about is that the control writes to a
-    // `number` entity, so it uses the gesture that works on both.
+    // One click of the pointer, and it lands at whichever end of the slider is
+    // furthest from where the value sits now - so the move is large, and no
+    // rounding of a fraction to a step can land it back where it started.
     //
-    // The edges are not usable either: `mouse.click(box.x + 6, ...)` moves
-    // nothing here, and moves nothing on the cb1 card whose slider other
-    // scenarios drive successfully, so it measures the click and not the card.
+    // Neither of the two obvious alternatives survives both legs of the bench,
+    // and both failures are about the gesture rather than the card (#269). An
+    // ArrowRight after a click moves the value one step on the pinned Home
+    // Assistant and nothing at all on `latest`. Two clicks in a row fare no
+    // better there: the first moves the value, the second is ignored. What
+    // this scenario is about is that the ma2 preset's target humidity control
+    // writes to a `number` entity with `number.set_value`, so it asks for that
+    // in the one gesture that works on both.
+    const before_ = await entity(bench.tokens, id);
+    const from = Number(before_.state);
+    const middle = (Number(before_.attributes.min) + Number(before_.attributes.max)) / 2;
+    const towards = from > middle ? 0.15 : 0.85;
+
     const box = await slider.boundingBox();
-    const clickAt = async fraction => {
-      await session.page.mouse.click(box.x + box.width * fraction, box.y + box.height / 2);
-      // The card holds a move for `action_timeout` before it sends, so this is
-      // part of the path under test rather than a pause for comfort.
-      await session.page.waitForTimeout(2500);
-      return entity(bench.tokens, id);
-    };
+    await session.page.mouse.click(box.x + box.width * towards, box.y + box.height / 2);
 
-    const low = await clickAt(0.2);
-    const high = await clickAt(0.8);
-
-    assert.ok(
-      Number.isFinite(Number(low.state)) && Number.isFinite(Number(high.state)),
-      `${low.state} -> ${high.state}`,
+    // The card holds a move for `action_timeout` before it sends, so the wait
+    // is part of the path under test. Polled, not slept through.
+    const after_ = await until(
+      async () => {
+        const state = await entity(bench.tokens, id);
+        return state.state !== before_.state ? state : null;
+      },
+      { timeout: 15000, diagnose: () => entity(bench.tokens, id) },
     );
+
+    const to = Number(after_.state);
+    assert.ok(Number.isFinite(to), `not a number: ${after_.state}`);
     assert.ok(
-      Number(high.state) > Number(low.state),
-      `the far end of the slider is not above the near one: ${low.state} -> ${high.state}`,
+      towards < 0.5 ? to < from : to > from,
+      `clicked at ${towards} of the slider and the value went ${from} -> ${to}`,
     );
 
     await callService(bench.tokens, 'number', 'set_value', { entity_id: id, value: 8 });
