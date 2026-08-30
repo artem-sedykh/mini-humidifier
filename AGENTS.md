@@ -149,11 +149,13 @@ npm run rollup     # bundle src/main.ts -> dist/mini-humidifier-bundle.js
 npm run check:bundle  # assertions on the built bundle (needs a build first)
 npm run check:docs  # every path the documentation names exists
 npm run check:options # every option the card reads is documented, and the reverse
+npm run check:models  # the presets' entity names still match the integration
 npm run check:version # the README names the version in package.json
 npm run changelog  # rebuild CHANGELOG.md from release_notes/ (--check in CI)
 npm run dev        # the same as rollup, unminified
 npm run build      # everything CI runs, in the same order: lint, typecheck,
-                   # format:check, check:docs, check:options, check:version,
+                   # format:check, check:docs, check:options, check:models,
+                   # check:version,
                    # changelog --check, test, rollup, check:bundle
 npm run watch      # unminified, rebuilding on save
 npm run bench      # up | setup | shot | down - the Home Assistant in a container
@@ -235,6 +237,35 @@ The tap actions are held the same way - every action in `TAP_ACTIONS`, plus
 and not another goes in the script's `IGNORED` map with its reason; `type` is
 there, as Lovelace's key rather than the card's. All four directions have been
 seen failing, not only passing.
+
+**`npm run check:models`** - `scripts/check-model-entities.mjs` (#267). The
+presets in `src/configurations/xiaomi_miio/` reach for entities by name -
+`sensor.{entity_id}_water_level`, `switch.{entity_id}_dry_mode`,
+`select.{entity_id}_led_brightness` and a dozen more, each built out of the
+humidifier's own id. Those suffixes are not an API: they are slugs of the
+display names the integration gives its entities, and Home Assistant renames
+those when it decides to.
+
+When one changes the card does not break loudly. The control is skipped, the
+user sees a card with a hole in it after an update, and the report arrives as
+"the water level stopped working". Nothing else here can see it coming - the
+unit layer, the browser layer and the bench all run against entities this
+repository names itself, which makes the convention true by construction
+wherever it is checked.
+
+It runs against `scripts/integration-entities.json`, a snapshot of the names
+`home-assistant/core` declares, so the build never touches the network.
+`.github/workflows/integration-drift.yml` refetches it weekly and pushes a
+branch when it moved; a red run there is the signal, and a red build on
+somebody's unrelated pull request would not be. Refresh it by hand with
+`npm run check:models -- --update`.
+
+The `xiaomi_miio_airpurifier` presets are deliberately not covered: they read
+attributes off a `fan` entity from syssi's custom component, whose names live in
+another repository. A `{entity_id}_` reference appearing in one of them fails
+the check rather than passing unexamined. Seen failing four ways: a preset
+renamed, a name gone from the snapshot, a companion entity added to the
+unchecked presets, and the whole thing finding nothing.
 
 **`npm run check:version`** - `scripts/check-readme-version.mjs`. Every `?v=`
 in `README.md` names the version in `package.json`, and no download link is

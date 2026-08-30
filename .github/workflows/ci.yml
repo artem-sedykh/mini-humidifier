@@ -89,6 +89,14 @@ jobs:
         # until now was a comment asking for it.
         run: npm run check:options
 
+      - name: The presets' entity names still match the integration
+        # Against a snapshot of home-assistant/core, so it needs no network:
+        # the presets build entity ids out of names the xiaomi_miio integration
+        # chose, and when one is renamed the card quietly draws a hole where an
+        # indicator was. `integration-drift.yml` is what refreshes the
+        # snapshot; this is what fails when a preset and the snapshot disagree.
+        run: npm run check:models
+
       - name: The README names the version this repository is at
         # `?v=` in the install instructions is the only cache-buster a person
         # has, and it said 3.1.5 while this was at 3.5.2.

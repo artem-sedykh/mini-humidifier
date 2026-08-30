@@ -1,0 +1,115 @@
+# Refreshes the snapshot of the entity names the xiaomi_miio integration gives
+# its entities, and says so when they have moved.
+#
+# The bundled presets build entity ids out of those names -
+# `sensor.{entity_id}_water_level` is a slug of "Water level" - so a rename in
+# home-assistant/core turns an indicator on this card into an empty slot, on
+# everybody's dashboard, with nothing in this repository able to see it coming.
+# `scripts/check-model-entities.mjs` is what compares the two; this is what
+# keeps the thing it compares against current.
+#
+# **Why a schedule and not the build.** Fetching upstream during CI would make
+# every pull request depend on the network and on somebody else's default
+# branch, and would fail the run of whoever happened to push on the day of a
+# rename - a red mark on a change that has nothing to do with it. A weekly run
+# of its own fails in the right place, with nobody's work attached to it.
+#
+# **It stops at a pushed branch on purpose**, the same as release-prepare.yml: a
+# pull request opened with GITHUB_TOKEN does not trigger other workflows, so the
+# required "Lint, test and build" check would never report on it and it could
+# not be merged. The run summary carries the link; opening it is one click.
+
+name: Integration drift
+
+on:
+  schedule:
+    # Mondays, after the weekly CI run, so a red one here is read on its own.
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    name: Refresh the entity name snapshot
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+
+      - name: Refetch the names from home-assistant/core
+        run: node scripts/check-model-entities.mjs --update
+
+      - name: Anything moved?
+        id: drift
+        run: |
+          if git diff --quiet -- scripts/integration-entities.json; then
+            echo "moved=no" >> "$GITHUB_OUTPUT"
+          else
+            echo "moved=yes" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Do the presets still line up with the new names?
+        # Run whichever way the snapshot went. A green check with a changed
+        # snapshot is the ordinary case - upstream added entities the card does
+        # not read - and it is worth committing anyway, so the next difference
+        # is small enough to read.
+        id: check
+        continue-on-error: true
+        # Straight to node: this script uses nothing but builtins, so the job
+        # needs no install and cannot fail on one.
+        run: node scripts/check-model-entities.mjs
+
+      - name: Push the refreshed snapshot
+        if: steps.drift.outputs.moved == 'yes'
+        run: |
+          branch="chore/integration-entities-${GITHUB_RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add scripts/integration-entities.json
+          git commit -m "chore: refresh the xiaomi_miio entity name snapshot"
+          git push origin "$branch"
+          echo "BRANCH=$branch" >> "$GITHUB_ENV"
+
+      - name: Say what happened
+        run: |
+          {
+            if [ "${{ steps.drift.outputs.moved }}" = "no" ]; then
+              echo "### The integration's entity names have not moved"
+              echo ""
+              echo "Nothing to do."
+            elif [ "${{ steps.check.outcome }}" = "success" ]; then
+              echo "### The names moved, and every preset still lines up"
+              echo ""
+              echo "Upstream changed something the card does not read. Merging"
+              echo "\`${BRANCH}\` keeps the next difference small enough to read."
+              echo ""
+              echo "[Open the pull request](https://github.com/${GITHUB_REPOSITORY}/compare/master...${BRANCH}?expand=1)"
+            else
+              echo "### A preset reads an entity the integration no longer names"
+              echo ""
+              echo "This is the case this workflow exists for. The failure above names"
+              echo "the preset and the suffix; the fix is in \`src/configurations/xiaomi_miio/\`,"
+              echo "and it is breaking for anyone on an older Home Assistant, so it belongs"
+              echo "in the release notes."
+              if [ -n "${BRANCH:-}" ]; then
+                echo ""
+                echo "[Open the pull request](https://github.com/${GITHUB_REPOSITORY}/compare/master...${BRANCH}?expand=1)"
+              else
+                echo ""
+                echo "The snapshot itself did not move, so there is no branch: the preset and"
+                echo "the snapshot in master already disagree."
+              fi
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail if a preset stopped lining up
+        if: steps.check.outcome == 'failure'
+        run: exit 1
