@@ -826,6 +826,162 @@
           }
         }
       ]
+    },
+    {
+      "domain": "fan",
+      "id": "deerma_jsq2w_fan_level",
+      "discovery": {
+        "name": "Deerma jsq2w fan level",
+        "unique_id": "deerma_jsq2w_fan_level",
+        "object_id": "deerma_jsq2w_fan_level",
+        "command_topic": "bench/jsq2w/set",
+        "preset_mode_command_topic": "bench/jsq2w/preset/set",
+        "preset_modes": ["Level1", "Level2", "Level3", "Level4"],
+        "availability_topic": "bench/jsq2w/availability",
+        "json_attributes_topic": "bench/jsq2w/attributes"
+      },
+      "state": {
+        "bench/jsq2w/availability": "online",
+        "bench/jsq2w/attributes": "{\"depth\": 60}"
+      },
+      "start": [
+        {
+          "domain": "fan",
+          "service": "turn_on"
+        },
+        {
+          "domain": "fan",
+          "service": "set_preset_mode",
+          "data": {
+            "preset_mode": "Level2"
+          }
+        }
+      ]
+    },
+    {
+      "domain": "light",
+      "id": "deerma_jsq2w_indicator_light",
+      "discovery": {
+        "name": "Deerma jsq2w indicator light",
+        "unique_id": "deerma_jsq2w_indicator_light",
+        "object_id": "deerma_jsq2w_indicator_light",
+        "command_topic": "bench/jsq2w/light/set"
+      },
+      "start": [
+        {
+          "domain": "light",
+          "service": "turn_on"
+        }
+      ]
+    },
+    {
+      "domain": "switch",
+      "id": "deerma_jsq2w_alarm",
+      "discovery": {
+        "name": "Deerma jsq2w alarm",
+        "unique_id": "deerma_jsq2w_alarm",
+        "object_id": "deerma_jsq2w_alarm",
+        "command_topic": "bench/jsq2w/alarm/set"
+      },
+      "start": [
+        {
+          "domain": "switch",
+          "service": "turn_off"
+        }
+      ]
+    },
+    {
+      "domain": "sensor",
+      "id": "average_humidity",
+      "discovery": {
+        "name": "Average humidity",
+        "unique_id": "average_humidity",
+        "object_id": "average_humidity",
+        "state_topic": "bench/average_humidity",
+        "unit_of_measurement": "%",
+        "device_class": "humidity"
+      },
+      "state": {
+        "bench/average_humidity": "48.6"
+      }
+    },
+    {
+      "domain": "humidifier",
+      "id": "classic_300s",
+      "discovery": {
+        "name": "Classic 300S",
+        "unique_id": "classic_300s",
+        "object_id": "classic_300s",
+        "device_class": "humidifier",
+        "command_topic": "bench/classic_300s/set",
+        "target_humidity_command_topic": "bench/classic_300s/humidity/set",
+        "current_humidity_topic": "bench/classic_300s/current_humidity",
+        "mode_command_topic": "bench/classic_300s/mode/set",
+        "modes": ["auto", "sleep", "manual"],
+        "availability_topic": "bench/classic_300s/availability",
+        "min_humidity": 35,
+        "max_humidity": 75
+      },
+      "state": {
+        "bench/classic_300s/availability": "online",
+        "bench/classic_300s/current_humidity": "52"
+      },
+      "start": [
+        {
+          "domain": "humidifier",
+          "service": "turn_on"
+        },
+        {
+          "domain": "humidifier",
+          "service": "set_humidity",
+          "data": {
+            "humidity": 60
+          }
+        },
+        {
+          "domain": "humidifier",
+          "service": "set_mode",
+          "data": {
+            "mode": "auto"
+          }
+        }
+      ]
+    },
+    {
+      "domain": "sensor",
+      "id": "classic_300s_current_humidity",
+      "discovery": {
+        "name": "Classic 300S current humidity",
+        "unique_id": "classic_300s_current_humidity",
+        "object_id": "classic_300s_current_humidity",
+        "state_topic": "bench/classic_300s/humidity_sensor",
+        "unit_of_measurement": "%",
+        "device_class": "humidity"
+      },
+      "state": {
+        "bench/classic_300s/humidity_sensor": "46"
+      }
+    },
+    {
+      "domain": "light",
+      "id": "classic_300s_night_light",
+      "discovery": {
+        "name": "Classic 300S night light",
+        "unique_id": "classic_300s_night_light",
+        "object_id": "classic_300s_night_light",
+        "command_topic": "bench/classic_300s/light/set",
+        "brightness_command_topic": "bench/classic_300s/light/brightness/set",
+        "brightness_scale": 255
+      },
+      "start": [
+        {
+          "domain": "light",
+          "service": "turn_on",
+          "data": {
+            "brightness": 128
+          }
+        }
+      ]
     }
   ],
   "views": [
@@ -1185,6 +1341,160 @@
           "model": "xiaomi_miio_airpurifier:deerma.humidifier.jsq5",
           "toggle": {
             "default": true
+          }
+        }
+      ]
+    },
+    {
+      "title": "The answers people were given",
+      "cards": [
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{deerma_jsq2w_fan_level}}",
+          "secondary_info": {
+            "type": "mode"
+          },
+          "name": "Увлажнитель",
+          "power": {
+            "type": "button",
+            "state": {
+              "entity": "{{deerma_jsq2w_fan_level}}"
+            },
+            "toggle_action": "(state, entity) => {\n  const service = state === 'on' ? 'turn_off' : 'turn_on';\n  const options = { entity_id: entity.entity_id };\n  return this.call_service('fan', service, options);\n}\n"
+          },
+          "indicators": {
+            "vlazhnost": {
+              "icon": "mdi:water-percent",
+              "unit": "%",
+              "round": 1,
+              "source": {
+                "entity": "{{average_humidity}}"
+              },
+              "tap_action": {
+                "action": "more-info",
+                "entity": "{{average_humidity}}"
+              }
+            }
+          },
+          "buttons": {
+            "mode": {
+              "icon": "mdi:fan",
+              "order": 1,
+              "type": "dropdown",
+              "state": {
+                "attribute": "preset_mode"
+              },
+              "source": {
+                "Level1": "Level 1",
+                "Level2": "Level 2",
+                "Level3": "Level 3",
+                "Level4": "Auto"
+              },
+              "active": "(state, entity) => (entity.state !== 'off')",
+              "disabled": "(state, entity) => (entity.attributes.depth === 0)",
+              "change_action": "(selected, state, entity) => {\n  const options = { entity_id: entity.entity_id, preset_mode: selected };\n  return this.call_service('fan', 'set_preset_mode', options);\n}\n"
+            },
+            "led": {
+              "icon": "mdi:lightbulb-on-outline",
+              "order": 2,
+              "type": "button",
+              "state": {
+                "entity": "{{deerma_jsq2w_indicator_light}}"
+              },
+              "toggle_action": "(state, entity) => {\n  const service = state === 'on' ? 'turn_off' : 'turn_on';\n  const options = { entity_id: entity.entity_id };\n  return this.call_service('light', service, options);\n}\n"
+            },
+            "buzzer": {
+              "icon": "mdi:bell-outline",
+              "order": 3,
+              "state": {
+                "entity": "{{deerma_jsq2w_alarm}}"
+              },
+              "toggle_action": "(state, entity) => {\n  const service = state === 'on' ? 'turn_off' : 'turn_on';\n  const options = { entity_id: entity.entity_id };\n  return this.call_service('switch', service, options);\n}\n"
+            }
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{classic_300s}}",
+          "model": "humidifier",
+          "name": "Bedroom",
+          "indicators": {
+            "humidity": {
+              "icon": "mdi:water",
+              "unit": "%",
+              "round": 0,
+              "source": {
+                "entity": "{{classic_300s_current_humidity}}"
+              }
+            }
+          },
+          "buttons": {
+            "night_light": {
+              "icon": "mdi:lightbulb-night",
+              "type": "dropdown",
+              "order": 2,
+              "state": {
+                "entity": "{{classic_300s_night_light}}",
+                "attribute": "brightness"
+              },
+              "source": {
+                "0": "Off",
+                "128": "Dim",
+                "255": "Bright"
+              },
+              "active": "(state) => Number(state) > 0",
+              "change_action": "(selected, state, entity) => {\n  const options = { entity_id: entity.entity_id, brightness: Number(selected) };\n  return this.call_service('light', 'turn_on', options);\n}\n"
+            }
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{xiaomi_fan}}",
+          "model": "none",
+          "name": "call-service",
+          "tap_action": {
+            "action": "call-service",
+            "service": "switch.toggle",
+            "service_data": {
+              "entity_id": "{{bench_plug}}"
+            }
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{xiaomi_fan}}",
+          "model": "none",
+          "name": "navigate",
+          "tap_action": {
+            "action": "navigate",
+            "navigation_path": "/card-bench/1"
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{xiaomi_fan}}",
+          "model": "none",
+          "name": "url",
+          "tap_action": {
+            "action": "url",
+            "url": "/card-bench/0"
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{xiaomi_fan}}",
+          "model": "none",
+          "name": "no action",
+          "tap_action": "none"
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{xiaomi_fan}}",
+          "model": "none",
+          "name": "more-info elsewhere",
+          "tap_action": {
+            "action": "more-info",
+            "entity": "{{bench_room_humidity}}"
           }
         }
       ]

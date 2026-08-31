@@ -400,6 +400,20 @@ services. `test/e2e/models.test.mjs` photographs each card as it goes, and
 (#279) - one picture per configuration rather than per `model:`, since three
 ids share the cb1 file and three more share deerma's.
 
+And it is where **the answers people were given** are held to what they
+promised (#285). `test/e2e/answers.test.mjs` renders the configurations this
+repository hands out as answers - the `deerma.humidifier.jsq2w` card of #112,
+the Levoit Classic 300S recipe `docs/custom-device.md` is built around, the
+complete cards and the `tap_action` snippets of `docs/examples.md` - and asserts
+the thing each one was written to do. `test/documented-contract.test.js` covers
+the claims that page makes about the contract; nothing rendered its YAML, and a
+recipe can be right about the contract and still draw nothing. Two of those
+assertions were checked by breaking the recipe on purpose: an indicator that
+stops naming its sensor reads the humidifier's own attribute instead, and
+`model: zhimi.humidifier.cb1` in place of `model: humidifier` gives the slider
+the preset's 30-80 rather than the device's own range - which is the sentence
+`custom-device.md` spends a paragraph on.
+
 ## Verifying a change by hand
 
 1. `npm run rollup`
