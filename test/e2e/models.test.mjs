@@ -49,7 +49,7 @@ const MODELS = [
   },
   {
     model: 'deerma.humidifier.jsq',
-    fixture: 'bench_jsq',
+    fixture: 'nursery_humidifier',
     indicators: ['water_tank_empty', 'temperature', 'humidity'],
     drawn: 3,
     buttons: ['mode', 'led', 'buzzer'],
@@ -57,7 +57,7 @@ const MODELS = [
   },
   {
     model: 'zhimi.airpurifier.ma2',
-    fixture: 'bench_ma2',
+    fixture: 'living_room_purifier',
     indicators: ['aqi', 'temperature', 'humidity', 'motor_speed', 'filter_use'],
     drawn: 5,
     buttons: ['mode', 'led', 'buzzer', 'child_lock'],
@@ -65,7 +65,7 @@ const MODELS = [
   },
   {
     model: 'zhimi.airfresh.va2',
-    fixture: 'bench_va2',
+    fixture: 'study_ventilator',
     // The preset also defines `motor_speed`, `hide: true`. It is absent here
     // rather than present-and-not-drawn: `buildConfig` drops a hidden
     // indicator while the configuration is being built, so it never reaches
@@ -213,7 +213,7 @@ describe('the bundled model presets, against their own devices', () => {
 
       it('photographs', async () => {
         const card = await locate(session.page, spec.model);
-        await card.screenshot({ path: `${SHOTS}/model-${spec.fixture.replace('bench_', '')}.png` });
+        await card.screenshot({ path: `${SHOTS}/model-${spec.fixture}.png` });
       });
     });
   }
@@ -279,7 +279,7 @@ describe('the bundled model presets, against their own devices', () => {
     // `number.{entity_id}_favorite_level` - a control that writes with
     // `number.set_value` rather than to the humidifier, and the only preset
     // that does.
-    const id = bench.ids.bench_ma2_favorite_level;
+    const id = bench.ids.living_room_purifier_favorite_level;
     const card = await locate(session.page, 'zhimi.airpurifier.ma2');
     const slider = card.locator('mh-target-humidity ha-slider').first();
 
