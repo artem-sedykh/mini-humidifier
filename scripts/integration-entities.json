@@ -7,7 +7,7 @@
       "homeassistant/components/sensor/strings.json",
       "homeassistant/components/binary_sensor/strings.json"
     ],
-    "fetched": "2026-08-30"
+    "fetched": "2026-08-31"
   },
   "entities": {
     "binary_sensor": {
