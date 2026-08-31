@@ -795,6 +795,37 @@
           "service": "turn_off"
         }
       ]
+    },
+    {
+      "domain": "fan",
+      "id": "xiaomi_fan",
+      "discovery": {
+        "name": "Xiaomi fan",
+        "unique_id": "xiaomi_fan",
+        "object_id": "xiaomi_fan",
+        "command_topic": "bench/syssi/set",
+        "preset_mode_command_topic": "bench/syssi/preset/set",
+        "preset_modes": ["Auto", "Silent", "Low", "Middle", "Strong"],
+        "availability_topic": "bench/syssi/availability",
+        "json_attributes_topic": "bench/syssi/attributes"
+      },
+      "state": {
+        "bench/syssi/availability": "online",
+        "bench/syssi/attributes": "{\"aqi\": 12, \"buzzer\": false, \"child_lock\": false, \"clean_mode\": false, \"co2\": 780, \"depth\": 60, \"dry\": false, \"fan_level\": 2, \"favorite_level\": 8, \"filter_hours_used\": 402, \"humidity\": 43.8, \"led\": true, \"led_brightness\": 1, \"mode\": \"humidity\", \"motor_speed\": 318, \"no_water\": false, \"target_humidity\": 50, \"temperature\": 22.6, \"water_level\": 40}"
+      },
+      "start": [
+        {
+          "domain": "fan",
+          "service": "turn_on"
+        },
+        {
+          "domain": "fan",
+          "service": "set_preset_mode",
+          "data": {
+            "preset_mode": "Silent"
+          }
+        }
+      ]
     }
   ],
   "views": [
@@ -1101,6 +1132,59 @@
                 "entity": "{{bench_room_humidity}}"
               }
             }
+          }
+        }
+      ]
+    },
+    {
+      "title": "Models (third-party)",
+      "cards": [
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{xiaomi_fan}}",
+          "model": "xiaomi_miio_airpurifier:zhimi.humidifier.cb1",
+          "toggle": {
+            "default": true
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{xiaomi_fan}}",
+          "model": "xiaomi_miio_airpurifier:zhimi.humidifier.ca4",
+          "toggle": {
+            "default": true
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{xiaomi_fan}}",
+          "model": "xiaomi_miio_airpurifier:zhimi.airpurifier.mb3",
+          "toggle": {
+            "default": true
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{xiaomi_fan}}",
+          "model": "xiaomi_miio_airpurifier:zhimi.airfresh.va2",
+          "toggle": {
+            "default": true
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{xiaomi_fan}}",
+          "model": "xiaomi_miio_airpurifier:deerma.humidifier.mjjsq",
+          "toggle": {
+            "default": true
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{xiaomi_fan}}",
+          "model": "xiaomi_miio_airpurifier:deerma.humidifier.jsq5",
+          "toggle": {
+            "default": true
           }
         }
       ]

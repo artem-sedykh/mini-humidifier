@@ -131,6 +131,26 @@ const DOCS_PAGES = [
     into: 'docs/images/models',
     images: ['cb1.png', 'jsq.png', 'ma2.png', 'va2.png', 'humidifier.png', 'none.png'],
   },
+  // The same page's second table, for syssi's component. One `fan` entity
+  // carrying every attribute those six presets read, which is all a picture
+  // needs: the stub services #266 left undone are for pressing things (#281).
+  {
+    view: 5,
+    title: 'Models (third-party)',
+    into: 'docs/images/models',
+    images: [
+      'airpurifier-cb1.png',
+      'airpurifier-ca4.png',
+      'airpurifier-mb3.png',
+      'airpurifier-va2.png',
+      'airpurifier-mjjsq.png',
+      // Rendered, not saved: jsq5 differs from mjjsq only in the slider's
+      // range, so a second picture of it would be the same card. `null` keeps
+      // the card on the view - it is still one the bench draws - without
+      // putting a duplicate on the page.
+      null,
+    ],
+  },
 ];
 
 const docs = async () => {
@@ -180,11 +200,15 @@ const docs = async () => {
       throw new Error(`"${page.title}" came out ${widths.join(', ')} wide`);
     }
 
+    let saved = 0;
     for (let index = 0; index < count; index += 1) {
+      if (!page.images[index]) continue;
+
       await all.nth(index).screenshot({ path: `${page.into}/${page.images[index]}` });
+      saved += 1;
       taken += 1;
     }
-    console.log(`${count} images in ${page.into}, ${widths[0]}px wide`);
+    console.log(`${saved} images in ${page.into}, ${widths[0]}px wide`);
   }
   await session.browser.close();
 

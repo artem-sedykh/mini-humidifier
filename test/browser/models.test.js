@@ -16,6 +16,7 @@ const ATTRIBUTES = {
   humidity: 50,
   target_humidity: 50,
   led_brightness: 1,
+  filter_hours_used: 402,
   dry: false,
   buzzer: false,
   child_lock: false,

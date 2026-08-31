@@ -125,7 +125,11 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_AIRFRESH_VA2 = () => ({
       round: 0,
       order: 5,
       hide: false,
-      source: { entity: 'filter_hours_used' },
+      // An attribute of the fan, not an entity: syssi's component reports
+      // every reading on this preset that way, and `filter_hours_used` has no
+      // domain, so as an entity id it never resolved and the indicator was
+      // skipped on every card. See #282.
+      source: { attribute: 'filter_hours_used' },
     },
   },
   buttons: {
