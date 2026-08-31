@@ -100,7 +100,7 @@ browser test is hard to read without one.
 
 ## What the manifest holds
 
-Four views, and the difference between the first two is the point:
+Five views, and the difference between the first two is the point:
 
 - **Cards** is the card as its defaults render it, plus the cases the scenarios
   need: a dehumidifier with no modes, an entity that is not in `hass.states`, a
@@ -116,6 +116,8 @@ Four views, and the difference between the first two is the point:
 - **Models** is one card per bundled preset from
   `src/configurations/xiaomi_miio/`, each with the whole family of entities its
   preset reads (#266). See below.
+- **Documentation** is the three cards the documentation shows, and is where
+  `npm run bench docs` takes its pictures. See below.
 
 A card with nothing but an `entity` exercises almost none of what the tracker
 asks about, which is why the second view exists.
@@ -153,6 +155,25 @@ Removing an entity is an empty retained payload on its discovery topic. That is
 also how an entity leaves `hass.states` for real, which is the situation behind
 [#263].
 
+### The pictures the documentation points at
+
+`npm run bench docs` writes `docs/images/default.png`,
+`model-humidifier.png` and `custom-indicators.png` from the manifest's
+**Documentation** view, whose three cards are the YAML blocks
+`docs/getting-started.md` shows. Change one and the other has to follow.
+
+They used to be screenshots of somebody's dashboard, and two of the three were
+taken on a Russian Home Assistant - the card said `АВТО` where the reader's says
+`Auto` - on a device with an empty tank and a stopped motor, under a name that
+was an entity id truncated mid-word (#277). Taken here they are in English,
+because `browser.mjs` pins both the browser locale and the frontend's language,
+and they are of a device that is doing something.
+
+All three come off one view at a 1400px viewport, so the masonry column is the
+same for each and the pictures are the same width; the command checks that
+rather than trusting it, and refuses if the view is not where it expects or has
+gained a card.
+
 ### The build under test, and the month of cache in front of it
 
 Home Assistant serves `/local` with `Cache-Control: public, max-age=2678400`.
@@ -187,7 +208,7 @@ value in any test.
 
 Emulating the device is therefore not emulating Xiaomi. The card never talks to
 `xiaomi_miio`: it talks to entity ids and to services in core domains, so
-`bench_cb1` and its eight companions are ordinary MQTT entities that happen to
+`bedroom_humidifier` and its eight companions are ordinary MQTT entities that happen to
 be named the way the integration names its own. The fixtures do copy the
 integration where copying is free - the modes are `Silent`, `Medium`, `High`,
 `Auto` with the real capitalisation, `deerma` has `Humidity` rather than
@@ -198,8 +219,8 @@ Two things about fixture ids, both measured here rather than assumed, and both
 able to waste an hour:
 
 - **The `name` decides the entity id, not `object_id`.** A fixture with
-  `"object_id": "bench_cb1_water_lvl"` and `"name": "Bench cb1 water level"`
-  registers as `sensor.bench_cb1_water_level`. The two agree throughout the
+  `"object_id": "bedroom_humidifier_water_lvl"` and `"name": "Bedroom humidifier water level"`
+  registers as `sensor.bedroom_humidifier_water_level`. The two agree throughout the
   manifest, so the `object_id` fields document intent and decide nothing;
   renaming a fixture means renaming its `name`.
 - **An id already handed out survives `forget`.** Home Assistant keeps deleted
