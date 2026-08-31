@@ -49,7 +49,6 @@ nothing. Every card below is the same entity, a Xiaomi humidifier with the
 sensors and switches its integration creates beside it, with the button panel
 open.
 
-The presets in the second table are not pictured yet.
 
 ### `humidifier`
 
@@ -96,6 +95,52 @@ first indicator reads `filled` or `empty`, and there is no motor speed and no
 child lock.
 
 ![The deerma jsq preset](images/models/jsq.png)
+
+### The same devices through syssi's component
+
+These read everything as attributes of one `fan` entity and call that
+component's own services, where the integration in the first table creates a
+sensor, a switch and a select beside the humidifier. That is why the same device
+appears twice: the card has to ask a different question.
+
+#### `xiaomi_miio_airpurifier:zhimi.humidifier.cb1`
+
+Water depth, temperature, humidity and motor speed; dry mode, the fan modes, LED
+brightness, buzzer and the child lock.
+
+![The cb1 preset through syssi's component](images/models/airpurifier-cb1.png)
+
+#### `xiaomi_miio_airpurifier:zhimi.humidifier.ca4`
+
+The same, with the water level as a percentage rather than a depth, and a clean
+mode button of its own.
+
+![The ca4 preset through syssi's component](images/models/airpurifier-ca4.png)
+
+#### `xiaomi_miio_airpurifier:zhimi.airpurifier.mb3`
+
+An air purifier: the slider sets the favourite level, and there is a fan level
+beside the modes.
+
+![The mb3 preset through syssi's component](images/models/airpurifier-mb3.png)
+
+#### `xiaomi_miio_airpurifier:zhimi.airfresh.va2`
+
+The slider is the fan speed, in the five steps the device has - the preset maps
+each to a preset mode rather than to a percentage, which is why it moves in
+quarters. Air quality, carbon dioxide and the filter's hours are read from the
+fan's own attributes.
+
+![The airfresh va2 preset through syssi's component](images/models/airpurifier-va2.png)
+
+#### `xiaomi_miio_airpurifier:deerma.humidifier.mjjsq`, `xiaomi_miio_airpurifier:deerma.humidifier.jsq5`
+
+A simpler device again: temperature, humidity, and a water tank that reads
+`Filled` or `Empty` rather than a level. The two differ in one thing the picture
+cannot show - the slider's range, 30-80 for the `mjjsq` and 40-70 for the
+`jsq5`.
+
+![The deerma preset through syssi's component](images/models/airpurifier-mjjsq.png)
 
 ## A device that is not in the list
 
