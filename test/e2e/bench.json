@@ -344,24 +344,24 @@
     },
     {
       "domain": "humidifier",
-      "id": "bench_jsq",
+      "id": "nursery_humidifier",
       "discovery": {
-        "name": "Bench jsq",
-        "unique_id": "bench_jsq",
-        "object_id": "bench_jsq",
+        "name": "Nursery humidifier",
+        "unique_id": "nursery_humidifier",
+        "object_id": "nursery_humidifier",
         "device_class": "humidifier",
-        "command_topic": "bench/jsq/set",
-        "target_humidity_command_topic": "bench/jsq/humidity/set",
-        "current_humidity_topic": "bench/jsq/current_humidity",
-        "mode_command_topic": "bench/jsq/mode/set",
+        "command_topic": "bench/nursery/set",
+        "target_humidity_command_topic": "bench/nursery/humidity/set",
+        "current_humidity_topic": "bench/nursery/current_humidity",
+        "mode_command_topic": "bench/nursery/mode/set",
         "modes": ["Low", "Medium", "High", "Humidity"],
-        "availability_topic": "bench/jsq/availability",
+        "availability_topic": "bench/nursery/availability",
         "min_humidity": 30,
         "max_humidity": 80
       },
       "state": {
-        "bench/jsq/availability": "online",
-        "bench/jsq/current_humidity": "47"
+        "bench/nursery/availability": "online",
+        "bench/nursery/current_humidity": "47"
       },
       "start": [
         {
@@ -386,55 +386,55 @@
     },
     {
       "domain": "binary_sensor",
-      "id": "bench_jsq_water_tank_empty",
+      "id": "nursery_humidifier_water_tank_empty",
       "discovery": {
-        "name": "Bench jsq water tank empty",
-        "unique_id": "bench_jsq_water_tank_empty",
-        "object_id": "bench_jsq_water_tank_empty",
-        "state_topic": "bench/jsq/water_tank_empty"
+        "name": "Nursery humidifier water tank empty",
+        "unique_id": "nursery_humidifier_water_tank_empty",
+        "object_id": "nursery_humidifier_water_tank_empty",
+        "state_topic": "bench/nursery/water_tank_empty"
       },
       "state": {
-        "bench/jsq/water_tank_empty": "OFF"
+        "bench/nursery/water_tank_empty": "OFF"
       }
     },
     {
       "domain": "sensor",
-      "id": "bench_jsq_temperature",
+      "id": "nursery_humidifier_temperature",
       "discovery": {
-        "name": "Bench jsq temperature",
-        "unique_id": "bench_jsq_temperature",
-        "object_id": "bench_jsq_temperature",
-        "state_topic": "bench/jsq/temperature",
+        "name": "Nursery humidifier temperature",
+        "unique_id": "nursery_humidifier_temperature",
+        "object_id": "nursery_humidifier_temperature",
+        "state_topic": "bench/nursery/temperature",
         "unit_of_measurement": "°C",
         "device_class": "temperature"
       },
       "state": {
-        "bench/jsq/temperature": "22.1"
+        "bench/nursery/temperature": "22.1"
       }
     },
     {
       "domain": "sensor",
-      "id": "bench_jsq_humidity",
+      "id": "nursery_humidifier_humidity",
       "discovery": {
-        "name": "Bench jsq humidity",
-        "unique_id": "bench_jsq_humidity",
-        "object_id": "bench_jsq_humidity",
-        "state_topic": "bench/jsq/humidity",
+        "name": "Nursery humidifier humidity",
+        "unique_id": "nursery_humidifier_humidity",
+        "object_id": "nursery_humidifier_humidity",
+        "state_topic": "bench/nursery/humidity",
         "unit_of_measurement": "%",
         "device_class": "humidity"
       },
       "state": {
-        "bench/jsq/humidity": "47.2"
+        "bench/nursery/humidity": "47.2"
       }
     },
     {
       "domain": "switch",
-      "id": "bench_jsq_buzzer",
+      "id": "nursery_humidifier_buzzer",
       "discovery": {
-        "name": "Bench jsq buzzer",
-        "unique_id": "bench_jsq_buzzer",
-        "object_id": "bench_jsq_buzzer",
-        "command_topic": "bench/jsq/buzzer/set"
+        "name": "Nursery humidifier buzzer",
+        "unique_id": "nursery_humidifier_buzzer",
+        "object_id": "nursery_humidifier_buzzer",
+        "command_topic": "bench/nursery/buzzer/set"
       },
       "start": [
         {
@@ -445,12 +445,12 @@
     },
     {
       "domain": "switch",
-      "id": "bench_jsq_led",
+      "id": "nursery_humidifier_led",
       "discovery": {
-        "name": "Bench jsq LED",
-        "unique_id": "bench_jsq_led",
-        "object_id": "bench_jsq_led",
-        "command_topic": "bench/jsq/led/set"
+        "name": "Nursery humidifier LED",
+        "unique_id": "nursery_humidifier_led",
+        "object_id": "nursery_humidifier_led",
+        "command_topic": "bench/nursery/led/set"
       },
       "start": [
         {
@@ -461,18 +461,18 @@
     },
     {
       "domain": "fan",
-      "id": "bench_ma2",
+      "id": "living_room_purifier",
       "discovery": {
-        "name": "Bench ma2",
-        "unique_id": "bench_ma2",
-        "object_id": "bench_ma2",
-        "command_topic": "bench/ma2/set",
-        "preset_mode_command_topic": "bench/ma2/preset/set",
+        "name": "Living room purifier",
+        "unique_id": "living_room_purifier",
+        "object_id": "living_room_purifier",
+        "command_topic": "bench/living/set",
+        "preset_mode_command_topic": "bench/living/preset/set",
         "preset_modes": ["Auto", "Silent", "Favorite", "Idle"],
-        "availability_topic": "bench/ma2/availability"
+        "availability_topic": "bench/living/availability"
       },
       "state": {
-        "bench/ma2/availability": "online"
+        "bench/living/availability": "online"
       },
       "start": [
         {
@@ -490,85 +490,85 @@
     },
     {
       "domain": "sensor",
-      "id": "bench_ma2_pm2_5",
+      "id": "living_room_purifier_pm2_5",
       "discovery": {
-        "name": "Bench ma2 PM2.5",
-        "unique_id": "bench_ma2_pm2_5",
-        "object_id": "bench_ma2_pm2_5",
-        "state_topic": "bench/ma2/pm2_5",
+        "name": "Living room purifier PM2.5",
+        "unique_id": "living_room_purifier_pm2_5",
+        "object_id": "living_room_purifier_pm2_5",
+        "state_topic": "bench/living/pm2_5",
         "unit_of_measurement": "µg/m³",
         "device_class": "pm25"
       },
       "state": {
-        "bench/ma2/pm2_5": "12"
+        "bench/living/pm2_5": "12"
       }
     },
     {
       "domain": "sensor",
-      "id": "bench_ma2_temperature",
+      "id": "living_room_purifier_temperature",
       "discovery": {
-        "name": "Bench ma2 temperature",
-        "unique_id": "bench_ma2_temperature",
-        "object_id": "bench_ma2_temperature",
-        "state_topic": "bench/ma2/temperature",
+        "name": "Living room purifier temperature",
+        "unique_id": "living_room_purifier_temperature",
+        "object_id": "living_room_purifier_temperature",
+        "state_topic": "bench/living/temperature",
         "unit_of_measurement": "°C",
         "device_class": "temperature"
       },
       "state": {
-        "bench/ma2/temperature": "23.0"
+        "bench/living/temperature": "23.0"
       }
     },
     {
       "domain": "sensor",
-      "id": "bench_ma2_humidity",
+      "id": "living_room_purifier_humidity",
       "discovery": {
-        "name": "Bench ma2 humidity",
-        "unique_id": "bench_ma2_humidity",
-        "object_id": "bench_ma2_humidity",
-        "state_topic": "bench/ma2/humidity",
+        "name": "Living room purifier humidity",
+        "unique_id": "living_room_purifier_humidity",
+        "object_id": "living_room_purifier_humidity",
+        "state_topic": "bench/living/humidity",
         "unit_of_measurement": "%",
         "device_class": "humidity"
       },
       "state": {
-        "bench/ma2/humidity": "39.5"
+        "bench/living/humidity": "39.5"
       }
     },
     {
       "domain": "sensor",
-      "id": "bench_ma2_motor_speed",
+      "id": "living_room_purifier_motor_speed",
       "discovery": {
-        "name": "Bench ma2 motor speed",
-        "unique_id": "bench_ma2_motor_speed",
-        "object_id": "bench_ma2_motor_speed",
-        "state_topic": "bench/ma2/motor_speed",
+        "name": "Living room purifier motor speed",
+        "unique_id": "living_room_purifier_motor_speed",
+        "object_id": "living_room_purifier_motor_speed",
+        "state_topic": "bench/living/motor_speed",
         "unit_of_measurement": "rpm"
       },
       "state": {
-        "bench/ma2/motor_speed": "900"
+        "bench/living/motor_speed": "900"
       }
     },
     {
       "domain": "sensor",
-      "id": "bench_ma2_filter_use",
+      "id": "living_room_purifier_filter_use",
       "discovery": {
-        "name": "Bench ma2 filter use",
-        "unique_id": "bench_ma2_filter_use",
-        "object_id": "bench_ma2_filter_use",
-        "state_topic": "bench/ma2/filter_use",
+        "name": "Living room purifier filter use",
+        "unique_id": "living_room_purifier_filter_use",
+        "object_id": "living_room_purifier_filter_use",
+        "state_topic": "bench/living/filter_use",
         "unit_of_measurement": "h"
       },
       "state": {
-        "bench/ma2/filter_use": "1273"
+        "bench/living/filter_use": "1273"
       }
     },
     {
       "domain": "number",
-      "id": "bench_ma2_favorite_level",
+      "id": "living_room_purifier_favorite_level",
       "discovery": {
-        "name": "Bench ma2 favorite level",
-        "unique_id": "bench_ma2_favorite_level",
-        "object_id": "bench_ma2_favorite_level",
-        "command_topic": "bench/ma2/favorite_level/set",
+        "name": "Living room purifier favorite level",
+        "unique_id": "living_room_purifier_favorite_level",
+        "object_id": "living_room_purifier_favorite_level",
+        "command_topic": "bench/living/favorite_level/set",
         "min": 0,
         "max": 14,
         "step": 1
@@ -585,12 +585,12 @@
     },
     {
       "domain": "switch",
-      "id": "bench_ma2_led",
+      "id": "living_room_purifier_led",
       "discovery": {
-        "name": "Bench ma2 LED",
-        "unique_id": "bench_ma2_led",
-        "object_id": "bench_ma2_led",
-        "command_topic": "bench/ma2/led/set"
+        "name": "Living room purifier LED",
+        "unique_id": "living_room_purifier_led",
+        "object_id": "living_room_purifier_led",
+        "command_topic": "bench/living/led/set"
       },
       "start": [
         {
@@ -601,12 +601,12 @@
     },
     {
       "domain": "switch",
-      "id": "bench_ma2_buzzer",
+      "id": "living_room_purifier_buzzer",
       "discovery": {
-        "name": "Bench ma2 buzzer",
-        "unique_id": "bench_ma2_buzzer",
-        "object_id": "bench_ma2_buzzer",
-        "command_topic": "bench/ma2/buzzer/set"
+        "name": "Living room purifier buzzer",
+        "unique_id": "living_room_purifier_buzzer",
+        "object_id": "living_room_purifier_buzzer",
+        "command_topic": "bench/living/buzzer/set"
       },
       "start": [
         {
@@ -617,12 +617,12 @@
     },
     {
       "domain": "switch",
-      "id": "bench_ma2_child_lock",
+      "id": "living_room_purifier_child_lock",
       "discovery": {
-        "name": "Bench ma2 child lock",
-        "unique_id": "bench_ma2_child_lock",
-        "object_id": "bench_ma2_child_lock",
-        "command_topic": "bench/ma2/child_lock/set"
+        "name": "Living room purifier child lock",
+        "unique_id": "living_room_purifier_child_lock",
+        "object_id": "living_room_purifier_child_lock",
+        "command_topic": "bench/living/child_lock/set"
       },
       "start": [
         {
@@ -633,21 +633,21 @@
     },
     {
       "domain": "fan",
-      "id": "bench_va2",
+      "id": "study_ventilator",
       "discovery": {
-        "name": "Bench va2",
-        "unique_id": "bench_va2",
-        "object_id": "bench_va2",
-        "command_topic": "bench/va2/set",
-        "percentage_command_topic": "bench/va2/percentage/set",
-        "preset_mode_command_topic": "bench/va2/preset/set",
+        "name": "Study ventilator",
+        "unique_id": "study_ventilator",
+        "object_id": "study_ventilator",
+        "command_topic": "bench/study/set",
+        "percentage_command_topic": "bench/study/percentage/set",
+        "preset_mode_command_topic": "bench/study/preset/set",
         "preset_modes": ["Auto", "Interval"],
-        "availability_topic": "bench/va2/availability",
+        "availability_topic": "bench/study/availability",
         "speed_range_min": 1,
         "speed_range_max": 4
       },
       "state": {
-        "bench/va2/availability": "online"
+        "bench/study/availability": "online"
       },
       "start": [
         {
@@ -672,86 +672,86 @@
     },
     {
       "domain": "sensor",
-      "id": "bench_va2_pm2_5",
+      "id": "study_ventilator_pm2_5",
       "discovery": {
-        "name": "Bench va2 PM2.5",
-        "unique_id": "bench_va2_pm2_5",
-        "object_id": "bench_va2_pm2_5",
-        "state_topic": "bench/va2/pm2_5",
+        "name": "Study ventilator PM2.5",
+        "unique_id": "study_ventilator_pm2_5",
+        "object_id": "study_ventilator_pm2_5",
+        "state_topic": "bench/study/pm2_5",
         "unit_of_measurement": "µg/m³",
         "device_class": "pm25"
       },
       "state": {
-        "bench/va2/pm2_5": "31"
+        "bench/study/pm2_5": "31"
       }
     },
     {
       "domain": "sensor",
-      "id": "bench_va2_temperature",
+      "id": "study_ventilator_temperature",
       "discovery": {
-        "name": "Bench va2 temperature",
-        "unique_id": "bench_va2_temperature",
-        "object_id": "bench_va2_temperature",
-        "state_topic": "bench/va2/temperature",
+        "name": "Study ventilator temperature",
+        "unique_id": "study_ventilator_temperature",
+        "object_id": "study_ventilator_temperature",
+        "state_topic": "bench/study/temperature",
         "unit_of_measurement": "°C",
         "device_class": "temperature"
       },
       "state": {
-        "bench/va2/temperature": "20.6"
+        "bench/study/temperature": "20.6"
       }
     },
     {
       "domain": "sensor",
-      "id": "bench_va2_humidity",
+      "id": "study_ventilator_humidity",
       "discovery": {
-        "name": "Bench va2 humidity",
-        "unique_id": "bench_va2_humidity",
-        "object_id": "bench_va2_humidity",
-        "state_topic": "bench/va2/humidity",
+        "name": "Study ventilator humidity",
+        "unique_id": "study_ventilator_humidity",
+        "object_id": "study_ventilator_humidity",
+        "state_topic": "bench/study/humidity",
         "unit_of_measurement": "%",
         "device_class": "humidity"
       },
       "state": {
-        "bench/va2/humidity": "51.3"
+        "bench/study/humidity": "51.3"
       }
     },
     {
       "domain": "sensor",
-      "id": "bench_va2_carbon_dioxide",
+      "id": "study_ventilator_carbon_dioxide",
       "discovery": {
-        "name": "Bench va2 carbon dioxide",
-        "unique_id": "bench_va2_carbon_dioxide",
-        "object_id": "bench_va2_carbon_dioxide",
-        "state_topic": "bench/va2/carbon_dioxide",
+        "name": "Study ventilator carbon dioxide",
+        "unique_id": "study_ventilator_carbon_dioxide",
+        "object_id": "study_ventilator_carbon_dioxide",
+        "state_topic": "bench/study/carbon_dioxide",
         "unit_of_measurement": "ppm",
         "device_class": "carbon_dioxide"
       },
       "state": {
-        "bench/va2/carbon_dioxide": "780"
+        "bench/study/carbon_dioxide": "780"
       }
     },
     {
       "domain": "sensor",
-      "id": "bench_va2_filter_use",
+      "id": "study_ventilator_filter_use",
       "discovery": {
-        "name": "Bench va2 filter use",
-        "unique_id": "bench_va2_filter_use",
-        "object_id": "bench_va2_filter_use",
-        "state_topic": "bench/va2/filter_use",
+        "name": "Study ventilator filter use",
+        "unique_id": "study_ventilator_filter_use",
+        "object_id": "study_ventilator_filter_use",
+        "state_topic": "bench/study/filter_use",
         "unit_of_measurement": "h"
       },
       "state": {
-        "bench/va2/filter_use": "402"
+        "bench/study/filter_use": "402"
       }
     },
     {
       "domain": "select",
-      "id": "bench_va2_led_brightness",
+      "id": "study_ventilator_led_brightness",
       "discovery": {
-        "name": "Bench va2 LED brightness",
-        "unique_id": "bench_va2_led_brightness",
-        "object_id": "bench_va2_led_brightness",
-        "command_topic": "bench/va2/led_brightness/set",
+        "name": "Study ventilator LED brightness",
+        "unique_id": "study_ventilator_led_brightness",
+        "object_id": "study_ventilator_led_brightness",
+        "command_topic": "bench/study/led_brightness/set",
         "options": ["bright", "dim", "off"]
       },
       "start": [
@@ -766,12 +766,12 @@
     },
     {
       "domain": "switch",
-      "id": "bench_va2_buzzer",
+      "id": "study_ventilator_buzzer",
       "discovery": {
-        "name": "Bench va2 buzzer",
-        "unique_id": "bench_va2_buzzer",
-        "object_id": "bench_va2_buzzer",
-        "command_topic": "bench/va2/buzzer/set"
+        "name": "Study ventilator buzzer",
+        "unique_id": "study_ventilator_buzzer",
+        "object_id": "study_ventilator_buzzer",
+        "command_topic": "bench/study/buzzer/set"
       },
       "start": [
         {
@@ -782,12 +782,12 @@
     },
     {
       "domain": "switch",
-      "id": "bench_va2_child_lock",
+      "id": "study_ventilator_child_lock",
       "discovery": {
-        "name": "Bench va2 child lock",
-        "unique_id": "bench_va2_child_lock",
-        "object_id": "bench_va2_child_lock",
-        "command_topic": "bench/va2/child_lock/set"
+        "name": "Study ventilator child lock",
+        "unique_id": "study_ventilator_child_lock",
+        "object_id": "study_ventilator_child_lock",
+        "command_topic": "bench/study/child_lock/set"
       },
       "start": [
         {
@@ -1011,34 +1011,46 @@
           "type": "custom:mini-humidifier",
           "entity": "{{bedroom_humidifier}}",
           "model": "zhimi.humidifier.cb1",
-          "name": "zhimi.humidifier.cb1",
           "toggle": {
             "default": true
           }
         },
         {
           "type": "custom:mini-humidifier",
-          "entity": "{{bench_jsq}}",
+          "entity": "{{nursery_humidifier}}",
           "model": "deerma.humidifier.jsq",
-          "name": "deerma.humidifier.jsq",
           "toggle": {
             "default": true
           }
         },
         {
           "type": "custom:mini-humidifier",
-          "entity": "{{bench_ma2}}",
+          "entity": "{{living_room_purifier}}",
           "model": "zhimi.airpurifier.ma2",
-          "name": "zhimi.airpurifier.ma2",
           "toggle": {
             "default": true
           }
         },
         {
           "type": "custom:mini-humidifier",
-          "entity": "{{bench_va2}}",
+          "entity": "{{study_ventilator}}",
           "model": "zhimi.airfresh.va2",
-          "name": "zhimi.airfresh.va2",
+          "toggle": {
+            "default": true
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bedroom_humidifier}}",
+          "model": "humidifier",
+          "toggle": {
+            "default": true
+          }
+        },
+        {
+          "type": "custom:mini-humidifier",
+          "entity": "{{bedroom_humidifier}}",
+          "model": "none",
           "toggle": {
             "default": true
           }

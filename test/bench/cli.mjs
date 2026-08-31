@@ -105,69 +105,90 @@ const shot = async () => {
 
 // The pictures the documentation points at, and which card each one is.
 //
-// They used to be screenshots of somebody's dashboard: two of the three were
-// taken on a Russian Home Assistant, so the card said `АВТО` where the reader's
-// says `Auto`, and both showed a device with an empty tank and a stopped motor
-// (#277). These are taken here instead - one view, so the cards come out the
-// same width, and a browser whose language is pinned to English in
-// `browser.mjs`.
+// They used to be screenshots of somebody's dashboard: two of the three on the
+// first page were taken on a Russian Home Assistant, so the card said `АВТО`
+// where the reader's says `Auto`, and both showed a device with an empty tank
+// and a stopped motor (#277). These are taken here instead - one view per page,
+// so the cards on it come out the same width, and a browser whose language is
+// pinned to English in `browser.mjs`.
 //
-// The view is the manifest's, and its cards are the YAML blocks the pages show.
-// Change one and the other has to follow, which is why they sit next to each
-// other here rather than being described twice.
-const DOCS_VIEW = 4;
-const DOCS_IMAGES = ['default.png', 'model-humidifier.png', 'custom-indicators.png'];
+// The views are the manifest's and their cards are the YAML the pages show, in
+// the order the pages show them. Change one and the other has to follow, which
+// is why they sit next to each other here rather than being described twice.
+const DOCS_PAGES = [
+  {
+    view: 4,
+    title: 'Documentation',
+    into: 'docs/images',
+    images: ['default.png', 'model-humidifier.png', 'custom-indicators.png'],
+  },
+  // The gallery in docs/models.md: one picture per preset rather than per
+  // `model:` id, because three ids share the cb1 configuration and three more
+  // share deerma's, and six copies of one card answer nothing (#279).
+  {
+    view: 3,
+    title: 'Models',
+    into: 'docs/images/models',
+    images: ['cb1.png', 'jsq.png', 'ma2.png', 'va2.png', 'humidifier.png', 'none.png'],
+  },
+];
 
 const docs = async () => {
   const { open } = await import('./browser.mjs');
   const { mkdir } = await import('node:fs/promises');
-  const directory = process.env.BENCH_DOCS || 'docs/images';
-
-  await mkdir(directory, { recursive: true });
   const ready = await prepare();
-  const view = ready.manifest.views[DOCS_VIEW];
 
-  if (!view || view.title !== 'Documentation') {
-    throw new Error(`view ${DOCS_VIEW} of the manifest is not the documentation view`);
-  }
-  if (view.cards.length !== DOCS_IMAGES.length) {
-    throw new Error(
-      `the documentation view has ${view.cards.length} cards and there are ` +
-        `${DOCS_IMAGES.length} names for them`,
-    );
-  }
-
-  // The same width as `shot` uses, and for the same reason: at the width the
+  // The same width `shot` uses, and for the same reason: at the width the
   // scenarios run, the masonry column narrows as cards are added.
   const session = await open(ready.tokens, { viewport: { width: 1400, height: 1000 } });
+  let taken = 0;
 
-  await session.page.goto(`${BASE}/${DASHBOARD}/${DOCS_VIEW}`, { waitUntil: 'load' });
-  await session.page.waitForSelector('mini-humidifier', { timeout: 60000 });
-  await session.page.waitForTimeout(2000);
+  for (const page of DOCS_PAGES) {
+    const view = ready.manifest.views[page.view];
 
-  const all = session.page.locator('mini-humidifier');
-  const count = await all.count();
+    if (!view || view.title !== page.title) {
+      throw new Error(`view ${page.view} of the manifest is not "${page.title}"`);
+    }
+    if (view.cards.length !== page.images.length) {
+      throw new Error(
+        `"${page.title}" has ${view.cards.length} cards and there are ` +
+          `${page.images.length} names for them`,
+      );
+    }
 
-  if (count !== DOCS_IMAGES.length) {
-    throw new Error(`${count} cards rendered, ${DOCS_IMAGES.length} expected`);
-  }
+    await mkdir(page.into, { recursive: true });
+    await session.page.goto(`${BASE}/${DASHBOARD}/${page.view}`, { waitUntil: 'load' });
+    await session.page.waitForSelector('mini-humidifier', { timeout: 60000 });
+    await session.page.waitForTimeout(2000);
 
-  // Equal widths are the point of taking them together, so they are checked
-  // rather than hoped for: a picture that is 310px wide beside two of 492 is
-  // what an unnoticed extra card on the view looks like.
-  const widths = await all.evaluateAll(cards =>
-    cards.map(
-      card => +card.shadowRoot.querySelector('ha-card').getBoundingClientRect().width.toFixed(1),
-    ),
-  );
-  if (new Set(widths).size !== 1) throw new Error(`cards came out ${widths.join(', ')} wide`);
+    const all = session.page.locator('mini-humidifier');
+    const count = await all.count();
 
-  for (let index = 0; index < count; index += 1) {
-    await all.nth(index).screenshot({ path: `${directory}/${DOCS_IMAGES[index]}` });
+    if (count !== page.images.length) {
+      throw new Error(`"${page.title}" rendered ${count} cards, ${page.images.length} expected`);
+    }
+
+    // Equal widths are the point of taking a page's pictures together, so they
+    // are checked rather than hoped for: one card 310px wide beside two of 492
+    // is what an unnoticed extra card on the view looks like.
+    const widths = await all.evaluateAll(cards =>
+      cards.map(
+        card => +card.shadowRoot.querySelector('ha-card').getBoundingClientRect().width.toFixed(1),
+      ),
+    );
+    if (new Set(widths).size !== 1) {
+      throw new Error(`"${page.title}" came out ${widths.join(', ')} wide`);
+    }
+
+    for (let index = 0; index < count; index += 1) {
+      await all.nth(index).screenshot({ path: `${page.into}/${page.images[index]}` });
+      taken += 1;
+    }
+    console.log(`${count} images in ${page.into}, ${widths[0]}px wide`);
   }
   await session.browser.close();
 
-  console.log(`${count} documentation images in ${directory}, ${widths[0]}px wide`);
+  console.log(`${taken} documentation images`);
   if (session.errors.length) console.log(`page errors: ${JSON.stringify(session.errors)}`);
 };
 

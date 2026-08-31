@@ -395,9 +395,10 @@ were simply absent, every control that needed one was skipped, and what was
 left still looked like a card. The manifest's fourth view gives each of them
 its own entities, which is a matter of naming MQTT fixtures correctly - the
 card never talks to `xiaomi_miio`, only to entity ids and core-domain
-services. `test/e2e/models.test.mjs` also photographs each card into
-`test/e2e/shots/`, which is where a picture of a preset comes from when
-`docs/models.md` wants one.
+services. `test/e2e/models.test.mjs` photographs each card as it goes, and
+`npm run bench docs` writes the gallery in `docs/models.md` from the same view
+(#279) - one picture per configuration rather than per `model:`, since three
+ids share the cb1 file and three more share deerma's.
 
 ## Verifying a change by hand
 

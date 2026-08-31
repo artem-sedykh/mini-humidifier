@@ -41,6 +41,62 @@ integration, which reports different attributes and calls different services:
 | `xiaomi_miio_airpurifier:deerma.humidifier.mjjsq` | |
 | `xiaomi_miio_airpurifier:deerma.humidifier.jsq5` | by @akovovh |
 
+## What each one draws
+
+One picture per configuration, not per `model:` - three ids share the `cb1`
+file and three more share deerma's, so six copies of one card would answer
+nothing. Every card below is the same entity, a Xiaomi humidifier with the
+sensors and switches its integration creates beside it, with the button panel
+open.
+
+The presets in the second table are not pictured yet.
+
+### `humidifier`
+
+The `humidifier` domain and nothing beyond it: on/off, the target slider from
+`min_humidity` and `max_humidity`, the reading from `current_humidity`, and the
+modes the entity reports.
+
+![The humidifier preset](images/models/humidifier.png)
+
+### `none`
+
+Nothing at all - the name and the icon. Everything else is for the card to
+describe itself, which is what this preset is for.
+
+![The none preset](images/models/none.png)
+
+### `zhimi.humidifier.cb1`, `zhimi.humidifier.ca1`, `zhimi.humidifier.ca4`
+
+Water level, temperature, humidity and motor speed, read from the sensors the
+integration creates beside the humidifier; dry mode, the fan modes, LED
+brightness, buzzer and the child lock. This is the default, so it is also what a
+card with no `model:` at all draws.
+
+![The cb1 preset](images/models/cb1.png)
+
+### `zhimi.airpurifier.ma2`
+
+An air purifier: the slider sets the favourite level rather than a humidity, and
+the first indicator is the air quality, coloured by how bad it is.
+
+![The ma2 preset](images/models/ma2.png)
+
+### `zhimi.airfresh.va2`
+
+The slider is the fan speed as a percentage, and there is a carbon dioxide
+reading and the filter's hours beside the air quality.
+
+![The airfresh va2 preset](images/models/va2.png)
+
+### `deerma.humidifier.jsq`, `deerma.humidifier.jsq1`, `deerma.humidifier.mjjsq`
+
+A simpler device: the water tank is a binary sensor rather than a level, so the
+first indicator reads `filled` or `empty`, and there is no motor speed and no
+child lock.
+
+![The deerma jsq preset](images/models/jsq.png)
+
 ## A device that is not in the list
 
 There are more humidifiers than this card ships configurations for, and that is
