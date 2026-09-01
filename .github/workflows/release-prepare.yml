@@ -110,6 +110,23 @@ jobs:
             }
             fs.writeFileSync(file, after);
           '
+          # package-lock.json repeats the version twice, and nothing checks it:
+          # `npm ci` compares dependencies, not that field, so it drifts in
+          # silence - in the sister card the lock sat a whole minor behind and
+          # only surfaced as noise in a dependabot diff. Rewritten from the
+          # parsed object rather than by regex (two identical lines, only one
+          # of them the root package), which is safe here: npm writes this file
+          # as `JSON.stringify(obj, null, 2)` plus a newline, so an untouched
+          # round-trip is byte-identical.
+          node -e '
+            const fs = require("fs");
+            const file = "package-lock.json";
+            const lock = JSON.parse(fs.readFileSync(file, "utf8"));
+            const version = `v${process.env.VERSION}`;
+            lock.version = version;
+            lock.packages[""].version = version;
+            fs.writeFileSync(file, JSON.stringify(lock, null, 2) + "\n");
+          '
           # The install instructions carry the same version, and `check:version`
           # fails the release pull request if they disagree. Bumped here rather
           # than left to whoever opens it.
@@ -135,7 +152,7 @@ jobs:
           # README.md as well: the step above rewrites `?v=` in it precisely so
           # `check:version` does not fail the release pull request, and leaving
           # it unstaged threw that edit away.
-          git add package.json CHANGELOG.md README.md
+          git add package.json package-lock.json CHANGELOG.md README.md
           git commit -m "build: release ${VERSION}"
           git push origin "$branch"
           echo "BRANCH=$branch" >> "$GITHUB_ENV"
