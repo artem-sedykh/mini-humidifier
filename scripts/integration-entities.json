@@ -7,7 +7,7 @@
       "homeassistant/components/sensor/strings.json",
       "homeassistant/components/binary_sensor/strings.json"
     ],
-    "fetched": "2026-08-30"
+    "fetched": "2026-09-28"
   },
   "entities": {
     "binary_sensor": {
@@ -66,6 +66,10 @@
       "gas": {
         "name": "Gas",
         "from": "device_class.gas"
+      },
+      "glass_break": {
+        "name": "Glass break",
+        "from": "device_class.glass_break"
       },
       "heat": {
         "name": "Heat",
